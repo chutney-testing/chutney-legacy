@@ -1,10 +1,22 @@
 package com.chutneytesting.execution.infra.storage;
 
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.singletonList;
+import static java.util.Optional.of;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import com.chutneytesting.campaign.domain.CampaignRepository;
+import com.chutneytesting.campaign.infra.CampaignExecutionReportMapper;
+import com.chutneytesting.campaign.infra.CampaignExecutionRepository;
+import com.chutneytesting.campaign.infra.CampaignParameterRepository;
+import com.chutneytesting.campaign.infra.DatabaseCampaignRepository;
+import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.Execution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.ExecutionSummary;
@@ -12,20 +24,32 @@ import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryR
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundException;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabaseTest {
 
     private final ExecutionHistoryRepository executionHistoryRepository;
+    private CampaignRepository campaignRepository;
 
     public DatabaseExecutionHistoryRepositoryTest() {
         this.executionHistoryRepository = new DatabaseExecutionHistoryRepository(namedParameterJdbcTemplate);
+        initCampaignRepositories();
+
     }
+
+
 
     @Test
     public void repository_is_empty_at_startup() {
@@ -193,6 +217,78 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
             .hasSize(512);
     }
 
+    @Test
+    public void should_map_campaign_only_when_executing_from_campaign() {
+        // Given
+        String scenarioId = "1";
+        Execution exec1 = executionHistoryRepository.store(scenarioId, buildDetachedExecution(ServerReportStatus.FAILURE, "exec1", ""));
+        Execution exec2 = executionHistoryRepository.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
+
+        // scenario 1 was executed in campaign 1
+        Long campaignId = saveNewCampaign();
+        Long campaignExecutionId = 1L;
+        saveCampaignExecutionReport(campaignId, campaignExecutionId,scenarioId, exec1);
+
+        // When
+        List<ExecutionSummary> executions = executionHistoryRepository.getExecutions(scenarioId);
+
+        // Then
+
+        assertThat(executions).hasSize(2);
+        assertThat(executions.get(0).executionId()).isEqualTo(exec2.executionId());
+        assertThat(executions.get(0).campaignReport()).isEmpty();
+        assertThat(executions.get(1).executionId()).isEqualTo(exec1.executionId());
+        assertThat(executions.get(1).campaignReport()).isPresent();
+        assertThat(executions.get(1).campaignReport().get().campaignId).isEqualTo(campaignId);
+        assertThat(executions.get(1).campaignReport().get().executionId).isEqualTo(campaignExecutionId);
+    }
+
+    @Test
+    public void should_retrieve_scenario_execution_summary() {
+        // Given
+        String scenarioId = "1";
+        Execution exec1 = executionHistoryRepository.store(scenarioId, buildDetachedExecution(ServerReportStatus.FAILURE, "exec1", ""));
+        executionHistoryRepository.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
+
+        // scenario 1 was executed in campaign 1
+        Long campaignId = saveNewCampaign();
+        Long campaignExecutionId = 1L;
+        saveCampaignExecutionReport(campaignId, campaignExecutionId,scenarioId, exec1);
+
+        // When
+        ExecutionSummary executionSummary = executionHistoryRepository.getExecutionSummary(scenarioId, exec1.executionId());
+
+        // Then
+
+
+        assertThat(executionSummary.executionId()).isEqualTo(exec1.executionId());
+        assertThat(executionSummary.campaignReport()).isPresent();
+        assertThat(executionSummary.campaignReport().get().campaignId).isEqualTo(campaignId);
+        assertThat(executionSummary.campaignReport().get().executionId).isEqualTo(campaignExecutionId);
+    }
+
+    private void saveCampaignExecutionReport(Long campaignId, Long campaignExecutionId, String scenarioId, Execution exec1) {
+        ExecutionSummary execution = ImmutableExecutionHistory.ExecutionSummary.builder().executionId(exec1.executionId())
+            .duration(3L)
+            .time(LocalDateTime.now())
+            .status(exec1.status())
+            .testCaseTitle("fake")
+            .environment("default")
+            .datasetId("#2:87")
+            .datasetVersion(5)
+            .user("user")
+            .build();
+        ScenarioExecutionReportCampaign scenarioExecutionReport = new ScenarioExecutionReportCampaign(scenarioId, "scenario 1", execution);
+        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaignId, singletonList(scenarioExecutionReport), "title", false, "env", "#2:87", 5, "user");
+
+        campaignRepository.saveReport(campaignId, campaignExecutionReport);
+    }
+
+    private Long saveNewCampaign() {
+        Campaign campaign = new Campaign(null, "test", "test campaign", newArrayList("1", "2"), null, "env", false, false, null, null);
+        return campaignRepository.createOrUpdate(campaign).id;
+    }
+
     private DetachedExecution buildDetachedExecution(ServerReportStatus status, String info, String error) {
         return ImmutableExecutionHistory.DetachedExecution.builder()
             .time(LocalDateTime.now())
@@ -206,5 +302,19 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
             .datasetId("fake dataset id")
             .user("")
             .build();
+    }
+
+    private void initCampaignRepositories() {
+        TestCaseRepositoryAggregator testCaseRepositoryMock = mock(TestCaseRepositoryAggregator.class);
+        CampaignExecutionReportMapper campaignExecutionReportMapper = new CampaignExecutionReportMapper(testCaseRepositoryMock);
+        TestCase mockTestCase = mock(TestCase.class);
+        TestCaseMetadata mockTestCaseMetadata = mock(TestCaseMetadata.class);
+        when(mockTestCaseMetadata.title()).thenReturn("scenario title");
+        when(mockTestCase.metadata()).thenReturn(mockTestCaseMetadata);
+        when(testCaseRepositoryMock.findById(any())).thenReturn(of(mockTestCase));
+        CampaignExecutionRepository campaignExecutionRepository = new CampaignExecutionRepository(namedParameterJdbcTemplate, campaignExecutionReportMapper);
+
+        CampaignParameterRepository campaignParameterRepository = new CampaignParameterRepository(namedParameterJdbcTemplate);
+        campaignRepository = new DatabaseCampaignRepository(namedParameterJdbcTemplate, campaignExecutionRepository, campaignParameterRepository);
     }
 }

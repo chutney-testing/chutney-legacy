@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { combineLatestWith, delay, switchMap, tap } from 'rxjs/operators';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Authorization, Execution, TestCase } from '@model';
+import { Execution, GwtTestCase, ScenarioComponent, TestCase } from '@model';
 import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
-import { EventManagerService } from '@shared';
-import { ScenarioService } from '@core/services';
-import { FileSaverService } from 'ngx-filesaver';
+import { ComponentService, ScenarioService } from '@core/services';
+import { ExecutionStatus } from '@core/model/scenario/execution-status';
 
 @Component({
     selector: 'chutney-scenario-executions-history',
@@ -22,30 +21,38 @@ export class ScenarioExecutionsHistoryComponent implements OnInit {
     scenarioId: string;
     private _executionsFilters: Params = {};
     private tabFilters: Params = {};
-    rightMenuItems = [];
+    private hasParameters: boolean = null;
+    private scenario: ScenarioComponent | GwtTestCase;
+    executionError: string;
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
                 private scenarioExecutionService: ScenarioExecutionService,
                 private scenarioService: ScenarioService,
-                private fileSaverService: FileSaverService) {
+                private componentService: ComponentService) {
     }
 
     ngOnInit(): void {
         this.route.params
             .pipe(
                 tap(params => this.scenarioId = params['id']),
-                switchMap(() => this.scenarioExecutionService.findScenarioExecutions(this.scenarioId)),
+                switchMap(() => this.loadScenario()),
+                switchMap(() => this.getScenarioExecutions()),
                 combineLatestWith(this.route.queryParams))
             .subscribe(([executions, queryParams]) => {
-                this.executions = executions;
                 this.openTabs(queryParams['open']);
                 this.focusOnTab(queryParams['active'])
                 this.executionsFilters = queryParams;
-                this.initRightMenu();
             });
     }
 
+
+    private getScenarioExecutions() {
+        return this.scenarioExecutionService.findScenarioExecutions(this.scenarioId)
+            .pipe(
+                tap(executions => this.executions = executions)
+            );
+    }
 
     closeReport(event: MouseEvent, executionId: number) {
         event.preventDefault();
@@ -72,6 +79,11 @@ export class ScenarioExecutionsHistoryComponent implements OnInit {
         this.updateQueryParams();
     }
 
+    onTabChange(changeEvent: NgbNavChangeEvent) {
+        this.tabFilters['active'] = changeEvent.nextId;
+        this.updateQueryParams();
+    }
+
     get executionsFilters(): Params {
         return this._executionsFilters;
     }
@@ -80,6 +92,56 @@ export class ScenarioExecutionsHistoryComponent implements OnInit {
         const {open, active, ...executionsParams} = value;
         this._executionsFilters = executionsParams;
         this.updateQueryParams();
+    }
+
+    executeScenario(env: string) {
+        if (this.hasParameters) {
+            this.router.navigateByUrl(`/scenario/${this.scenarioId}/execute/${env}`,);
+        } else {
+            this.scenarioExecutionService
+                .executeScenarioAsync(this.scenarioId, [], env)
+                .pipe(
+                    delay(1000),
+                    switchMap(executionId => this.scenarioExecutionService.findScenarioExecutionSummary(this.scenarioId, +executionId)))
+                .subscribe({
+                        next: (executionSummary) => {
+                            this.openReport({
+                                execution: executionSummary,
+                                focus: true
+                            });
+                            this.executions.unshift(executionSummary);
+                        },
+                        error: error => {
+                            this.executionError = error.error;
+                        }
+                    }
+                )
+            ;
+        }
+    }
+
+    updateExecutionStatus(executionId: number, update : {status: ExecutionStatus, error: string}) {
+        const execution = this.executions.find(exec => exec.executionId === executionId);
+        execution.status = update.status;
+        execution.error = update.error;
+    }
+
+    private loadScenario(): Observable<ScenarioComponent | GwtTestCase> {
+        let scenario$: Observable<ScenarioComponent | GwtTestCase>;
+        let hasParameter: (scenario: ScenarioComponent | GwtTestCase) => boolean;
+        if (TestCase.isComposed(this.scenarioId)) {
+            scenario$ = this.componentService.findComponentTestCaseWithoutDeserializeImpl(this.scenarioId);
+            hasParameter = (scenario: ScenarioComponent) => !!scenario.computedParameters?.length;
+        } else {
+            scenario$ = this.scenarioService.findTestCase(this.scenarioId);
+            hasParameter = (scenario: GwtTestCase) => !!scenario.wrappedParams?.params?.length;
+        }
+        return scenario$.pipe(
+            tap(scenario => {
+                this.hasParameters = hasParameter(scenario);
+                this.scenario = scenario;
+            })
+        );
     }
 
 
@@ -117,54 +179,5 @@ export class ScenarioExecutionsHistoryComponent implements OnInit {
             }
         });
         return params;
-    }
-
-    onTabChange(changeEvent: NgbNavChangeEvent) {
-        this.tabFilters['active'] = changeEvent.nextId;
-        this.updateQueryParams();
-    }
-
-    private initRightMenu() {
-        this.rightMenuItems = [
-            {
-                label: 'global.actions.execute',
-                //click: this.onTabChange,
-                class: 'fa fa-play',
-                authorizations: [Authorization.SCENARIO_EXECUTE]
-            },
-            {
-                label: 'global.actions.edit',
-                link: TestCase.isComposed(this.scenarioId) ? '/scenario/' + this.scenarioId + '/component-edition' : '/scenario/' + this.scenarioId + '/raw-edition',
-                class: 'fa fa-pencil-alt',
-                authorizations: [Authorization.SCENARIO_WRITE]
-            },
-            {
-                label: 'scenarios.execution.actions.remove',
-                //click:
-                class: 'fa fa-trash',
-                authorizations: [Authorization.SCENARIO_WRITE]
-            },
-            {
-                label: 'global.actions.clone',
-                //click:
-                class: 'fa fa-clone',
-                authorizations: [Authorization.SCENARIO_WRITE]
-            },
-        ];
-
-        if(!TestCase.isComposed(this.scenarioId)) {
-            this.rightMenuItems.push({
-                label: 'global.actions.export',
-                click: this.exportScenario.bind(this),
-                class: 'fa fa-file-code'
-            })
-        }
-    }
-    private exportScenario() {
-        this.scenarioService.findRawTestCase(this.scenarioId)
-            .subscribe((testCase: TestCase) => {
-                const fileName = `${this.scenarioId}-${testCase.title}.chutney.hjson`;
-                this.fileSaverService.saveText(testCase.content, fileName);
-        });
     }
 }

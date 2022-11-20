@@ -8,14 +8,16 @@ import { ChutneyRightMenuComponent } from '@shared/components/chutney-right-menu
 import { ChutneyMainHeaderComponent } from '@shared/components/chutney-main-header/chutney-main-header.component';
 
 export const componentRoute: Routes = [
-    { path: '',
-    pathMatch: 'full',
-    redirectTo: 'list',
-    data: { 'authorizations': [Authorization.COMPONENT_READ, Authorization.COMPONENT_WRITE] } },
+    {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'list',
+        data: {'authorizations': [Authorization.COMPONENT_READ, Authorization.COMPONENT_WRITE]}
+    },
     {
         path: ':id',
         component: CreateComponent,
         canActivate: [AuthGuard],
-        data: { 'authorizations': [ Authorization.COMPONENT_READ,Authorization.COMPONENT_WRITE ] }
+        data: {'authorizations': [Authorization.COMPONENT_READ, Authorization.COMPONENT_WRITE]}
     }
 ];

@@ -60,7 +60,7 @@ export class ScenarioExecutionMenuComponent implements OnInit {
     }
 
     executeScenarioOnToggle() {
-        if (this.environments.length == 1) {
+        if (this.environments.length === 1) {
             this.executeDropDown.first.close();
             this.executeScenario(this.environments[0]);
         }

@@ -14,50 +14,55 @@
             <thead class="table-light text-center">
             <tr class="headers-labels">
                 <th class="w1">#</th>
-                <th scope="col" class="w11">
-                    {{'scenarios.execution.history.status' | translate}}
-                    <button class="btn btn-sm float-end" (click)="toggleDropDown(statusDropdown, $event)">
+                <th scope="col">
+                    <div class="d-flex justify-content-between">
+                        <span>{{'scenarios.execution.history.status' | translate}}</span>
                         <i class="fa" [ngClass]="{
                         'fa-chevron-up': statusDropdown.isActive,
-                        'fa-chevron-down': !statusDropdown.isActive}"></i>
-                    </button>
+                        'fa-chevron-down': !statusDropdown.isActive}"
+                           (click)="toggleDropDown(statusDropdown, $event)"></i>
+                    </div>
                 </th>
-                <th scope="col" class="w16">
-                    {{'scenarios.execution.history.date' | translate}}
-                    <button #dateToggleButton class="btn btn-sm float-end" type="button" (click)="datepicker.toggle()">
-                        <i class="fa-regular fa-calendar-days"></i>
-                    </button>
+                <th scope="col">
+                    <div class="d-flex justify-content-between">
+                        <span>{{'scenarios.execution.history.date' | translate}}</span>
+                        <i #dateToggleButton class="fa-regular fa-calendar-days" (click)="datepicker.toggle()"></i>
+                    </div>
                 </th>
-                <th scope="col" class="w17">
-                    {{'scenarios.execution.history.env' | translate}}
-                    <button class="btn btn-sm float-end" (click)="toggleDropDown(envsDropdown, $event)">
+                <th scope="col">
+                    <div class="d-flex justify-content-between">
+                        <span>{{'scenarios.execution.history.env' | translate}}</span>
                         <i class="fa" [ngClass]="{
                         'fa-chevron-up': envsDropdown.isActive,
-                        'fa-chevron-down': !envsDropdown.isActive}"></i>
-                    </button>
+                        'fa-chevron-down': !envsDropdown.isActive}"
+                           (click)="toggleDropDown(envsDropdown, $event)"></i>
+                    </div>
                 </th>
-                <th scope="col" class="w13">
-                    {{'scenarios.execution.history.executor' | translate}}
-                    <button class="btn btn-sm float-end" (click)="toggleDropDown(executorsDropdown, $event)">
+                <th scope="col">
+                    <div class="d-flex justify-content-between">
+                        <span>{{'scenarios.execution.history.executor' | translate}}</span>
                         <i class="fa" [ngClass]="{
                         'fa-chevron-up': executorsDropdown.isActive,
-                        'fa-chevron-down': !executorsDropdown.isActive}"></i>
-                    </button>
+                        'fa-chevron-down': !executorsDropdown.isActive}"
+                           (click)="toggleDropDown(executorsDropdown, $event)"></i>
+                    </div>
+
                 </th>
-                <th scope="col" class="w13">
-                    {{'scenarios.execution.history.campaign' | translate}}
-                    <button class="btn btn-sm float-end" (click)="toggleDropDown(campsDropdown, $event)">
+                <th scope="col" class="">
+                    <div class="d-flex justify-content-between">
+                        <span> {{'scenarios.execution.history.campaign' | translate}}</span>
                         <i class="fa" [ngClass]="{
                         'fa-chevron-up': campsDropdown.isActive,
-                        'fa-chevron-down': !campsDropdown.isActive}"></i>
-                    </button>
+                        'fa-chevron-down': !campsDropdown.isActive}"
+                           (click)="toggleDropDown(campsDropdown, $event)"></i>
+                    </div>
                 </th>
-                <th scope="col" class="">{{'scenarios.execution.history.report' | translate}}</th>
+                <th scope="col">{{'scenarios.execution.history.report' | translate}}</th>
                 <th scope="col" class="w1">&nbsp;</th>
             </tr>
             <tr class="headers-filters">
                 <th></th>
-                <th>
+                <th colspan="#ofColumnsToSpan">
                     <angular2-multiselect [data]="status"
                                           [settings]="selectSettings"
                                           formControlName="status"
@@ -128,15 +133,18 @@
                     <ngb-highlight [result]="execution.user" [term]="filtersForm.get('keyword').value"></ngb-highlight>
                 </td>
                 <td>
-                    <ngb-highlight [result]="execution.campaign"
-                                   [term]="filtersForm.get('keyword').value"></ngb-highlight>
+                    <a [routerLink]="['/campaign', execution.campaignReport?.campaignId, 'execution', execution.campaignReport?.executionId]">
+                        <ngb-highlight [result]="execution.campaignReport?.campaignName"
+                                       [term]="filtersForm.get('keyword').value"></ngb-highlight>
+                    </a>
                 </td>
                 <td>
                     <ngb-highlight [result]="execution.error"
                                    [term]="filtersForm.get('keyword').value"></ngb-highlight>
                 </td>
                 <td class="align-middle">
-                    <i class="fa fa-eye icon-primary pointer fa-lg" (click)="openReport(execution, !$event.ctrlKey)"></i>
+                    <i class="fa fa-eye icon-primary pointer fa-lg"
+                       (click)="openReport(execution, !$event.ctrlKey)"></i>
                 </td>
             </tr>
             </tbody>

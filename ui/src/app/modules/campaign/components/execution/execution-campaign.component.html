@@ -179,7 +179,8 @@
                         <td>
                             <ng-container *hasAuthorization="[Authorization.SCENARIO_READ]">
                                 <a
-                                   [routerLink]="['/scenario', scenarioReportOutline.scenarioId, 'executions', scenarioReportOutline.executionId != -1 ? scenarioReportOutline.executionId : 'last']"
+                                   [routerLink]="['/scenario', scenarioReportOutline.scenarioId, 'executions']"
+                                   [queryParams]="toQueryParams(scenarioReportOutline)"
                                     title="{{ 'campaigns.execution.scenarios.item.executions.link' | translate }} {{scenarioReportOutline.scenarioName}}">
                                     {{scenarioReportOutline.scenarioName}}
                                 </a>

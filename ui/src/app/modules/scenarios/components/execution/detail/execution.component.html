@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="mb-2">
-            <chutney-scenario-campaigns [idScenario]="scenarioId"></chutney-scenario-campaigns>
+            <chutney-scenario-campaigns [idScenario]="scenario.id"></chutney-scenario-campaigns>
         </div>
         <ng-container *ngIf="scenarioExecutionReport?.report">
             <div class="row steps">
@@ -34,22 +34,22 @@
                         </small>
                     </span>
                     <div class="text-sm-center" *hasAuthorization="[Authorization.SCENARIO_EXECUTE]">
-                        <div *ngIf="scenarioExecutionReport.report.status == 'RUNNING' || scenarioExecutionReport.report.status == 'PAUSED'"
+                        <div *ngIf="scenarioExecutionReport.report.status == ExecutionStatus.RUNNING || scenarioExecutionReport.report.status == ExecutionStatus.PAUSED"
                               class="btn-group btn-group-sm mt-1 justify-content-center position-relative">
                             <button type="button" class="btn btn-primary" (click)="stopScenario()"
-                                    [disabled]="scenarioExecutionReport.report.status != 'RUNNING'">
+                                    [disabled]="scenarioExecutionReport.report.status != ExecutionStatus.RUNNING">
                                 <span class="fa fa-stop"></span>
                                 <span class="btn-label">{{'global.actions.stop' | translate}}</span>
                             </button>
 
                             <button type="button" class="btn btn-primary mx-1" (click)="pauseScenario()"
-                                    [disabled]="scenarioExecutionReport.report.status != 'RUNNING'">
+                                    [disabled]="scenarioExecutionReport.report.status != ExecutionStatus.RUNNING">
                                 <span class="fa fa-pause"></span>
                                 <span class="btn-label">{{'global.actions.pause' | translate}}</span>
                             </button>
 
                             <button type="button" class="btn btn-primary" (click)="resumeScenario()"
-                                    [disabled]="scenarioExecutionReport.report.status != 'PAUSED'">
+                                    [disabled]="scenarioExecutionReport.report.status != ExecutionStatus.PAUSED">
                                 <span class="fa fa-play"></span>
                                 <span class="btn-label">{{'global.actions.resume' | translate}}</span>
                             </button>
@@ -75,22 +75,22 @@
             </div>
         </ng-container>
         <div *ngIf="!scenarioExecutionReport" class="border">
-            <ng-container *ngIf="(scenarioComponent$ | async) as scenarioComponent">
-                <div *ngFor="let step of scenarioComponent.componentSteps">
+            <ng-container *ngIf="isComponentScenario()">
+                <div *ngFor="let step of scenario.componentSteps">
                     <chutney-component-read [step]=step></chutney-component-read>
                 </div>
             </ng-container>
-            <ng-container *ngIf="(scenarioGwt$ | async) as scenarioGwt">
-                <div *ngIf="scenarioGwt.scenario.givens.length > 0" class="gwt" id="given">
-                    <div *ngFor="let step of scenarioGwt.scenario.givens">
+            <ng-container *ngIf="!isComponentScenario()">
+                <div *ngIf="scenario.scenario.givens.length > 0" class="gwt" id="given">
+                    <div *ngFor="let step of scenario.scenario.givens">
                         <chutney-gwt-read [step]=step [type]="'given'"></chutney-gwt-read>
                     </div>
                 </div>
-                <div *ngIf="scenarioGwt.scenario.when" class="gwt" id="when">
-                    <chutney-gwt-read [step]=scenarioGwt.scenario.when [type]="'when'"></chutney-gwt-read>
+                <div *ngIf="scenario.scenario.when" class="gwt" id="when">
+                    <chutney-gwt-read [step]=scenario.scenario.when [type]="'when'"></chutney-gwt-read>
                 </div>
-                <div *ngIf="scenarioGwt.scenario.thens.length > 0" class="gwt" id="then">
-                    <div *ngFor="let step of scenarioGwt.scenario.thens">
+                <div *ngIf="scenario.scenario.thens.length > 0" class="gwt" id="then">
+                    <div *ngFor="let step of scenario.scenario.thens">
                         <chutney-gwt-read [step]=step [type]="'then'"></chutney-gwt-read>
                     </div>
                 </div>

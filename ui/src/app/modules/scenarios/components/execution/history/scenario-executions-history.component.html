@@ -1,5 +1,8 @@
+<div class="error" *ngIf="executionError">
+    <em>{{executionError}}</em>
+</div>
 <div class="d-flex flex-row">
-    <div class="w90">
+    <div class="flex-grow-1">
         <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" (navChange)="onTabChange($event)" class="nav-tabs">
             <li [ngbNavItem]="0" [destroyOnHide]="false">
                 <a ngbNavLink>
@@ -18,16 +21,20 @@
                     <i class="fa-regular fa-x fa-xs ms-2 fw-light" (click)="closeReport($event, exec.executionId)"></i>
                 </a>
                 <ng-template ngbNavContent>
-                    <chutney-scenario-execution [scenarioId]="scenarioId"
-                                                [executionId]="exec.executionId"></chutney-scenario-execution>
+                    <chutney-scenario-execution [scenario]="scenario"
+                                                [executionId]="exec.executionId"
+                                                (onExecutionStatusUpdate)="updateExecutionStatus(exec.executionId, $event)">
+
+                    </chutney-scenario-execution>
                 </ng-template>
             </li>
         </ul>
         <div [ngbNavOutlet]="nav" class="mt-2">
         </div>
     </div>
-    <div class="w13 ms-2">
-        <chutney-scenario-execution-menu [testCaseId]="scenarioId">
+    <div class="ms-2">
+        <chutney-scenario-execution-menu [testCaseId]="scenarioId"
+        (executeEvent)="executeScenario($event)">
 
         </chutney-scenario-execution-menu>
     </div>

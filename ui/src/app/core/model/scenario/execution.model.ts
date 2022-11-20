@@ -1,5 +1,5 @@
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
-import { Campaign } from '@core/model';
+import { Campaign, CampaignExecutionReport } from '@core/model';
 
 export class Execution {
 
@@ -15,7 +15,7 @@ export class Execution {
     public user: string,
     public info?: string,
     public error?: string,
-    public campaign?: string,
+    public campaignReport?: CampaignExecutionReport,
   ) { }
 
   static deserializeExecutions(jsonObject: any): Execution[] {
@@ -33,7 +33,7 @@ export class Execution {
       jsonObject.user,
       jsonObject.info,
       jsonObject.error,
-      jsonObject.campaign,
+      jsonObject.campaignReport,
     );
   }
 }

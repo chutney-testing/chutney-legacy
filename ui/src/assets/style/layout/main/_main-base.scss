@@ -13,7 +13,7 @@
 }
 
 .app-main__inner {
-    padding: $grid-gutter-width $grid-gutter-width 0;
+    padding: $grid-gutter-width 0 0 $grid-gutter-width;
     flex: 1;
     display: flex;
     flex-direction: row;

@@ -21,6 +21,7 @@ public interface ExecutionHistoryRepository {
      * @return last reports of the indicated scenario.
      **/
     List<ExecutionHistory.ExecutionSummary> getExecutions(String scenarioId);
+    ExecutionHistory.ExecutionSummary getExecutionSummary(String scenarioId, Long executionId);
 
     /**
      * @return the matching {@link ExecutionHistory.Execution}

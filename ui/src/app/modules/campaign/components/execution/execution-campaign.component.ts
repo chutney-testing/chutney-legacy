@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { FileSaverService } from 'ngx-filesaver';
@@ -457,6 +457,14 @@ export class CampaignExecutionComponent implements OnInit, OnDestroy {
 
     private updateLocation(executionId) {
         this.location.replaceState('/campaign/' + this.campaign.id + '/execution/' + executionId);
+    }
+
+    toQueryParams (scenarioExecutionReportOutline: ScenarioExecutionReportOutline): Params {
+        let execId = scenarioExecutionReportOutline.executionId !== -1 ? scenarioExecutionReportOutline.executionId : 'last';
+        return {
+            active: execId,
+            open: execId,
+        }
     }
 }
 

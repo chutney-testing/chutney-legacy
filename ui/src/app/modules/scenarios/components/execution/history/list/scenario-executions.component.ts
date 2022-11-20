@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { Execution } from '@model';
+import { CampaignExecutionReport, Execution } from '@model';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -86,7 +86,7 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
         this.status = [...new Set(this.executions.map(exec => exec.status))].map(status => this.toSelectOption(status, ExecutionStatus.toString(status)));
         this.environments = [...new Set(this.executions.map(exec => exec.environment))].map(env => this.toSelectOption(env));
         this.executors = [...new Set(this.executions.map(exec => exec.user))].map(user => this.toSelectOption(user));
-        this.campaigns = [...new Set(this.executions.filter(exec => !!exec.campaign).map(exec => exec.campaign))].map(camp => this.toSelectOption(camp));
+        this.campaigns = [...new Set(this.executions.filter(exec => !!exec.campaignReport).map(exec => exec.campaignReport.campaignName))].map(camp => this.toSelectOption(camp));
     }
 
     private applyFilters() {
@@ -190,8 +190,8 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
                 + space
                 + ExecutionStatus.toString(exec.status)
                 + space;
-            if (exec.campaign) {
-                searchScope += space + exec.campaign;
+            if (exec.campaignReport) {
+                searchScope += space + exec.campaignReport.campaignName;
             }
 
             if (exec.error) {
@@ -221,7 +221,7 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
 
         let campaignMatch = true;
         if (filters.campaigns && filters.campaigns.length) {
-            campaignMatch = !!filters.campaigns.find(camp => exec.campaign && camp.id === exec.campaign);
+            campaignMatch = !!filters.campaigns.find(camp => exec.campaignReport && camp.id === exec.campaignReport.campaignName);
         }
 
         return keywordMatch && statusMatch && dateMatch && userMatch && envMatch && campaignMatch;

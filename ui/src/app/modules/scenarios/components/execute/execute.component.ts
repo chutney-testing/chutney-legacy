@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { delay, map, tap } from 'rxjs/operators';
 
-import { TestCase, KeyValue } from '@model';
-import {  ComponentService, ScenarioService } from '@core/services';
+import { KeyValue, TestCase } from '@model';
+import { ComponentService, ScenarioService } from '@core/services';
 import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 
 @Component({
@@ -51,14 +51,21 @@ export class ExecuteComponent implements OnInit, OnDestroy {
             .pipe(
                 delay(1000)
             )
-            .subscribe(
-            executionId =>
-                this.router.navigateByUrl(`/scenario/${this.testCaseId}/executions/${executionId}`)
-                    .then(null),
-            error =>
-                this.router.navigateByUrl(`/scenario/${this.testCaseId}/executions`)
-                    .then(null)
-        );
+            .subscribe({
+                    next: executionId =>
+                        this.router.navigate(['scenario', this.testCaseId, 'executions'],
+                            {
+                                queryParams: {
+                                    open: executionId,
+                                    active: executionId,
+                                }
+                            })
+                            .then(null),
+                    error: () =>
+                        this.router.navigateByUrl(`/scenario/${this.testCaseId}/executions`)
+                            .then(null)
+                }
+            );
     }
 
     private loadScenario(testCaseId: string) {

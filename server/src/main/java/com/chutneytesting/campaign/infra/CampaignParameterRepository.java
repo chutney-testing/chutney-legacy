@@ -10,12 +10,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
+public
 class CampaignParameterRepository {
 
     private final RowMapper<CampaignParameter> campaignParamaterRowMapper;
     private final NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate;
 
-    CampaignParameterRepository(NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate) {
+    public CampaignParameterRepository(NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate) {
         this.uiNamedParameterJdbcTemplate = uiNamedParameterJdbcTemplate;
         campaignParamaterRowMapper = (resultSet, i) -> {
             Long campaignId = resultSet.getLong(1);
