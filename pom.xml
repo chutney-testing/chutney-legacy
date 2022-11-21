@@ -176,6 +176,11 @@
         <dependencies>
             <dependency>
                 <groupId>com.chutneytesting</groupId>
+                <artifactId>server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chutneytesting</groupId>
                 <artifactId>server-core</artifactId>
                 <version>${project.version}</version>
             </dependency>

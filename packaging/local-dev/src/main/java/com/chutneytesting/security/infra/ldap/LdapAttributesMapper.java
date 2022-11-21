@@ -1,14 +1,12 @@
 package com.chutneytesting.security.infra.ldap;
 
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.security.api.UserDto;
-import com.chutneytesting.security.domain.AuthenticationService;
-import com.chutneytesting.server.core.domain.security.Authorization;
-import com.chutneytesting.server.core.domain.security.Role;
-import com.chutneytesting.server.core.domain.security.RoleNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.naming.NamingEnumeration;
@@ -24,52 +22,46 @@ public class LdapAttributesMapper implements AttributesMapper<UserDto> {
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapAttributesMapper.class);
     private final Pattern ldapGroupPattern;
     private final LdapAttributesProperties ldapAttributesProperties;
-    private final AuthenticationService authenticationService;
 
     LdapAttributesMapper(LdapAttributesProperties ldapAttributesProperties,
-                         String ldapGroupsPattern,
-                         AuthenticationService authenticationService) {
+                         String ldapGroupsPattern) {
         this.ldapGroupPattern = Pattern.compile(ldapGroupsPattern);
         this.ldapAttributesProperties = ldapAttributesProperties;
-        this.authenticationService = authenticationService;
     }
 
     @Override
     public UserDto mapFromAttributes(Attributes attributes) throws NamingException {
         UserDto user = new UserDto();
 
-        user.setId(extractAttributeMonoValue(attributes.get(ldapAttributesProperties.getId())));
-        user.setName(extractAttributeMonoValue(attributes.get(ldapAttributesProperties.getName())));
-        user.setFirstname(extractAttributeMonoValue(attributes.get(ldapAttributesProperties.getFirstname())));
-        user.setLastname(extractAttributeMonoValue(attributes.get(ldapAttributesProperties.getLastname())));
-        user.setMail(extractAttributeMonoValue(attributes.get(ldapAttributesProperties.getMail())));
+        consumeLDAPAttribute(ldapAttributesProperties.getId(), attributes, user::setId);
+        consumeLDAPAttribute(ldapAttributesProperties.getName(), attributes, user::setName);
+        consumeLDAPAttribute(ldapAttributesProperties.getFirstname(), attributes, user::setFirstname);
+        consumeLDAPAttribute(ldapAttributesProperties.getLastname(), attributes, user::setLastname);
+        consumeLDAPAttribute(ldapAttributesProperties.getMail(), attributes, user::setMail);
 
-        List<String> groups = extractAttributeMultiValue(attributes.get(ldapAttributesProperties.getGroups()));
-        groups.stream()
-            .map(this::applyLdapGroupMatcher)
-            .filter(Objects::nonNull)
-            .forEach(user::addRole);
+        ofNullable(ldapAttributesProperties.getGroups()).ifPresent(groupProperty -> {
+            try {
+                List<String> groups = extractAttributeMultiValue(attributes.get(groupProperty));
+                groups.stream()
+                    .map(this::applyLdapGroupMatcher)
+                    .filter(Objects::nonNull)
+                    .forEach(user::addRole);
+            } catch (NamingException e) {
+                LOGGER.warn("Cannot retrieve groups from LDAP", e);
+            }
+        });
 
-        return readRole(user);
+        return user;
     }
 
-    private UserDto readRole(UserDto userDto) {
-        UserDto dto = new UserDto(userDto);
-
-        if (dto.getRoles().contains("ADMIN")) {
-            Arrays.stream(Authorization.values()).map(Authorization::name).forEach(dto::grantAuthority);
-        } else {
+    private void consumeLDAPAttribute(String ldapAttributeName, Attributes attributes, Consumer<String> setter) {
+        ofNullable(ldapAttributeName).ifPresent(ldapAttr -> {
             try {
-                Role role = authenticationService.userRoleById(dto.getId());
-                dto.addRole(role.name);
-                role.authorizations.stream().map(Enum::name).forEach(dto::grantAuthority);
-            } catch (RoleNotFoundException rnfe) {
-                LOGGER.warn("User {} has no role defined", dto.getId());
-                throw rnfe;
+                setter.accept(extractAttributeMonoValue(attributes.get(ldapAttr)));
+            } catch (NamingException e) {
+                LOGGER.warn("Cannot retrieve {} from LDAP", ldapAttr, e);
             }
-        }
-
-        return dto;
+        });
     }
 
     private String applyLdapGroupMatcher(String ldapGroup) {
