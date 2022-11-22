@@ -56,8 +56,6 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
         invalidSessionHeaders.put(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
 
         http
-            .sessionManagement()
-            .and()
             .csrf()
                 .disable()
             .exceptionHandling()

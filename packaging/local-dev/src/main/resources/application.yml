@@ -21,7 +21,7 @@ server:
       cookie:
         http-only: true
         secure: true
-        same-site: "lax"
+        same-site: lax
       tracking-modes: cookie
 
 management:
