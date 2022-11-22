@@ -239,7 +239,8 @@
                 "campaign": "Campaign required",
                 "time": "Time required",
                 "date": "Date required"
-            }
+            },
+            "nothing": "Nothing scheduled"
         }
     },
     "dataset": {

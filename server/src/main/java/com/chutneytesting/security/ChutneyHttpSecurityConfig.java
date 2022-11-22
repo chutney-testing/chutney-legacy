@@ -6,7 +6,6 @@ import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.security.domain.Authorizations;
 import com.chutneytesting.security.infra.handlers.Http401FailureHandler;
 import com.chutneytesting.security.infra.handlers.HttpEmptyLogoutSuccessHandler;
-import com.chutneytesting.security.infra.handlers.HttpStatusInvalidSessionStrategy;
 import com.chutneytesting.server.core.domain.security.Authorization;
 import com.chutneytesting.server.core.domain.security.User;
 import java.util.ArrayList;
@@ -29,11 +28,6 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String API_BASE_URL_PATTERN = "/api/**";
     public static final String ACTUATOR_BASE_URL_PATTERN = "/actuator/**";
 
-    @Value("${server.servlet.session.cookie.http-only:true}")
-    private boolean sessionCookieHttpOnly;
-    @Value("${server.servlet.session.cookie.secure:true}")
-    private boolean sessionCookieSecure;
-
     @Autowired
     private Authorizations authorizations;
 
@@ -52,7 +46,7 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(InfoController.BASE_URL + "/**").permitAll()
                 .antMatchers(API_BASE_URL_PATTERN).authenticated()
                 .antMatchers(ACTUATOR_BASE_URL_PATTERN).hasAuthority(Authorization.ADMIN_ACCESS.name())
-            .anyRequest().permitAll()
+                .anyRequest().permitAll()
             .and()
             .httpBasic();
     }
@@ -62,9 +56,6 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
         invalidSessionHeaders.put(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
 
         http
-            .sessionManagement()
-                .invalidSessionStrategy(new HttpStatusInvalidSessionStrategy(HttpStatus.UNAUTHORIZED, invalidSessionHeaders, sessionCookieHttpOnly, sessionCookieSecure))
-            .and()
             .csrf()
                 .disable()
             .exceptionHandling()
