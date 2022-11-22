@@ -94,7 +94,7 @@
         <commonsio.version>2.11.0</commonsio.version>
         <glacio.version>0.0.1</glacio.version>
         <hjson.version>3.0.0</hjson.version>
-        <orientdb.version>3.2.5</orientdb.version>
+        <orientdb.version>3.2.9</orientdb.version>
         <jsr305.version>3.0.2</jsr305.version>
 
         <!-- task-impl dependencies versions -->
