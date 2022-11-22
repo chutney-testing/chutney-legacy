@@ -14,25 +14,28 @@ public class Row {
         this.cells = values;
     }
 
-    public Cell get(Column column) {
+    public Object get(Column column) {
         return cells.stream()
             .filter(v -> v.column.equals(column))
             .findFirst()
-            .orElse(Cell.NONE);
+            .orElse(Cell.NONE)
+            .value;
     }
 
-    public Cell get(String header) {
+    public Object get(String header) {
         return cells.stream()
             .filter(v -> v.column.name.equals(header))
             .findFirst()
-            .orElse(Cell.NONE);
+            .orElse(Cell.NONE)
+            .value;
     }
 
-    public Cell get(int index) {
+    public Object get(int index) {
         return cells.stream()
             .filter(v -> v.column.index == index)
             .findFirst()
-            .orElse(Cell.NONE);
+            .orElse(Cell.NONE)
+            .value;
     }
 
     public String print(Map<Column, Integer> maxLength) {

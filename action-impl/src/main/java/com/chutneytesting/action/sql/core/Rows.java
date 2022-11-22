@@ -7,21 +7,26 @@ import java.util.List;
 import java.util.Map;
 
 public class Rows {
+
     private final List<Row> rows;
 
     public Rows(List<Row> rows) {
         this.rows = rows;
     }
 
+    public Row get(int index) {
+        return rows.get(index);
+    }
+
     public List<Object> get(String column) {
         return rows.stream()
-            .map(row -> row.get(column).value)
+            .map(row -> row.get(column))
             .collect(toList());
     }
 
     public List<List<Object>> valuesOf(String... column) {
         return rows.stream().map(
-            row ->  Arrays.stream(column).map(s -> row.get(s).value).collect(toList())
+            row ->  Arrays.stream(column).map(row::get).collect(toList())
         ).collect(toList());
     }
 

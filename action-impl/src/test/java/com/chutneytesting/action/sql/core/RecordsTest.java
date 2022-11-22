@@ -121,7 +121,7 @@ public class RecordsTest {
 
         assertThat(actual).isEqualTo(
             "| lengthOf11  | 2  | 7       |\n" +
-                "------------------------------\n"
+            "------------------------------\n"
         );
     }
 
@@ -168,9 +168,9 @@ public class RecordsTest {
 
         assertThat(actual).isEqualTo(
             "| X | X | X |\n" +
-                "-------------\n" +
-                "| A | B | C |\n" +
-                "| D | E | F |\n"
+            "-------------\n" +
+            "| A | B | C |\n" +
+            "| D | E | F |\n"
         );
     }
 }

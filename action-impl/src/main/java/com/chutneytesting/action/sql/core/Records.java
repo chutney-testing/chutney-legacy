@@ -51,7 +51,7 @@ public class Records {
         final Object[][] matrix = new Object[records.size()][columns.size()];
         for (int rowIndex = 0; rowIndex < records.size(); rowIndex++) {
             for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
-                matrix[rowIndex][columnIndex] = records.get(rowIndex).get(columnIndex).value;
+                matrix[rowIndex][columnIndex] = records.get(rowIndex).get(columnIndex);
             }
         }
         return matrix;
@@ -77,7 +77,7 @@ public class Records {
         for (Row row : records.subList(0, limit)) {
             final Map<String, Object> aRow = new LinkedHashMap<>(columns.size());
             for (Column column : columns) {
-                aRow.put(column.name, row.get(column).value);
+                aRow.put(column.name, row.get(column));
             }
             listOfMaps.add(aRow);
         }
@@ -109,7 +109,7 @@ public class Records {
             column.name.length(),
             records.stream()
                 .limit(limit)
-                .map(r -> r.get(column).value.toString().length())
+                .map(r -> r.get(column).toString().length())
                 .max(Integer::compare)
                 .orElse(0)
         );

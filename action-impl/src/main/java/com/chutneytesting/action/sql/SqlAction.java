@@ -77,8 +77,8 @@ public class SqlAction implements Action {
                     failure.set(true);
                 }
             });
-            outputs.put("recordResult", records);
-            outputs.put("records", records.get(0));
+            outputs.put("recordResult", records); // List of all results from each statement
+            outputs.put("rows", records.get(0).rows()); // All rows result from the first statement only
             return failure.get() ? ActionExecutionResult.ko(outputs) : ActionExecutionResult.ok(outputs);
         } finally {
             if (sqlClient != null) {
