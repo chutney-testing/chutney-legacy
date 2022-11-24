@@ -94,7 +94,7 @@
         <commonsio.version>2.11.0</commonsio.version>
         <glacio.version>0.0.1</glacio.version>
         <hjson.version>3.0.0</hjson.version>
-        <orientdb.version>3.2.5</orientdb.version>
+        <orientdb.version>3.2.12</orientdb.version>
         <jsr305.version>3.0.2</jsr305.version>
 
         <!-- task-impl dependencies versions -->
@@ -392,6 +392,12 @@
                 <version>4.0.1</version>
                 <scope>compile</scope>
             </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>9.2</version>
+                <scope>compile</scope>
+            </dependency>
             <!-- Actions -->
             <dependency>
                 <groupId>org.apache.santuario</groupId>
@@ -424,18 +430,6 @@
                 <scope>runtime</scope>
             </dependency>
             <!-- Server -->
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>9.1</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.lz4</groupId>
-                <artifactId>lz4-java</artifactId>
-                <version>1.8.0</version>
-                <scope>runtime</scope>
-            </dependency>
             <dependency>
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker-qual</artifactId>
