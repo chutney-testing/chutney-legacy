@@ -75,6 +75,10 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <wait>1000</wait>
+                    <jmxPort>54321</jmxPort>
+                </configuration>
                 <executions>
                     <execution>
                         <id>before-it</id>
