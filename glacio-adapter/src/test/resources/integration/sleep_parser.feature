@@ -1,9 +1,9 @@
 # language: en
 
 Feature: Sleep feature
-    Could execute sleep task as glacio feature
+    Could execute sleep action as glacio feature
 
-    Scenario: Define sleep tasks with specific parser
+    Scenario: Define sleep action with specific parser
         When The night is out there
             Do success
         Then I rest for short time periods

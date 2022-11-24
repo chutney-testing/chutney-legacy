@@ -4,8 +4,8 @@ import com.chutneytesting.engine.domain.execution.action.PauseExecutionAction;
 import com.chutneytesting.engine.domain.execution.action.ResumeExecutionAction;
 import com.chutneytesting.engine.domain.execution.action.StopExecutionAction;
 import com.chutneytesting.engine.domain.execution.event.EndScenarioExecutionEvent;
-import com.chutneytesting.task.spi.FinallyAction;
-import com.chutneytesting.task.spi.injectable.TasksConfiguration;
+import com.chutneytesting.action.spi.FinallyAction;
+import com.chutneytesting.action.spi.injectable.ActionsConfiguration;
 import io.reactivex.disposables.Disposable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class ScenarioExecution {
 
     private final List<FinallyAction> finallyActions = new ArrayList<>();
-    private final TasksConfiguration taskConfiguration;
+    private final ActionsConfiguration actionConfiguration;
     public final long executionId;
 
     private boolean pause = false;
@@ -23,14 +23,14 @@ public class ScenarioExecution {
 
     private Disposable endExecutionSubscriber;
 
-    public static ScenarioExecution createScenarioExecution(TasksConfiguration taskConfiguration) {
+    public static ScenarioExecution createScenarioExecution(ActionsConfiguration actionConfiguration) {
         long executionId = UUID.randomUUID().getMostSignificantBits();
-        return new ScenarioExecution(executionId, taskConfiguration);
+        return new ScenarioExecution(executionId, actionConfiguration);
     }
 
-    private ScenarioExecution(long executionId, TasksConfiguration taskConfiguration) {
+    private ScenarioExecution(long executionId, ActionsConfiguration actionConfiguration) {
         this.executionId = executionId;
-        this.taskConfiguration = taskConfiguration;
+        this.actionConfiguration = actionConfiguration;
 
         final Disposable pauseSubscriber = RxBus.getInstance()
             .registerOnExecutionId(PauseExecutionAction.class, executionId, e -> this.pause());
@@ -85,8 +85,8 @@ public class ScenarioExecution {
         pause = false;
     }
 
-    public TasksConfiguration getTasksConfiguration() {
-        return taskConfiguration;
+    public ActionsConfiguration getActionsConfiguration() {
+        return actionConfiguration;
     }
 
     public List<FinallyAction> finallyActions() {

@@ -1,7 +1,7 @@
 # language: en
 
 Feature: Simple parser feature
-    Could execute simple tasks, i.e. ones without target, strategy, inputs nor outputs
+    Could execute simple actions, i.e. ones without target, strategy, inputs nor outputs
 
     Scenario: Simple Success/Debug
         Given Do: debug

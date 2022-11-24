@@ -1,7 +1,7 @@
 package com.chutneytesting.engine.domain.execution.engine.parameterResolver;
 
-import com.chutneytesting.task.domain.parameter.Parameter;
-import com.chutneytesting.task.domain.parameter.ParameterResolver;
+import com.chutneytesting.action.domain.parameter.Parameter;
+import com.chutneytesting.action.domain.parameter.ParameterResolver;
 
 public class TypedValueParameterResolver<T> implements ParameterResolver {
 

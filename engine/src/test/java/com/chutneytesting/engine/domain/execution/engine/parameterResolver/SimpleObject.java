@@ -1,6 +1,6 @@
 package com.chutneytesting.engine.domain.execution.engine.parameterResolver;
 
-import com.chutneytesting.task.spi.injectable.Input;
+import com.chutneytesting.action.spi.injectable.Input;
 
 class SimpleObject {
 

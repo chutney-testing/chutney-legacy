@@ -47,8 +47,8 @@ Main class : com.chutneytesting.ServerBootstrap
     * Store scenarios in Orient database for composed scenarios
     * Store in files target and environment information
     * Send scenarios to the execution engine and retrieve reports
-* task-impl: Default implementation of task (Sql, Http, Jms,...)
-* task-spi: Contains interfaces to extend the engine 
+* action-impl: Default implementation of task (Sql, Http, Jms,...)
+* action-spi: Contains interfaces to extend the engine 
 * tools: Utility class with no dependency 
 * ui : front-end of Chutney
 

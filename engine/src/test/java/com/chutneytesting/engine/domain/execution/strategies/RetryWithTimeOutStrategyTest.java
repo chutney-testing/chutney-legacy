@@ -139,7 +139,7 @@ public class RetryWithTimeOutStrategyTest {
     }
 
     @Test
-    public void should_execute_all_tasks_when_status_is_not_KO() {
+    public void should_execute_all_actions_when_status_is_not_KO() {
         Step rootStep = mock(Step.class);
 
         StepExecutionStrategies strategies = mock(StepExecutionStrategies.class);

@@ -1,4 +1,0 @@
-com.chutneytesting.task.selenium.jackson.SeleniumModule
-com.chutneytesting.task.http.jackson.WiremockModule
-com.chutneytesting.task.jms.jackson.ActiveMQModule
-com.chutneytesting.task.kafka.jackson.KafkaModule

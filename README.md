@@ -15,10 +15,10 @@ a web front end, and an edition server to create and edit your scenarios, consul
 
 Chutney scenarios are declarative. They provide functional requirements and technical details (needed for automation) in a single view.
 
-Those technical details are provided by generic [Tasks](https://github.com/chutney-testing/chutney/blob/master/task-spi/src/main/java/com/chutneytesting/task/spi/Task.java) (such as HTTP, AMQP, MongoDB, Kafka, Selenium, etc.)  
+Those technical details are provided by generic [Actions](https://github.com/chutney-testing/chutney/blob/master/action-spi/src/main/java/com/chutneytesting/action/spi/Action.java) (such as HTTP, AMQP, MongoDB, Kafka, Selenium, etc.)  
 Those Tasks are extensions, and you can easily develop yours, even proprietary or non-generic one, and include them in your own release.
 
-In addition, Chutney provide SpEL evaluation and extensible [Function](https://github.com/chutney-testing/chutney/blob/master/task-spi/src/main/java/com/chutneytesting/task/spi/SpelFunction.java) in order to ease the use of managing scenario data like JSON path or Date comparison.
+In addition, Chutney provide SpEL evaluation and extensible [Function](https://github.com/chutney-testing/chutney/blob/master/action-spi/src/main/java/com/chutneytesting/action/spi/SpelFunction.java) in order to ease the use of managing scenario data like JSON path or Date comparison.
 
 [Find out more in the documentation !](https://www.chutney-testing.com/)
 

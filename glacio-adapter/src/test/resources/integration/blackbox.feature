@@ -1,4 +1,4 @@
-Feature: Assertions Task test
+Feature: Assertions Action test
 
     Scenario: Execution by UI controller
         Given this scenario is saved

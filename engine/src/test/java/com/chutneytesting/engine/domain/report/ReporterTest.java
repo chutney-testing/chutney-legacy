@@ -21,7 +21,7 @@ import com.chutneytesting.engine.domain.execution.event.EndScenarioExecutionEven
 import com.chutneytesting.engine.domain.execution.event.StartScenarioExecutionEvent;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
-import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.action.spi.injectable.Target;
 import io.reactivex.observers.TestObserver;
 import java.util.ArrayList;
 import java.util.List;
@@ -179,16 +179,16 @@ public class ReporterTest {
     private Step buildFakeScenario() {
         final String environment = "";
         List<StepDefinition> subSubSteps = new ArrayList<>();
-        StepDefinition subSubStepDef1 = new StepDefinition("fakeStep1", fakeTarget, "taskType", null, null, null, null, null, environment);
-        StepDefinition subSubStepDef2 = new StepDefinition("fakeStep2", fakeTarget, "taskType", null, null, null, null, null, environment);
+        StepDefinition subSubStepDef1 = new StepDefinition("fakeStep1", fakeTarget, "actionType", null, null, null, null, null, environment);
+        StepDefinition subSubStepDef2 = new StepDefinition("fakeStep2", fakeTarget, "actionType", null, null, null, null, null, environment);
         subSubSteps.add(subSubStepDef1);
         subSubSteps.add(subSubStepDef2);
-        StepDefinition subStepDef1 = new StepDefinition("fakeParentStep", fakeTarget, "taskType", null, null, subSubSteps, null, null, environment);
-        StepDefinition subStepDef2 = new StepDefinition("fakeParentEmptyStep", fakeTarget, "taskType", null, null, null, null, null, environment);
+        StepDefinition subStepDef1 = new StepDefinition("fakeParentStep", fakeTarget, "actionType", null, null, subSubSteps, null, null, environment);
+        StepDefinition subStepDef2 = new StepDefinition("fakeParentEmptyStep", fakeTarget, "actionType", null, null, null, null, null, environment);
         List<StepDefinition> steps = new ArrayList<>();
         steps.add(subStepDef1);
         steps.add(subStepDef2);
-        StepDefinition rootStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "taskType", null, null, steps, null, null, environment);
+        StepDefinition rootStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "actionType", null, null, steps, null, null, environment);
 
         return buildStep(rootStepDefinition);
     }

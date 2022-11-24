@@ -66,8 +66,8 @@
         <module>server-core</module>
         <module>ui</module>
         <module>engine</module>
-        <module>task-spi</module>
-        <module>task-impl</module>
+        <module>action-spi</module>
+        <module>action-impl</module>
         <module>environment</module>
         <module>tools</module>
         <module>packaging</module>
@@ -97,7 +97,7 @@
         <orientdb.version>3.2.12</orientdb.version>
         <jsr305.version>3.0.2</jsr305.version>
 
-        <!-- task-impl dependencies versions -->
+        <!-- action-impl dependencies versions -->
         <sshj.version>0.33.0</sshj.version>
         <sshd.version>2.9.1</sshd.version>
         <qpid-broker.version>8.0.6</qpid-broker.version>
@@ -105,7 +105,7 @@
         <wss4j.version>1.6.19</wss4j.version>
         <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version>
 
-        <!-- task-impl test dependencies versions -->
+        <!-- action-impl test dependencies versions -->
         <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
         <activemq-junit.version>5.16.5</activemq-junit.version> <!-- = Follow spring boot version -->
         <rabbitmq-mock.version>1.1.1</rabbitmq-mock.version>
@@ -211,12 +211,12 @@
             </dependency>
             <dependency>
                 <groupId>com.chutneytesting</groupId>
-                <artifactId>task-spi</artifactId>
+                <artifactId>action-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.chutneytesting</groupId>
-                <artifactId>task-impl</artifactId>
+                <artifactId>action-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

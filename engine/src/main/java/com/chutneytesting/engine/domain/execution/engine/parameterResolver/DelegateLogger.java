@@ -1,6 +1,6 @@
 package com.chutneytesting.engine.domain.execution.engine.parameterResolver;
 
-import com.chutneytesting.task.spi.injectable.Logger;
+import com.chutneytesting.action.spi.injectable.Logger;
 import java.util.function.Consumer;
 import org.slf4j.LoggerFactory;
 

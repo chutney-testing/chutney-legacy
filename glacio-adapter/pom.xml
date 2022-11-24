@@ -24,7 +24,7 @@
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
-            <artifactId>task-impl</artifactId>
+            <artifactId>action-impl</artifactId>
         </dependency>
 
         <!-- External -->

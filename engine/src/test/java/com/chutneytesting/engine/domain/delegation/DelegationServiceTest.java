@@ -8,7 +8,7 @@ import static org.mockito.Mockito.mock;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.engine.DefaultStepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
-import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.action.spi.injectable.Target;
 import com.google.common.collect.Lists;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;

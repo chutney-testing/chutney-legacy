@@ -1,6 +1,6 @@
 package com.chutneytesting.engine.domain.execution.evaluation;
 
-import com.chutneytesting.task.spi.SpelFunction;
+import com.chutneytesting.action.spi.SpelFunction;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import org.springframework.util.ReflectionUtils;

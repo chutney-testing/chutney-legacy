@@ -1,7 +1,8 @@
 package com.chutneytesting;
 
-import static com.chutneytesting.task.sql.SqlTask.CONFIGURABLE_NB_LOGGED_ROW;
+import static com.chutneytesting.action.sql.SqlAction.CONFIGURABLE_NB_LOGGED_ROW;
 
+import com.chutneytesting.action.api.EmbeddedActionEngine;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
@@ -22,7 +23,6 @@ import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProc
 import com.chutneytesting.server.core.domain.execution.state.ExecutionStateRepository;
 import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
-import com.chutneytesting.task.api.EmbeddedTaskEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
@@ -150,9 +150,9 @@ public class ServerConfiguration implements AsyncConfigurer {
         @Value(ENGINE_DELEGATION_USER_SPRING_VALUE) String delegateUser,
         @Value(ENGINE_DELEGATION_PASSWORD_SPRING_VALUE) String delegatePasword
     ) {
-        Map<String, String> tasksConfiguration = new HashMap<>();
-        tasksConfiguration.put(CONFIGURABLE_NB_LOGGED_ROW, nbLoggedRow);
-        return new ExecutionConfiguration(reporterTTL, engineExecutor, tasksConfiguration, delegateUser, delegatePasword);
+        Map<String, String> actionsConfiguration = new HashMap<>();
+        actionsConfiguration.put(CONFIGURABLE_NB_LOGGED_ROW, nbLoggedRow);
+        return new ExecutionConfiguration(reporterTTL, engineExecutor, actionsConfiguration, delegateUser, delegatePasword);
     }
 
     @Bean
@@ -237,8 +237,8 @@ public class ServerConfiguration implements AsyncConfigurer {
     }
 
     @Bean
-    EmbeddedTaskEngine embeddedTaskEngine(ExecutionConfiguration executionConfiguration) {
-        return new EmbeddedTaskEngine(executionConfiguration.taskTemplateRegistry());
+    EmbeddedActionEngine embeddedActionEngine(ExecutionConfiguration executionConfiguration) {
+        return new EmbeddedActionEngine(executionConfiguration.actionTemplateRegistry());
     }
 
     @Bean

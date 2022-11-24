@@ -145,7 +145,7 @@ Feature: Replace scenario parameters with data set or global var values
                 With mode equals
 
     Scenario: Execute composable testcase with global vars
-        Given A context-put composable task component wrapper
+        Given A context-put composable action component wrapper
             Do http-post Post scenario to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/steps/v1
@@ -179,7 +179,7 @@ Feature: Replace scenario parameters with data set or global var values
                 """
                 Take contextPutWrapperComponentId ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
-        And A assert-equals composable task component wrapper
+        And A assert-equals composable action component wrapper
             Do http-post Post scenario to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/steps/v1

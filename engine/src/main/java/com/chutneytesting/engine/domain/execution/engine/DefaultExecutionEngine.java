@@ -21,8 +21,8 @@ import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrate
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.chutneytesting.engine.domain.execution.strategies.StrategyProperties;
 import com.chutneytesting.engine.domain.report.Reporter;
-import com.chutneytesting.task.spi.FinallyAction;
-import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.action.spi.FinallyAction;
+import com.chutneytesting.action.spi.injectable.Target;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +36,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExecutionEngine.class);
 
-    private final Executor taskExecutor;
+    private final Executor actionExecutor;
 
     private final StepDataEvaluator dataEvaluator;
     private final StepExecutionStrategies stepExecutionStrategies;
@@ -47,12 +47,12 @@ public class DefaultExecutionEngine implements ExecutionEngine {
                                   StepExecutionStrategies stepExecutionStrategies,
                                   DelegationService delegationService,
                                   Reporter reporter,
-                                  Executor taskExecutor) {
+                                  Executor actionExecutor) {
         this.dataEvaluator = dataEvaluator;
         this.stepExecutionStrategies = stepExecutionStrategies != null ? stepExecutionStrategies : new StepExecutionStrategies();
         this.delegationService = delegationService;
         this.reporter = reporter;
-        this.taskExecutor = taskExecutor;
+        this.actionExecutor = actionExecutor;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
         AtomicReference<Step> rootStep = new AtomicReference<>(Step.nonExecutable(stepDefinition));
         reporter.createPublisher(execution.executionId, rootStep.get());
 
-        taskExecutor.execute(() -> {
+        actionExecutor.execute(() -> {
 
             final ScenarioContext scenarioContext = new ScenarioContextImpl();
             try {

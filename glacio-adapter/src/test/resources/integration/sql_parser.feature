@@ -1,7 +1,7 @@
 # language: en
 
 Feature: SQL feature
-    Could execute sql task as glacio feature
+    Could execute sql action as glacio feature
 
     Scenario: Simple sql select
         When Execute (sql) Request RDS BDD

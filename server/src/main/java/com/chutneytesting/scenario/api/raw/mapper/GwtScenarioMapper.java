@@ -157,7 +157,7 @@ public class GwtScenarioMapper implements GwtScenarioMarshaller {
                 .outputs(implementation.outputs)
                 .build();
         } catch (Exception e) {
-            throw new ScenarioNotParsableException("Cannot deserialize task implementation", e);
+            throw new ScenarioNotParsableException("Cannot deserialize action implementation", e);
         }
     }
 

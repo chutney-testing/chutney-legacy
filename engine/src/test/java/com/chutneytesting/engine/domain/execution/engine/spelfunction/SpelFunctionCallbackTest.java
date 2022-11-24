@@ -2,7 +2,7 @@ package com.chutneytesting.engine.domain.execution.engine.spelfunction;
 
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctionCallback;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
-import com.chutneytesting.task.spi.SpelFunction;
+import com.chutneytesting.action.spi.SpelFunction;
 import com.chutneytesting.tools.ThrowingConsumer;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;

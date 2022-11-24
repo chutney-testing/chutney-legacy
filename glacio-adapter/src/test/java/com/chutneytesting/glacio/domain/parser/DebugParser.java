@@ -16,7 +16,7 @@ public class DebugParser extends ExecutableGlacioStepParser {
     }
 
     @Override
-    public String parseTaskType(Step step) {
+    public String parseActionType(Step step) {
         return "debug";
     }
 

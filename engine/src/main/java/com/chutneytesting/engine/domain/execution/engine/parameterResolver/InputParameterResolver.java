@@ -3,9 +3,9 @@ package com.chutneytesting.engine.domain.execution.engine.parameterResolver;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper;
 
-import com.chutneytesting.task.domain.parameter.Parameter;
-import com.chutneytesting.task.domain.parameter.ParameterResolver;
-import com.chutneytesting.task.spi.injectable.Input;
+import com.chutneytesting.action.domain.parameter.Parameter;
+import com.chutneytesting.action.domain.parameter.ParameterResolver;
+import com.chutneytesting.action.spi.injectable.Input;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -19,7 +19,7 @@ import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * TODO do not mix input parameter parsing and task instantiation
+ * TODO do not mix input parameter parsing and action instantiation
  */
 public class InputParameterResolver implements ParameterResolver {
 

@@ -41,12 +41,12 @@ public class GlacioSleepParserTest {
     }
 
     @Test
-    public void should_parse_only_sleep_task() {
-        String sleepTaskType = "sleep";
+    public void should_parse_only_sleep_action() {
+        String sleepActionType = "sleep";
         loopOverRandomString(10, 30, 30, (randomString) ->
             assertThat(
-                sut.parseTaskType(buildSimpleStepWithText(randomString)))
-                .isEqualTo(sleepTaskType)
+                sut.parseActionType(buildSimpleStepWithText(randomString)))
+                .isEqualTo(sleepActionType)
         );
     }
 

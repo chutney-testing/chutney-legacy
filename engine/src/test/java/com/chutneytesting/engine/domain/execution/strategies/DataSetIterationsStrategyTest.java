@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.chutneytesting.ExecutionConfiguration;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
-import com.chutneytesting.engine.domain.execution.TestTaskTemplateLoader;
+import com.chutneytesting.engine.domain.execution.TestActionTemplateLoader;
 import com.chutneytesting.engine.domain.execution.engine.DefaultStepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEvaluator;
@@ -13,8 +13,8 @@ import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContex
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
 import com.chutneytesting.engine.domain.execution.report.Status;
-import com.chutneytesting.task.domain.DefaultTaskTemplateRegistry;
-import com.chutneytesting.task.domain.TaskTemplateLoaders;
+import com.chutneytesting.action.domain.DefaultActionTemplateRegistry;
+import com.chutneytesting.action.domain.ActionTemplateLoaders;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public class DataSetIterationsStrategyTest {
     private final ExecutionConfiguration executionConfiguration = new ExecutionConfiguration();
     private final DefaultStepExecutionStrategy defaultStepExecutionStrategy = DefaultStepExecutionStrategy.instance;
     private final StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
-    private final StepExecutor stepExecutor = new DefaultStepExecutor(new DefaultTaskTemplateRegistry(new TaskTemplateLoaders(Collections.singletonList(new TestTaskTemplateLoader()))));
+    private final StepExecutor stepExecutor = new DefaultStepExecutor(new DefaultActionTemplateRegistry(new ActionTemplateLoaders(Collections.singletonList(new TestActionTemplateLoader()))));
     private final StepExecutionStrategies strategies = new StepExecutionStrategies(executionConfiguration.stepExecutionStrategies());
 
     @Test

@@ -16,7 +16,7 @@
 
         <dependency>
             <groupId>com.chutneytesting</groupId>
-            <artifactId>task-spi</artifactId>
+            <artifactId>action-spi</artifactId>
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>

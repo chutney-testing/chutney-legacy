@@ -1,6 +1,6 @@
 # language: en
 
-Feature: Execution success task
+Feature: Execution success action
 
     Scenario: Task instantiation and execution of a success scenario
         Given this scenario is saved

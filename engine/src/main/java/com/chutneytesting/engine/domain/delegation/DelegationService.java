@@ -2,7 +2,7 @@ package com.chutneytesting.engine.domain.delegation;
 
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
-import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.action.spi.injectable.Target;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,7 +1,7 @@
 # language: en
 
 Feature: Strategy parser feature
-    Could execute tasks using execution strategies, i.e. soft assert, retry or default
+    Could execute actions using execution strategies, i.e. soft assert, retry or default
 
     Scenario: Fails softly
         When a step fails (softly:)

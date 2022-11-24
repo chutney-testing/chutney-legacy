@@ -1,9 +1,9 @@
 # language: en
 
 Feature: Context-put feature
-    Could execute context-put task as glacio feature
+    Could execute context-put action as glacio feature
 
-    Scenario: Define context-put tasks with specific parser
+    Scenario: Define context-put action with specific parser
         When Need to put some variables directly in context
             Do success
         Then Use datatable
@@ -15,7 +15,7 @@ Feature: Context-put feature
                 var1 value1 split
                 "var 2" value2
 
-    Scenario: Define context-put tasks with default parser
+    Scenario: Define context-put action with default parser
         When Need to put some variables directly in context
             Do success
         Then Use default parsing syntax

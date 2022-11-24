@@ -24,7 +24,7 @@ import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrate
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.chutneytesting.engine.domain.execution.strategies.StrategyProperties;
 import com.chutneytesting.engine.domain.report.Reporter;
-import com.chutneytesting.task.spi.FinallyAction;
+import com.chutneytesting.action.spi.FinallyAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class DefaultExecutionEngineTest {
     private final StepExecutionStrategies stepExecutionStrategies = mock(StepExecutionStrategies.class);
     private final DelegationService delegationService = mock(DelegationService.class);
     private final String fakeEnvironment = "env";
-    private final Executor taskExecutor = Executors.newFixedThreadPool(1);
+    private final Executor actionExecutor = Executors.newFixedThreadPool(1);
     private static final String throwableMessage = "Should be catch by fault barrier";
 
     @ParameterizedTest(name = "{index}: {0}")
@@ -58,7 +58,7 @@ public class DefaultExecutionEngineTest {
         when(strategy.execute(any(), any(), any(), any())).thenThrow(throwable.get());
 
         Reporter reporter = new Reporter();
-        DefaultExecutionEngine engine = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, taskExecutor);
+        DefaultExecutionEngine engine = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, actionExecutor);
         StrategyProperties strategyProperties = new StrategyProperties();
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("retry", strategyProperties);
         StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null, null, fakeEnvironment);
@@ -78,7 +78,7 @@ public class DefaultExecutionEngineTest {
     public void should_execute_finally_actions_on_scenario_end(Status endStatus) {
         //Given
         Reporter reporter = new Reporter();
-        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, taskExecutor);
+        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, actionExecutor);
 
         StepExecutionStrategy strategy = mock(StepExecutionStrategy.class);
         when(stepExecutionStrategies.buildStrategyFrom(any()))
@@ -89,7 +89,7 @@ public class DefaultExecutionEngineTest {
         StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null, fakeEnvironment);
 
         ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
-        FinallyAction finallyAction = FinallyAction.Builder.forAction("final", "task name").build();
+        FinallyAction finallyAction = FinallyAction.Builder.forAction("final", "action name").build();
         scenarioExecution.registerFinallyAction(finallyAction);
 
         List<BeginStepExecutionEvent> events = new ArrayList<>();
@@ -119,13 +119,13 @@ public class DefaultExecutionEngineTest {
         when(strategy.execute(any(), any(), any(), any())).thenThrow(throwable.get());
 
         Reporter reporter = new Reporter();
-        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, taskExecutor);
+        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, actionExecutor);
         StrategyProperties strategyProperties = new StrategyProperties();
         StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("retry", strategyProperties);
         StepDefinition stepDefinition = new StepDefinition("name", null, "type", strategyDefinition, null, null, null, null, fakeEnvironment);
 
         ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
-        FinallyAction finallyAction = FinallyAction.Builder.forAction("final", "task name").build();
+        FinallyAction finallyAction = FinallyAction.Builder.forAction("final", "action name").build();
         scenarioExecution.registerFinallyAction(finallyAction);
 
         List<BeginStepExecutionEvent> events = new ArrayList<>();
@@ -149,7 +149,7 @@ public class DefaultExecutionEngineTest {
     public void finally_actions_are_executed_in_declaration_order() {
         // Given
         Reporter reporter = new Reporter();
-        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, taskExecutor);
+        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, actionExecutor);
 
         StepExecutionStrategy strategy = mock(StepExecutionStrategy.class);
         when(stepExecutionStrategies.buildStrategyFrom(any()))
@@ -201,7 +201,7 @@ public class DefaultExecutionEngineTest {
     @Test
     public void should_add_finally_actions_to_root_step() {
         Reporter reporter = new Reporter();
-        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, taskExecutor);
+        DefaultExecutionEngine engineUnderTest = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, actionExecutor);
 
         StepExecutionStrategy strategy = mock(StepExecutionStrategy.class);
         when(stepExecutionStrategies.buildStrategyFrom(any())).thenReturn(strategy);

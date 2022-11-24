@@ -2,7 +2,7 @@ package com.chutneytesting.engine.domain.execution.report;
 
 import static java.util.Collections.emptyList;
 
-import com.chutneytesting.task.spi.injectable.Target;
+import com.chutneytesting.action.spi.injectable.Target;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;

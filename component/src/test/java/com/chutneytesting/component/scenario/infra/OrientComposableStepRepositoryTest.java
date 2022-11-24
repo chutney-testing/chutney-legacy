@@ -352,7 +352,7 @@ public class OrientComposableStepRepositoryTest {
     }
 
     @Test
-    public void changelog_n5_should_update_selenium_tasks() {
+    public void changelog_n5_should_update_selenium_actions() {
         // G
         final ComposableStep step = saveAndReload(
             orientDatabaseHelperTest.buildComposableStep("selenium-get", "{\n" +
@@ -383,7 +383,7 @@ public class OrientComposableStepRepositoryTest {
 
         // W
         try (ODatabaseSession dbSession = orientDatabaseHelperTest.orientComponentDB.dbPool().acquire()) {
-            OrientChangelog.updateSeleniumTaskParametersRight(dbSession);
+            OrientChangelog.updateSeleniumActionParametersRight(dbSession);
         }
 
         // T
@@ -394,7 +394,7 @@ public class OrientComposableStepRepositoryTest {
     }
 
     @Test
-    public void changelog_n12_should_update_sql_tasks() {
+    public void changelog_n12_should_update_sql_actions() {
         // G
         final ComposableStep step = saveAndReload(
             orientDatabaseHelperTest.buildComposableStep("new sql", "{\n" +
@@ -411,7 +411,7 @@ public class OrientComposableStepRepositoryTest {
 
         // W
         try (ODatabaseSession dbSession = orientDatabaseHelperTest.orientComponentDB.dbPool().acquire()) {
-            OrientChangelog.addInputToSqlTask(dbSession);
+            OrientChangelog.addInputToSqlAction(dbSession);
         }
 
         // T
