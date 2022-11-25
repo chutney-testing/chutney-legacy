@@ -4,6 +4,8 @@ Feature: Agent test
 
 Agent A (main) -> Agent B
 We are the agent B. The agent A send us its network configuration in order we save it.
+TODO => rename folder to agent when we could delete all existing environment.
+Environments make the explore time consuming because of connection refused and connection timeout
 
     Scenario: We receive a network configuration to persist
         Given network configuration initialized
@@ -14,6 +16,7 @@ We are the agent B. The agent A send us its network configuration in order we sa
             Do http-post Init configuration
                 On CHUTNEY_LOCAL
                 With uri /api/v1/agentnetwork/configuration
+                With timeout 5 sec
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body ${#jsonSerialize(#networkConfiguration)}
