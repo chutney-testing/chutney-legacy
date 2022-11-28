@@ -104,25 +104,25 @@ public class SqlClientTest {
         SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
         Records actual = sqlClient.execute("select * from allsqltypes");
 
-        Row onlyRecord = actual.records.get(0);
-        assertThat(onlyRecord.get("COL_BOOLEAN").value).isInstanceOf(Boolean.class);
-        assertThat(onlyRecord.get("COL_TINYINT").value).isInstanceOf(Integer.class);
-        assertThat(onlyRecord.get("COL_SMALLINT").value).isInstanceOf(Integer.class);
-        assertThat(onlyRecord.get("COL_MEDIUMINT").value).isInstanceOf(Integer.class);
-        assertThat(onlyRecord.get("COL_INTEGER").value).isInstanceOf(Integer.class);
-        assertThat(onlyRecord.get("COL_BIGINT").value).isInstanceOf(Long.class);
-        assertThat(onlyRecord.get("COL_FLOAT").value).isInstanceOf(Float.class);
-        assertThat(onlyRecord.get("COL_DOUBLE").value).isInstanceOf(Double.class);
-        assertThat(onlyRecord.get("COL_DECIMAL").value).isInstanceOf(BigDecimal.class);
-        assertThat(onlyRecord.get("COL_DECIMAL").value).isInstanceOf(BigDecimal.class);
-        assertThat(onlyRecord.get("COL_DATE").value).isInstanceOf(Date.class);
-        assertThat(onlyRecord.get("COL_TIME").value).isInstanceOf(Time.class);
-        assertThat(onlyRecord.get("COL_TIMESTAMP").value).isInstanceOf(Timestamp.class);
-        assertThat(onlyRecord.get("COL_CHAR").value).isInstanceOf(String.class);
-        assertThat(onlyRecord.get("COL_VARCHAR").value).isInstanceOf(String.class);
+        Row onlyRecord = actual.rows().get(0);
+        assertThat(onlyRecord.get("COL_BOOLEAN")).isInstanceOf(Boolean.class);
+        assertThat(onlyRecord.get("COL_TINYINT")).isInstanceOf(Integer.class);
+        assertThat(onlyRecord.get("COL_SMALLINT")).isInstanceOf(Integer.class);
+        assertThat(onlyRecord.get("COL_MEDIUMINT")).isInstanceOf(Integer.class);
+        assertThat(onlyRecord.get("COL_INTEGER")).isInstanceOf(Integer.class);
+        assertThat(onlyRecord.get("COL_BIGINT")).isInstanceOf(Long.class);
+        assertThat(onlyRecord.get("COL_FLOAT")).isInstanceOf(Float.class);
+        assertThat(onlyRecord.get("COL_DOUBLE")).isInstanceOf(Double.class);
+        assertThat(onlyRecord.get("COL_DECIMAL")).isInstanceOf(BigDecimal.class);
+        assertThat(onlyRecord.get("COL_DECIMAL")).isInstanceOf(BigDecimal.class);
+        assertThat(onlyRecord.get("COL_DATE")).isInstanceOf(Date.class);
+        assertThat(onlyRecord.get("COL_TIME")).isInstanceOf(Time.class);
+        assertThat(onlyRecord.get("COL_TIMESTAMP")).isInstanceOf(Timestamp.class);
+        assertThat(onlyRecord.get("COL_CHAR")).isInstanceOf(String.class);
+        assertThat(onlyRecord.get("COL_VARCHAR")).isInstanceOf(String.class);
         // INTERVAL SQL types : cf. SqlClient.StatementConverter#isJDBCDateType(Class)
-        assertThat(onlyRecord.get("COL_INTERVAL_YEAR").value).isInstanceOf(String.class);
-        assertThat(onlyRecord.get("COL_INTERVAL_SECOND").value).isInstanceOf(String.class);
+        assertThat(onlyRecord.get("COL_INTERVAL_YEAR")).isInstanceOf(String.class);
+        assertThat(onlyRecord.get("COL_INTERVAL_SECOND")).isInstanceOf(String.class);
     }
 
     @Test
