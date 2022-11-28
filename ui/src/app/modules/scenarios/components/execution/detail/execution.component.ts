@@ -154,7 +154,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     isComponentScenario() {
-        return typeof this.scenario === typeof ScenarioComponent
+        return this.scenario instanceof ScenarioComponent;
     }
 
     private observeScenarioExecution(executionId: number) {

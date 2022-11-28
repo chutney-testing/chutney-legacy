@@ -1,14 +1,20 @@
-import { Component, Input, Output, EventEmitter, OnInit, ViewChildren, QueryList, TemplateRef } from '@angular/core';
-import { disabledBoolean } from '@shared/tools/bool-utils';
+import { Component, OnInit, QueryList, TemplateRef, ViewChildren } from '@angular/core';
 
-import { TestCase, ScenarioIndex, Authorization } from '@model';
-import { ScenarioService, ComponentService, EnvironmentAdminService, JiraPluginService, LoginService } from '@core/services';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Authorization, ScenarioIndex, TestCase } from '@model';
+import {
+    ComponentService,
+    EnvironmentAdminService,
+    JiraPluginService,
+    LoginService,
+    ScenarioService
+} from '@core/services';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable, switchMap, tap } from 'rxjs';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { EventManagerService } from '@shared';
 
 @Component({
     selector: 'chutney-scenario-execution-menu',
@@ -17,10 +23,8 @@ import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 })
 export class ScenarioExecutionMenuComponent implements OnInit {
 
-    @Input() testCaseId: string;
-    @Input() canExecute = true;
-
-    @Output() executeEvent = new EventEmitter<string>();
+    testCaseId: string;
+    canExecute = true;
 
     isComposed = TestCase.isComposed;
 
@@ -40,14 +44,22 @@ export class ScenarioExecutionMenuComponent implements OnInit {
                 private router: Router,
                 private scenarioService: ScenarioService,
                 private loginService: LoginService,
-                private modalService: BsModalService
-    ) {
+                private modalService: BsModalService,
+                private route: ActivatedRoute,
+                private eventManagerService: EventManagerService) {
     }
 
+
     ngOnInit(): void {
-        this.scenarioService.findScenarioMetadata(this.testCaseId).subscribe(
-            (res) => this.testCaseMetadata = res
-        );
+        this.route.params
+            .pipe(
+                tap(params => this.testCaseId = params['id']),
+                switchMap(() => this.scenarioService.findScenarioMetadata(this.testCaseId))
+            )
+            .subscribe(scenarioMetadata => {
+                this.testCaseMetadata = scenarioMetadata
+            });
+
         if (this.loginService.hasAuthorization(Authorization.SCENARIO_EXECUTE)) {
             this.environmentAdminService.listEnvironmentsNames().subscribe(
                 (res) => this.environments = res
@@ -56,7 +68,7 @@ export class ScenarioExecutionMenuComponent implements OnInit {
     }
 
     executeScenario(envName: string) {
-        this.executeEvent.emit(envName);
+        this.eventManagerService.broadcast({name: 'execute', env: envName});
     }
 
     executeScenarioOnToggle() {
@@ -110,11 +122,13 @@ export class ScenarioExecutionMenuComponent implements OnInit {
     }
 
 
-
     private removeJiraLink(id: string) {
         this.jiraLinkService.removeForScenario(id).subscribe(
-            () => {},
-            (error) => { console.log(error); }
+            () => {
+            },
+            (error) => {
+                console.log(error);
+            }
         );
     }
 }

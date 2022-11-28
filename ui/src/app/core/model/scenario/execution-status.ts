@@ -10,19 +10,6 @@ export enum ExecutionStatus {
 export namespace ExecutionStatus {
 
     export function toString(status: ExecutionStatus): string {
-        switch (status) {
-            case ExecutionStatus.SUCCESS:
-               return 'OK';
-            case ExecutionStatus.FAILURE:
-               return 'KO';
-            case ExecutionStatus.RUNNING:
-               return 'RUNNING';
-            case ExecutionStatus.PAUSED:
-               return 'PAUSE';
-            case ExecutionStatus.STOPPED:
-               return 'STOP';
-            case ExecutionStatus.NOT_EXECUTED:
-               return 'NOT EXECUTED';
-        }
+        return status && `global.status.${status.toLowerCase()}`
     }
 }

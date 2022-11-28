@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { CampaignExecutionReport, Execution } from '@model';
+import { Execution } from '@model';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -9,6 +9,7 @@ import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { DateFormatPipe } from 'ngx-moment';
 import { AngularMultiSelect } from 'angular2-multiselect-dropdown';
 import { NgbDate } from '@ng-bootstrap/ng-bootstrap/datepicker/ngb-date';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'chutney-scenario-executions',
@@ -49,7 +50,8 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
     constructor(private route: ActivatedRoute,
                 private router: Router,
                 private formBuilder: FormBuilder,
-                private datePipe: DateFormatPipe) {
+                private datePipe: DateFormatPipe,
+                private translateService: TranslateService) {
     }
 
 
@@ -83,7 +85,7 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
 
 
     private initFiltersOptions() {
-        this.status = [...new Set(this.executions.map(exec => exec.status))].map(status => this.toSelectOption(status, ExecutionStatus.toString(status)));
+        this.status = [...new Set(this.executions.map(exec => exec.status))].map(status => this.toSelectOption(status,  this.translateService.instant(ExecutionStatus.toString(status))));
         this.environments = [...new Set(this.executions.map(exec => exec.environment))].map(env => this.toSelectOption(env));
         this.executors = [...new Set(this.executions.map(exec => exec.user))].map(user => this.toSelectOption(user));
         this.campaigns = [...new Set(this.executions.filter(exec => !!exec.campaignReport).map(exec => exec.campaignReport.campaignName))].map(camp => this.toSelectOption(camp));
@@ -98,7 +100,7 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
         this.filtersForm = this.formBuilder.group({
             keyword: this.filters['keyword'],
             date: this.formBuilder.control(this.toNgbDate(this.filters['date'])),
-            status: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['status'], ExecutionStatus.toString)),
+            status: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['status'],  (status) => this.translateService.instant(ExecutionStatus.toString(status)))),
             environments: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['env'])),
             executors: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['exec'])),
             campaigns: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['camp'])),
@@ -188,7 +190,7 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
                 + space
                 + exec.executionId
                 + space
-                + ExecutionStatus.toString(exec.status)
+                + this.translateService.instant(ExecutionStatus.toString(exec.status))
                 + space;
             if (exec.campaignReport) {
                 searchScope += space + exec.campaignReport.campaignName;

@@ -8,19 +8,6 @@
     flex: 0 0 $app-sidebar-width-collapsed;
     z-index: 13;
 
-    .app-header__logo {
-      width: auto;
-    }
-
-    .logo-src {
-      width: 20px;
-      margin: 0 auto;
-    }
-
-    .header__pane {
-      display: none;
-    }
-
     .close-sidebar-btn{
           display: none;
     }
@@ -57,21 +44,8 @@
   .app-header .app-header__content {
     padding-left: $app-sidebar-width-collapsed;
   }
-
-  .app-main__outer {
-    padding-left: $app-sidebar-width-collapsed;
-  }
 }
 
-// Closed Sidebar Medium
-
-.closed-sidebar-open.closed-sidebar.closed-sidebar-md {
-  .app-sidebar {
-    .header__pane {
-      display: none;
-    }
-  }
-}
 
 // Closed Sidebar Open
 
@@ -79,15 +53,13 @@
   &.closed-sidebar {
     .app-sidebar {
       width: $app-sidebar-width;
+        position: absolute;
 
       .logo-src {
         width: $logo-width;
         margin: 0;
       }
 
-      .header__pane {
-        display: block;
-      }
       .close-sidebar-btn{
             display: block;
       }

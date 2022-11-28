@@ -25,7 +25,6 @@ import { RawEditionComponent } from './components/edition/raw/raw-edition.compon
 import { ComponentEditionComponent } from './components/edition/component-edition/component-edition.component';
 import { DragulaModule } from 'ng2-dragula';
 import { ExecuteComponent } from './components/execute/execute.component';
-import { ScenarioExecutionMenuComponent } from './components/sub/header/scenario-execution-menu.component';
 import {
     ScenarioCampaignsComponent
 } from '@modules/scenarios/components/sub/scenario-campaigns/scenario-campaigns.component';
@@ -42,7 +41,9 @@ import { GwtReadComponent } from '@modules/scenarios/components/execution/detail
 import {
     ScenarioExecutionsComponent
 } from '@modules/scenarios/components/execution/history/list/scenario-executions.component';
-
+import {
+    ScenarioExecutionMenuComponent
+} from '@modules/scenarios/components/execution/sub/right-side-bar/scenario-execution-menu.component';
 const ROUTES = [
     ...scenarioRoute
 ];

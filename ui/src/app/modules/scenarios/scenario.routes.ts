@@ -8,6 +8,9 @@ import { Authorization } from '@model';
 import {
     ScenarioExecutionsHistoryComponent
 } from '@modules/scenarios/components/execution/history/scenario-executions-history.component';
+import {
+    ScenarioExecutionMenuComponent
+} from '@modules/scenarios/components/execution/sub/right-side-bar/scenario-execution-menu.component';
 
 export const scenarioRoute: Routes = [
 
@@ -19,11 +22,20 @@ export const scenarioRoute: Routes = [
     },
     {
         path: ':id/executions',
-        component: ScenarioExecutionsHistoryComponent,
         canActivate: [AuthGuard],
-        data: {'authorizations': [Authorization.SCENARIO_READ]}
+        data: {'authorizations': [Authorization.SCENARIO_READ]},
+        children: [
+            {
+                path: '',
+                component: ScenarioExecutionsHistoryComponent
+            },
+            {
+                path: '',
+                component: ScenarioExecutionMenuComponent,
+                outlet: 'right-side-bar'
+            },
+        ]
     },
-
     {
         path: ':id/raw-edition',
         component: RawEditionComponent,

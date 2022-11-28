@@ -12,7 +12,7 @@
                     </a>
                 </div>
                 <div *ngIf="false" class="nav-item" placement="bottom"  ngbTooltip="{{'menu.principal.feedback' | translate}}">
-                    <span class="nav-link pointer">
+                    <span class="nav-link cursor-pointer">
                         <i class="fa fa-lightbulb"></i>
                     </span>
                 </div>
@@ -38,7 +38,7 @@
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="fa fa-regular fa-user" placement="bottom"></i>
                     </a>
-                    <ul class="dropdown-menu pointer">
+                    <ul class="dropdown-menu cursor-pointer">
                         <li><span class="dropdown-item fw-bold">{{user?.id}}</span></li>
                         <li><hr class="dropdown-divider"></li>
                         <li (click)="logout()">

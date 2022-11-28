@@ -49,7 +49,7 @@
 }
 
 .component-list {
-    padding-right: 20px;
+    padding-right: 25px;
 
     table {
         table-layout: fixed;
@@ -114,7 +114,6 @@ textarea.no-resize {
 .left-panel-minimize-btn {
     width: 40px;
     position: absolute;
-    height: calc(100vh);
+    height: 100%;
     border: none;
-    margin-left: -1.5rem;
 }

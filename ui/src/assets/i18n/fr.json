@@ -23,13 +23,6 @@
             "notif": "Notifications"
         }
     },
-    "home": {
-        "edition": {
-            "dialog": {
-                "title": "Modifier la page d'accueil"
-            }
-        }
-    },
     "scenarios": {
         "search": {
             "create": {
@@ -77,7 +70,8 @@
                 "env": "Environnement",
                 "executor": "Executeur",
                 "campaign": "Campagne",
-                "report": "Rapport"
+                "report": "Rapport",
+                "empty": "Aucune exécution"
             },
             "step": {
                 "actions": {
@@ -392,6 +386,14 @@
         "warning": "Avertissement"
     },
     "global": {
+        "status": {
+            "success": "OK",
+            "failure": "KO",
+            "running": "EN COURS",
+            "paused": "PAUSE",
+            "stopped": "STOP",
+            "not_executed": "NON EXÉCUTÉ"
+        },
         "time": {
             "in": "en",
             "at": "le",

@@ -41,7 +41,7 @@
                 <tbody>
                 <tr *ngFor="let dataset of (datasets |  dataSetSearch : selectedTags | searchTextPipe  : dataSetFilter : ['name', 'description'])"
                     (click)="showPreview(dataset)"
-                    style="cursor: pointer">
+                    class="cursor-pointer">
 
                     <td class="align-items-center">
                         <button *hasAuthorization="[Authorization.DATASET_WRITE]"

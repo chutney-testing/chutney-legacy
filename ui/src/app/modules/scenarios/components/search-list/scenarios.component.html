@@ -126,7 +126,7 @@
 
                 <td scope="row" class="text-center">{{scenario.executionCount}}</td>
 
-                <td [routerLink]="['/scenario', scenario.id, 'executions']" (click)="$event.stopPropagation()" class="scenario-title pointer">{{scenario.title}}</td>
+                <td [routerLink]="['/scenario', scenario.id, 'executions']" (click)="$event.stopPropagation()" class="scenario-title cursor-pointer">{{scenario.title}}</td>
 
                 <td>
                     <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link me-0"

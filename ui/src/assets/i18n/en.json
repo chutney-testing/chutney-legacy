@@ -23,13 +23,6 @@
             "notif": "Notifications"
         }
     },
-    "home": {
-        "edition": {
-            "dialog": {
-                "title": "Update home-page"
-            }
-        }
-    },
     "scenarios": {
         "search": {
             "create": {
@@ -77,7 +70,8 @@
                 "env": "Environment",
                 "executor": "Executor",
                 "campaign": "Campaign",
-                "report": "Report"
+                "report": "Report",
+                "empty": "No execution"
             },
             "step": {
                 "actions": {
@@ -392,6 +386,14 @@
         "warning": "Warning"
     },
     "global": {
+        "status": {
+            "success": "OK",
+            "failure": "KO",
+            "running": "RUNNING",
+            "paused": "PAUSE",
+            "stopped": "STOP",
+            "not_executed": "NOT EXECUTED"
+        },
         "time": {
             "in": "in",
             "at": "at",

@@ -9,9 +9,6 @@
             padding-top: 0;
             padding-bottom: 0;
         }
-        tbody {
-            //line-height: 2rem;
-        }
     }
 
     .dp-hidden {
@@ -30,7 +27,7 @@
 
 :host ::ng-deep
 .cuppa-dropdown {
-    background-color: var(--bs-light);
+    border: none;
     .selected-list {
         .c-angle-up {
             display: none!important;

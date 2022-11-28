@@ -1,19 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { combineLatestWith, delay, switchMap, tap } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { delay, switchMap, tap } from 'rxjs/operators';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Execution, GwtTestCase, ScenarioComponent, TestCase } from '@model';
 import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs';
+import { Observable, of, Subscription, zip } from 'rxjs';
 import { ComponentService, ScenarioService } from '@core/services';
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
+import { EventManagerService } from '@shared';
 
 @Component({
     selector: 'chutney-scenario-executions-history',
     templateUrl: './scenario-executions-history.component.html',
     styleUrls: ['./scenario-executions-history.component.scss']
 })
-export class ScenarioExecutionsHistoryComponent implements OnInit {
+export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
 
     tabs: Execution[] = [];
     activeTab = 0;
@@ -22,14 +23,16 @@ export class ScenarioExecutionsHistoryComponent implements OnInit {
     private _executionsFilters: Params = {};
     private tabFilters: Params = {};
     private hasParameters: boolean = null;
-    private scenario: ScenarioComponent | GwtTestCase;
-    executionError: string;
+    scenario: ScenarioComponent | GwtTestCase;
+    error: string;
+    private scenarioExecution$: Subscription;
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
                 private scenarioExecutionService: ScenarioExecutionService,
                 private scenarioService: ScenarioService,
-                private componentService: ComponentService) {
+                private componentService: ComponentService,
+                private eventManagerService: EventManagerService) {
     }
 
     ngOnInit(): void {
@@ -37,15 +40,25 @@ export class ScenarioExecutionsHistoryComponent implements OnInit {
             .pipe(
                 tap(params => this.scenarioId = params['id']),
                 switchMap(() => this.loadScenario()),
-                switchMap(() => this.getScenarioExecutions()),
-                combineLatestWith(this.route.queryParams))
-            .subscribe(([executions, queryParams]) => {
-                this.openTabs(queryParams['open']);
-                this.focusOnTab(queryParams['active'])
-                this.executionsFilters = queryParams;
-            });
+                switchMap(() => this.getScenarioExecutions())
+            ).subscribe({
+            next: () => {
+                this.onQueryParamsChange()
+                this.onRightMenuAction();
+            },
+            error: (error) => this.error = error.error
+        });
     }
 
+
+    private onQueryParamsChange() {
+        let executionsFilters: Params;
+        this.route.queryParams.pipe(
+            tap(queryParams => executionsFilters = queryParams),
+            switchMap(queryParams => this.openTabs(queryParams)),
+            tap(() => this.executionsFilters = executionsFilters)
+        ).subscribe();
+    }
 
     private getScenarioExecutions() {
         return this.scenarioExecutionService.findScenarioExecutions(this.scenarioId)
@@ -70,7 +83,7 @@ export class ScenarioExecutionsHistoryComponent implements OnInit {
     openReport(request: { execution: Execution, focus: boolean }) {
 
         let tabs = this.tabs;
-        if (!this.opened(request.execution.executionId)) {
+        if (!this.isOpened(request.execution.executionId)) {
             tabs = tabs.concat(request.execution);
         }
         this.tabFilters['open'] = tabs.map(exec => exec.executionId).toString();
@@ -94,33 +107,7 @@ export class ScenarioExecutionsHistoryComponent implements OnInit {
         this.updateQueryParams();
     }
 
-    executeScenario(env: string) {
-        if (this.hasParameters) {
-            this.router.navigateByUrl(`/scenario/${this.scenarioId}/execute/${env}`,);
-        } else {
-            this.scenarioExecutionService
-                .executeScenarioAsync(this.scenarioId, [], env)
-                .pipe(
-                    delay(1000),
-                    switchMap(executionId => this.scenarioExecutionService.findScenarioExecutionSummary(this.scenarioId, +executionId)))
-                .subscribe({
-                        next: (executionSummary) => {
-                            this.openReport({
-                                execution: executionSummary,
-                                focus: true
-                            });
-                            this.executions.unshift(executionSummary);
-                        },
-                        error: error => {
-                            this.executionError = error.error;
-                        }
-                    }
-                )
-            ;
-        }
-    }
-
-    updateExecutionStatus(executionId: number, update : {status: ExecutionStatus, error: string}) {
+    updateExecutionStatus(executionId: number, update: { status: ExecutionStatus, error: string }) {
         const execution = this.executions.find(exec => exec.executionId === executionId);
         execution.status = update.status;
         execution.error = update.error;
@@ -153,22 +140,13 @@ export class ScenarioExecutionsHistoryComponent implements OnInit {
         });
     }
 
-    private opened(executionId: number) {
-        return this.tabs.find(exec => exec.executionId === executionId);
-    }
-
-    private openTabs(executionsIds: string) {
-        this.tabs = [];
-        if (executionsIds) {
-            this.tabs = executionsIds.split(',')
-                .map(id => this.executions.find(exec => exec.executionId.toString() === id))
-                .filter(exec => !!exec);
-        }
-        this.tabFilters['open'] = this.tabs.map(exec => exec.executionId).toString();
+    private isOpened(executionId: number) {
+        const openTabs: string = this.tabFilters['open'];
+        return openTabs.includes(executionId.toString());
     }
 
     private focusOnTab(executionId: string) {
-        this.activeTab = executionId ? +executionId : 0;
+        this.activeTab = executionId && this.isOpened(+executionId) ? +executionId : 0;
         this.tabFilters['active'] = this.activeTab;
     }
 
@@ -179,5 +157,62 @@ export class ScenarioExecutionsHistoryComponent implements OnInit {
             }
         });
         return params;
+    }
+
+    private openTabs(queryParams: Params): Observable<Execution[]> {
+        const executionsIds = queryParams['open'];
+        let openedExecutions$ = of([]);
+        if (executionsIds) {
+            let executions$: Observable<Execution> [] = executionsIds
+                .split(',')
+                .map(id => {
+                    let execution = this.executions.find(exec => exec.executionId.toString() === id);
+                    if (!execution) {
+                        return this.scenarioExecutionService.findScenarioExecutionSummary(this.scenarioId, +id);
+                    }
+                    return of(execution);
+                });
+            openedExecutions$ = zip(executions$);
+        }
+        return openedExecutions$.pipe(
+            tap(executions => {
+                this.tabs = executions;
+                this.tabFilters['open'] = this.tabs.map(exec => exec.executionId).toString();
+                this.focusOnTab(queryParams['active']);
+            })
+        )
+    }
+
+    private onRightMenuAction() {
+        this.scenarioExecution$ = this.eventManagerService.subscribe('execute', (data) => this.executeScenario(data.env));
+    }
+
+    private executeScenario(env: string) {
+        if (this.hasParameters) {
+            this.router.navigateByUrl(`/scenario/${this.scenarioId}/execute/${env}`,);
+        } else {
+            this.scenarioExecutionService
+                .executeScenarioAsync(this.scenarioId, [], env)
+                .pipe(
+                    delay(1000),
+                    switchMap(executionId => this.scenarioExecutionService.findScenarioExecutionSummary(this.scenarioId, +executionId)))
+                .subscribe({
+                        next: (executionSummary) => {
+                            this.openReport({
+                                execution: executionSummary,
+                                focus: true
+                            });
+                            this.executions.unshift(executionSummary);
+                        },
+                        error: error => {
+                            this.error = error.error;
+                        }
+                    }
+                );
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.eventManagerService.destroy(this.scenarioExecution$);
     }
 }

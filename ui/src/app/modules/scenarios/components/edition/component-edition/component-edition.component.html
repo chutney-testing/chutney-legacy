@@ -57,7 +57,7 @@
                     <tbody dragula="COPYABLE" id="left"
                             [dragulaModel]="componentRefTasksArray | searchTextPipe: componentFilter:['name']">
                     <tr *ngFor="let component of componentRefTasksArray | searchTextPipe: componentFilter:['name']"
-                        class="pointer">
+                        class="cursor-pointer">
                         <td>
                             <span class="fa" [ngClass]="component.implementation ? 'fa-clone' : 'fa-cubes'"></span>
                             {{component.name}}

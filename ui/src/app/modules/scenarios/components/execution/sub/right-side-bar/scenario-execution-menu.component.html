@@ -1,14 +1,14 @@
-<nav class="navbar bg-light h-100 align-items-start">
+<nav class="navbar px-1 bg-light h-100 align-items-start">
     <div class="container-fluid">
         <ul class="navbar-nav me-auto mb-2">
-            <li class="nav-item" ngbDropdown *hasAuthorization="[Authorization.SCENARIO_WRITE]">
+            <li class="nav-item" ngbDropdown display="dynamic" *hasAuthorization="[Authorization.SCENARIO_WRITE]">
                 <a class="nav-link" tabindex="0" ngbDropdownToggle id="executeDropdown" role="button"
                    (click)="executeScenarioOnToggle()">
                     <i class="fa fa-play me-1"></i>
                     {{'global.actions.execute' | translate}}
                 </a>
                 <div ngbDropdownMenu aria-labelledby="executeDropdown" class="dropdown-menu">
-                    <a ngbDropdownItem *ngFor="let env of environments"
+                    <a class="cursor-pointer" ngbDropdownItem *ngFor="let env of environments"
                        (click)="executeScenario(env)">{{ env }}</a>
                 </div>
             </li>
@@ -21,20 +21,20 @@
             </li>
 
             <li class="nav-item" *hasAuthorization="[Authorization.SCENARIO_WRITE]">
-                    <span class="nav-link pointer" (click)="openModal(template)">
+                    <span class="nav-link cursor-pointer" (click)="openModal(template)">
                         <i class="fa fa-trash me-1"></i>{{'global.actions.delete' | translate}}
                     </span>
             </li>
 
             <li class="nav-item" *hasAuthorization="[Authorization.SCENARIO_WRITE]">
-                    <span class="nav-link pointer"
+                    <span class="nav-link cursor-pointer"
                           (click)="duplicateScenario()">
                         <i class="fa fa-clone"></i>
                         {{'global.actions.clone' | translate}}
                     </span>
             </li>
             <li class="nav-item" *hasAuthorization="[Authorization.SCENARIO_WRITE]">
-                    <span class="nav-link pointer"
+                    <span class="nav-link cursor-pointer"
                           (click)="exportScenario()">
                         <i class="fa fa-file-code"></i>
                         {{'global.actions.export' | translate}}
