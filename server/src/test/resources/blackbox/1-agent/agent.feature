@@ -4,8 +4,9 @@ Feature: Agent test
 
 Agent A (main) -> Agent B
 We are the agent B. The agent A send us its network configuration in order we save it.
-TODO => rename folder to agent when we could delete all existing environment.
-Environments make the explore time consuming because of connection refused and connection timeout
+// TODO - This test is flaky on some setup do the exploration process which is very time consuming, because of connection refused and connection timeout.
+// In order to run test features in any order and then rename folder "1-agent" to "agent", when have to implement a way to delete all existing environment. 
+// Current solution seems to be a for loop.
 
     Scenario: We receive a network configuration to persist
         Given network configuration initialized
