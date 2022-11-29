@@ -13,7 +13,6 @@ import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
-import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngine;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngineAsync;
 import com.chutneytesting.server.core.domain.execution.ServerTestEngine;
@@ -22,7 +21,6 @@ import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProc
 import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessors;
 import com.chutneytesting.server.core.domain.execution.state.ExecutionStateRepository;
 import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
-import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
@@ -66,25 +64,21 @@ public class ServerConfiguration implements AsyncConfigurer {
     public static final String SERVER_HTTP_PORT_SPRING_VALUE = "${server.http.port}";
     public static final String SERVER_HTTP_INTERFACE_SPRING_VALUE = "${server.http.interface}";
 
-    public static final String DBSERVER_PORT_SPRING_VALUE = "${chutney.db-server.port}";
-    private static final String DBSERVER_BASEDIR_SPRING_BASE_VALUE = "${chutney.db-server.base-dir:~/.chutney/data";
-    public static final String DBSERVER_H2_BASEDIR_SPRING_VALUE = DBSERVER_BASEDIR_SPRING_BASE_VALUE + "}";
-
     public static final String CONFIGURATION_FOLDER_SPRING_VALUE = "${chutney.configuration-folder:~/.chutney/conf}";
     public static final String ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE = "${chutney.engine.reporter.publisher.ttl:5}";
     public static final String ENGINE_DELEGATION_USER_SPRING_VALUE = "${chutney.engine.delegation.user:#{null}}";
     public static final String ENGINE_DELEGATION_PASSWORD_SPRING_VALUE = "${chutney.engine.delegation.password:#{null}}";
-    public static final String EXECUTION_ASYNC_PUBLISHER_TTL_SPRING_VALUE = "${chutney.execution.async.publisher.ttl:5}";
-    public static final String EXECUTION_ASYNC_PUBLISHER_DEBOUNCE_SPRING_VALUE = "${chutney.execution.async.publisher.debounce:250}";
-    public static final String CAMPAIGNS_THREAD_SPRING_VALUE = "${chutney.campaigns.thread:20}";
-    public static final String SCHEDULED_CAMPAIGNS_THREAD_SPRING_VALUE = "${chutney.schedule.campaigns.thread:20}";
-    public static final String SCHEDULED_CAMPAIGNS_FIXED_DELAY_SPRING_VALUE = "${chutney.schedule.campaigns.fixedDelay:60000}";
-    public static final String ENGINE_THREAD_SPRING_VALUE = "${chutney.scenarios.thread:20}";
-    public static final String AGENTNETWORK_CONNECTION_CHECK_TIMEOUT_SPRING_VALUE = "${chutney.agentnetwork.connection-checker-timeout:1000}";
-    public static final String LOCALAGENT_DEFAULTNAME_SPRING_VALUE = "${chutney.localAgent.defaultName:#{null}}";
-    public static final String LOCALAGENT_DEFAULTHOSTNAME_SPRING_VALUE = "${chutney.localAgent.defaultHostName:#{null}}";
-    public static final String EDITIONS_TTL_VALUE_SPRING_VALUE = "${chutney.editions.ttl.value:6}";
-    public static final String EDITIONS_TTL_UNIT_SPRING_VALUE = "${chutney.editions.ttl.unit:HOURS}";
+    public static final String EXECUTION_ASYNC_PUBLISHER_TTL_SPRING_VALUE = "${chutney.server.execution.async.publisher.ttl:5}";
+    public static final String EXECUTION_ASYNC_PUBLISHER_DEBOUNCE_SPRING_VALUE = "${chutney.server.execution.async.publisher.debounce:250}";
+    public static final String CAMPAIGNS_EXECUTOR_POOL_SIZE_SPRING_VALUE = "${chutney.server.campaigns.executor.pool-size:20}";
+    public static final String SCHEDULED_CAMPAIGNS_EXECUTOR_POOL_SIZE_SPRING_VALUE = "${chutney.server.schedule-campaigns.executor.pool-size:20}";
+    public static final String SCHEDULED_CAMPAIGNS_FIXED_RATE_SPRING_VALUE = "${chutney.server.schedule-campaigns.fixed-rate:60000}";
+    public static final String ENGINE_EXECUTOR_POOL_SIZE_SPRING_VALUE = "${chutney.engine.executor.pool-size:20}";
+    public static final String AGENT_NETWORK_CONNECTION_CHECK_TIMEOUT_SPRING_VALUE = "${chutney.server.agent.network.connection-checker-timeout:1000}";
+    public static final String LOCAL_AGENT_DEFAULT_NAME_SPRING_VALUE = "${chutney.server.agent.name:#{null}}";
+    public static final String LOCAL_AGENT_DEFAULT_HOSTNAME_SPRING_VALUE = "${chutney.server.agent.hostname:#{null}}";
+    public static final String EDITIONS_TTL_VALUE_SPRING_VALUE = "${chutney.server.editions.ttl.value:6}";
+    public static final String EDITIONS_TTL_UNIT_SPRING_VALUE = "${chutney.server.editions.ttl.unit:HOURS}";
 
     public static final String TASK_SQL_NB_LOGGED_ROW = "${" + CONFIGURABLE_NB_LOGGED_ROW + ":30}";
 
@@ -109,7 +103,7 @@ public class ServerConfiguration implements AsyncConfigurer {
     }
 
     @Bean
-    public TaskExecutor engineExecutor(@Value(ENGINE_THREAD_SPRING_VALUE) Integer threadForEngine) {
+    public TaskExecutor engineExecutor(@Value(ENGINE_EXECUTOR_POOL_SIZE_SPRING_VALUE) Integer threadForEngine) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(threadForEngine);
         executor.setMaxPoolSize(threadForEngine);
@@ -121,7 +115,7 @@ public class ServerConfiguration implements AsyncConfigurer {
     }
 
     @Bean
-    public TaskExecutor campaignExecutor(@Value(CAMPAIGNS_THREAD_SPRING_VALUE) Integer threadForCampaigns) {
+    public TaskExecutor campaignExecutor(@Value(CAMPAIGNS_EXECUTOR_POOL_SIZE_SPRING_VALUE) Integer threadForCampaigns) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(threadForCampaigns);
         executor.setMaxPoolSize(threadForCampaigns);
@@ -132,7 +126,7 @@ public class ServerConfiguration implements AsyncConfigurer {
     }
 
     @Bean
-    public ExecutorService scheduledCampaignsExecutor(@Value(SCHEDULED_CAMPAIGNS_THREAD_SPRING_VALUE) Integer threadForScheduledCampaigns) {
+    public ExecutorService scheduledCampaignsExecutor(@Value(SCHEDULED_CAMPAIGNS_EXECUTOR_POOL_SIZE_SPRING_VALUE) Integer threadForScheduledCampaigns) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(threadForScheduledCampaigns);
         executor.setMaxPoolSize(threadForScheduledCampaigns);
@@ -148,11 +142,11 @@ public class ServerConfiguration implements AsyncConfigurer {
         Executor engineExecutor,
         @Value(TASK_SQL_NB_LOGGED_ROW) String nbLoggedRow,
         @Value(ENGINE_DELEGATION_USER_SPRING_VALUE) String delegateUser,
-        @Value(ENGINE_DELEGATION_PASSWORD_SPRING_VALUE) String delegatePasword
+        @Value(ENGINE_DELEGATION_PASSWORD_SPRING_VALUE) String delegatePassword
     ) {
         Map<String, String> actionsConfiguration = new HashMap<>();
         actionsConfiguration.put(CONFIGURABLE_NB_LOGGED_ROW, nbLoggedRow);
-        return new ExecutionConfiguration(reporterTTL, engineExecutor, actionsConfiguration, delegateUser, delegatePasword);
+        return new ExecutionConfiguration(reporterTTL, engineExecutor, actionsConfiguration, delegateUser, delegatePassword);
     }
 
     @Bean

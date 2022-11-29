@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "chutney.orient")
+@ConfigurationProperties(prefix = "chutney.component.orient")
 public class OrientConfigurationProperties {
 
     private static final String DEFAULT_DB_NAME = "chutney_component_db";

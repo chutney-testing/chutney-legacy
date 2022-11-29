@@ -52,45 +52,54 @@ chutney:
     configuration-folder: ${chutney.configuration-folder}/environment
   jira:
     configuration-folder: ${chutney.configuration-folder}/jira
-#  db-server: (cf. application-db-[h2].yml configuration files)
-#    port: 9360
-#    base-dir: ./.chutney
-  orient:
-    path: .chutney/data/orient
-#    dBProperties:
-#      dbName: chutney_component_db
-#      dbType: PLOCAL
-    contextConfiguration:
-      "[storage.diskCache.diskFreeSpaceLimit]": 384
-      "[storage.diskCache.bufferSize]": 1024
-  execution:
-    async:
-      publisher:
-        ttl: 5
-        debounce: 250
+
+  server:
+    editions:
+      ttl:
+        value: 2
+        unit: SECONDS
+    execution:
+      async:
+        publisher:
+          ttl: 5
+          debounce: 250
+    campaigns:
+      executor:
+        pool-size: 20
+    scheduled-campaigns:
+      fixed-rate: 60000
+      executor:
+        pool-size: 20
+    agent:
+#      name:
+#      hostname:
+      network:
+        connection-checker-timeout: 1000
+
   engine:
+    executor:
+      pool-size: 20
     reporter:
       publisher:
         ttl: 5
 #    delegation:
 #      user:
 #      password:
-  campaigns:
-    thread: 20
-  scenarios:
-    thread: 20
-  editions:
-    ttl:
-      value: 2
-      unit: SECONDS
+
   actions:
     sql:
-      nbLoggedRow: 30
-#  localAgent:
-#    defaultName:
-#    defaultHostName:
-  agentnetwork:
-    connection-checker-timeout: 1000
+      max-logged-rows: 30
+
+  component:
+    orient:
+      path: .chutney/data/orient
+      #    dBProperties:
+      #      dbName: chutney_component_db
+      #      dbType: PLOCAL
+      contextConfiguration:
+        "[storage.diskCache.diskFreeSpaceLimit]": 384
+        "[storage.diskCache.bufferSize]": 1024
+
 jasypt:
   encryptor:
     private-key-format: pem
