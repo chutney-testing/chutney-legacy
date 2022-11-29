@@ -19,22 +19,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @Configuration
 public class WebConfiguration {
-
-    @Bean
-    @Primary // Because of https://github.com/spring-projects/spring-boot/issues/20308
-    public TaskScheduler taskScheduler() {
-        return new ConcurrentTaskScheduler();
-    }
-
-    @Bean
-    public ThreadPoolTaskExecutor applicationTaskExecutor(TaskExecutorBuilder builder) {
-        return builder.threadNamePrefix("app-task-exec").build();
-    }
 
     @Bean
     @Primary

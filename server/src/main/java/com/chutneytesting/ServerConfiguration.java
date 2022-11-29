@@ -45,14 +45,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.boot.task.TaskExecutorBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.support.ExecutorServiceAdapter;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @SpringBootApplication(exclude = {LiquibaseAutoConfiguration.class, ActiveMQAutoConfiguration.class, MongoAutoConfiguration.class})
 @EnableScheduling
@@ -103,23 +107,49 @@ public class ServerConfiguration implements AsyncConfigurer {
         };
     }
 
+    /**
+     * Default task scheduler for
+     * With a default ScheduledExecutorService with a pool size of 1
+     */
+    @Bean
+    public TaskScheduler taskScheduler() {
+        return new ThreadPoolTaskScheduler();
+    }
+
+    /**
+     * Default task executor for @Aync (used for SSE for example)
+     * With a default  with default configuration: org.springframework.boot.autoconfigure.task.TaskExecutionProperties.Pool
+     */
+    @Bean
+    public TaskExecutor applicationTaskExecutor(TaskExecutorBuilder builder) {
+        return builder.threadNamePrefix("app-task-exec").build();
+    }
+
+    /**
+     * For com.chutneytesting.execution.domain.schedule.CampaignScheduler#executeScheduledCampaigns()
+     */
     @Bean
     public TaskExecutor scheduleCampaignsExecutor() {
         return new SimpleAsyncTaskExecutor("schedule-campaigns-executor");
     }
 
+    /**
+     * For com.chutneytesting.ServerConfiguration#executionConfiguration()
+     */
     @Bean
     public TaskExecutor engineExecutor(@Value(ENGINE_THREAD_SPRING_VALUE) Integer threadForEngine) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(threadForEngine);
         executor.setMaxPoolSize(threadForEngine);
-
         executor.setThreadNamePrefix("engine-executor");
         executor.initialize();
         LOGGER.debug("Pool for engine created with size {}", threadForEngine);
         return executor;
     }
 
+    /**
+     * For com.chutneytesting.ServerConfiguration#campaignExecutionEngine()
+     */
     @Bean
     public TaskExecutor campaignExecutor(@Value(CAMPAIGNS_THREAD_SPRING_VALUE) Integer threadForCampaigns) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -131,6 +161,9 @@ public class ServerConfiguration implements AsyncConfigurer {
         return executor;
     }
 
+    /**
+     * For com.chutneytesting.execution.domain.schedule.CampaignScheduler#CampaignScheduler()
+     */
     @Bean
     public ExecutorService scheduledCampaignsExecutor(@Value(SCHEDULED_CAMPAIGNS_THREAD_SPRING_VALUE) Integer threadForScheduledCampaigns) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -145,7 +178,7 @@ public class ServerConfiguration implements AsyncConfigurer {
     @Bean
     public ExecutionConfiguration executionConfiguration(
         @Value(ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE) Long reporterTTL,
-        Executor engineExecutor,
+        @Qualifier("engineExecutor") TaskExecutor engineExecutor,
         @Value(TASK_SQL_NB_LOGGED_ROW) String nbLoggedRow,
         @Value(ENGINE_DELEGATION_USER_SPRING_VALUE) String delegateUser,
         @Value(ENGINE_DELEGATION_PASSWORD_SPRING_VALUE) String delegatePasword
@@ -206,7 +239,7 @@ public class ServerConfiguration implements AsyncConfigurer {
                                                     DataSetHistoryRepository dataSetHistoryRepository,
                                                     JiraXrayEmbeddedApi jiraXrayEmbeddedApi,
                                                     ChutneyMetrics metrics,
-                                                    TaskExecutor campaignExecutor,
+                                                    @Qualifier("campaignExecutor") TaskExecutor campaignExecutor,
                                                     ObjectMapper objectMapper) {
         return new CampaignExecutionEngine(
             campaignRepository,
