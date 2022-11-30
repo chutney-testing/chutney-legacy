@@ -73,7 +73,7 @@ public class SqlActionTest {
 
         verify(logger).info(eq(
             "| ID | NAME    | EMAIL           |\n" +
-            "----------------------------------\n" +
+            "|----|---------|-----------------|\n" +
             "| 1  | laitue  | laitue@fake.com |\n" +
             "| 2  | carotte | kakarot@fake.db |\n"));
     }
@@ -103,12 +103,12 @@ public class SqlActionTest {
         InOrder inOrder = Mockito.inOrder(logger);
         inOrder.verify(logger).info(eq(
             "| ID | NAME   | EMAIL           |\n" +
-            "---------------------------------\n" +
+            "|----|--------|-----------------|\n" +
             "| 1  | laitue | laitue@fake.com |\n")
         );
         inOrder.verify(logger).info(
             "| ID | NAME    | EMAIL           |\n" +
-            "----------------------------------\n" +
+            "|----|---------|-----------------|\n" +
             "| 2  | carotte | kakarot@fake.db |\n"
         );
     }

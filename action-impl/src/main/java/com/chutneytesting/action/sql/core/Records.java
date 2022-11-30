@@ -117,16 +117,18 @@ public class Records {
 
     public String tableHeaders(Map<Column, Integer> maxColumnLength) {
         StringBuilder sb = new StringBuilder();
+        StringBuilder hyphenLine = new StringBuilder();
         if (columns.size() > 0) {
             sb.append("|");
-            columns.forEach(column ->
+            hyphenLine.append("|");
+            columns.forEach(column -> {
                 sb.append(" ")
                     .append(column.printHeader(maxColumnLength.get(column)))
-                    .append(" |")
-            );
-            sb.append("\n");
-            sb.append("-".repeat(sb.length() - 1));
-            sb.append("\n");
+                    .append(" |");
+                hyphenLine.append("-".repeat(maxColumnLength.get(column) + 2))
+                    .append("|");
+            });
+            sb.append("\n").append(hyphenLine).append("\n");
         }
         return sb.toString();
     }
