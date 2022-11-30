@@ -3,6 +3,7 @@ package com.chutneytesting.action.sql.core;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,9 @@ public class Rows {
     }
 
     public Row get(int index) {
+        if (rows.isEmpty()) {
+            return new Row(Collections.emptyList());
+        }
         return rows.get(index);
     }
 
