@@ -3,36 +3,42 @@ package com.chutneytesting.security;
 import com.chutneytesting.admin.api.InfoController;
 import com.chutneytesting.security.api.UserController;
 import com.chutneytesting.security.api.UserDto;
+import com.chutneytesting.security.domain.AuthenticationService;
 import com.chutneytesting.security.domain.Authorizations;
 import com.chutneytesting.security.infra.handlers.Http401FailureHandler;
 import com.chutneytesting.security.infra.handlers.HttpEmptyLogoutSuccessHandler;
 import com.chutneytesting.server.core.domain.security.Authorization;
 import com.chutneytesting.server.core.domain.security.User;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 @Configuration
-public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class ChutneyWebSecurityConfig {
 
     public static final String LOGIN_URL = UserController.BASE_URL + "/login";
     public static final String LOGOUT_URL = UserController.BASE_URL + "/logout";
     public static final String API_BASE_URL_PATTERN = "/api/**";
-    public static final String ACTUATOR_BASE_URL_PATTERN = "/actuator/**";
 
-    @Autowired
-    private Authorizations authorizations;
+    @Value("${management.endpoints.web.base-path:'/actuator'}")
+    String actuatorBaseUrl;
 
-    @Override
-    protected void configure(final HttpSecurity http) throws Exception {
+    @Bean
+    public AuthenticationService authenticationService(Authorizations authorizations) {
+        return new AuthenticationService(authorizations);
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         configureBaseHttpSecurity(http);
         UserDto anonymous = anonymous();
         http
@@ -45,16 +51,15 @@ public class ChutneyHttpSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(LOGOUT_URL).permitAll()
                 .antMatchers(InfoController.BASE_URL + "/**").permitAll()
                 .antMatchers(API_BASE_URL_PATTERN).authenticated()
-                .antMatchers(ACTUATOR_BASE_URL_PATTERN).hasAuthority(Authorization.ADMIN_ACCESS.name())
+                .antMatchers(actuatorBaseUrl + "/**").hasAuthority(Authorization.ADMIN_ACCESS.name())
                 .anyRequest().permitAll()
             .and()
             .httpBasic();
+
+        return http.build();
     }
 
     protected void configureBaseHttpSecurity(final HttpSecurity http) throws Exception {
-        Map<String, String> invalidSessionHeaders = new HashMap<>();
-        invalidSessionHeaders.put(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-
         http
             .csrf()
                 .disable()

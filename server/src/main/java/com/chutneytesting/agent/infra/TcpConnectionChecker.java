@@ -1,6 +1,6 @@
 package com.chutneytesting.agent.infra;
 
-import static com.chutneytesting.ServerConfiguration.AGENTNETWORK_CONNECTION_CHECK_TIMEOUT_SPRING_VALUE;
+import static com.chutneytesting.ServerConfiguration.AGENT_NETWORK_CONNECTION_CHECK_TIMEOUT_SPRING_VALUE;
 
 import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
@@ -17,7 +17,7 @@ class TcpConnectionChecker implements ConnectionChecker {
     private static final Logger LOGGER = LoggerFactory.getLogger(TcpConnectionChecker.class);
     private final int timeout;
 
-    TcpConnectionChecker(@Value(AGENTNETWORK_CONNECTION_CHECK_TIMEOUT_SPRING_VALUE) int timeout) {
+    TcpConnectionChecker(@Value(AGENT_NETWORK_CONNECTION_CHECK_TIMEOUT_SPRING_VALUE) int timeout) {
         this.timeout = timeout;
     }
 

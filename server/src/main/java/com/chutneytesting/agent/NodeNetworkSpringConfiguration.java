@@ -1,7 +1,7 @@
 package com.chutneytesting.agent;
 
-import static com.chutneytesting.ServerConfiguration.LOCALAGENT_DEFAULTHOSTNAME_SPRING_VALUE;
-import static com.chutneytesting.ServerConfiguration.LOCALAGENT_DEFAULTNAME_SPRING_VALUE;
+import static com.chutneytesting.ServerConfiguration.LOCAL_AGENT_DEFAULT_HOSTNAME_SPRING_VALUE;
+import static com.chutneytesting.ServerConfiguration.LOCAL_AGENT_DEFAULT_NAME_SPRING_VALUE;
 import static com.chutneytesting.ServerConfiguration.SERVER_PORT_SPRING_VALUE;
 
 import com.chutneytesting.agent.domain.AgentClient;
@@ -46,8 +46,8 @@ public class NodeNetworkSpringConfiguration {
 
     @Bean
     LocalServerIdentifier localServerIdentifier(@Value(SERVER_PORT_SPRING_VALUE) int port,
-                                                @Value(LOCALAGENT_DEFAULTNAME_SPRING_VALUE) Optional<String> defaultLocalName,
-                                                @Value(LOCALAGENT_DEFAULTHOSTNAME_SPRING_VALUE) Optional<String> defaultLocalHostName
+                                                @Value(LOCAL_AGENT_DEFAULT_NAME_SPRING_VALUE) Optional<String> defaultLocalName,
+                                                @Value(LOCAL_AGENT_DEFAULT_HOSTNAME_SPRING_VALUE) Optional<String> defaultLocalHostName
     ) throws UnknownHostException {
         InetAddress localHost = InetAddress.getLocalHost();
         return new LocalServerIdentifier(

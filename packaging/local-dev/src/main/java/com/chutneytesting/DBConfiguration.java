@@ -1,8 +1,5 @@
 package com.chutneytesting;
 
-import static com.chutneytesting.ServerConfiguration.DBSERVER_H2_BASEDIR_SPRING_VALUE;
-import static com.chutneytesting.ServerConfiguration.DBSERVER_PORT_SPRING_VALUE;
-
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.SQLException;
 import javax.sql.DataSource;
@@ -22,6 +19,9 @@ import org.springframework.context.annotation.Profile;
 public class DBConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DBConfiguration.class);
+
+    private static final String DBSERVER_PORT_SPRING_VALUE = "${chutney.db-server.port}";
+    private static final String DBSERVER_H2_BASEDIR_SPRING_VALUE = "${chutney.db-server.base-dir:~/.chutney/data}";
 
     @Bean
     @DependsOn("dbServer")

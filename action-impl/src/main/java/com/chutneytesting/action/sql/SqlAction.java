@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class SqlAction implements Action {
 
-    public static final String CONFIGURABLE_NB_LOGGED_ROW = "chutney.actions.sql.nbLoggedRow";
+    public static final String CONFIGURABLE_NB_LOGGED_ROW = "chutney.actions.sql.max-logged-rows";
     private static final Integer DEFAULT_NB_LOGGED_ROW = 30;
 
     private final Target target;

@@ -70,14 +70,14 @@ class MicrometerMetrics implements ChutneyMetrics {
 
     @Override
     public void onHttpError(HttpStatus status) {
-        final Counter httpErrorCount = this.meterRegistry.counter("http_error", asList(of("status", String.valueOf(status.value()))));
+        final Counter httpErrorCount = this.meterRegistry.counter("http_error", List.of(of("status", String.valueOf(status.value()))));
         httpErrorCount.increment();
     }
 
     private void updateMetrics(Map<ServerReportStatus, Long> scenarioCountByStatus, Map<ServerReportStatus, AtomicLong> cachedMetrics) {
-        cachedMetrics.entrySet().stream().forEach(e -> {
-            final Long valueInCache = scenarioCountByStatus.get(e.getKey());
-            e.getValue().set(Objects.requireNonNullElse(valueInCache, 0L));
+        cachedMetrics.forEach((key, value) -> {
+            final Long valueInCache = scenarioCountByStatus.get(key);
+            value.set(Objects.requireNonNullElse(valueInCache, 0L));
         });
     }
 
@@ -87,7 +87,7 @@ class MicrometerMetrics implements ChutneyMetrics {
             cachedMetrics = new HashMap<>();
 
             final Map<ServerReportStatus, AtomicLong> tmp = cachedMetrics;
-            Arrays.asList(ServerReportStatus.values()).stream().forEach(s -> {
+            Arrays.asList(ServerReportStatus.values()).forEach(s -> {
                 final AtomicLong initialValue = new AtomicLong(0);
                 this.meterRegistry.gauge("scenario_in_campaign_gauge", asList(of("campaignId", campaignId), of("scenarioStatus", s.name())), initialValue);
                 tmp.put(s, initialValue);
