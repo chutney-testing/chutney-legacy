@@ -6,7 +6,7 @@ public class NotEnoughMemoryException extends RuntimeException {
 
     public NotEnoughMemoryException(long usedMemory, long maxMemory, String customMsg) {
         super(
-            "Running step was stopped to prevent application crash."
+            "Running step was stopped to prevent application crash. "
                 + toMegaByte(usedMemory) + "MB memory used of " + toMegaByte(maxMemory) + "MB max."
                 + "\n" + "Current step may not be the cause."
                 + "\n" + customMsg

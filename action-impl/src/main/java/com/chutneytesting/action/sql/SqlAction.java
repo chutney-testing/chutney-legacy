@@ -81,6 +81,7 @@ public class SqlAction implements Action {
             if (statements.size() == 1) {
                 outputs.put("rows", records.get(0).rows()); // All rows result from the first statement only
                 outputs.put("firstRow", records.get(0).rows().get(0)); // First row of the first statement
+                outputs.put("recordResult", records); // List of all results from each statement // TODO - remove after user migration
             } else {
                 outputs.put("recordResult", records); // List of all results from each statement
             }

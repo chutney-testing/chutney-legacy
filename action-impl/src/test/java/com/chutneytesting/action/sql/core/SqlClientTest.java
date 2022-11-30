@@ -79,65 +79,42 @@ public class SqlClientTest {
     }
 
     @Test
-    public void should_print_records_as_matrix() throws SQLException {
-        Object[][] expectedMatrix = new Object[3][3];
-        expectedMatrix[0][0] = 1;
-        expectedMatrix[0][1] = "laitue";
-        expectedMatrix[0][2] = "laitue@fake.com";
-
-        expectedMatrix[1][0] = 2;
-        expectedMatrix[1][1] = "carotte";
-        expectedMatrix[1][2] = "kakarot@fake.db";
-
-        expectedMatrix[2][0] = 3;
-        expectedMatrix[2][1] = "tomate";
-        expectedMatrix[2][2] = "null";
-
-        SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
-        Records records = sqlClient.execute("select * from users");
-
-        assertThat(records.toMatrix()).isEqualTo(expectedMatrix);
-    }
-
-    @Test
     public void should_retrieve_columns_as_string_but_for_date_and_numeric_sql_datatypes() throws SQLException {
         SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
         Records actual = sqlClient.execute("select * from allsqltypes");
 
-        Row onlyRecord = actual.rows().get(0);
-        assertThat(onlyRecord.get("COL_BOOLEAN")).isInstanceOf(Boolean.class);
-        assertThat(onlyRecord.get("COL_TINYINT")).isInstanceOf(Integer.class);
-        assertThat(onlyRecord.get("COL_SMALLINT")).isInstanceOf(Integer.class);
-        assertThat(onlyRecord.get("COL_MEDIUMINT")).isInstanceOf(Integer.class);
-        assertThat(onlyRecord.get("COL_INTEGER")).isInstanceOf(Integer.class);
-        assertThat(onlyRecord.get("COL_BIGINT")).isInstanceOf(Long.class);
-        assertThat(onlyRecord.get("COL_FLOAT")).isInstanceOf(Float.class);
-        assertThat(onlyRecord.get("COL_DOUBLE")).isInstanceOf(Double.class);
-        assertThat(onlyRecord.get("COL_DECIMAL")).isInstanceOf(BigDecimal.class);
-        assertThat(onlyRecord.get("COL_DECIMAL")).isInstanceOf(BigDecimal.class);
-        assertThat(onlyRecord.get("COL_DATE")).isInstanceOf(Date.class);
-        assertThat(onlyRecord.get("COL_TIME")).isInstanceOf(Time.class);
-        assertThat(onlyRecord.get("COL_TIMESTAMP")).isInstanceOf(Timestamp.class);
-        assertThat(onlyRecord.get("COL_CHAR")).isInstanceOf(String.class);
-        assertThat(onlyRecord.get("COL_VARCHAR")).isInstanceOf(String.class);
+        Row firstRow = actual.rows().get(0);
+        assertThat(firstRow.get("COL_BOOLEAN")).isInstanceOf(Boolean.class);
+        assertThat(firstRow.get("COL_TINYINT")).isInstanceOf(Integer.class);
+        assertThat(firstRow.get("COL_SMALLINT")).isInstanceOf(Integer.class);
+        assertThat(firstRow.get("COL_MEDIUMINT")).isInstanceOf(Integer.class);
+        assertThat(firstRow.get("COL_INTEGER")).isInstanceOf(Integer.class);
+        assertThat(firstRow.get("COL_BIGINT")).isInstanceOf(Long.class);
+        assertThat(firstRow.get("COL_FLOAT")).isInstanceOf(Float.class);
+        assertThat(firstRow.get("COL_DOUBLE")).isInstanceOf(Double.class);
+        assertThat(firstRow.get("COL_DECIMAL")).isInstanceOf(BigDecimal.class);
+        assertThat(firstRow.get("COL_DECIMAL")).isInstanceOf(BigDecimal.class);
+        assertThat(firstRow.get("COL_DATE")).isInstanceOf(Date.class);
+        assertThat(firstRow.get("COL_TIME")).isInstanceOf(Time.class);
+        assertThat(firstRow.get("COL_TIMESTAMP")).isInstanceOf(Timestamp.class);
+        assertThat(firstRow.get("COL_CHAR")).isInstanceOf(String.class);
+        assertThat(firstRow.get("COL_VARCHAR")).isInstanceOf(String.class);
         // INTERVAL SQL types : cf. SqlClient.StatementConverter#isJDBCDateType(Class)
-        assertThat(onlyRecord.get("COL_INTERVAL_YEAR")).isInstanceOf(String.class);
-        assertThat(onlyRecord.get("COL_INTERVAL_SECOND")).isInstanceOf(String.class);
+        assertThat(firstRow.get("COL_INTERVAL_YEAR")).isInstanceOf(String.class);
+        assertThat(firstRow.get("COL_INTERVAL_SECOND")).isInstanceOf(String.class);
     }
 
     @Test
     public void should_prevent_out_of_memory() {
-        try (MockedStatic<ChutneyMemoryInfo> chutneyMemoryInfoMockedStatic = Mockito.mockStatic(ChutneyMemoryInfo.class);) {
+        try (MockedStatic<ChutneyMemoryInfo> chutneyMemoryInfoMockedStatic = Mockito.mockStatic(ChutneyMemoryInfo.class)) {
             chutneyMemoryInfoMockedStatic.when(ChutneyMemoryInfo::hasEnoughAvailableMemory).thenReturn(true, true, false);
             chutneyMemoryInfoMockedStatic.when(ChutneyMemoryInfo::usedMemory).thenReturn(42L * 1024 * 1024);
             chutneyMemoryInfoMockedStatic.when(ChutneyMemoryInfo::maxMemory).thenReturn(1337L * 1024 * 1024);
 
             SqlClient sqlClient = new DefaultSqlClientFactory().create(sqlTarget);
 
-            Exception exception = assertThrows(NotEnoughMemoryException.class, () -> {
-                sqlClient.execute("select * from users");
-            });
-            assertThat(exception.getMessage()).isEqualTo("Running step was stopped to prevent application crash.42MB memory used of 1337MB max.\n" +
+            Exception exception = assertThrows(NotEnoughMemoryException.class, () -> sqlClient.execute("select * from users"));
+            assertThat(exception.getMessage()).isEqualTo("Running step was stopped to prevent application crash. 42MB memory used of 1337MB max.\n" +
                 "Current step may not be the cause.\n" +
                 "Query fetched 2 rows");
         }
