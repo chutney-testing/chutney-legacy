@@ -50,8 +50,8 @@
                            placeholder="ex. LK-42"/>
                 </div>
             </div>
-            <div class="col-5">
-                <div *ngIf="saveErrorMessage" class="text-center btn-danger text-white cursor-default" (click)="this.saveErrorMessage = null">
+            <div class="col-8">
+                <div *ngIf="saveErrorMessage" class="alert alert-danger text-center text-white cursor-default" (click)="this.saveErrorMessage = null">
                     <strong>{{ saveErrorMessage }}</strong>
                 </div>
             </div>
