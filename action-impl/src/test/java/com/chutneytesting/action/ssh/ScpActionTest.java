@@ -2,6 +2,7 @@ package com.chutneytesting.action.ssh;
 
 import static com.chutneytesting.action.spi.ActionExecutionResult.Status.Success;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 import static org.mockito.Mockito.mock;
 
 import com.chutneytesting.action.spi.ActionExecutionResult;
@@ -16,6 +17,7 @@ import java.util.List;
 import org.apache.sshd.server.SshServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -63,6 +65,7 @@ public class ScpActionTest {
     /**
      * Failed if launched in git bash
      */
+    @DisabledOnOs(WINDOWS)
     @ParameterizedTest
     @MethodSource("securedTargets")
     void should_download_remote_file_to_local_destination(Target target) {
