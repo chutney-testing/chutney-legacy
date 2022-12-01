@@ -87,7 +87,7 @@
 
         <!-- Runtime dependencies versions -->
         <springboot.version>2.7.5</springboot.version>
-        <guava.version>31.0.1-jre</guava.version> <!-- Test on https://github.com/FasterXML/jackson-datatypes-collections/tree/2.14/guava -->
+        <guava.version>31.1-jre</guava.version> <!-- Test on https://github.com/FasterXML/jackson-datatypes-collections/tree/2.14/guava -->
 
         <immutables.version>2.9.0</immutables.version>
         <commonstext.version>1.10.0</commonstext.version> <!-- Follow commons-lang3 spring boot version -->
