@@ -1,4 +1,11 @@
-import { Component, OnInit, QueryList, TemplateRef, ViewChildren } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    QueryList,
+    TemplateRef,
+    ViewChild,
+    ViewChildren
+} from '@angular/core';
 
 import { Authorization, ScenarioIndex, TestCase } from '@model';
 import {
@@ -9,7 +16,7 @@ import {
     ScenarioService
 } from '@core/services';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, switchMap, tap } from 'rxjs';
+import { combineLatestWith, EMPTY, Observable, of, switchMap, tap } from 'rxjs';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -34,8 +41,11 @@ export class ScenarioExecutionMenuComponent implements OnInit {
     @ViewChildren(NgbDropdown)
     private executeDropDown: QueryList<NgbDropdown>;
 
+    @ViewChild('delete_modal') deleteModal: TemplateRef<any>;
+
     Authorization = Authorization;
     modalRef: BsModalRef;
+    rightMenuItems;
 
     constructor(private componentService: ComponentService,
                 private environmentAdminService: EnvironmentAdminService,
@@ -54,38 +64,30 @@ export class ScenarioExecutionMenuComponent implements OnInit {
         this.route.params
             .pipe(
                 tap(params => this.testCaseId = params['id']),
-                switchMap(() => this.scenarioService.findScenarioMetadata(this.testCaseId))
+                switchMap(() => this.scenarioService.findScenarioMetadata(this.testCaseId)),
+                combineLatestWith(this.getEnvironments())
             )
-            .subscribe(scenarioMetadata => {
-                this.testCaseMetadata = scenarioMetadata
+            .subscribe(([scenarioMetadata, environments]) => {
+                this.testCaseMetadata = scenarioMetadata;
+                this.environments = environments;
+                this.initRightMenu();
             });
 
-        if (this.loginService.hasAuthorization(Authorization.SCENARIO_EXECUTE)) {
-            this.environmentAdminService.listEnvironmentsNames().subscribe(
-                (res) => this.environments = res
-            );
-        }
+
     }
 
     executeScenario(envName: string) {
         this.eventManagerService.broadcast({name: 'execute', env: envName});
     }
 
-    executeScenarioOnToggle() {
-        if (this.environments.length === 1) {
-            this.executeDropDown.first.close();
-            this.executeScenario(this.environments[0]);
-        }
-    }
-
     deleteScenario(id: string) {
-        let deleteObs: Observable<any>;
+        let delete$: Observable<any>;
         if (TestCase.isComposed(this.testCaseId)) {
-            deleteObs = this.componentService.deleteComponentTestCase(id);
+            delete$ = this.componentService.deleteComponentTestCase(id);
         } else {
-            deleteObs = this.scenarioService.delete(id);
+            delete$ = this.scenarioService.delete(id);
         }
-        deleteObs.subscribe(() => {
+        delete$.subscribe(() => {
             this.removeJiraLink(id);
             this.router.navigateByUrl('/scenario')
                 .then(null);
@@ -93,11 +95,8 @@ export class ScenarioExecutionMenuComponent implements OnInit {
     }
 
     duplicateScenario() {
-        if (TestCase.isComposed(this.testCaseId)) {
-            this.router.navigateByUrl('/scenario/' + this.testCaseId + '/component-edition?duplicate=true');
-        } else {
-            this.router.navigateByUrl('/scenario/' + this.testCaseId + '/raw-edition?duplicate=true');
-        }
+        const editionPath = TestCase.isComposed(this.testCaseId) ? '/component-edition' : '/raw-edition';
+        this.router.navigateByUrl('/scenario/' + this.testCaseId + editionPath + '?duplicate=true');
     }
 
     exportScenario() {
@@ -107,9 +106,8 @@ export class ScenarioExecutionMenuComponent implements OnInit {
         });
     }
 
-    openModal(template: TemplateRef<any>) {
-        this.modalRef = this.modalService.show(template, {class: 'modal-sm'});
-        document.getElementById('no-btn').focus();
+    openModal() {
+        this.modalRef = this.modalService.show(this.deleteModal, {class: 'modal-sm'});
     }
 
     confirm(): void {
@@ -123,12 +121,59 @@ export class ScenarioExecutionMenuComponent implements OnInit {
 
 
     private removeJiraLink(id: string) {
-        this.jiraLinkService.removeForScenario(id).subscribe(
-            () => {
-            },
-            (error) => {
+        this.jiraLinkService.removeForScenario(id).subscribe({
+            error: (error) => {
                 console.log(error);
             }
-        );
+        });
     }
+
+    private initRightMenu() {
+        const rightMenuItems: any [] = [
+            {
+                label: 'global.actions.execute',
+                click: this.executeScenario.bind(this),
+                class: 'fa fa-play',
+                authorizations: [Authorization.SCENARIO_EXECUTE],
+                options: this.environments.map(env => {
+                    return {id: env, label: env};
+                })
+            },
+            {
+                label: 'global.actions.edit',
+                link: TestCase.isComposed(this.testCaseId) ? '/scenario/' + this.testCaseId + '/component-edition' : '/scenario/' + this.testCaseId + '/raw-edition',
+                class: 'fa fa-pencil-alt',
+                authorizations: [Authorization.SCENARIO_WRITE]
+            },
+            {
+                label: 'global.actions.delete',
+                click: this.openModal.bind(this),
+                class: 'fa fa-trash',
+                authorizations: [Authorization.SCENARIO_WRITE]
+            },
+            {
+                label: 'global.actions.clone',
+                click: this.duplicateScenario.bind(this),
+                class: 'fa fa-clone',
+                authorizations: [Authorization.SCENARIO_WRITE]
+            },
+        ];
+
+        if (!TestCase.isComposed(this.testCaseId)) {
+            rightMenuItems.push({
+                label: 'global.actions.export',
+                click: this.exportScenario.bind(this),
+                class: 'fa fa-file-code'
+            });
+        }
+        this.rightMenuItems = rightMenuItems;
+    }
+
+    private getEnvironments(): Observable<Array<string>> {
+        if (this.loginService.hasAuthorization(Authorization.SCENARIO_EXECUTE)) {
+            return this.environmentAdminService.listEnvironmentsNames();
+        }
+        return of([])
+    }
+
 }

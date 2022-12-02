@@ -8,19 +8,17 @@ import { Authorization } from '@model';
 })
 export class ChutneyRightMenuComponent implements OnInit {
 
-    expanded = true;
     @Input() menuItems: {
         label: string,
         click?: Function,
         link?: string,
         class?: string,
-        authorizations:Authorization[]
+        authorizations:Authorization[],
+        options: {id: string,label: string} []
     } [] = [];
     constructor() { }
 
     ngOnInit(): void {
-    }
-    toggleExpand() {
-        this.expanded = !this.expanded;
+        console.log(this.menuItems);
     }
 }

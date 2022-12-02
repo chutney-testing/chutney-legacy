@@ -1,16 +1,31 @@
-<div class="right-menu" [class.expanded]="expanded">
-    <div class="right-menu__items">
-        <div *ngFor="let item of  menuItems">
-            <div class="menu-item"
-                 routerLink="{{!!item.link && item.link}}"
-                 (click)="item.click && item.click()">
-                <i class="icon-30" [ngClass]="item.class"></i>
-                <span>{{item.label | translate}}</span>
-            </div>
+<nav class="navbar px-1 bg-light h-100 align-items-start" *ngIf="menuItems?.length">
+    <div class="container-fluid">
+        <ul class="navbar-nav me-auto mb-2">
+                <ng-container *ngFor="let item of menuItems"
+                    [ngTemplateOutlet]="!!item.options && item.options.length ? dropDownItem : simpleItem"
+                    [ngTemplateOutletContext]="{item:item}">
+                </ng-container>
+        </ul>
+    </div>
+</nav>
+<ng-template #dropDownItem let-item='item'>
+    <li class="nav-item" ngbDropdown display="dynamic" *hasAuthorization="item.authorizations || []">
+        <a class="nav-link" tabindex="0" ngbDropdownToggle id="executeDropdown" role="button">
+            <i [ngClass]="item.class"></i>
+            {{item.label | translate}}
+        </a>
+        <div ngbDropdownMenu aria-labelledby="executeDropdown" class="dropdown-menu">
+            <a class="cursor-pointer" ngbDropdownItem *ngFor="let option of item.options"
+            (click)="item.click(option.id)">{{ option.label }}</a>
         </div>
+</ng-template>
 
-    </div>
-    <div class="right-menu__collapse" (click)="toggleExpand()">
-        <i class="fa fa-chevron-right icon-60"></i>
-    </div>
-</div>
+<ng-template #simpleItem let-item='item'>
+    <li class="nav-item" *hasAuthorization="item.authorizations || []">
+        <a class="nav-link cursor-pointer"
+           [routerLink]="item.link ? [item.link]: []"
+           (click)="item.click && item.click()">
+            <i [ngClass]="item.class"></i>
+            {{item.label | translate}}</a>
+    </li>
+</ng-template>
