@@ -22,6 +22,7 @@ import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { EventManagerService } from '@shared';
+import { MenuItem } from '@shared/components/layout/menuItem';
 
 @Component({
     selector: 'chutney-scenario-execution-menu',
@@ -45,7 +46,7 @@ export class ScenarioExecutionMenuComponent implements OnInit {
 
     Authorization = Authorization;
     modalRef: BsModalRef;
-    rightMenuItems;
+    rightMenuItems: MenuItem[];
 
     constructor(private componentService: ComponentService,
                 private environmentAdminService: EnvironmentAdminService,
@@ -133,7 +134,7 @@ export class ScenarioExecutionMenuComponent implements OnInit {
             {
                 label: 'global.actions.execute',
                 click: this.executeScenario.bind(this),
-                class: 'fa fa-play',
+                iconClass: 'fa fa-play',
                 authorizations: [Authorization.SCENARIO_EXECUTE],
                 options: this.environments.map(env => {
                     return {id: env, label: env};
@@ -142,19 +143,19 @@ export class ScenarioExecutionMenuComponent implements OnInit {
             {
                 label: 'global.actions.edit',
                 link: TestCase.isComposed(this.testCaseId) ? '/scenario/' + this.testCaseId + '/component-edition' : '/scenario/' + this.testCaseId + '/raw-edition',
-                class: 'fa fa-pencil-alt',
+                iconClass: 'fa fa-pencil-alt',
                 authorizations: [Authorization.SCENARIO_WRITE]
             },
             {
                 label: 'global.actions.delete',
                 click: this.openModal.bind(this),
-                class: 'fa fa-trash',
+                iconClass: 'fa fa-trash',
                 authorizations: [Authorization.SCENARIO_WRITE]
             },
             {
                 label: 'global.actions.clone',
                 click: this.duplicateScenario.bind(this),
-                class: 'fa fa-clone',
+                iconClass: 'fa fa-clone',
                 authorizations: [Authorization.SCENARIO_WRITE]
             },
         ];
@@ -163,7 +164,7 @@ export class ScenarioExecutionMenuComponent implements OnInit {
             rightMenuItems.push({
                 label: 'global.actions.export',
                 click: this.exportScenario.bind(this),
-                class: 'fa fa-file-code'
+                iconClass: 'fa fa-file-code'
             });
         }
         this.rightMenuItems = rightMenuItems;

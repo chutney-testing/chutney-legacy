@@ -1,7 +1,8 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { LoginService } from '@core/services';
-import { allMenuItems, MenuItem } from '@shared/components/chutney-left-menu/chutney-left-menu.items';
 import { LayoutOptions } from '@core/layout/layout-options.service';
+import { MenuItem } from '@shared/components/layout/menuItem';
+import { allMenuItems } from '@shared/components/layout/left-menu/chutney-left-menu.items';
 
 @Component({
     selector: 'chutney-chutney-left-menu',

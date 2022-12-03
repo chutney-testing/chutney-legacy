@@ -4,8 +4,6 @@ import { DatasetListComponent } from './components/dataset-list/dataset-list.com
 import { DatasetEditionComponent } from './components/dataset-edition/dataset-edition.component';
 import { CanDeactivateGuard, AuthGuard } from '@core/guards';
 import { Authorization } from '@model';
-import { ChutneyLeftMenuComponent } from '@shared/components/chutney-left-menu/chutney-left-menu.component';
-import { ChutneyMainHeaderComponent } from '@shared/components/chutney-main-header/chutney-main-header.component';
 
 export const DatasetRoute: Routes = [
     {

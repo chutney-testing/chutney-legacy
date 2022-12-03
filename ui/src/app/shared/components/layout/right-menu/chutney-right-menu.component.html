@@ -11,7 +11,7 @@
 <ng-template #dropDownItem let-item='item'>
     <li class="nav-item" ngbDropdown display="dynamic" *hasAuthorization="item.authorizations || []">
         <a class="nav-link" tabindex="0" ngbDropdownToggle id="executeDropdown" role="button">
-            <i [ngClass]="item.class"></i>
+            <i [ngClass]="item.iconClass"></i>
             {{item.label | translate}}
         </a>
         <div ngbDropdownMenu aria-labelledby="executeDropdown" class="dropdown-menu">
@@ -22,10 +22,10 @@
 
 <ng-template #simpleItem let-item='item'>
     <li class="nav-item" *hasAuthorization="item.authorizations || []">
-        <a class="nav-link cursor-pointer"
+        <a class="nav-link cursor-pointer" role="nav-link"
            [routerLink]="item.link ? [item.link]: []"
            (click)="item.click && item.click()">
-            <i [ngClass]="item.class"></i>
+            <i [ngClass]="item.iconClass"></i>
             {{item.label | translate}}</a>
     </li>
 </ng-template>

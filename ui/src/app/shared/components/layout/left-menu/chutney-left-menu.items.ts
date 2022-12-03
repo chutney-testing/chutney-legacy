@@ -1,19 +1,13 @@
 import { Authorization } from '@model';
-
-export class MenuItem {
-    label: string;
-    link?: string;
-    iconClass?: string;
-    authorizations?: Authorization[];
-    children?: MenuItem[] = [];
-}
+import { MenuItem } from '@shared/components/layout/menuItem';
 
 export const allMenuItems: MenuItem [] = [
     {
         label: 'Navigation',
         children: [
             {
-                label: 'menu.principal.scenarios', link: '/scenario',
+                label: 'menu.principal.scenarios',
+                link: '/scenario',
                 iconClass: 'fa fa-film',
                 authorizations: [Authorization.SCENARIO_READ,Authorization.SCENARIO_WRITE,Authorization.SCENARIO_EXECUTE]
             },
