@@ -79,6 +79,19 @@ public class SqlActionTest {
     }
 
     @Test
+    public void should_provide_affectedRows_when_single_statement() {
+        // Given
+        ActionsConfiguration configuration = new TestActionsConfiguration();
+        Action action = new SqlAction(sqlTarget, logger, configuration, Collections.singletonList("UPDATE USERS SET NAME = 'toto' WHERE ID = 1"), 5);
+
+        // When
+        ActionExecutionResult result = action.execute();
+
+        // Then
+        assertThat(result.outputs.get("affectedRows")).isEqualTo(1);
+    }
+
+    @Test
     public void should_output_only_many_results_when_multi_statements() {
         // Given
         ActionsConfiguration configuration = new TestActionsConfiguration();
