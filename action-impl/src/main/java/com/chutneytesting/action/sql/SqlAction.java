@@ -60,7 +60,7 @@ public class SqlAction implements Action {
         SqlClient sqlClient = clientFactory.create(target);
         try {
             List<Records> records = new ArrayList<>();
-            Map<String, List<Records>> outputs = new HashMap<>();
+            Map<String, Object> outputs = new HashMap<>();
             AtomicBoolean failure = new AtomicBoolean(false);
             statements.forEach(statement -> {
                 try {
@@ -77,7 +77,15 @@ public class SqlAction implements Action {
                     failure.set(true);
                 }
             });
-            outputs.put("recordResult", records);
+
+            if (statements.size() == 1) {
+                outputs.put("rows", records.get(0).rows()); // All rows result from the first statement only
+                outputs.put("firstRow", records.get(0).rows().get(0)); // First row of the first statement
+                outputs.put("recordResult", records); // List of all results from each statement // TODO - remove after user migration
+            } else {
+                outputs.put("recordResult", records); // List of all results from each statement
+            }
+
             return failure.get() ? ActionExecutionResult.ko(outputs) : ActionExecutionResult.ok(outputs);
         } finally {
             if (sqlClient != null) {

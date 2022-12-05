@@ -15,7 +15,7 @@ public class Records {
     @Deprecated public final List<List<Object>> rows;
 
     public final List<Column> columns;
-    public final List<Row> records;
+    public final List<Row> records; // TODO - rename to 'rows' after removing currently deprecated 'rows'
 
     public Records(int affectedRows, List<Column> columns, List<Row> records) {
         this.affectedRows = affectedRows;
@@ -30,8 +30,17 @@ public class Records {
         return headers;
     }
 
+    @Deprecated
     List<List<Object>> getRows() {
         return rows;
+    }
+
+    public Rows rows() {
+        return new Rows(records);
+    }
+
+    public Row row(int index) {
+        return records.get(index);
     }
 
     public int count() {
@@ -42,7 +51,7 @@ public class Records {
         final Object[][] matrix = new Object[records.size()][columns.size()];
         for (int rowIndex = 0; rowIndex < records.size(); rowIndex++) {
             for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
-                matrix[rowIndex][columnIndex] = records.get(rowIndex).get(columnIndex).value;
+                matrix[rowIndex][columnIndex] = records.get(rowIndex).get(columnIndex);
             }
         }
         return matrix;
@@ -68,7 +77,7 @@ public class Records {
         for (Row row : records.subList(0, limit)) {
             final Map<String, Object> aRow = new LinkedHashMap<>(columns.size());
             for (Column column : columns) {
-                aRow.put(column.name, row.get(column).value);
+                aRow.put(column.name, row.get(column));
             }
             listOfMaps.add(aRow);
         }
@@ -100,7 +109,7 @@ public class Records {
             column.name.length(),
             records.stream()
                 .limit(limit)
-                .map(r -> r.get(column).value.toString().length())
+                .map(r -> r.get(column).toString().length())
                 .max(Integer::compare)
                 .orElse(0)
         );
@@ -108,16 +117,18 @@ public class Records {
 
     public String tableHeaders(Map<Column, Integer> maxColumnLength) {
         StringBuilder sb = new StringBuilder();
+        StringBuilder hyphenLine = new StringBuilder();
         if (columns.size() > 0) {
             sb.append("|");
-            columns.forEach(column ->
+            hyphenLine.append("|");
+            columns.forEach(column -> {
                 sb.append(" ")
                     .append(column.printHeader(maxColumnLength.get(column)))
-                    .append(" |")
-            );
-            sb.append("\n");
-            sb.append("-".repeat(sb.length() - 1));
-            sb.append("\n");
+                    .append(" |");
+                hyphenLine.append("-".repeat(maxColumnLength.get(column) + 2))
+                    .append("|");
+            });
+            sb.append("\n").append(hyphenLine).append("\n");
         }
         return sb.toString();
     }

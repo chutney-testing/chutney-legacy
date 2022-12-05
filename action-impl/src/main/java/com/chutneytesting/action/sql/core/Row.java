@@ -1,5 +1,8 @@
 package com.chutneytesting.action.sql.core;
 
+import static java.util.stream.Collectors.toMap;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -11,25 +14,28 @@ public class Row {
         this.cells = values;
     }
 
-    public Cell get(Column column) {
+    public Object get(Column column) {
         return cells.stream()
             .filter(v -> v.column.equals(column))
             .findFirst()
-            .orElse(Cell.NONE);
+            .orElse(Cell.NONE)
+            .value;
     }
 
-    public Cell get(String header) {
+    public Object get(String header) {
         return cells.stream()
             .filter(v -> v.column.name.equals(header))
             .findFirst()
-            .orElse(Cell.NONE);
+            .orElse(Cell.NONE)
+            .value;
     }
 
-    public Cell get(int index) {
+    public Object get(int index) {
         return cells.stream()
             .filter(v -> v.column.index == index)
             .findFirst()
-            .orElse(Cell.NONE);
+            .orElse(Cell.NONE)
+            .value;
     }
 
     public String print(Map<Column, Integer> maxLength) {
@@ -64,5 +70,10 @@ public class Row {
         return "Row{" +
             "cells=" + cells +
             '}';
+    }
+
+    public Map<String, Object> asMap() {
+        return cells.stream()
+            .collect(toMap(c -> c.column.name, c -> c.value, (c1, c2) -> c1, HashMap::new));
     }
 }

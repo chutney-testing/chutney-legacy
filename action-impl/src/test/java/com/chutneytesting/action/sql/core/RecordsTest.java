@@ -117,11 +117,12 @@ public class RecordsTest {
         List<Row> rows = singletonList(new Row(List.of(new Cell(c0, "12345678910"), new Cell(c1, "12"), new Cell(c2, "1234567"))));
         Records sut = new Records(-1, headers, rows);
 
-        String actual = sut.tableHeaders(sut.maximumColumnLength(1));
+        Map<Column, Integer> maxColumnLength = sut.maximumColumnLength(1);
+        String actual = sut.tableHeaders(maxColumnLength);
 
         assertThat(actual).isEqualTo(
             "| lengthOf11  | 2  | 7       |\n" +
-                "------------------------------\n"
+            "|-------------|----|---------|\n"
         );
     }
 
@@ -168,9 +169,9 @@ public class RecordsTest {
 
         assertThat(actual).isEqualTo(
             "| X | X | X |\n" +
-                "-------------\n" +
-                "| A | B | C |\n" +
-                "| D | E | F |\n"
+            "|---|---|---|\n" +
+            "| A | B | C |\n" +
+            "| D | E | F |\n"
         );
     }
 }
