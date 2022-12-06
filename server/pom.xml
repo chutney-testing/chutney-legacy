@@ -174,7 +174,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
+            <artifactId>caffeine</artifactId> <!-- Divergence on dependency checker-qual and error_prone_annotations -->
         </dependency>
 
         <!-- Test dependencies -->

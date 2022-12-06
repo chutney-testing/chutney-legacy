@@ -157,7 +157,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.13</artifactId>
+            <artifactId>kafka_2.13</artifactId> <!-- Divergence on dependencies scala-library and scala-reflect-->
         </dependency>
         <dependency>
             <groupId>org.springframework.kafka</groupId>
@@ -185,7 +185,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.13</artifactId>
+            <artifactId>kafka_2.13</artifactId> <!-- Divergence on dependencies scala-library and scala-reflect-->
             <classifier>test</classifier>
         </dependency>
         <!-- Selemnium tasks-->
