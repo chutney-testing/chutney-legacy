@@ -22,20 +22,24 @@ public class Rows {
         return rows.get(index);
     }
 
-    public List<Object> get(String column) {
+    public List<Object> get(String header) {
         return rows.stream()
-            .map(row -> row.get(column))
+            .map(row -> row.get(header))
             .collect(toList());
     }
 
-    public List<List<Object>> valuesOf(String... column) {
+    public List<List<Object>> valuesOf(String... header) {
         return rows.stream().map(
-            row ->  Arrays.stream(column).map(row::get).collect(toList())
+            row ->  Arrays.stream(header).map(row::get).collect(toList())
         ).collect(toList());
     }
 
     public List<Map<String, Object>> asMap() {
         return rows.stream().map(Row::asMap).collect(toList());
+    }
+
+    public int count() {
+        return rows.size();
     }
 
 }
