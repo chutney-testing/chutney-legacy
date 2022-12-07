@@ -3,12 +3,20 @@ package com.chutneytesting;
 import com.chutneytesting.tools.ui.MyMixInForIgnoreType;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import javax.sql.DataSource;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.server.AbstractServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
@@ -34,12 +42,16 @@ public class WebConfiguration {
 
     @Bean
     public ObjectMapper reportObjectMapper() {
+        SimpleModule jdomElementModule = new SimpleModule();
+        jdomElementModule.addSerializer(Element.class, new JDomElementSerializer());
+
         return new ObjectMapper()
             .addMixIn(Resource.class, MyMixInForIgnoreType.class)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
             .enable(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS.mappedFeature())
+            .registerModule(jdomElementModule)
             .findAndRegisterModules();
     }
 
@@ -97,5 +109,24 @@ public class WebConfiguration {
             return "../";
         }
         return rootPath;
+    }
+
+    static class JDomElementSerializer extends StdSerializer<Element> {
+
+        private static final long serialVersionUID = 1L;
+
+        protected JDomElementSerializer() {
+            this(null);
+        }
+
+        protected JDomElementSerializer(Class<Element> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(Element element, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            String xmlString = new XMLOutputter(Format.getCompactFormat()).outputString(element);
+            jsonGenerator.writeObject(xmlString);
+        }
     }
 }
