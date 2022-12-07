@@ -1,5 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Authorization } from '@model';
+import { Component, Input } from '@angular/core';
 import { MenuItem } from '@shared/components/layout/menuItem';
 
 @Component({
@@ -7,12 +6,19 @@ import { MenuItem } from '@shared/components/layout/menuItem';
   templateUrl: './chutney-right-menu.component.html',
   styleUrls: ['./chutney-right-menu.component.scss']
 })
-export class ChutneyRightMenuComponent implements OnInit {
+export class ChutneyRightMenuComponent {
 
     @Input() menuItems: MenuItem [] = [];
     constructor() { }
 
-    ngOnInit(): void {
-        console.log(this.menuItems);
+    onItemClick(item: MenuItem) {
+        if (item.click) {
+            const option = item.options ? item.options[0].id : null;
+            option ? item.click(option) : item.click();
+        }
+    }
+
+    getItemLink(item: MenuItem) {
+        return item.link ? [item.link]: []
     }
 }

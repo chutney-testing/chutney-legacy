@@ -229,4 +229,11 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
         return keywordMatch && statusMatch && dateMatch && userMatch && envMatch && campaignMatch;
     }
 
+    openCampaignExecution(execution: Execution, event: MouseEvent) {
+        if (execution.campaignReport) {
+            event.stopPropagation();
+            this.router.navigate(['/campaign', execution.campaignReport.campaignId, 'execution', execution.campaignReport.executionId]);
+        }
+
+    }
 }

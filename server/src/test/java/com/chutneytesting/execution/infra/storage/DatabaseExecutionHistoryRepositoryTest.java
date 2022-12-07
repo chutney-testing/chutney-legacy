@@ -238,9 +238,10 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
         assertThat(executions.get(0).executionId()).isEqualTo(exec2.executionId());
         assertThat(executions.get(0).campaignReport()).isEmpty();
         assertThat(executions.get(1).executionId()).isEqualTo(exec1.executionId());
-        assertThat(executions.get(1).campaignReport()).isPresent();
-        assertThat(executions.get(1).campaignReport().get().campaignId).isEqualTo(campaignId);
-        assertThat(executions.get(1).campaignReport().get().executionId).isEqualTo(campaignExecutionId);
+        assertThat(executions.get(1).campaignReport()).hasValueSatisfying(report -> {
+            assertThat(report.campaignId).isEqualTo(campaignId);
+            assertThat(report.executionId).isEqualTo(campaignExecutionId);
+        });
     }
 
     @Test
@@ -256,7 +257,7 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
         saveCampaignExecutionReport(campaignId, campaignExecutionId,scenarioId, exec1);
 
         // When
-        ExecutionSummary executionSummary = executionHistoryRepository.getExecutionSummary(scenarioId, exec1.executionId());
+        ExecutionSummary executionSummary = executionHistoryRepository.getExecutionSummary(exec1.executionId());
 
         // Then
 

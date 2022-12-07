@@ -7,7 +7,7 @@ public class ReportNotFoundException extends RuntimeException {
         super("Unable to find report " + reportId + " of scenario " + scenarioId);
     }
 
-    public ReportNotFoundException(String scenarioId) {
-        super("No report available for scenario " + scenarioId);
+    public ReportNotFoundException(Long reportId) {
+        super("Unable to find report " + reportId);
     }
 }

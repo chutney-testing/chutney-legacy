@@ -28,9 +28,9 @@ class ScenarioExecutionHistoryController {
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
-    @GetMapping(path = "/api/ui/scenario/{scenarioId}/execution/{executionId}/summary/v1", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ExecutionSummaryDto getExecutionSummary(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
-        return ExecutionSummaryDto.toDto(executionHistoryRepository.getExecutionSummary(scenarioId, executionId));
+    @GetMapping(path = "/api/ui/scenario/execution/{executionId}/summary/v1", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ExecutionSummaryDto getExecutionSummary(@PathVariable("executionId") Long executionId) {
+        return ExecutionSummaryDto.toDto(executionHistoryRepository.getExecutionSummary(executionId));
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_READ')")

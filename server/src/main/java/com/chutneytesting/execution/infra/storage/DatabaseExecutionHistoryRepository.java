@@ -47,21 +47,24 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     @Override
-    public ExecutionSummary getExecutionSummary(String scenarioId, Long executionId) {
-        return namedParameterJdbcTemplate.queryForObject(
-            "SELECT SCENARIO_HIST.ID, SCENARIO_HIST.EXECUTION_TIME, SCENARIO_HIST.DURATION, SCENARIO_HIST.STATUS, SCENARIO_HIST.INFORMATION, SCENARIO_HIST.ERROR, " +
-                "SCENARIO_HIST.TEST_CASE_TITLE, SCENARIO_HIST.ENVIRONMENT,SCENARIO_HIST.DATASET_ID, SCENARIO_HIST.DATASET_VERSION, SCENARIO_HIST.USER_ID, " +
-                "CAMP.TITLE AS CAMPAIGN_TITLE, " +
-                "CAMP.ID AS CAMPAIGN_ID, " +
-                "CAMP_HIST.ID AS CAMPAIGN_EXECUTION_ID " +
-                "FROM SCENARIO_EXECUTION_HISTORY SCENARIO_HIST " +
-                "LEFT JOIN CAMPAIGN_EXECUTION_HISTORY CAMP_HIST ON CAMP_HIST.SCENARIO_EXECUTION_ID = SCENARIO_HIST.ID " +
-                "LEFT JOIN CAMPAIGN CAMP ON CAMP.ID = CAMP_HIST .CAMPAIGN_ID " +
-                "WHERE SCENARIO_HIST.SCENARIO_ID = :scenarioId " +
-                "AND SCENARIO_HIST.ID = :executionId",
-            ImmutableMap.<String, Object>builder().put("scenarioId", scenarioId)
-                .put("executionId", executionId).build(),
-            executionSummaryRowMapper);
+    public ExecutionSummary getExecutionSummary(Long executionId) {
+        try {
+            return namedParameterJdbcTemplate.queryForObject(
+                "SELECT SCENARIO_HIST.ID, SCENARIO_HIST.EXECUTION_TIME, SCENARIO_HIST.DURATION, SCENARIO_HIST.STATUS, SCENARIO_HIST.INFORMATION, SCENARIO_HIST.ERROR, " +
+                    "SCENARIO_HIST.TEST_CASE_TITLE, SCENARIO_HIST.ENVIRONMENT,SCENARIO_HIST.DATASET_ID, SCENARIO_HIST.DATASET_VERSION, SCENARIO_HIST.USER_ID, " +
+                    "CAMP.TITLE AS CAMPAIGN_TITLE, " +
+                    "CAMP.ID AS CAMPAIGN_ID, " +
+                    "CAMP_HIST.ID AS CAMPAIGN_EXECUTION_ID " +
+                    "FROM SCENARIO_EXECUTION_HISTORY SCENARIO_HIST " +
+                    "LEFT JOIN CAMPAIGN_EXECUTION_HISTORY CAMP_HIST ON CAMP_HIST.SCENARIO_EXECUTION_ID = SCENARIO_HIST.ID " +
+                    "LEFT JOIN CAMPAIGN CAMP ON CAMP.ID = CAMP_HIST .CAMPAIGN_ID " +
+                    "WHERE SCENARIO_HIST.ID = :executionId",
+                ImmutableMap.<String, Object>builder().put("executionId", executionId).build(),
+                executionSummaryRowMapper);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ReportNotFoundException(executionId);
+        }
+
     }
 
     @Override
@@ -83,6 +86,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     @Override
+    // TODO remove scenarioId params
     public Execution getExecution(String scenarioId, Long reportId) throws ReportNotFoundException {
         try {
             return namedParameterJdbcTemplate.queryForObject(

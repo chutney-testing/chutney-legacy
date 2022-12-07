@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <ul class="navbar-nav me-auto mb-2">
                 <ng-container *ngFor="let item of menuItems"
-                    [ngTemplateOutlet]="!!item.options && item.options.length ? dropDownItem : simpleItem"
+                    [ngTemplateOutlet]="!!item.options && item.options.length > 2 ? dropDownItem : simpleItem"
                     [ngTemplateOutletContext]="{item:item}">
                 </ng-container>
         </ul>
@@ -23,8 +23,8 @@
 <ng-template #simpleItem let-item='item'>
     <li class="nav-item" *hasAuthorization="item.authorizations || []">
         <a class="nav-link cursor-pointer" role="nav-link"
-           [routerLink]="item.link ? [item.link]: []"
-           (click)="item.click && item.click()">
+           [routerLink]="getItemLink(item)"
+           (click)="onItemClick(item)">
             <i [ngClass]="item.iconClass"></i>
             {{item.label | translate}}</a>
     </li>

@@ -1,13 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { delay, switchMap, tap } from 'rxjs/operators';
+import { catchError, delay, switchMap, tap } from 'rxjs/operators';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Execution, GwtTestCase, ScenarioComponent, TestCase } from '@model';
 import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, of, Subscription, zip } from 'rxjs';
+import { EMPTY, Observable, of, Subscription, zip } from 'rxjs';
 import { ComponentService, ScenarioService } from '@core/services';
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
-import { EventManagerService } from '@shared';
+import { AlertService, EventManagerService } from '@shared';
 
 @Component({
     selector: 'chutney-scenario-executions-history',
@@ -17,7 +17,7 @@ import { EventManagerService } from '@shared';
 export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
 
     tabs: Execution[] = [];
-    activeTab = 0;
+    activeTab = '0';
     executions: Execution [] = [];
     scenarioId: string;
     private _executionsFilters: Params = {};
@@ -26,13 +26,15 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
     scenario: ScenarioComponent | GwtTestCase;
     error: string;
     private scenarioExecution$: Subscription;
+    private readonly LAST_ID = 'last';
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
                 private scenarioExecutionService: ScenarioExecutionService,
                 private scenarioService: ScenarioService,
                 private componentService: ComponentService,
-                private eventManagerService: EventManagerService) {
+                private eventManagerService: EventManagerService,
+                private alertService: AlertService) {
     }
 
     ngOnInit(): void {
@@ -73,7 +75,7 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
         const openTabs = this.tabs.filter(exec => exec.executionId !== executionId);
         this.tabFilters['open'] = openTabs.map(exec => exec.executionId).toString();
 
-        if (this.activeTab === executionId || !openTabs.length) {
+        if (this.activeTab === executionId.toString() || !openTabs.length) {
             this.tabFilters['active'] = null;
         }
         this.updateQueryParams();
@@ -83,7 +85,7 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
     openReport(request: { execution: Execution, focus: boolean }) {
 
         let tabs = this.tabs;
-        if (!this.isOpened(request.execution.executionId)) {
+        if (!this.isOpened(request.execution.executionId.toString())) {
             tabs = tabs.concat(request.execution);
         }
         this.tabFilters['open'] = tabs.map(exec => exec.executionId).toString();
@@ -93,6 +95,7 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
     }
 
     onTabChange(changeEvent: NgbNavChangeEvent) {
+        this.activeTab = changeEvent.nextId;
         this.tabFilters['active'] = changeEvent.nextId;
         this.updateQueryParams();
     }
@@ -108,7 +111,7 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
     }
 
     updateExecutionStatus(executionId: number, update: { status: ExecutionStatus, error: string }) {
-        const execution = this.executions.find(exec => exec.executionId === executionId);
+        const execution = this.getExecution(executionId.toString());
         execution.status = update.status;
         execution.error = update.error;
     }
@@ -127,6 +130,11 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
             tap(scenario => {
                 this.hasParameters = hasParameter(scenario);
                 this.scenario = scenario;
+            }),
+            catchError(err => {
+                this.alertService.error(err.error);
+                this.router.navigate(['scenario']);
+                return EMPTY;
             })
         );
     }
@@ -140,19 +148,27 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
         });
     }
 
-    private isOpened(executionId: number) {
+    private isOpened(executionId: string) {
+        const lastExecId = this.executions[0]?.executionId?.toString();
         const openTabs: string = this.tabFilters['open'];
-        return openTabs.includes(executionId.toString());
+        return !!openTabs.split(',')
+            .find(openId => {
+                let id = openId;
+                if (openId === this.LAST_ID && executionId === lastExecId) {
+                    id = lastExecId;
+                }
+                return executionId === id;
+            });
     }
 
     private focusOnTab(executionId: string) {
-        this.activeTab = executionId && this.isOpened(+executionId) ? +executionId : 0;
+        this.activeTab = executionId && this.isOpened(executionId) ? executionId : '0';
         this.tabFilters['active'] = this.activeTab;
     }
 
     private cleanParams(params: Params) {
         Object.keys(params).forEach(key => {
-            if (params[key] === null || params[key] === '' || params[key] === 0) {
+            if (params[key] === null || params[key] === '' || params[key] === '0') {
                 delete params[key];
             }
         });
@@ -160,15 +176,19 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
     }
 
     private openTabs(queryParams: Params): Observable<Execution[]> {
-        const executionsIds = queryParams['open'];
+        if (!this.executions.length) {
+            return EMPTY;
+        }
+
         let openedExecutions$ = of([]);
-        if (executionsIds) {
-            let executions$: Observable<Execution> [] = executionsIds
+        this.cleanQueryParams(queryParams);
+        if (queryParams['open']) {
+            let executions$: Observable<Execution> [] = queryParams['open']
                 .split(',')
                 .map(id => {
-                    let execution = this.executions.find(exec => exec.executionId.toString() === id);
+                    let execution = this.getExecution(id);
                     if (!execution) {
-                        return this.scenarioExecutionService.findScenarioExecutionSummary(this.scenarioId, +id);
+                        return this.findScenarioExecutionSummary(id);
                     }
                     return of(execution);
                 });
@@ -177,10 +197,60 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
         return openedExecutions$.pipe(
             tap(executions => {
                 this.tabs = executions;
-                this.tabFilters['open'] = this.tabs.map(exec => exec.executionId).toString();
+                this.tabFilters['open'] = this.getOpenTabs(queryParams['open']);
                 this.focusOnTab(queryParams['active']);
             })
         )
+    }
+
+    private findScenarioExecutionSummary(id): Observable<Execution> {
+        return this.scenarioExecutionService.findScenarioExecutionSummary(+id)
+            .pipe(
+            catchError(error => {
+                this.error = error.error;
+                return EMPTY
+            })
+        );
+    }
+
+    private getOpenTabs(opens: string) {
+        return this.tabs. map((exec, i) => {
+            if (opens.includes(this.LAST_ID) && i === 0) {
+                return this.LAST_ID;
+            }
+            return exec.executionId;
+        }).toString();
+    }
+
+    private getExecution(id: string): Execution {
+        if (id === this.LAST_ID){
+            return this.executions[0];
+        }
+        return this.executions.find(exec => exec.executionId.toString() === id);
+    }
+
+    private cleanQueryParams(queryParams: Params) {
+        let redirect = false;
+        const lastExecutionId = this.executions.length && this.executions[0].executionId.toString();
+        if (queryParams['open']) {
+            let openExecutionsIds: string[] = queryParams['open'].split(',');
+            if (openExecutionsIds.includes(this.LAST_ID) && openExecutionsIds.includes(lastExecutionId)) {
+                openExecutionsIds = openExecutionsIds.filter(id => id !== lastExecutionId);
+                this.tabFilters['open'] = openExecutionsIds;
+                redirect = true;
+            }
+        }
+
+        if (queryParams['active']) {
+            let activeExecutionsIds: string[] = queryParams['active'].split(',');
+            if (activeExecutionsIds.includes(this.LAST_ID) && activeExecutionsIds.includes(lastExecutionId)) {
+                activeExecutionsIds = activeExecutionsIds.filter(id => id !== lastExecutionId);
+                this.tabFilters['active'] = activeExecutionsIds;
+                redirect = true;
+            }
+        }
+
+        redirect && this.updateQueryParams();
     }
 
     private onRightMenuAction() {
@@ -195,7 +265,7 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
                 .executeScenarioAsync(this.scenarioId, [], env)
                 .pipe(
                     delay(1000),
-                    switchMap(executionId => this.scenarioExecutionService.findScenarioExecutionSummary(this.scenarioId, +executionId)))
+                    switchMap(executionId => this.findScenarioExecutionSummary(+executionId)))
                 .subscribe({
                         next: (executionSummary) => {
                             this.openReport({
@@ -214,5 +284,9 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.eventManagerService.destroy(this.scenarioExecution$);
+    }
+
+    getActiveTab() {
+        return this.activeTab === this.LAST_ID ? this.executions[0]?.executionId?.toString() : this.activeTab;
     }
 }

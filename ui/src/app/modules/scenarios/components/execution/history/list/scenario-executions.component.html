@@ -132,8 +132,8 @@
                     <ngb-highlight [result]="execution.environment"
                                    [term]="filtersForm.get('keyword').value"></ngb-highlight>
                 </td>
-                <td (click)="$event.stopPropagation();" class="cursor-auto">
-                    <a [routerLink]="['/campaign', execution.campaignReport?.campaignId, 'execution', execution.campaignReport?.executionId]">
+                <td>
+                    <a (click)="openCampaignExecution(execution, $event)">
                         <ngb-highlight [result]="execution.campaignReport?.campaignName"
                                        [term]="filtersForm.get('keyword').value"></ngb-highlight>
                     </a>

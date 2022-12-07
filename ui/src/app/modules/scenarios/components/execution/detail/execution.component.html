@@ -33,30 +33,30 @@
                             -  {{'admin.targets.environment' | translate}} : <b>{{scenarioExecutionReport.environment}}</b>
                         </small>
                     </span>
-                    <div class="text-sm-center" *hasAuthorization="[Authorization.SCENARIO_EXECUTE]">
-                        <div *ngIf="scenarioExecutionReport.report.status == ExecutionStatus.RUNNING || scenarioExecutionReport.report.status == ExecutionStatus.PAUSED"
-                              class="btn-group btn-group-sm mt-1 justify-content-center position-relative">
-                            <button type="button" class="btn btn-primary" (click)="stopScenario()"
-                                    [disabled]="scenarioExecutionReport.report.status != ExecutionStatus.RUNNING">
-                                <span class="fa fa-stop"></span>
-                                <span class="btn-label">{{'global.actions.stop' | translate}}</span>
-                            </button>
+                </div>
+                <div class="text-sm-center" *hasAuthorization="[Authorization.SCENARIO_EXECUTE]">
+                    <div *ngIf="scenarioExecutionReport.report.status == ExecutionStatus.RUNNING || scenarioExecutionReport.report.status == ExecutionStatus.PAUSED"
+                         class="btn-group btn-group-sm mt-1 justify-content-center position-relative">
+                        <button type="button" class="btn btn-primary" (click)="stopScenario()"
+                                [disabled]="scenarioExecutionReport.report.status != ExecutionStatus.RUNNING">
+                            <span class="fa fa-stop"></span>
+                            <span class="btn-label">{{'global.actions.stop' | translate}}</span>
+                        </button>
 
-                            <button type="button" class="btn btn-primary mx-1" (click)="pauseScenario()"
-                                    [disabled]="scenarioExecutionReport.report.status != ExecutionStatus.RUNNING">
-                                <span class="fa fa-pause"></span>
-                                <span class="btn-label">{{'global.actions.pause' | translate}}</span>
-                            </button>
+                        <button type="button" class="btn btn-primary mx-1" (click)="pauseScenario()"
+                                [disabled]="scenarioExecutionReport.report.status != ExecutionStatus.RUNNING">
+                            <span class="fa fa-pause"></span>
+                            <span class="btn-label">{{'global.actions.pause' | translate}}</span>
+                        </button>
 
-                            <button type="button" class="btn btn-primary" (click)="resumeScenario()"
-                                    [disabled]="scenarioExecutionReport.report.status != ExecutionStatus.PAUSED">
-                                <span class="fa fa-play"></span>
-                                <span class="btn-label">{{'global.actions.resume' | translate}}</span>
-                            </button>
-                        </div>
+                        <button type="button" class="btn btn-primary" (click)="resumeScenario()"
+                                [disabled]="scenarioExecutionReport.report.status != ExecutionStatus.PAUSED">
+                            <span class="fa fa-play"></span>
+                            <span class="btn-label">{{'global.actions.resume' | translate}}</span>
+                        </button>
                     </div>
                 </div>
-                <div class="btn-group">
+                <div class="btn-group h-100">
                     <button type="button" class="btn btn-sm btn-primary m-2 rounded" [ngClass]="!toggleScenarioInfo ? 'active' : ''" (click)="expandAllInfo()">
                         <span class="btn-label"> {{ 'scenarios.execution.step.actions.informations' | translate }}
                         </span>
