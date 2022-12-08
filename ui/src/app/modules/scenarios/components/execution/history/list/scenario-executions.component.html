@@ -99,7 +99,7 @@
             <tr *ngFor="let execution of filteredExecutions"
                 (click)="openReport(execution, !$event.ctrlKey)" class="cursor-pointer">
                 <td>
-                    <a class="link-primary">
+                    <a class="link">
                         <ngb-highlight [result]="execution.executionId.toString()"
                                        [term]="filtersForm.get('keyword').value">
                         </ngb-highlight>
@@ -133,7 +133,7 @@
                                    [term]="filtersForm.get('keyword').value"></ngb-highlight>
                 </td>
                 <td>
-                    <a (click)="openCampaignExecution(execution, $event)">
+                    <a (click)="openCampaignExecution(execution, $event)" class="link">
                         <ngb-highlight [result]="execution.campaignReport?.campaignName"
                                        [term]="filtersForm.get('keyword').value"></ngb-highlight>
                     </a>

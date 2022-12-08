@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <ul class="navbar-nav me-auto mb-2">
                 <ng-container *ngFor="let item of menuItems"
-                    [ngTemplateOutlet]="!!item.options && item.options.length > 2 ? dropDownItem : simpleItem"
+                    [ngTemplateOutlet]="!!item.options && item.options.length > 1 ? dropDownItem : simpleItem"
                     [ngTemplateOutletContext]="{item:item}">
                 </ng-container>
         </ul>
