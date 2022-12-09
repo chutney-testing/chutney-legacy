@@ -48,6 +48,7 @@ class AggregatedTestCaseControllerTest {
         TestCaseMetadata mockTestCaseMetadata = mock(TestCaseMetadata.class);
         when(mockTestCaseMetadata.id()).thenReturn("1");
         when(mockTestCaseMetadata.creationDate()).thenReturn(Instant.now());
+        when(mockTestCaseMetadata.updateDate()).thenReturn(Instant.now());
         when(mockTestCaseMetadata.title()).thenReturn("TestCase title");
         when(mockTestCaseMetadata.description()).thenReturn("TestCase description");
         when(mockTestCase.metadata()).thenReturn(mockTestCaseMetadata);
@@ -66,6 +67,7 @@ class AggregatedTestCaseControllerTest {
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(testCaseIndexDto.metadata().id()).isEqualTo(of("1"));
         softly.assertThat(testCaseIndexDto.metadata().creationDate()).isAfter(Instant.now().minus(1, SECONDS));
+        softly.assertThat(testCaseIndexDto.metadata().updateDate()).isAfter(Instant.now().minus(1, SECONDS));
         softly.assertThat(testCaseIndexDto.metadata().title()).isEqualTo("TestCase title");
         softly.assertThat(testCaseIndexDto.metadata().description()).isEqualTo(of("TestCase description"));
         softly.assertAll();
@@ -77,6 +79,7 @@ class AggregatedTestCaseControllerTest {
         TestCaseMetadata mockTestCaseMetadata = mock(TestCaseMetadata.class);
         when(mockTestCaseMetadata.id()).thenReturn("1");
         when(mockTestCaseMetadata.creationDate()).thenReturn(Instant.now());
+        when(mockTestCaseMetadata.updateDate()).thenReturn(Instant.now());
         when(mockTestCaseMetadata.title()).thenReturn("TestCase title");
         when(mockTestCaseMetadata.description()).thenReturn("TestCase description");
         when(testCaseRepository.findAll()).thenReturn(List.of(mockTestCaseMetadata));
@@ -95,6 +98,7 @@ class AggregatedTestCaseControllerTest {
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(testCaseIndexDto.metadata().id()).isEqualTo(of("1"));
         softly.assertThat(testCaseIndexDto.metadata().creationDate()).isAfter(Instant.now().minus(10, SECONDS));
+        softly.assertThat(testCaseIndexDto.metadata().updateDate()).isAfter(Instant.now().minus(10, SECONDS));
         softly.assertThat(testCaseIndexDto.metadata().title()).isEqualTo("TestCase title");
         softly.assertThat(testCaseIndexDto.metadata().description()).isEqualTo(of("TestCase description"));
         softly.assertAll();

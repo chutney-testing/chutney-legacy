@@ -19,6 +19,7 @@ public interface TestCaseIndexDto {
             .metadata(ImmutableGwtTestCaseMetadataDto.builder()
                 .id(testCaseMetadata.id())
                 .creationDate(testCaseMetadata.creationDate())
+                .updateDate(testCaseMetadata.updateDate())
                 .title(testCaseMetadata.title())
                 .description(testCaseMetadata.description())
                 .tags(testCaseMetadata.tags())

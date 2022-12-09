@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/scenario/v2")
 public class AggregatedTestCaseController {
 
-    private TestCaseRepository testCaseRepository;
+    private final TestCaseRepository testCaseRepository;
     private final ExecutionHistoryRepository executionHistoryRepository;
 
     public AggregatedTestCaseController(TestCaseRepository testCaseRepository, ExecutionHistoryRepository executionHistoryRepository) {

@@ -6,6 +6,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
+import static org.assertj.core.api.Assertions.within;
 
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
@@ -223,11 +224,11 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
     @ParameterizedTest
     @MethodSource("parametersForShould_update_scenario_fields")
-    public void should_update_scenario_fields(String testName, GwtTestCase modifiedTestCase) {
+    public void should_update_scenario_fields_but_creation_date(String testName, GwtTestCase modifiedTestCase) {
         // Given: an existing scenarioTemplate in the repository
         final String scenarioId = repository.save(GWT_TEST_CASE);
         GwtTestCase modifiedTestCaseWithId = GwtTestCase.builder().from(modifiedTestCase).withMetadata(TestCaseMetadataBuilder.from(modifiedTestCase.metadata)
-            .withId(scenarioId).build())
+                .withId(scenarioId).build())
             .build();
 
         // When: the scenarioTemplate is updated in the repository
@@ -236,10 +237,14 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         // Then: the modified scenarioTemplate is found in the repository
         TestCase repositoryScenario = repository.findById(scenarioId).get();
 
-        assertThat(modifiedTestCaseWithId)
+        assertThat(repositoryScenario)
             .as(testName)
             .usingRecursiveComparison().ignoringFields("metadata.version", "metadata.updateDate", "metadata.creationDate")
-            .isEqualTo(repositoryScenario);
+            .isEqualTo(modifiedTestCaseWithId);
+
+        assertThat(repositoryScenario.metadata().creationDate())
+            .as(testName)
+            .isCloseTo(GWT_TEST_CASE.metadata.creationDate(), within(1, MILLIS));
     }
 
     @Test

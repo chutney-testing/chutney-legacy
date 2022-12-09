@@ -30,4 +30,9 @@ public interface GwtTestCaseMetadataDto {
         return Instant.now();
     }
 
+    @Value.Default()
+    default Instant updateDate() {
+        return Instant.now();
+    }
+
 }
