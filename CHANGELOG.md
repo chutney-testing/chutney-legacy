@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased](https://github.com/chutney-testing/chutney/tree/1.6.0)
+## [1.6.0](https://github.com/chutney-testing/chutney/tree/1.6.0)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.5.6...1.6.0)
 
@@ -10,7 +10,7 @@
 - 🚀 | Add utiliy method on sql Records [\#886](https://github.com/chutney-testing/chutney/issues/886)
 - 🚀 | Documentation of version convergence [\#959](https://github.com/chutney-testing/chutney/pull/959) 
 - 🚀 | Add affected rows count for single statement [\#958](https://github.com/chutney-testing/chutney/pull/958) 
-- 🚀 | Improve dark theme [\#941](https://github.com/chutney-testing/chutney/pull/941) ([rbenyoussef](https://github.com/rbenyoussef))
+- 🚀 | Improve dark theme [\#941](https://github.com/chutney-testing/chutney/pull/941)
 - 🚀 | Test campaign exec history with not executed scenario [\#931](https://github.com/chutney-testing/chutney/pull/931) 
 - 🚀 | SQL records utilities [\#897](https://github.com/chutney-testing/chutney/pull/897) 
 
