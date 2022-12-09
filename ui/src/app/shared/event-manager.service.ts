@@ -38,6 +38,6 @@ export class EventManagerService {
      * Method to unsubscribe the subscription
      */
     destroy(subscriber: Subscription) {
-        subscriber.unsubscribe();
+        subscriber && subscriber.unsubscribe();
     }
 }

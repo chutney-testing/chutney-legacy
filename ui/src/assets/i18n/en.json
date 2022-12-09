@@ -23,13 +23,6 @@
             "notif": "Notifications"
         }
     },
-    "home": {
-        "edition": {
-            "dialog": {
-                "title": "Update home-page"
-            }
-        }
-    },
     "scenarios": {
         "search": {
             "create": {
@@ -71,7 +64,14 @@
         "execution": {
             "history": {
                 "title": "Executions' history",
-                "time": "Today at"
+                "time": "Today at",
+                "status": "Status",
+                "date": "Date",
+                "env": "Environment",
+                "executor": "Executor",
+                "campaign": "Campaign",
+                "report": "Report",
+                "empty": "No execution"
             },
             "step": {
                 "actions": {
@@ -386,6 +386,14 @@
         "warning": "Warning"
     },
     "global": {
+        "status": {
+            "success": "OK",
+            "failure": "KO",
+            "running": "RUNNING",
+            "paused": "PAUSE",
+            "stopped": "STOP",
+            "not_executed": "NOT EXECUTED"
+        },
         "time": {
             "in": "in",
             "at": "at",
@@ -397,6 +405,7 @@
             },
 
             "search": "Search",
+            "global-search": "Global search",
             "add": "Add",
             "edit": "Edit",
             "editRaw": "Raw edition",
@@ -420,6 +429,7 @@
             "resume": "Resume",
             "pause": "Pause",
             "help": "Help",
+            "select": "Select",
 
             "done": {
                 "saved": "Saved"
@@ -449,7 +459,8 @@
         "smallword": {
             "of": "of",
             "On": "On",
-            "by": "by"
+            "by": "by",
+            "at": "at"
         }
     }
 }

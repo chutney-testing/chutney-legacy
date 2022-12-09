@@ -9,5 +9,7 @@ export class CampaignExecutionReport {
         public startDate?: string,
         public campaignName?: string,
         public partialExecution?: boolean,
-        public executionEnvironment?: string) { }
+        public executionEnvironment?: string,
+        public campaignId?: string
+        ) { }
 }

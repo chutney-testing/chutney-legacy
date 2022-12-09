@@ -1,3 +1,4 @@
+@import "~bootstrap/scss/bootstrap-utilities";
 @for $i from 1 through 100 {
     .w#{$i} { width: 1%*$i; }
 }
@@ -6,6 +7,15 @@
     .h#{$i} { height: 1%*$i; }
 }
 
-.pointer {
-    cursor: pointer;
-}
+
+//Generate utilities for Cursor
+$utilities: map-merge(
+        $utilities,
+        (
+            "cursor": (
+                property: cursor,
+                values: auto default pointer wait text move help not-allowed
+            ),
+        )
+);
+

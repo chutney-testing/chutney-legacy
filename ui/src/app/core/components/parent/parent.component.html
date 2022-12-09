@@ -2,17 +2,19 @@
 'closed-sidebar' : layoutOptions.toggleSidebar,
 'closed-sidebar-md' : layoutOptions.toggleSidebarMobile,
 'closed-sidebar-open': layoutOptions.sidebarHover || layoutOptions.toggleSidebarMobile
-}" [class]="'app-container'">
-    <router-outlet name="header"></router-outlet>
-    <router-outlet name="left-side-bar"></router-outlet>
-    <div class="app-main__outer">
-        <div class="app-main__inner">
-            <div>
-                <div class="container-fluid">
-                    <router-outlet></router-outlet>
-                </div>
-                <router-outlet name="right-side-bar"></router-outlet>
-            </div>
+}" class="app">
+    <header>
+        <router-outlet name="header"></router-outlet>
+    </header>
+    <main class="app_main">
+        <div>
+            <router-outlet name="left-side-bar"></router-outlet>
         </div>
-    </div>
+        <div class="app_main_inner container-fluid">
+            <router-outlet></router-outlet>
+        </div>
+        <div>
+            <router-outlet name="right-side-bar"></router-outlet>
+        </div>
+    </main>
 </div>

@@ -1,18 +1,22 @@
 // Main Base
 @import "../layout-variables";
 @import "~bootstrap/scss/bootstrap";
-.app-main__outer {
-  flex: 1;
-  flex-direction: column;
-  display: flex;
-  z-index: 8;
-  padding: $app-header-height 0 0 $app-sidebar-width;
-  transition: all .2s;
-  overflow: hidden;
-}
 
-.app-main__inner {
-  padding: $grid-gutter-width $grid-gutter-width 0;
-  flex: 1;
-    background-color: var(--bs-body-bg);
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &_main {
+        height: calc(100% - $app-header-height);
+        display: flex;
+        flex-direction: row;
+        &_inner {
+            flex-grow: 1;
+            padding: $grid-gutter-width 0 0 $grid-gutter-width;
+            transition: all .2s;
+            overflow: auto;
+            z-index: 8;
+        }
+    }
 }

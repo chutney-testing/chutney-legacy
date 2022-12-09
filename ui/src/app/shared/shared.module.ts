@@ -36,11 +36,12 @@ import {
 import { StateService } from './state/state.service';
 import { ChutneyEditorComponent } from '@shared/components/chutney-editor/chutney-editor.component';
 import { HjsonParserService } from '@shared/hjson-parser/hjson-parser.service';
-import { ChutneyMainHeaderComponent } from './components/chutney-main-header/chutney-main-header.component';
-import { ChutneyLeftMenuComponent } from './components/chutney-left-menu/chutney-left-menu.component';
-import { ChutneyRightMenuComponent } from './components/chutney-right-menu/chutney-right-menu.component';
+
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { ChutneyMainHeaderComponent } from '@shared/components/layout/header/chutney-main-header.component';
+import { ChutneyLeftMenuComponent } from '@shared/components/layout/left-menu/chutney-left-menu.component';
+import { ChutneyRightMenuComponent } from '@shared/components/layout/right-menu/chutney-right-menu.component';
 
 @NgModule({
     imports: [
@@ -51,7 +52,8 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
         RouterModule,
         TranslateModule,
         PerfectScrollbarModule,
-        NgbTooltipModule
+        NgbTooltipModule,
+        NgbDropdownModule
     ],
     declarations: [
         ComponentCardComponent,
@@ -105,6 +107,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
         WithoutScenarioPipe,
         HasAuthorizationDirective,
         ChutneyEditorComponent,
+        ChutneyRightMenuComponent,
     ],
     providers: [
         {

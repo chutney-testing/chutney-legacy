@@ -22,7 +22,7 @@
         <ul *ngIf="parents?.parentScenario.length > 0">
             <li *ngFor="let parentScenario of parents?.parentScenario">
                 <ng-container *hasAuthorization="[Authorization.SCENARIO_READ]">
-                    <a [routerLink]="['/scenario', parentScenario.id, 'execution', 'last']">{{parentScenario.name}}</a>
+                    <a [routerLink]="['/scenario', parentScenario.id, 'executions', 'last']">{{parentScenario.name}}</a>
                 </ng-container>
                 <ng-container *hasAuthorization="{not: true, authorizations: [Authorization.SCENARIO_READ]}">
                     {{parentScenario.name}}

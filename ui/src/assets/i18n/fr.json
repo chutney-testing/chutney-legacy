@@ -23,13 +23,6 @@
             "notif": "Notifications"
         }
     },
-    "home": {
-        "edition": {
-            "dialog": {
-                "title": "Modifier la page d'accueil"
-            }
-        }
-    },
     "scenarios": {
         "search": {
             "create": {
@@ -71,7 +64,14 @@
         "execution": {
             "history": {
                 "title": "Historique des exécutions",
-                "time": "Aujourd'hui à"
+                "time": "Aujourd'hui à",
+                "status": "Statut",
+                "date": "Date",
+                "env": "Environnement",
+                "executor": "Executeur",
+                "campaign": "Campagne",
+                "report": "Rapport",
+                "empty": "Aucune exécution"
             },
             "step": {
                 "actions": {
@@ -386,6 +386,14 @@
         "warning": "Avertissement"
     },
     "global": {
+        "status": {
+            "success": "OK",
+            "failure": "KO",
+            "running": "EN COURS",
+            "paused": "PAUSE",
+            "stopped": "STOP",
+            "not_executed": "NON EXÉCUTÉ"
+        },
         "time": {
             "in": "en",
             "at": "le",
@@ -397,6 +405,7 @@
             },
 
             "search": "Rechercher",
+            "global-search": "Recherche globale",
             "add": "Ajouter",
             "edit": "Éditer",
             "editRaw": "Édition brute",
@@ -420,6 +429,7 @@
             "resume": "Reprendre",
             "pause": "Suspendre",
             "help": "Aide",
+            "select": "Sélectionner",
 
             "done": {
                 "saved": "Sauvegarde réalisée"
@@ -449,7 +459,8 @@
         "smallword": {
             "of": "de",
             "On": "Sur",
-            "by": "par"
+            "by": "par",
+            "at": "à"
         }
     }
 }

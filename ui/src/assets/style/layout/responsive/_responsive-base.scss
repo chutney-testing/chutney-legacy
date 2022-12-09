@@ -11,14 +11,9 @@
 
   .app-sidebar {
     transform: translateX(-$app-sidebar-width-collapsed);
-    position: fixed;
     z-index: 20;
     box-shadow: 0 0 0 0 transparent;
-    padding-top: $app-header-height;
 
-    .app-header__logo {
-      display: none;
-    }
   }
 
   .closed-sidebar-md.closed-sidebar-open {
@@ -26,10 +21,6 @@
       transform: translateX(0);
       box-shadow: $sidebar-box-shadow;
     }
-  }
-
-  .app-main__outer {
-    padding-left: 0 !important;
   }
 
   .app-header {
@@ -129,11 +120,16 @@
       background: $gray-800;
     }
   }
+    .closed-sidebar:not(.closed-sidebar-open) {
+        .app-sidebar {
+            display: none!important;
+        }
+    }
 }
 
 
 @include media-breakpoint-down(sm) {
-  .app-main__inner {
+  .app_main_inner {
     padding: 15px 15px 0;
   }
 

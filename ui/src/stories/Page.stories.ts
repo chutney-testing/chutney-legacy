@@ -3,7 +3,7 @@ import { within, userEvent } from '@storybook/testing-library';
 import { CommonModule } from '@angular/common';
 
 import Button from './button.component';
-import Header from './header.component';
+import Header from './layout/header/header.component';
 import Page from './page.component';
 
 export default {

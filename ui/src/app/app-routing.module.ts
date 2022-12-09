@@ -5,8 +5,8 @@ import { LoginComponent } from '@core/components/login/login.component';
 import { AuthGuard } from '@core/guards';
 import { Authorization } from '@model';
 import { ParentComponent } from '@core/components/parent/parent.component';
-import { ChutneyMainHeaderComponent } from '@shared/components/chutney-main-header/chutney-main-header.component';
-import { ChutneyLeftMenuComponent } from '@shared/components/chutney-left-menu/chutney-left-menu.component';
+import { ChutneyMainHeaderComponent } from '@shared/components/layout/header/chutney-main-header.component';
+import { ChutneyLeftMenuComponent } from '@shared/components/layout/left-menu/chutney-left-menu.component';
 
 export const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },

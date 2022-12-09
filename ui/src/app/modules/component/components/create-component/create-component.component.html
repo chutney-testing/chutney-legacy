@@ -1,6 +1,6 @@
-<div class="row">
-    <div class="ps-0 m-0 position-relative"
-        [ngClass]="{'col-1 p-0 h100 component-list-container-minimize':componentMinimize, 'col-3':!componentMinimize}">
+<div class="d-flex flex-row">
+    <div class="position-relative w-25"
+        [ngClass]="{'ps-0 m-0 h100 component-list-container-minimize':componentMinimize}">
         <button type="button"
             class="left-panel-minimize-btn btn btn-xs btn-default shadow-none p-0 px-1 border-end rounded-0"
             [ngClass]="{'start-0':componentMinimize, 'end-0':!componentMinimize}"
@@ -53,7 +53,7 @@
                 <table class="table table-sm table-striped table-hover">
                     <tbody dragula="COPYABLE" id="left"
                         [dragulaModel]="componentTasks |  componentSearch : tagData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll() | searchTextPipe  : componentFilter : ['name']">
-                        <tr class="pointer d-flex me-auto"
+                        <tr class="cursor-pointer d-flex me-auto"
                             *ngFor="let component of (componentTasks |  componentSearch : tagData.selected() : tagData.isNoTagSelected() : tagData.isSelectAll() | searchTextPipe  : componentFilter : ['name'])"
                             (click)="editComponentTask(component)"
                             [ngClass]="{'selected-component': editableComponent?.name === component.name || actionToEdit?.name === component.name}">
@@ -75,7 +75,7 @@
                 <table class="table table-sm table-striped table-hover">
                     <tbody>
                         <tr *ngFor="let task of tasks | searchTextPipe: taskFilter:['identifier']"
-                            (click)="select(task)" class="pointer"
+                            (click)="select(task)" class="cursor-pointer"
                             [ngClass]="{'selected-component': task?.identifier === actionSelected?.identifier }">
                             <td> {{task.identifier}}</td>
                         </tr>
@@ -85,8 +85,7 @@
         </div>
     </div>
 
-    <div class="" [formGroup]="componentForm"
-        [ngClass]="{'col-12 ms-3':componentMinimize, 'col-9':!componentMinimize}">
+    <div class="flex-grow-1" [formGroup]="componentForm">
         <div class="text-center bg-info text-white mt-0 " [ngClass]="message ? 'bg-' + messageType : 'mb-4'">
             <strong *ngIf="message">{{ message }}</strong>
         </div>

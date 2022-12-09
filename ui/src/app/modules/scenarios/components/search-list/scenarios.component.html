@@ -64,7 +64,7 @@
     </div>
 </div>
 
-<div class="row">
+<div class="row w-100">
     <span class="ms-3">{{viewedScenarios.length}} / {{scenarios.length}}</span>
     <div class="table-responsive mb-3 mx-3">
         <table class="table table-sm table-striped table-hover">
@@ -126,7 +126,7 @@
 
                 <td scope="row" class="text-center">{{scenario.executionCount}}</td>
 
-                <td [routerLink]="['/scenario', scenario.id, 'execution', 'last']" (click)="$event.stopPropagation()" class="scenario-title pointer">{{scenario.title}}</td>
+                <td [routerLink]="['/scenario', scenario.id, 'executions']" (click)="$event.stopPropagation()" class="scenario-title cursor-pointer">{{scenario.title}}</td>
 
                 <td>
                     <a *ngIf="jiraMap.has(scenario.id)" role="button" class="btn btn-sm btn-link me-0"
@@ -164,7 +164,7 @@
                     {{ scenario.creationDate | amLocale:'fr' | amTimeAgo }}
                 </td>
                 <td >
-                    <button type="button" class="btn bnt-xs" [routerLink]="['/scenario', scenario.id, 'execution', 'last']" (click)="$event.stopPropagation()" >
+                    <button type="button" class="btn bnt-xs" [routerLink]="['/scenario', scenario.id, 'executions', 'last']" (click)="$event.stopPropagation()" >
                         <span  class="fa fa-eye"></span>
                     </button>
                     <button type="button" class="btn bnt-xs"  routerLink="{{isComposed(scenario.id) ? '/scenario/' + scenario.id + '/component-edition' : '/scenario/' + scenario.id + '/raw-edition'}}" (click)="$event.stopPropagation()">

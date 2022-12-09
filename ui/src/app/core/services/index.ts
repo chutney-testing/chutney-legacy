@@ -13,6 +13,5 @@ export * from './linkifier.service';
 export * from './login.service';
 export * from './roles.service';
 export * from './scenario.service';
-export * from './scenario-execution.service';
 export * from './step.service';
 export * from './info.service';

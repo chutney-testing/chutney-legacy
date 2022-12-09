@@ -1,0 +1,85 @@
+
+button span:not(:first-child) {
+    display: block;
+}
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+}
+
+:host ::ng-deep button.trash-btn {
+    height: 48px;
+    font-size: 25px;
+    color: white;
+}
+
+.badge-container {
+    display: inline-block;
+    margin: 10px 0 5px 20px;
+}
+
+div.steps {
+    margin-top: 20px;
+}
+
+.error {
+    color: var(--bs-warning);
+    margin-bottom: 30px;
+}
+
+.col-sm-3half, .col-sm-8half {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+@media (min-width: 768px) {
+    .col-sm-3half, .col-sm-8half {
+        float: left;
+    }
+    .col-sm-3half {
+        width: 17.16666667%;
+    }
+    .col-sm-8half {
+        width: 82.83333333%;
+    }
+}
+
+.campaigns-scenario {
+    position: absolute;
+    height: 50px;
+    right: 0;
+    z-index: 100;
+    margin: 0;
+}
+
+.background-white {
+    background-color: white;
+}
+
+.gwt::before {
+    //background: $neutral;
+    //color: $grisfonce;
+    font-size: 9px;
+    font-weight: bold;
+    padding: 3px 5px;
+    text-transform: uppercase;
+}
+
+#given::before {
+    content: "Given";
+}
+
+#when::before {
+    content: "When";
+}
+
+#then::before {
+    content: "Then";
+}

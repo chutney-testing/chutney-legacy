@@ -16,13 +16,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
+public
 class CampaignExecutionRepository {
 
     private final CampaignExecutionReportMapper campaignExecutionReportMapper;
     private final NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate;
     private static final int LIMIT_BLOC_SIZE = 20;
 
-    CampaignExecutionRepository(NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate, CampaignExecutionReportMapper repository) {
+    public CampaignExecutionRepository(NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate, CampaignExecutionReportMapper repository) {
         this.uiNamedParameterJdbcTemplate = uiNamedParameterJdbcTemplate;
         this.campaignExecutionReportMapper = repository;
     }

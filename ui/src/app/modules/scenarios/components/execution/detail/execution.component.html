@@ -1,0 +1,100 @@
+<div class="row">
+
+
+    <div>
+        <div class="steps" *ngIf="parseError">
+            <div class="error">
+                <em>{{'scenarios.execution.errors.parse' | translate}} : {{parseError}}</em>
+            </div>
+        </div>
+        <div class="steps" *ngIf="executionError">
+            <div class="error">
+                <em>{{executionError}}</em>
+            </div>
+        </div>
+        <div class="mb-2">
+            <chutney-scenario-campaigns [idScenario]="scenario.id"></chutney-scenario-campaigns>
+        </div>
+        <ng-container *ngIf="scenarioExecutionReport?.report">
+            <div class="steps d-flex flex-row justify-content-between">
+                <div class="badge-container">
+                    <span>
+                       <chutney-execution-badge [status]="scenarioExecutionReport.report.status" [spin]="true"></chutney-execution-badge>
+                        <small class="text-muted ms-2">
+                            {{'global.time.in' | translate}} {{scenarioExecutionReport.report.duration | duration}}
+                        </small>
+                        <small class="text-muted ms-2">
+                            {{'global.time.at' | translate}} {{scenarioExecutionReport.report.startDate | date:'medium'}}
+                        </small>
+                        <small *ngIf="scenarioExecutionReport.user" class="text-muted ms-2">
+                            {{'global.smallword.by' | translate}} : <b>{{scenarioExecutionReport.user}}</b>
+                        </small>
+                        <small class="text-muted ms-2">
+                            -  {{'admin.targets.environment' | translate}} : <b>{{scenarioExecutionReport.environment}}</b>
+                        </small>
+                    </span>
+                </div>
+                <div class="text-sm-center" *hasAuthorization="[Authorization.SCENARIO_EXECUTE]">
+                    <div *ngIf="scenarioExecutionReport.report.status == ExecutionStatus.RUNNING || scenarioExecutionReport.report.status == ExecutionStatus.PAUSED"
+                         class="btn-group btn-group-sm mt-1 justify-content-center position-relative">
+                        <button type="button" class="btn btn-primary" (click)="stopScenario()"
+                                [disabled]="scenarioExecutionReport.report.status != ExecutionStatus.RUNNING">
+                            <span class="fa fa-stop"></span>
+                            <span class="btn-label">{{'global.actions.stop' | translate}}</span>
+                        </button>
+
+                        <button type="button" class="btn btn-primary mx-1" (click)="pauseScenario()"
+                                [disabled]="scenarioExecutionReport.report.status != ExecutionStatus.RUNNING">
+                            <span class="fa fa-pause"></span>
+                            <span class="btn-label">{{'global.actions.pause' | translate}}</span>
+                        </button>
+
+                        <button type="button" class="btn btn-primary" (click)="resumeScenario()"
+                                [disabled]="scenarioExecutionReport.report.status != ExecutionStatus.PAUSED">
+                            <span class="fa fa-play"></span>
+                            <span class="btn-label">{{'global.actions.resume' | translate}}</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="btn-group h-100">
+                    <button type="button" class="btn btn-sm btn-primary m-2 rounded" [ngClass]="!toggleScenarioInfo ? 'active' : ''" (click)="expandAllInfo()">
+                        <span class="btn-label"> {{ 'scenarios.execution.step.actions.informations' | translate }}
+                        </span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-dark m-2 rounded" [ngClass]="!toggleScenarioDetails ? 'active' : ''" (click)="expandAllDetails()">
+                        <span class="btn-label">
+                            {{toggleScenarioDetails ? ('scenarios.execution.actions.details.show' | translate) : ('scenarios.execution.actions.details.hide' | translate)}}
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <div class="steps">
+                <chutney-scenario-step-report *ngFor="let report of scenarioExecutionReport.report.steps; let i = index"
+                                              [id]="i"
+                                              [step]="report"></chutney-scenario-step-report>
+            </div>
+        </ng-container>
+        <div *ngIf="!scenarioExecutionReport" class="border">
+            <ng-container *ngIf="isComponentScenario()">
+                <div *ngFor="let step of scenario.componentSteps">
+                    <chutney-component-read [step]=step></chutney-component-read>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="!isComponentScenario()">
+                <div *ngIf="scenario.scenario.givens.length > 0" class="gwt" id="given">
+                    <div *ngFor="let step of scenario.scenario.givens">
+                        <chutney-gwt-read [step]=step [type]="'given'"></chutney-gwt-read>
+                    </div>
+                </div>
+                <div *ngIf="scenario.scenario.when" class="gwt" id="when">
+                    <chutney-gwt-read [step]=scenario.scenario.when [type]="'when'"></chutney-gwt-read>
+                </div>
+                <div *ngIf="scenario.scenario.thens.length > 0" class="gwt" id="then">
+                    <div *ngFor="let step of scenario.scenario.thens">
+                        <chutney-gwt-read [step]=step [type]="'then'"></chutney-gwt-read>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>

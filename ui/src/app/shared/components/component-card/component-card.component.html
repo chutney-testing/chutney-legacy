@@ -1,4 +1,4 @@
-<div *ngIf="component" id="component-{{uid}}" class="card-body pointer p-2" [formGroup]="cardForm">
+<div *ngIf="component" id="component-{{uid}}" class="card-body cursor-pointer p-2" [formGroup]="cardForm">
     <div class="float-sm-end">
         <button *hasAuthorization="[Authorization.COMPONENT_WRITE, Authorization.SCENARIO_WRITE]"
             type="button" class="btn btn-sm btn-outline-danger"

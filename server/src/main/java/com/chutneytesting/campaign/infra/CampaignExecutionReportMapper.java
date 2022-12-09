@@ -31,7 +31,7 @@ public class CampaignExecutionReportMapper implements ResultSetExtractor<List<Ca
 
     private final TestCaseRepositoryAggregator repository;
 
-    CampaignExecutionReportMapper(TestCaseRepositoryAggregator repository) {
+    public CampaignExecutionReportMapper(TestCaseRepositoryAggregator repository) {
         this.repository = repository;
     }
 
