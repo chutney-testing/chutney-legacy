@@ -56,14 +56,16 @@ public class StepExecutionReportDto {
 
         public Map<String, Object> scenarioContext;
         public Map<String, Object> evaluatedInputs;
+        public Map<String, Object> inputs;
         public Map<String, Object> stepResults;
 
         public StepContextDto() {
         }
 
-        public StepContextDto(Map<String, Object> scenarioContext, Map<String, Object> evaluatedInputs, Map<String, Object> stepResults) {
+        public StepContextDto(Map<String, Object> scenarioContext, Map<String, Object> evaluatedInputs, Map<String, Object> inputs,  Map<String, Object> stepResults) {
             this.scenarioContext = scenarioContext;
             this.evaluatedInputs = evaluatedInputs;
+            this.inputs = inputs;
             this.stepResults = stepResults;
         }
     }

@@ -22,7 +22,7 @@ class StepExecutionReportMapper {
             report.information,
             report.errors,
             report.steps.stream().map(StepExecutionReportMapper::toDto).collect(Collectors.toList()),
-            StepContextMapper.toDto(report.scenarioContext, report.evaluatedInputs, report.stepResults),
+            StepContextMapper.toDto(report.scenarioContext, report.evaluatedInputs, report.inputs, report.stepResults),
             report.type,
             report.targetName,
             report.targetUrl,
@@ -33,10 +33,11 @@ class StepExecutionReportMapper {
     static class StepContextMapper {
 
         @SuppressWarnings("unchecked")
-        static StepExecutionReportDto.StepContextDto toDto(Map<String, Object> scenarioContext, Map<String, Object> evaluatedInput, Map<String, Object> stepResults) {
+        static StepExecutionReportDto.StepContextDto toDto(Map<String, Object> scenarioContext, Map<String, Object> evaluatedInput, Map<String, Object> input, Map<String, Object> stepResults) {
             return new StepExecutionReportDto.StepContextDto(
                 scenarioContext != null ? scenarioContext : EMPTY_MAP,
                 evaluatedInput != null ? evaluatedInput : EMPTY_MAP,
+                input != null ? input : EMPTY_MAP,
                 stepResults != null ? stepResults : EMPTY_MAP
             );
         }

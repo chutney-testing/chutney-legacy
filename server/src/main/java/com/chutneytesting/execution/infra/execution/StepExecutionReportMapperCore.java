@@ -24,6 +24,7 @@ class StepExecutionReportMapperCore {
             .setErrors(reportDto.errors)
             .setSteps(reportDto.steps.stream().map(StepExecutionReportMapperCore::fromDto).collect(Collectors.toList()))
             .setEvaluatedInputs(reportDto.context != null ? reportDto.context.evaluatedInputs : EMPTY_MAP)
+            .setInputs(reportDto.context != null ? reportDto.context.inputs : EMPTY_MAP)
             .setStepOutputs(reportDto.context != null ? reportDto.context.stepResults : EMPTY_MAP)
             .setType(reportDto.type)
             .setTargetName(reportDto.targetName)

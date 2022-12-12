@@ -119,6 +119,7 @@ public class Reporter {
                 .setErrors(step.errors())
                 .setSteps(step.subSteps().stream().map(subStep -> generateReport(subStep, Step::status)).collect(Collectors.toList()))
                 .setEvaluatedInputs(stepContext.getEvaluatedInputs())
+                .setInputs(step.definition().inputs)
                 .setStepResults(stepContext.getStepOutputs())
                 .setScenarioContext(stepContext.getScenarioContext())
                 .setType(step.type())

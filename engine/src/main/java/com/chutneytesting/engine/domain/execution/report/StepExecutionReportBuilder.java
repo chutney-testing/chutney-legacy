@@ -24,6 +24,8 @@ public class StepExecutionReportBuilder {
     private String targetUrl = "";
     private String strategy = "sequential";
     private Map<String, Object> evaluatedInputs;
+
+    private Map<String, Object> inputs;
     private Map<String, Object> stepResults;
     private Map<String, Object> scenarioContext;
 
@@ -49,6 +51,11 @@ public class StepExecutionReportBuilder {
 
     public StepExecutionReportBuilder setEvaluatedInputs(Map<String, Object> evaluatedInputs) {
         this.evaluatedInputs = evaluatedInputs;
+        return this;
+    }
+
+    public StepExecutionReportBuilder setInputs(Map<String, Object> inputs) {
+        this.inputs = inputs;
         return this;
     }
 
@@ -152,6 +159,7 @@ public class StepExecutionReportBuilder {
             targetUrl,
             strategy,
             evaluatedInputs,
+            inputs,
             stepResults,
             scenarioContext
         );

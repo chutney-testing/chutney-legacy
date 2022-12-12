@@ -61,6 +61,26 @@ export class StepReportComponent implements OnInit, OnDestroy {
         return size > 0;
     }
 
+    mergeInputs() {
+        const res: Map<string, Object> = new Map<string, Object>();
+        this.step.inputs.forEach((value, key) => {
+            if (value instanceof Array) {
+                res.set(key, value.map(el => {
+                    if (value instanceof Array) {
+                        res.set(key, value.map(el => {
+                            res.set(key, value + ' / ' +this.step.evaluatedInputs.get(key));
+                        }));
+                    } else {
+                        res.set(key, value + ' / ' +this.step.evaluatedInputs.get(key));
+                    }
+                }));
+            } else {
+                res.set(key, value + ' / ' +this.step.evaluatedInputs.get(key));
+            }
+        });
+        this.step.evaluatedInputs;
+    }
+
     hasOutputs(): boolean {
         let size = 0;
         if (this.step.stepOutputs) {

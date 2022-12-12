@@ -10,6 +10,7 @@ export class StepExecutionReport {
         public targetName: string,
         public targetUrl: string,
         public evaluatedInputs: Map<string, Object>,
+        public inputs: Map<string, Object>,
         public steps: Array<StepExecutionReport>,
         public stepOutputs: Map<string, Object>,
         public name?: string,

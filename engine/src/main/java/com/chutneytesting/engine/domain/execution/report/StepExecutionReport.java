@@ -24,6 +24,7 @@ public class StepExecutionReport implements Status.HavingStatus {
     public final String targetUrl;
     public final String strategy;
     public final Map<String, Object> evaluatedInputs;
+    public final Map<String, Object> inputs;
 
     @JsonIgnore
     public Map<String, Object> stepResults;
@@ -45,7 +46,7 @@ public class StepExecutionReport implements Status.HavingStatus {
                                String targetUrl,
                                String strategy
     ) {
-        this(executionId, name, environment, duration, startDate, status, information, errors, steps, type, targetName, targetUrl, strategy, null, null, null);
+        this(executionId, name, environment, duration, startDate, status, information, errors, steps, type, targetName, targetUrl, strategy, null, null, null, null);
     }
 
     public StepExecutionReport(Long executionId,
@@ -62,6 +63,7 @@ public class StepExecutionReport implements Status.HavingStatus {
                                String targetUrl,
                                String strategy,
                                Map<String, Object> evaluatedInputs,
+                               Map<String, Object> inputs,
                                Map<String, Object> stepResults,
                                Map<String, Object> scenarioContext
     ) {
@@ -79,6 +81,7 @@ public class StepExecutionReport implements Status.HavingStatus {
         this.targetUrl = targetUrl;
         this.strategy = strategy;
         this.evaluatedInputs = evaluatedInputs != null ? evaluatedInputs : emptyMap();
+        this.inputs = inputs != null ? inputs : emptyMap();
         this.stepResults = stepResults != null ? stepResults : emptyMap();
         this.scenarioContext = scenarioContext != null ? scenarioContext : emptyMap();
     }

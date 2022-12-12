@@ -21,6 +21,7 @@ class StepExecutionReportMapper {
             .setErrors(reportDto.errors)
             .setSteps(reportDto.steps.stream().map(StepExecutionReportMapper::fromDto).collect(Collectors.toList()))
             .setEvaluatedInputs(reportDto.context.evaluatedInputs)
+            .setInputs(reportDto.context.inputs)
             .setScenarioContext(reportDto.context.scenarioContext)
             .setStepResults(reportDto.context.stepResults)
             .setType(reportDto.type)

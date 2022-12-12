@@ -25,6 +25,7 @@ import com.chutneytesting.action.spi.injectable.Target;
 import io.reactivex.observers.TestObserver;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,8 +49,8 @@ public class ReporterTest {
     @Test
     public void parent_status_should_be_recalculate() {
         Step subStep1 = step.subSteps().get(0);
-        Step subSubStep1 = step.subSteps().get(0).subSteps().get(0);
-        Step subSubStep2 = step.subSteps().get(0).subSteps().get(1);
+        Step subSubStep1 = subStep1.subSteps().get(0);
+        Step subSubStep2 = subStep1.subSteps().get(1);
 
         StepExecutionReport report = sut.generateReport(step, Step::status);
         assertThat(report.status).isEqualTo(Status.NOT_EXECUTED);
@@ -176,10 +177,53 @@ public class ReporterTest {
         assertThat(step.status()).isEqualTo(SUCCESS);
     }
 
+    @Test
+    public void report_should_contains_inputs_raw_values() {
+        // initial report
+        Step subStep1 = step.subSteps().get(0);
+        Step subSubStep1 = subStep1.subSteps().get(0);
+
+        // When
+        StepExecutionReport report = sut.generateReport(step, Step::status);
+
+        // Then
+        assertThat(report.status).isEqualTo(Status.NOT_EXECUTED);
+        StepExecutionReport stepReport = report.steps.get(0).steps.get(0);
+        assertThat(stepReport.status).isEqualTo(Status.NOT_EXECUTED);
+        assertThat(stepReport.inputs.get("key")).isEqualTo("${#otherVar}");
+
+        // running report
+        step.beginExecution(scenarioExecution);
+        subStep1.beginExecution(scenarioExecution);
+        subSubStep1.beginExecution(scenarioExecution);
+
+        // When
+        report = sut.generateReport(step, Step::status);
+
+        // Then
+        assertThat(report.status).isEqualTo(RUNNING);
+        assertThat(report.steps.get(0).status).isEqualTo(RUNNING);
+        stepReport = report.steps.get(0).steps.get(0);
+        assertThat(stepReport.status).isEqualTo(RUNNING);
+        assertThat(stepReport.inputs.get("key")).isEqualTo("${#otherVar}");
+
+        // end report
+        subSubStep1.success();
+
+        // When
+        report = sut.generateReport(step, Step::status);
+
+        // Then
+        stepReport = report.steps.get(0).steps.get(0);
+        assertThat(stepReport.status).isEqualTo(SUCCESS);
+        assertThat(stepReport.inputs.get("key")).isEqualTo("${#otherVar}");
+
+    }
+
     private Step buildFakeScenario() {
         final String environment = "";
         List<StepDefinition> subSubSteps = new ArrayList<>();
-        StepDefinition subSubStepDef1 = new StepDefinition("fakeStep1", fakeTarget, "actionType", null, null, null, null, null, environment);
+        StepDefinition subSubStepDef1 = new StepDefinition("fakeStep1", fakeTarget, "actionType", null, Map.of("key", "${#otherVar}"), null, null, null, environment);
         StepDefinition subSubStepDef2 = new StepDefinition("fakeStep2", fakeTarget, "actionType", null, null, null, null, null, environment);
         subSubSteps.add(subSubStepDef1);
         subSubSteps.add(subSubStepDef2);

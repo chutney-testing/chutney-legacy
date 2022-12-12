@@ -37,8 +37,11 @@
                   <div *ngIf="hasInputs()">
                     <em>{{'scenarios.execution.inputs' | translate}}:</em>
                     <div *ngFor="let input of step.evaluatedInputs | objectAsEntryList" class="ps-2">
-                      <pre>{{input.key}} :  {{input.value | stringify | prettyPrint}}</pre>
+                      <pre>{{input.key}} :  {{input.value | stringify | prettyPrint}} </pre>
                     </div>
+                      <div *ngFor="let input of step.inputs | objectAsEntryList" class="ps-2">
+                          <pre>{{input.key}} :  {{input.value | stringify | prettyPrint}}</pre>
+                      </div>
                   </div>
                   <div *ngIf="hasOutputs()">
                     <em>{{'scenarios.execution.outputs' | translate}}:</em>
