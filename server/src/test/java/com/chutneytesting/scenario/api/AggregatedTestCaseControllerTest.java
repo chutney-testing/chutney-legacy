@@ -1,23 +1,22 @@
 package com.chutneytesting.scenario.api;
 
-
-import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.Optional.of;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.scenario.api.raw.dto.GwtTestCaseMetadataDto;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.Instant;
 import java.util.List;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -45,14 +44,10 @@ class AggregatedTestCaseControllerTest {
     public void should_call_repository_to_get_scenario_metadata() throws Exception {
         // Given
         TestCase mockTestCase = mock(TestCase.class);
-        TestCaseMetadata mockTestCaseMetadata = mock(TestCaseMetadata.class);
-        when(mockTestCaseMetadata.id()).thenReturn("1");
-        when(mockTestCaseMetadata.creationDate()).thenReturn(Instant.now());
-        when(mockTestCaseMetadata.updateDate()).thenReturn(Instant.now());
-        when(mockTestCaseMetadata.title()).thenReturn("TestCase title");
-        when(mockTestCaseMetadata.description()).thenReturn("TestCase description");
-        when(mockTestCase.metadata()).thenReturn(mockTestCaseMetadata);
-        when(testCaseRepository.findById(eq("1"))).thenReturn(of(mockTestCase));
+        String id = "1";
+        TestCaseMetadata fakeMetadata = TestCaseMetadataImpl.builder().withId(id).build();
+        when(mockTestCase.metadata()).thenReturn(fakeMetadata);
+        when(testCaseRepository.findById(eq(id))).thenReturn(of(mockTestCase));
 
         //When
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/scenario/v2/1/metadata")
@@ -61,28 +56,22 @@ class AggregatedTestCaseControllerTest {
             .andReturn();
 
         //Then
-        verify(testCaseRepository).findById(eq("1"));
+        verify(testCaseRepository).findById(eq(id));
 
-        TestCaseIndexDto testCaseIndexDto = om.readValue(mvcResult.getResponse().getContentAsString(), TestCaseIndexDto.class);
-        SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(testCaseIndexDto.metadata().id()).isEqualTo(of("1"));
-        softly.assertThat(testCaseIndexDto.metadata().creationDate()).isAfter(Instant.now().minus(1, SECONDS));
-        softly.assertThat(testCaseIndexDto.metadata().updateDate()).isAfter(Instant.now().minus(1, SECONDS));
-        softly.assertThat(testCaseIndexDto.metadata().title()).isEqualTo("TestCase title");
-        softly.assertThat(testCaseIndexDto.metadata().description()).isEqualTo(of("TestCase description"));
-        softly.assertAll();
+        GwtTestCaseMetadataDto actualMetadata = om.readValue(mvcResult.getResponse().getContentAsString(), TestCaseIndexDto.class).metadata();
+        assertThat(actualMetadata.id()).isEqualTo(of(fakeMetadata.id()));
+        assertThat(actualMetadata.creationDate()).isEqualTo(fakeMetadata.creationDate());
+        assertThat(actualMetadata.updateDate()).isEqualTo(fakeMetadata.updateDate());
+        assertThat(actualMetadata.title()).isEqualTo(fakeMetadata.title());
+        assertThat(actualMetadata.description()).isEqualTo(of(fakeMetadata.description()));
     }
 
     @Test
     public void should_call_repository_to_get_all_scenarios_metadata() throws Exception {
         // Given
-        TestCaseMetadata mockTestCaseMetadata = mock(TestCaseMetadata.class);
-        when(mockTestCaseMetadata.id()).thenReturn("1");
-        when(mockTestCaseMetadata.creationDate()).thenReturn(Instant.now());
-        when(mockTestCaseMetadata.updateDate()).thenReturn(Instant.now());
-        when(mockTestCaseMetadata.title()).thenReturn("TestCase title");
-        when(mockTestCaseMetadata.description()).thenReturn("TestCase description");
-        when(testCaseRepository.findAll()).thenReturn(List.of(mockTestCaseMetadata));
+        String id = "1";
+        TestCaseMetadata fakeMetadata = TestCaseMetadataImpl.builder().withId(id).build();
+        when(testCaseRepository.findAll()).thenReturn(List.of(fakeMetadata));
 
         //When
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/scenario/v2/")
@@ -93,15 +82,13 @@ class AggregatedTestCaseControllerTest {
         //Then
         verify(testCaseRepository).findAll();
 
-        TestCaseIndexDto testCaseIndexDto = (om.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<TestCaseIndexDto>>() {
-        })).get(0);
-        SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(testCaseIndexDto.metadata().id()).isEqualTo(of("1"));
-        softly.assertThat(testCaseIndexDto.metadata().creationDate()).isAfter(Instant.now().minus(10, SECONDS));
-        softly.assertThat(testCaseIndexDto.metadata().updateDate()).isAfter(Instant.now().minus(10, SECONDS));
-        softly.assertThat(testCaseIndexDto.metadata().title()).isEqualTo("TestCase title");
-        softly.assertThat(testCaseIndexDto.metadata().description()).isEqualTo(of("TestCase description"));
-        softly.assertAll();
+        GwtTestCaseMetadataDto actualMetadata = (om.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<TestCaseIndexDto>>() {
+        })).get(0).metadata();
+        assertThat(actualMetadata.id()).isEqualTo(of(fakeMetadata.id()));
+        assertThat(actualMetadata.creationDate()).isEqualTo(fakeMetadata.creationDate());
+        assertThat(actualMetadata.updateDate()).isEqualTo(fakeMetadata.updateDate());
+        assertThat(actualMetadata.title()).isEqualTo(fakeMetadata.title());
+        assertThat(actualMetadata.description()).isEqualTo(of(fakeMetadata.description()));
     }
 
     @Test
