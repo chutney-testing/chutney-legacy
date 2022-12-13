@@ -53,6 +53,7 @@
                 "create": "New scenario"
             },
             "header": {
+                "update": "Updated",
                 "creation": "Created",
                 "execCount": "Exec. Count",
                 "execLast": "Ran",

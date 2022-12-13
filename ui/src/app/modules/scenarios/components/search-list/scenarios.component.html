@@ -83,7 +83,7 @@
                     <span *ngIf="orderBy == 'lastExecution' && reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'lastExecution' && !reverseOrder" class="fa fa-caret-up"></span>
                 </th>
-                <th class="filter w5" scope="col" (click)="sortBy('executionCount')">{{ 'scenarios.list.header.execCount'  | translate  }}
+                <th class="filter w3" scope="col" (click)="sortBy('executionCount')">{{ 'scenarios.list.header.execCount'  | translate  }}
                     <span *ngIf="orderBy == 'executionCount' && reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'executionCount' && !reverseOrder" class="fa fa-caret-up"></span>
                 </th>
@@ -97,11 +97,15 @@
                     <span *ngIf="orderBy == 'tags' && reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'tags' && !reverseOrder" class="fa fa-caret-up"></span>
                 </th>
+                <th class="filter w10" scope="col" (click)="sortBy('updateDate')">{{ 'scenarios.list.header.update'  | translate  }}
+                    <span *ngIf="orderBy == 'updateDate' && reverseOrder" class="fa fa-caret-down"></span>
+                    <span *ngIf="orderBy == 'updateDate' && !reverseOrder" class="fa fa-caret-up"></span>
+                </th>
                 <th class="filter w10" scope="col" (click)="sortBy('creationDate')">{{ 'scenarios.list.header.creation'  | translate  }}
                     <span *ngIf="orderBy == 'creationDate' && reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'creationDate' && !reverseOrder" class="fa fa-caret-up"></span>
                 </th>
-                <th class="w12" scope="col">
+                <th class="w6" scope="col">
                 </th>
             </tr>
             </thead>
@@ -159,6 +163,9 @@
                             ...
                         </button>
                     </span>
+                </td>
+                <td scope="row" class="text-center">
+                    {{ scenario.updateDate | amLocale:'fr' | amTimeAgo }}
                 </td>
                 <td scope="row" class="text-center">
                     {{ scenario.creationDate | amLocale:'fr' | amTimeAgo }}

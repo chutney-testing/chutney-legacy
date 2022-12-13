@@ -5,7 +5,7 @@ Feature: Support testcase edition metadata
     Background:
         Given A start date
             Do put in context
-            | startDate         | ${#now().toInstant()}                        |
+            | startDate         | ${#now().toInstant()}           |
             | isoFormatter      | ${#isoDateFormatter('instant')} |
 
     Scenario: Consult new testcase metadata
@@ -163,7 +163,7 @@ Feature: Support testcase edition metadata
                 | $.title        | new Title                                        |
                 | $.description  | new description                                  |
                 | $.tags         | ${#json('["SECOND","THIRD"]', '$')}              |
-                | $.creationDate | $isEqualDate:2020-06-01T14:00:00Z                |
+                | $.creationDate | $isEqualDate:2020-01-01T12:00:03Z                |
                 | $.author       | paloma                                           |
                 | $.updateDate   | $isAfterDate:${#isoFormatter.format(#startDate)} |
                 | $.version      | 2                                                |

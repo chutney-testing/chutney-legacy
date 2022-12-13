@@ -134,7 +134,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     }
 
     private String doUpdate(TestCaseData scenario) {
-        int update = uiNamedParameterJdbcTemplate.update("UPDATE SCENARIO SET CONTENT_VERSION = :contentVersion, TITLE = :title, DESCRIPTION = :description, CONTENT = :content, TAGS = :tags, CREATION_DATE = :creationDate, DATASET = :dataSet, USER_ID = :author, UPDATE_DATE = CURRENT_TIMESTAMP, VERSION = VERSION+1 WHERE ID = :id AND VERSION = :version",
+        int update = uiNamedParameterJdbcTemplate.update("UPDATE SCENARIO SET CONTENT_VERSION = :contentVersion, TITLE = :title, DESCRIPTION = :description, CONTENT = :content, TAGS = :tags, DATASET = :dataSet, USER_ID = :author, UPDATE_DATE = CURRENT_TIMESTAMP, VERSION = VERSION+1 WHERE ID = :id AND VERSION = :version",
             scenarioQueryParameterMap(scenario.id, scenario));
         if (update == 0) {
             throw new ScenarioNotFoundException(scenario.id, scenario.version);

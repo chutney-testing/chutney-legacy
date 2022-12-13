@@ -53,6 +53,7 @@
                 "create": "Nouveau scénario"
             },
             "header": {
+                "update": "Mis à jour",
                 "creation": "Créé",
                 "execCount": "Nb.Exec",
                 "execLast": "Executé",
