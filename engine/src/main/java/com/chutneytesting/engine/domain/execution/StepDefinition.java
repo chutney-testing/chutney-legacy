@@ -2,6 +2,7 @@ package com.chutneytesting.engine.domain.execution;
 
 import static java.util.Objects.requireNonNull;
 
+import com.chutneytesting.action.spi.injectable.StepDefinitionSpi;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.chutneytesting.action.spi.injectable.Target;
 import java.util.Collections;
@@ -12,7 +13,7 @@ import java.util.Optional;
 /**
  * Immutable tree-like structure composing a Scenario.
  */
-public class StepDefinition {
+public class StepDefinition implements StepDefinitionSpi {
 
     public final String name;
 
@@ -24,7 +25,7 @@ public class StepDefinition {
     /**
      * Data used by a matched extension, may be empty.
      */
-    public final Map<String, Object> inputs;
+    private final Map<String, Object> inputs;
 
     /**
      * Sub steps, may be empty.
@@ -90,5 +91,10 @@ public class StepDefinition {
             ", target=" + target +
             ", strategy=" + strategy +
             '}';
+    }
+
+    @Override
+    public Map<String, Object> inputs() {
+        return inputs;
     }
 }
