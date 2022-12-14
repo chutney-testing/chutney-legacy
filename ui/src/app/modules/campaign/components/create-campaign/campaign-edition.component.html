@@ -23,10 +23,10 @@
         </div>
 
         <div class="row row-cols-lg-auto g-3">
-            <div class="col-sm-7" [class.errors-input]="submitted && f['title'].errors['required']">
+            <div class="col-sm-7">
                 <label for="title">{{ 'campaigns.edition.form.title.label' | translate }}</label>
                 <input type="text" id="title" class="form-control" formControlName="title">
-                <div class="error-message" *ngIf="submitted && f['title'].errors['required']">
+                <div class="error-message" *ngIf="submitted && this.campaignForm.hasError('required', 'title')">
                     {{ 'campaigns.edition.form.title.required' | translate }}
                 </div>
             </div>

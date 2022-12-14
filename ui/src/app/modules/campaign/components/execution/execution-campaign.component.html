@@ -245,7 +245,7 @@
                 </thead>
                 <tbody>
                 <tr *ngFor="let scenario of orderedScenarios"
-                    [routerLink]="hasAuthorization([Authorization.SCENARIO_READ]) ? ['/scenario', scenario.id, 'executions', last] : null"
+                    [routerLink]="hasAuthorization([Authorization.SCENARIO_READ]) ? ['/scenario', scenario.id, 'executions'] : null"
                     [ngClass]="hasAuthorization([Authorization.SCENARIO_READ]) ? 'cursor-pointer' : ''">
                     <td>
                         <span class="fw-bold small_text">{{scenario.id}}</span>
