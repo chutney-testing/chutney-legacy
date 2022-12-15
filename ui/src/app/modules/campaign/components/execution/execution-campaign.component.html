@@ -252,7 +252,7 @@
                     </td>
                     <td>
                         <ng-container *hasAuthorization="[Authorization.SCENARIO_READ]">
-                            <a [routerLink]="['/scenario', scenario.id,'executions', 'last']"
+                            <a [routerLink]="['/scenario', scenario.id,'executions']" [queryParams]="{open: 'last', active: 'last'}"
                                title="{{ 'campaigns.execution.scenarios.item.title' | translate }} {{scenario.title}}">{{scenario.title}}</a>
                         </ng-container>
                         <ng-container *hasAuthorization="{not: true, authorizations: [Authorization.SCENARIO_READ]}">
