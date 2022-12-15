@@ -32,7 +32,7 @@ class ExecutionRequestMapper {
             extractTarget(definition),
             strategy,
             definition.type,
-            definition.inputs,
+            definition.inputs(),
             steps,
             definition.outputs,
             definition.validations);

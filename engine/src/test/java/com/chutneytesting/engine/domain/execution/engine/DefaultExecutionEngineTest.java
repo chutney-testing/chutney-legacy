@@ -188,13 +188,13 @@ public class DefaultExecutionEngineTest {
         assertThat(finalStep.isParentStep()).isTrue();
 
         assertThat(thirdStep.type()).isEqualTo("context-put");
-        Map<String, Object> e1 = (Map<String, Object>) thirdStep.definition().inputs.get("entries");
+        Map<String, Object> e1 = (Map<String, Object>) thirdStep.definition().inputs().get("entries");
         assertThat(e1).containsAllEntriesOf(entries2);
 
         assertThat(secondStep.type()).isEqualTo("failure");
 
         assertThat(firstStep.type()).isEqualTo("context-put");
-        Map<String, Object> e2 = (Map<String, Object>) firstStep.definition().inputs.get("entries");
+        Map<String, Object> e2 = (Map<String, Object>) firstStep.definition().inputs().get("entries");
         assertThat(e2).containsAllEntriesOf(entries1);
     }
 

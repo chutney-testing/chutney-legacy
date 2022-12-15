@@ -32,7 +32,7 @@ public class FinallyActionMapperTest {
 
         assertThat(stepDefinition.type).isEqualTo("test-action");
         assertThat(stepDefinition.name).isEqualTo("action name");
-        assertThat(stepDefinition.inputs).containsOnly(entry("test-input", "test"));
+        assertThat(stepDefinition.inputs()).containsOnly(entry("test-input", "test"));
         assertThat(stepDefinition.validations).containsOnly(entry("test-validation", true));
         assertThat(stepDefinition.getTarget()).isPresent();
         Target targetCopy = stepDefinition.getTarget().get();

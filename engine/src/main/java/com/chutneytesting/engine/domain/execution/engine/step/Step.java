@@ -1,12 +1,11 @@
 package com.chutneytesting.engine.domain.execution.engine.step;
 
-import static com.chutneytesting.engine.domain.execution.StepDefinitionBuilder.copyFrom;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
-import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.action.spi.injectable.Target;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
@@ -20,7 +19,6 @@ import com.chutneytesting.engine.domain.execution.event.EndStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.event.PauseStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
-import com.chutneytesting.action.spi.injectable.Target;
 import com.chutneytesting.tools.Try;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -30,7 +28,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +84,7 @@ public class Step {
             makeTargetAccessibleForInputEvaluation(scenarioContext);
             makeEnvironmentAccessibleForInputEvaluation(scenarioContext);
 
-            final Map<String, Object> evaluatedInputs = definition.type.equals("final") ? definition.inputs : unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs, scenarioContext));
+            final Map<String, Object> evaluatedInputs = definition.type.equals("final") ? definition.inputs() : unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs(), scenarioContext));
             target = dataEvaluator.evaluateTarget(target, scenarioContext);
 
             Try
@@ -258,9 +255,9 @@ public class Step {
                 final Map<String, Object> evaluatedValidations = dataEvaluator.evaluateNamedDataWithContextVariables(definition.validations, contextAndStepResults);
                 evaluatedValidations.forEach((k, v) -> {
                     if (!(boolean) v) {
-                        failure("Validation [" + k + "] : KO (" + definition.validations.get(k).toString() + ")");
+                        failure("Validation [" + k + " : " + definition.validations.get(k).toString() + "] : KO");
                     } else {
-                        state.addInformation("Validation [" + k + "] : OK");
+                        state.addInformation("Validation [" + k + " : " + definition.validations.get(k).toString() + "] : OK");
                     }
                 });
                 return null;

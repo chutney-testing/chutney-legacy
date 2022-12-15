@@ -98,7 +98,7 @@ public class EngineIntegrationTest {
         assertThat(report.steps).hasSize(2);
         assertThat(report.steps.get(0).steps.get(0).type).isEqualTo("success");
         assertThat(report.steps.get(1).steps.get(0).type).isEqualTo("context-put");
-        assertThat(report.steps.get(1).steps.get(0).information.get(2)).isEqualTo("Validation [assertion] : OK");
+        assertThat(report.steps.get(1).steps.get(0).information.get(2)).isEqualTo("Validation [assertion : ${'value1 split'.equals(#var1)}] : OK");
         assertThat(report.steps.get(1).steps.get(0).context.evaluatedInputs).containsExactly(entry("entries", Map.of("var1", "value1 split", "var 2", "value2")));
     }
 

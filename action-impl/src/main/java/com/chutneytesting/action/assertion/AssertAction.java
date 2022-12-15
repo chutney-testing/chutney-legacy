@@ -9,47 +9,63 @@ import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Input;
 import com.chutneytesting.action.spi.injectable.Logger;
+import com.chutneytesting.action.spi.injectable.StepDefinitionSpi;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 
 /**
  * Input are evaluated (SPeL) before entering the action
  */
 public class AssertAction implements Action {
 
+    private final String ASSERTS_INPUT_LABEL = "asserts";
     private final Logger logger;
     private final List<Map<String, Boolean>> asserts;
+    private final StepDefinitionSpi stepDefinition;
 
-    public AssertAction(Logger logger, @Input("asserts") List<Map<String, Boolean>> asserts) {
+    public AssertAction(Logger logger, @Input(ASSERTS_INPUT_LABEL) List<Map<String, Boolean>> asserts, StepDefinitionSpi stepDefinition) {
         this.logger = logger;
         this.asserts = ofNullable(asserts).orElse(emptyList());
+        this.stepDefinition = stepDefinition;
     }
 
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            notEmptyListValidation(asserts, "asserts")
+            notEmptyListValidation(asserts, ASSERTS_INPUT_LABEL)
         );
     }
 
     @Override
     public ActionExecutionResult execute() {
-        boolean result = asserts.stream().allMatch(l -> l.entrySet().stream()
-            .map(e -> {
-                if ("assert-true".equals(e.getKey())) {
-                    if (e.getValue()) {
-                        logger.info("assert ok");
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    logger.error("Unknown assert type [" + e.getKey() + "]");
-                    return Boolean.FALSE;
-                }
-            })
-            .allMatch(r -> r)
-        );
-        return result ? ActionExecutionResult.ok() : ActionExecutionResult.ko();
+        List<Map<String, Object>> stepDefinitionInputs = (List<Map<String, Object>>) stepDefinition.inputs().get(ASSERTS_INPUT_LABEL);
+        boolean allAssertionAreValid = IntStream
+            .range(0, asserts.size())
+            .mapToObj(index ->
+                asserts.get(index)
+                    .entrySet()
+                    .stream()
+                    .map(assertion -> checkAssertion(assertion, stepDefinitionInputs.get(index))))
+            .flatMap(Function.identity())
+            .allMatch(valid -> valid);
+        return allAssertionAreValid ? ActionExecutionResult.ok() : ActionExecutionResult.ko();
+    }
+
+    private Boolean checkAssertion(Map.Entry<String, Boolean> assertion, Map<String, Object> stepDefinitionAssertions) {
+        if ("assert-true".equals(assertion.getKey())) {
+            String stepDefinitionAssertion = (String) stepDefinitionAssertions.get(assertion.getKey());
+            if (assertion.getValue()) {
+                logger.info(stepDefinitionAssertion + " is True");
+                return true;
+            } else {
+                logger.error(stepDefinitionAssertion + " is False");
+                return false;
+            }
+        } else {
+            logger.error("Unknown assert type [" + assertion.getKey() + "]");
+            return Boolean.FALSE;
+        }
     }
 }

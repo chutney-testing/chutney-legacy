@@ -72,7 +72,7 @@ public class StepDefinitionBuilder {
         builder.withTarget(definition.getTarget().orElse(null));
         builder.withType(definition.type);
         builder.withStrategy(definition.getStrategy().orElse(null));
-        builder.withInputs(definition.inputs);
+        builder.withInputs(definition.inputs());
         builder.withSteps(definition.steps);
         builder.withOutputs(definition.outputs);
         builder.withValidations(definition.validations);
