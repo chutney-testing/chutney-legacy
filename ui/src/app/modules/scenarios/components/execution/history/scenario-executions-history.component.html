@@ -5,6 +5,9 @@
 <div *ngIf="scenario">
     <h5>{{scenario.title}}</h5>
     <h6>{{scenario.description}}</h6>
+    <div class="mb-2">
+        <chutney-scenario-campaigns [idScenario]="scenario.id"></chutney-scenario-campaigns>
+    </div>
 
     <ul ngbNav #nav="ngbNav" [activeId]="getActiveTab()" (navChange)="onTabChange($event)" class="nav-tabs">
         <li [ngbNavItem]="'0'" [destroyOnHide]="false">
@@ -26,6 +29,7 @@
             <ng-template ngbNavContent>
                 <chutney-scenario-execution [scenario]="scenario"
                                             [executionId]="exec.executionId"
+                                            [campaignExecution]="{id : exec.campaignReport?.executionId, name : exec.campaignReport?.campaignName, campaignId: exec.campaignReport?.campaignId }"
                                             (onExecutionStatusUpdate)="updateExecutionStatus(exec.executionId, $event)">
 
                 </chutney-scenario-execution>

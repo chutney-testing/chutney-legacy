@@ -25,6 +25,7 @@ import { ExecutionStatus } from '@core/model/scenario/execution-status';
 })
 export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     @Input() executionId: number;
+    @Input() campaignExecution: object;
     @Input() scenario: ScenarioComponent | GwtTestCase;
     @Output() onExecutionStatusUpdate = new EventEmitter<{status: ExecutionStatus, error: string}>() ;
 
@@ -34,11 +35,14 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     executionError: String;
 
     scenarioExecutionReport: ScenarioExecutionReport;
+    selectedStep: StepExecutionReport;
 
-    toggleScenarioDetails = true;
-    toggleScenarioInfo = true;
+    isAllStepsCollapsed = true;
+    isRootStepDetailsVisible = false;
+    collapseContextVariables = true;
 
     private scenarioExecutionAsyncSubscription: Subscription;
+    private stepDetailsSubscription: Subscription;
 
     Authorization = Authorization;
 
@@ -50,10 +54,15 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.loadScenarioExecution(this.executionId);
+        this.stepDetailsSubscription = this.eventManager.subscribe('selectStepEvent_' + this.executionId, (data) => {
+            this.selectedStep = data.step;
+            this.isRootStepDetailsVisible = this.selectedStep === this.scenarioExecutionReport?.report;
+        });
     }
 
     ngOnDestroy() {
         this.unsubscribeScenarioExecutionAsyncSubscription();
+        this.eventManager.destroy(this.stepDetailsSubscription);
     }
 
     onLastIdExecution(execution: Execution) {
@@ -99,10 +108,8 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                     if (scenarioExecutionReport?.report?.status === ExecutionStatus.RUNNING) {
                         this.observeScenarioExecution(executionId);
                     } else {
-                        this.toggleScenarioDetails = true;
                         this.scenarioExecutionReport = scenarioExecutionReport;
                     }
-
                 },
                 error: error => {
                     console.error(error.message);
@@ -112,14 +119,19 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
             });
     }
 
-    expandAllDetails() {
-        this.toggleScenarioDetails = !this.toggleScenarioDetails;
-        this.eventManager.broadcast({name: 'toggleScenarioDetails', expand: this.toggleScenarioDetails});
+    expandAll() {
+        this.isAllStepsCollapsed = !this.isAllStepsCollapsed;
+        this.eventManager.broadcast({name: 'toggleScenarioStep_' + this.executionId, expand: this.isAllStepsCollapsed});
     }
 
-    expandAllInfo() {
-        this.toggleScenarioInfo = !this.toggleScenarioInfo;
-        this.eventManager.broadcast({name: 'toggleScenarioInfo', expand: this.toggleScenarioInfo});
+    showRootStep(){
+        this.isRootStepDetailsVisible = ! this.isRootStepDetailsVisible;
+        if (this.isRootStepDetailsVisible) {
+            this.eventManager.broadcast({name: 'selectStepEvent_' + this.executionId , step: this.scenarioExecutionReport?.report});
+            this.eventManager.broadcast({name: 'highlightEvent_' + this.executionId, stepId: null});
+        } else {
+            this.eventManager.broadcast({name: 'selectStepEvent_' + this.executionId , step: null});
+        }
     }
 
     stopScenario() {
@@ -157,6 +169,18 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         return this.scenario instanceof ScenarioComponent;
     }
 
+    isRunning() {
+        return ExecutionStatus.RUNNING === this.scenarioExecutionReport?.report?.status;
+    }
+
+    isPaused() {
+        return ExecutionStatus.PAUSED === this.scenarioExecutionReport?.report?.status;
+    }
+
+    private switchCollapseContextVariables() {
+        this.collapseContextVariables = !this.collapseContextVariables;
+    }
+
     private observeScenarioExecution(executionId: number) {
         this.unsubscribeScenarioExecutionAsyncSubscription();
         this.scenarioExecutionAsyncSubscription =
@@ -173,7 +197,6 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                 next: (scenarioExecutionReport: ScenarioExecutionReport) => {
                     executionStatus = ExecutionStatus[scenarioExecutionReport.report.status];
                     executionError = this.getExecutionError(scenarioExecutionReport);
-                    this.toggleScenarioDetails = true;
                     if (this.scenarioExecutionReport) {
                         this.scenarioExecutionReport.report.duration = scenarioExecutionReport.report.duration;
                         this.updateStepExecutionReport(this.scenarioExecutionReport.report, scenarioExecutionReport.report, []);

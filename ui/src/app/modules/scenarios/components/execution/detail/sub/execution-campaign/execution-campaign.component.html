@@ -1,0 +1,12 @@
+<!-- scenario execution campaign-->
+<ng-container *ngIf="campaignExecution">
+    -  {{ 'scenarios.execution.history.campaign' | translate }} :
+    <ng-container *hasAuthorization="[Authorization.CAMPAIGN_READ]">
+            <a [routerLink]="['/campaign', campaignExecution.campaignId, 'execution', campaignExecution.id]">
+                {{campaignExecution.name}}
+            </a>
+    </ng-container>
+    <ng-container *hasAuthorization="{not: true, authorizations: [Authorization.CAMPAIGN_READ]}">
+        <span>{{campaignExecution.name}}</span>
+    </ng-container>
+</ng-container>

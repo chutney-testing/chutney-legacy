@@ -86,6 +86,10 @@
                     "show": "Voir détails",
                     "hide": "Cacher détails"
                 },
+                "steps": {
+                    "show": "Voir étapes",
+                    "hide": "Cacher étapes"
+                },
                 "remove": "Etes-vous sur de vouloir supprimer le scénario ?"
             },
             "errors": {

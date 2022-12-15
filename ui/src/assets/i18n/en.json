@@ -86,6 +86,10 @@
                     "show": "Show details",
                     "hide": "Hide details"
                 },
+                "steps": {
+                    "show": "Show steps",
+                    "hide": "Hide steps"
+                },
                 "remove": "Confirm the deletion"
             },
             "errors": {

@@ -1,0 +1,26 @@
+.step-details {
+    border-radius: 4px;
+    box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.4);
+
+    &:hover {
+        box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.7);
+    }
+}
+
+.error {
+    color: #d9534f;
+    font-weight: bold;
+}
+
+.information {
+    color: #58c69f;
+    font-weight: bold;
+}
+
+.io-head {
+    cursor: pointer;
+    
+    span {
+        color: #7b8a8b;
+    }
+}

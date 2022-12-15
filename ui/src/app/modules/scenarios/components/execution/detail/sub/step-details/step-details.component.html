@@ -1,0 +1,50 @@
+<div *ngIf="step" class="step-details ms-2 ps-1 mb-1 pb-1">
+    <div class="pt-2" >
+        <div>
+            <h5 class="me-1">{{step.name}}</h5>
+            <ng-template #stepInfo>
+                <b class="me-1">{{step.type}}</b>
+                <span *ngIf="step.targetName" class="mx-2">on <b>{{step.targetName}}</b></span>
+                <span *ngIf="step.strategy">with <b>{{step.strategy}}</b> strategy</span>
+            </ng-template>
+            <button type="button" class="btn btn-link float-end" style="margin-top: -2rem !important;"
+                    [ngbPopover]="stepInfo" placement="left" triggers="mouseenter:mouseleave">
+                <span class="fa fa-info-circle" aria-hidden="true"></span>
+            </button>
+        </div>
+    <div *ngIf="hasInputs()">
+        <div class="io-head px-3 mb-0 float-none" (click)="switchCollapseInput()">
+            <span class="pe-2 fa" [ngClass]="collapseInput ? 'fa-eye' : 'fa-eye-slash'"></span>
+            <em>{{'scenarios.execution.inputs' | translate}}</em>
+        </div>
+        <ng-container *ngIf="!collapseInput" >
+            <div *ngFor="let input of step.evaluatedInputs | objectAsEntryList" class="ps-2">
+                <pre>{{input.key}} :  {{input.value | stringify | prettyPrint}}</pre>
+            </div>
+        </ng-container>
+    </div>
+    <div *ngIf="hasOutputs()">
+        <span class="io-head px-3 mb-0 float-none" (click)="switchCollapseOutput()">
+            <span class="pe-2 fa" [ngClass]="collapseOutput ? 'fa-eye' : 'fa-eye-slash'"></span>
+            <em>{{'scenarios.execution.outputs' | translate}}</em>
+        </span>
+        <ng-container *ngIf="!collapseOutput" >
+            <div *ngFor="let output of step.stepOutputs | objectAsEntryList" class="ps-2">
+                <pre>{{output.key}} :  {{output.value | stringify | prettyPrint}}</pre>
+            </div>
+        </ng-container>
+    </div>
+    </div>
+    <pre class="information" [innerHTML]="getInformation() | prettyPrint: true | thumbnail | safe: 'html'"></pre>
+    <div [hidden]="getErrors().length == 0" >
+        <div *ngIf="getErrors().length > 1" class="error pt-2" >
+            <pre [innerHTML]="getErrors() | prettyPrint: true | thumbnail | safe: 'html'"></pre>
+        </div>
+        <div *ngIf="getErrors().length == 1" class="error pt-2">
+            <pre [innerHTML]="getErrors()[0] | prettyPrint: true | thumbnail | safe: 'html'"></pre>
+        </div>
+    </div>
+    <div *ngIf="step.steps && step.steps.length > 0">
+        <chutney-scenario-step-details *ngFor="let subStep of step.steps" [step]="subStep" [executionId]="executionId" ></chutney-scenario-step-details>
+    </div>
+</div>
