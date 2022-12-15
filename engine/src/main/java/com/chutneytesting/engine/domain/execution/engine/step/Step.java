@@ -255,9 +255,9 @@ public class Step {
                 final Map<String, Object> evaluatedValidations = dataEvaluator.evaluateNamedDataWithContextVariables(definition.validations, contextAndStepResults);
                 evaluatedValidations.forEach((k, v) -> {
                     if (!(boolean) v) {
-                        failure("Validation [" + k + "] : KO (" + definition.validations.get(k).toString() + ")");
+                        failure("Validation [" + k + " : " + definition.validations.get(k).toString() + "] : KO");
                     } else {
-                        state.addInformation("Validation [" + k + "] : OK"); // log input definition.validations.get(k).toString()
+                        state.addInformation("Validation [" + k + " : " + definition.validations.get(k).toString() + "] : OK");
                     }
                 });
                 return null;

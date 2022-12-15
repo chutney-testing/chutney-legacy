@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
  */
 public class AssertAction implements Action {
 
-    public static final String ASSERTS_INPUT_LABEL = "asserts";
+    private final String ASSERTS_INPUT_LABEL = "asserts";
     private final Logger logger;
     private final List<Map<String, Boolean>> asserts;
     private final StepDefinitionSpi stepDefinition;

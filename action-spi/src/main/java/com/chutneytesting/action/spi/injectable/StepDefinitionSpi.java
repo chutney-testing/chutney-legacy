@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface StepDefinitionSpi {
     /**
-     * Data used by a matched extension, may be empty.
+     * Return step definition inputs.
      */
     Map<String, Object> inputs();
 }

@@ -135,8 +135,8 @@ public class StepTest {
         StepState state = (StepState) ReflectionTestUtils.getField(step, "state");
         assertThat(state.errors().size()).isEqualTo(1);
         assertThat(state.informations().size()).isEqualTo(1);
-        assertThat(state.errors().get(0)).isEqualTo("Validation [first assert] : KO (${false})");
-        assertThat(state.informations().get(0)).isEqualTo("Validation [second assert] : OK");
+        assertThat(state.errors().get(0)).isEqualTo("Validation [first assert : ${false}] : KO");
+        assertThat(state.informations().get(0)).isEqualTo("Validation [second assert : ${true}] : OK");
     }
 
     @Test
