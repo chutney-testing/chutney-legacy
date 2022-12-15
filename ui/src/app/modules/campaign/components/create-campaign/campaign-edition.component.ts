@@ -145,11 +145,6 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         this.jiraFilter();
     }
 
-    // convenience getter for easy access to form fields
-    get f() {
-        return this.campaignForm.controls;
-    }
-
     ngOnDestroy() {
         this.subscription.unsubscribe();
         this.dragulaService.destroy(this.DRAGGABLE);

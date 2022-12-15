@@ -245,14 +245,14 @@
                 </thead>
                 <tbody>
                 <tr *ngFor="let scenario of orderedScenarios"
-                    [routerLink]="hasAuthorization([Authorization.SCENARIO_READ]) ? ['/scenario', scenario.id, 'executions', last] : null"
+                    [routerLink]="hasAuthorization([Authorization.SCENARIO_READ]) ? ['/scenario', scenario.id, 'executions'] : null"
                     [ngClass]="hasAuthorization([Authorization.SCENARIO_READ]) ? 'cursor-pointer' : ''">
                     <td>
                         <span class="fw-bold small_text">{{scenario.id}}</span>
                     </td>
                     <td>
                         <ng-container *hasAuthorization="[Authorization.SCENARIO_READ]">
-                            <a [routerLink]="['/scenario', scenario.id,'executions', 'last']"
+                            <a [routerLink]="['/scenario', scenario.id,'executions']" [queryParams]="{open: 'last', active: 'last'}"
                                title="{{ 'campaigns.execution.scenarios.item.title' | translate }} {{scenario.title}}">{{scenario.title}}</a>
                         </ng-container>
                         <ng-container *hasAuthorization="{not: true, authorizations: [Authorization.SCENARIO_READ]}">

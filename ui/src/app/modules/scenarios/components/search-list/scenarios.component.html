@@ -171,7 +171,7 @@
                     {{ scenario.creationDate | amLocale:'fr' | amTimeAgo }}
                 </td>
                 <td >
-                    <button type="button" class="btn bnt-xs" [routerLink]="['/scenario', scenario.id, 'executions', 'last']" (click)="$event.stopPropagation()" >
+                    <button type="button" class="btn bnt-xs" [routerLink]="['/scenario', scenario.id, 'executions']" [queryParams]="{open: 'last', active: 'last'}" (click)="$event.stopPropagation()" >
                         <span  class="fa fa-eye"></span>
                     </button>
                     <button type="button" class="btn bnt-xs"  routerLink="{{isComposed(scenario.id) ? '/scenario/' + scenario.id + '/component-edition' : '/scenario/' + scenario.id + '/raw-edition'}}" (click)="$event.stopPropagation()">

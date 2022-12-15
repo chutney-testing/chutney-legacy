@@ -151,7 +151,7 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
     private isOpened(executionId: string) {
         const lastExecId = this.executions[0]?.executionId?.toString();
         const openTabs: string = this.tabFilters['open'];
-        return !!openTabs.split(',')
+        return !!openTabs && !!openTabs.split(',')
             .find(openId => {
                 let id = openId;
                 if (openId === this.LAST_ID && executionId === lastExecId) {

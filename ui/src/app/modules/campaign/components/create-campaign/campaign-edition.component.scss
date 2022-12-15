@@ -91,3 +91,8 @@ fieldset legend {
     cursor: pointer;
     color: var(--bs-blue);
 }
+
+.error-message{
+    color:var(--bs-warning);
+    font-size: 0.8em;
+}
