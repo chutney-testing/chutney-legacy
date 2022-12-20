@@ -1,4 +1,4 @@
-import { BackupsService, BackupDto } from './backups.service';
+import { BackupsService } from './backups.service';
 import { Backup } from '@core/model/backups.model';
 import { of } from 'rxjs';
 
@@ -12,17 +12,19 @@ describe('BackupsService', () => {
     sut = new BackupsService(<any> httpClientSpy);
   });
 
-  it('should return expected backups (HttpClient called once)', () => {
-    const expectedBackups: BackupDto[] =
-      [new BackupDto(true, true, true, true, true)];
+  it('should list available backups (HttpClient called once)', () => {
+      const backup = new Backup(["backupable"]);
+      const expectedBackups: Backup[] = [backup];
 
     httpClientSpy.get.and.returnValue(of(expectedBackups));
 
-    sut.list().subscribe(
-      backups => expect(backups).toEqual([new Backup(true, true, true, true, true)], 'expected backups'),
-      fail
+    sut.list()
+        .subscribe({
+            next: backups => expect(backups).withContext('expected backups').toEqual(expectedBackups,),
+            error: fail
+        }
     );
-    expect(httpClientSpy.get.calls.count()).toBe(1, 'one call');
+    expect(httpClientSpy.get.calls.count()).withContext('one call').toBe(1, );
   });
 });
 

@@ -5,7 +5,7 @@ import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
 import com.chutneytesting.server.core.domain.globalvar.GlobalVarNotFoundException;
 import com.chutneytesting.server.core.domain.globalvar.GlobalvarRepository;
-import com.chutneytesting.tools.ZipUtils;
+import com.chutneytesting.server.core.domain.tools.ZipUtils;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -144,6 +144,11 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    @Override
+    public String name() {
+        return "globalvars";
     }
 
     private void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> accumulator) {

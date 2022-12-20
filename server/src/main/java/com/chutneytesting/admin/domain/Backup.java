@@ -3,41 +3,36 @@ package com.chutneytesting.admin.domain;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class Backup {
 
     public final static DateTimeFormatter backupIdTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     public final LocalDateTime time;
-    public final boolean agentsNetwork;
-    public final boolean environments;
-    public final boolean components;
-    public final boolean globalVars;
-    public final boolean jiraLinks;
+    public final List<String> backupables;
 
-    public Backup(boolean agentsNetwork, boolean environments, boolean components, boolean globalVars, boolean jiraLinks) {
-        if (!(agentsNetwork || environments || components || globalVars || jiraLinks)) {
+    public Backup(List<String> backupables) {
+        if (CollectionUtils.isEmpty(backupables)) {
             throw new IllegalArgumentException("Nothing to backup !!");
         }
 
-        this.time = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        this.agentsNetwork = agentsNetwork;
-        this.environments = environments;
-        this.components = components;
-        this.globalVars = globalVars;
-        this.jiraLinks = jiraLinks;
+        this.time = toLocalDate(null);
+        this.backupables = backupables;
     }
 
-    public Backup(String id, Boolean agentsNetwork, Boolean environments, Boolean components, Boolean globalVars, Boolean jiraLinks) {
-        this.time = LocalDateTime.parse(id, backupIdTimeFormatter);
-        this.agentsNetwork = agentsNetwork;
-        this.environments = environments;
-        this.components = components;
-        this.globalVars = globalVars;
-        this.jiraLinks = jiraLinks;
+    public Backup(String id, List<String> backupables) {
+        this.time = toLocalDate(id);
+        this.backupables = backupables;
     }
 
-    public String id() {
+    private static LocalDateTime toLocalDate(String id) {
+        return StringUtils.isNotBlank(id) ? LocalDateTime.parse(id, backupIdTimeFormatter) : LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    }
+
+    public String getId() {
         return this.time.format(backupIdTimeFormatter);
     }
 }

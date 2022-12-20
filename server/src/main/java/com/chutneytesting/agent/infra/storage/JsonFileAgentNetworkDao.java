@@ -6,7 +6,7 @@ import static java.util.Optional.of;
 
 import com.chutneytesting.tools.ThrowingRunnable;
 import com.chutneytesting.tools.ThrowingSupplier;
-import com.chutneytesting.tools.ZipUtils;
+import com.chutneytesting.server.core.domain.tools.ZipUtils;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
 import { Backup } from '@core/model/backups.model';
@@ -16,51 +15,31 @@ export class BackupsService {
     constructor(private http: HttpClient) {
     }
 
-    public list(): Observable<Array<Backup>> {
-        return this.http.get<Array<BackupDto>>(environment.backend + this.url).pipe(
-            map(dtos => this.mapToBackups(dtos))
-        );
+    list(): Observable<Array<Backup>> {
+        return this.http.get<Array<Backup>>(environment.backend + this.url);
     }
 
-    public get(backup: Backup): Observable<Backup> {
-        return this.http.get<BackupDto>(
-            environment.backend + this.url + `/${backup.id()}`).pipe(
-            map(dto => this.mapToBackup(dto))
-        );
+    get(id: string): Observable<Backup> {
+        return this.http.get<Backup>(
+            environment.backend + this.url + `/${id}`);
     }
 
-    public delete(backup: Backup): Observable<void> {
-        return this.http.delete(environment.backend + this.url + `/${backup.id()}`)
-            .pipe(map(() => {}));
+    delete(id: string): Observable<void> {
+        return this.http.delete<void>(environment.backend + this.url + `/${id}`);
     }
 
-    public download(backup: Backup): Observable<any> {
+    download(id: string): Observable<any> {
         const options: any = {
             responseType: 'arraybuffer'
         };
-        return this.http.get(environment.backend + this.url + `/${backup.id()}` + '/download', options);
+        return this.http.get(environment.backend + this.url + `/${id}` + '/download', options);
     }
 
-    public save(backup: BackupDto): Observable<String> {
+    save(backup: Backup): Observable<String> {
         return this.http.post(environment.backend + this.url, backup, {responseType: 'text'});
     }
 
-    private mapToBackup(dto: BackupDto): Backup {
-        return new Backup(dto.agentsNetwork, dto.environments, dto.components, dto.globalVars, dto.jiraLinks, dto.time);
-    }
-
-    private mapToBackups(dtos: BackupDto[]): Backup[] {
-        return dtos.map(dto => this.mapToBackup(dto));
-    }
-}
-
-export class BackupDto {
-    constructor(
-        public agentsNetwork: boolean,
-        public environments: boolean,
-        public components: boolean,
-        public globalVars: boolean,
-        public jiraLinks: boolean,
-        public time?: Date) {
+    getBackupables(): Observable<string[]> {
+        return this.http.get<string[]>(environment.backend + this.url + '/backupables');
     }
 }

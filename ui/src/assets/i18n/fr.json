@@ -295,9 +295,9 @@
                 "time.title": "Date de création",
                 "agents.title": "Agents",
                 "environments.title": "Environnements",
-                "components.title": "Composants",
+                "orient.title": "Composants",
                 "globalvars.title": "Variables globales",
-                "jira.title": "Liens Jira"
+                "jiralinks.title": "Liens Jira"
             }
         }
     },

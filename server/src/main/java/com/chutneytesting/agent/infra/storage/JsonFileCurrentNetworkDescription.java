@@ -51,6 +51,11 @@ public class JsonFileCurrentNetworkDescription implements CurrentNetworkDescript
         }
     }
 
+    @Override
+    public String name() {
+        return "agents";
+    }
+
     private Optional<NetworkDescription> getNetworkDescription() {
         Optional<NetworkDescription> newNetworkDescription = jsonFileAgentNetworkDao.read()
             .map(dto -> agentNetworkMapperJsonFileMapper.fromDto(dto, environmentApi.listEnvironments()));

@@ -17,6 +17,10 @@
             <artifactId>tools</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.chutneytesting</groupId>
+            <artifactId>server-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-java-client-app</artifactId>
             <version>5.2.4</version>

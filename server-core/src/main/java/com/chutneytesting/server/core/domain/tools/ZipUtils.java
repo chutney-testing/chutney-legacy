@@ -1,4 +1,4 @@
-package com.chutneytesting.tools;
+package com.chutneytesting.server.core.domain.tools;
 
 import static java.util.Objects.requireNonNull;
 
