@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -15,10 +14,10 @@ export class InfoService {
     }
 
     public getVersion(): Observable<string> {
-        return this.http.get(environment.backend + this.url + "/build/version", {responseType: 'text'});
+        return this.http.get(environment.backend + this.url + '/build/version', {responseType: 'text'});
     }
 
     public getApplicationName(): Observable<string> {
-        return this.http.get(environment.backend + this.url + "/appname", {responseType: 'text'});
+        return this.http.get(environment.backend + this.url + '/appname', {responseType: 'text'});
     }
 }
