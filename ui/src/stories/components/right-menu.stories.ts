@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { APP_BASE_HREF } from '@angular/common';
-import { TranslateTestingModule } from '../../../app/testing/translate-testing.module';
+import { TranslateTestingModule } from '../../app/testing/translate-testing.module';
 import { userEvent, waitFor, within } from '@storybook/testing-library';
 import { expect, jest } from '@storybook/jest';
 import { ChutneyRightMenuComponent } from '@shared/components/layout/right-menu/chutney-right-menu.component';
@@ -19,7 +19,7 @@ const mockLoginService = {
 };
 
 export default {
-    title: 'Layout/Right menu',
+    title: 'Components/Right menu',
     component: ChutneyRightMenuComponent,
     decorators: [
         moduleMetadata({

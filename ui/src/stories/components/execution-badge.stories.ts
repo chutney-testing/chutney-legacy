@@ -2,7 +2,7 @@ import { componentWrapperDecorator, Meta, Story } from '@storybook/angular';
 import { ExecutionBadgeComponent } from '@shared/components';
 
 export default {
-    title: 'Chutney/Execution Badge',
+    title: 'Components/Execution Badge',
     component: ExecutionBadgeComponent,
     excludeStories: /^Default$/,
     decorators: [

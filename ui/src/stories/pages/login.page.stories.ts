@@ -23,7 +23,7 @@ const mockInfoService = {
 };
 
 export default {
-    title: 'Chutney/Login',
+    title: 'Pages/Login',
     component: LoginComponent,
     decorators: [
         moduleMetadata({
