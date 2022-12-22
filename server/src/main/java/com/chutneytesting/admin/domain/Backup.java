@@ -19,7 +19,7 @@ public class Backup {
             throw new IllegalArgumentException("Nothing to backup !!");
         }
 
-        this.time = toLocalDate(null);
+        this.time = getLocalDateTime();
         this.backupables = backupables;
     }
 
@@ -28,8 +28,12 @@ public class Backup {
         this.backupables = backupables;
     }
 
-    private static LocalDateTime toLocalDate(String id) {
-        return StringUtils.isNotBlank(id) ? LocalDateTime.parse(id, backupIdTimeFormatter) : LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    private LocalDateTime toLocalDate(String id) {
+        return StringUtils.isNotBlank(id) ? LocalDateTime.parse(id, backupIdTimeFormatter) : getLocalDateTime();
+    }
+
+    private LocalDateTime getLocalDateTime() {
+        return LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     }
 
     public String getId() {

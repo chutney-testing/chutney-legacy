@@ -1,6 +1,10 @@
 package com.chutneytesting.admin.api;
 
-import com.chutneytesting.admin.domain.Backup;
+import static com.chutneytesting.admin.api.dto.BackupMapper.fromDto;
+import static com.chutneytesting.admin.api.dto.BackupMapper.toDto;
+import static com.chutneytesting.admin.api.dto.BackupMapper.toDtos;
+
+import com.chutneytesting.admin.api.dto.BackupDto;
 import com.chutneytesting.admin.domain.BackupRepository;
 import java.io.IOException;
 import java.util.List;
@@ -29,8 +33,8 @@ public class BackupController {
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String backup(@RequestBody Backup backup) {
-        return backupRepository.save(backup);
+    public String backup(@RequestBody BackupDto backup) {
+        return backupRepository.save(fromDto(backup));
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
@@ -41,8 +45,8 @@ public class BackupController {
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(path = "/{backupId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Backup get(@PathVariable("backupId") String backupId) {
-        return backupRepository.read(backupId);
+    public BackupDto get(@PathVariable("backupId") String backupId) {
+        return toDto(backupRepository.read(backupId));
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
@@ -53,8 +57,8 @@ public class BackupController {
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Backup> list() {
-        return backupRepository.list();
+    public List<BackupDto> list() {
+        return toDtos(backupRepository.list());
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")

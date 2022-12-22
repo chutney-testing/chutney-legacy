@@ -28,7 +28,7 @@ export class BackupsAdminComponent implements OnInit {
     ) {
         this.backupsService.getBackupables()
             .subscribe(backupables => {
-                this.backupables = backupables;
+                this.backupables = backupables.sort();
                 this.initBackupForm();
             })
     }
