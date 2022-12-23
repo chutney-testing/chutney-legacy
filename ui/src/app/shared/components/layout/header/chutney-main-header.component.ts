@@ -7,18 +7,22 @@ import { Theme } from '@core/theme/theme';
 import { LayoutOptions } from '@core/layout/layout-options.service';
 
 @Component({
-  selector: 'chutney-chutney-main-header',
-  templateUrl: './chutney-main-header.component.html',
-  styleUrls: ['./chutney-main-header.component.scss']
+    selector: 'chutney-chutney-main-header',
+    templateUrl: './chutney-main-header.component.html',
+    styleUrls: ['./chutney-main-header.component.scss']
 })
 export class ChutneyMainHeaderComponent implements OnInit {
+
     public user$: Observable<User>;
-    public Theme = Theme;
-  constructor(private loginService: LoginService,
-              private themeService: ThemeService,
-              public globals: LayoutOptions) {
-      this.user$ = this.loginService.getUser();
-  }
+    FLATLY: string = Theme.FLATLY;
+    DARKLY: string = Theme.DARKLY;
+
+    constructor(private loginService: LoginService,
+                private themeService: ThemeService,
+                public globals: LayoutOptions) {
+        this.user$ = this.loginService.getUser();
+    }
+
     @HostBinding('class.isActive')
     get isActiveAsGetter() {
         return this.isActive;
@@ -38,11 +42,14 @@ export class ChutneyMainHeaderComponent implements OnInit {
         this.loginService.logout();
     }
 
-    public switchTheme(theme: Theme) {
+    public switchTheme(theme: string) {
         this.themeService.switchTheme(theme);
     }
 
-    public isCurrentTheme(theme: Theme): boolean {
-        return this.themeService.getCurrentTheme() === theme;
+    public isCurrentTheme(theme: string): boolean {
+        let currentTheme = this.themeService.getCurrentTheme();
+        console.log('current theme: ' + currentTheme)
+        console.log('passed theme: ' + theme)
+        return currentTheme === theme;
     }
 }

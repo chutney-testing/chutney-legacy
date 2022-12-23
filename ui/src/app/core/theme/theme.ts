@@ -1,4 +1,4 @@
 export enum Theme {
-    FLATLY='FLATLY',
-    DARKLY='DARKLY'
+    FLATLY = 'FLATLY',
+    DARKLY = 'DARKLY'
 }

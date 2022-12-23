@@ -5,7 +5,8 @@ import { Theme } from '@core/theme/theme';
     providedIn: 'root'
 })
 export class ThemeService {
-    private defaultTheme = Theme.FLATLY;
+
+    private defaultTheme: string = Theme.FLATLY.toString();
     private readonly style: HTMLLinkElement;
 
     constructor() {
@@ -16,11 +17,11 @@ export class ThemeService {
         this.switchTheme(this.getCurrentTheme());
     }
 
-    public getCurrentTheme(): Theme {
+    public getCurrentTheme(): string {
         return localStorage.getItem('theme') as Theme ?? this.defaultTheme;
     }
 
-    public switchTheme(theme: Theme) {
+    public switchTheme(theme: string) {
         localStorage.setItem('theme', theme);
         this.style.href = `${theme.toLowerCase()}.css`;
     }
