@@ -11,4 +11,6 @@ public interface BackupRepository {
     void delete(String backupId);
     List<Backup> list();
     void getBackupData(String backupId, OutputStream outputStream) throws IOException;
+
+    List<String> getBackupables();
 }

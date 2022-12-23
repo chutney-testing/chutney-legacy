@@ -295,9 +295,9 @@
                 "time.title": "Creation date",
                 "agents.title": "Agents",
                 "environments.title": "Environments",
-                "components.title": "Components",
+                "orient.title": "Components",
                 "globalvars.title": "Global vars",
-                "jira.title": "Jira links"
+                "jiralinks.title": "Jira links"
             }
         }
     },

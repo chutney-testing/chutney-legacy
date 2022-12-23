@@ -56,10 +56,11 @@ public class SecuredControllerSpringBootIntegrationTest {
     private static Object[] securedEndPointList() {
         return new Object[][]{
             {GET, "/api/v1/backups", "ADMIN_ACCESS", null},
-            {POST, "/api/v1/backups", "ADMIN_ACCESS", "{\"environments\":true}"},
+            {POST, "/api/v1/backups", "ADMIN_ACCESS", "{\"backupables\": [ \"environments\" ]}"},
             {GET, "/api/v1/backups/backupId", "ADMIN_ACCESS", null},
             {DELETE, "/api/v1/backups/backupId", "ADMIN_ACCESS", null},
             {GET, "/api/v1/backups/id/download", "ADMIN_ACCESS", null},
+            {GET, "/api/v1/backups/backupables", "ADMIN_ACCESS", null},
             {POST, "/api/v1/admin/database/execute/orient", "ADMIN_ACCESS", "select 1"},
             {POST, "/api/v1/admin/database/execute/jdbc", "ADMIN_ACCESS", "select 1"},
             {POST, "/api/v1/admin/database/paginate/orient", "ADMIN_ACCESS", "{\"pageNumber\":1,\"elementPerPage\":1,\"wrappedRequest\":\"\"}"},

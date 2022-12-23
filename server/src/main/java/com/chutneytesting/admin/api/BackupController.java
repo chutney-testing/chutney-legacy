@@ -2,13 +2,12 @@ package com.chutneytesting.admin.api;
 
 import static com.chutneytesting.admin.api.dto.BackupMapper.fromDto;
 import static com.chutneytesting.admin.api.dto.BackupMapper.toDto;
+import static com.chutneytesting.admin.api.dto.BackupMapper.toDtos;
 
 import com.chutneytesting.admin.api.dto.BackupDto;
-import com.chutneytesting.admin.api.dto.BackupMapper;
 import com.chutneytesting.admin.domain.BackupRepository;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,8 +33,8 @@ public class BackupController {
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String backup(@RequestBody BackupDto backupDto) {
-        return backupRepository.save(fromDto(backupDto));
+    public String backup(@RequestBody BackupDto backup) {
+        return backupRepository.save(fromDto(backup));
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
@@ -59,8 +58,12 @@ public class BackupController {
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<BackupDto> list() {
-        return backupRepository.list().stream()
-            .map(BackupMapper::toDto)
-            .collect(Collectors.toList());
+        return toDtos(backupRepository.list());
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
+    @GetMapping(path = "/backupables", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getBackupables() {
+        return backupRepository.getBackupables();
     }
 }

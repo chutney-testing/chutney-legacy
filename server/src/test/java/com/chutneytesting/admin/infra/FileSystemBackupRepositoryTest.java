@@ -1,10 +1,12 @@
 package com.chutneytesting.admin.infra;
 
+import static com.chutneytesting.admin.infra.FileSystemBackupRepository.BACKUP_FILE_EXTENSION;
 import static com.chutneytesting.admin.infra.FileSystemBackupRepository.ROOT_DIRECTORY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,12 +14,7 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.admin.domain.Backup;
 import com.chutneytesting.admin.domain.BackupNotFoundException;
 import com.chutneytesting.admin.domain.BackupRepository;
-import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
-import com.chutneytesting.component.scenario.infra.orient.OrientComponentDB;
-import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
-import com.chutneytesting.jira.domain.JiraRepository;
-import com.chutneytesting.server.core.domain.globalvar.GlobalvarRepository;
+import com.chutneytesting.server.core.domain.admin.Backupable;
 import com.chutneytesting.tools.Try;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,17 +22,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.util.FileSystemUtils;
 
 public class FileSystemBackupRepositoryTest {
@@ -43,16 +34,13 @@ public class FileSystemBackupRepositoryTest {
     private BackupRepository sut;
     private Path backupsRootPath;
 
-    private final OrientComponentDB orientComponentDB = mock(OrientComponentDB.class);
-    private final EmbeddedEnvironmentApi environmentApi = mock(EmbeddedEnvironmentApi.class);
-    private final GlobalvarRepository globalvarRepository = mock(GlobalvarRepository.class);
-    private final CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
-    private final JiraRepository jiraRepository = mock(JiraRepository.class);
+    private final Backupable aBackupable = mock(Backupable.class);
+    private final Backupable otherBackupable = mock(Backupable.class);
 
     @BeforeEach
     public void before() {
         backupsRootPath = Try.exec(() -> Files.createTempDirectory(Paths.get("target"), "backups")).runtime();
-        sut = new FileSystemBackupRepository(backupsRootPath.toString(), orientComponentDB, environmentApi, globalvarRepository, currentNetworkDescription, jiraRepository);
+        sut = new FileSystemBackupRepository(backupsRootPath.toString(), List.of(aBackupable, otherBackupable));
     }
 
     @AfterEach
@@ -66,7 +54,7 @@ public class FileSystemBackupRepositoryTest {
         Files.deleteIfExists(backupsRootPath.resolve(ROOT_DIRECTORY_NAME));
         backupsRootPath = Files.createTempDirectory(Paths.get("target"), "freshNewBackups");
         // When
-        sut = new FileSystemBackupRepository(backupsRootPath.toString(), orientComponentDB, environmentApi, globalvarRepository, currentNetworkDescription, jiraRepository);
+        sut = new FileSystemBackupRepository(backupsRootPath.toString(), List.of(aBackupable));
         // Then
         assertThat(backupsRootPath.resolve(ROOT_DIRECTORY_NAME).toFile().exists()).isTrue();
     }
@@ -84,14 +72,15 @@ public class FileSystemBackupRepositoryTest {
 
         // Then
         assertThat(backups).hasSize(2);
-        assertThat(backups).extracting(Backup::id).containsExactly(backup2Path.getFileName().toString(), backup1Path.getFileName().toString());
+        assertThat(backups).extracting(Backup::getId).containsExactly(backup2Path.getFileName().toString(), backup1Path.getFileName().toString());
     }
 
-    @ParameterizedTest
-    @MethodSource("backupObjectsParameters")
-    public void should_read_a_backup(boolean agentsNetwork, boolean environments, boolean components, boolean globalVars) throws IOException {
+    @Test
+    public void should_read_a_backup() throws IOException {
         // Given
-        Path backupPath = stubBackup(Backup.backupIdTimeFormatter.format(LocalDateTime.now().minus(2, ChronoUnit.DAYS)), agentsNetwork, environments, components, globalVars);
+        when(aBackupable.name()).thenReturn("aBackup");
+        when(otherBackupable.name()).thenReturn("anOtherBackup");
+        Path backupPath = stubBackup(Backup.backupIdTimeFormatter.format(LocalDateTime.now().minus(2, ChronoUnit.DAYS)), List.of(aBackupable, otherBackupable));
         LocalDateTime backupTimeId = LocalDateTime.parse(backupPath.getFileName().toString(), Backup.backupIdTimeFormatter);
 
         // When
@@ -99,10 +88,7 @@ public class FileSystemBackupRepositoryTest {
 
         // Then
         assertThat(backupRead.time).isEqualTo(backupTimeId);
-        assertThat(backupRead.agentsNetwork).isEqualTo(agentsNetwork);
-        assertThat(backupRead.environments).isEqualTo(environments);
-        assertThat(backupRead.components).isEqualTo(components);
-        assertThat(backupRead.globalVars).isEqualTo(globalVars);
+        assertThat(backupRead.backupables).containsExactly("aBackup", "anOtherBackup");
     }
 
     @Test()
@@ -124,30 +110,31 @@ public class FileSystemBackupRepositoryTest {
     @Test
     public void should_save_backup_as_directory() {
         // When
-        String backupStringId = sut.save(new Backup(false, false, false, true, false));
+        String backupStringId = sut.save(new Backup(Arrays.asList("a backupable")));
 
         // Then
         assertThat(backupsRootPath.resolve(ROOT_DIRECTORY_NAME).resolve(backupStringId).toFile().exists()).isTrue();
     }
 
-    @ParameterizedTest
-    @MethodSource("backupObjectsParameters")
-    public void should_call_right_repository_backup_when_save(boolean agentsNetwork, boolean environments, boolean components, boolean globalVars, boolean jiraLinks) {
+    @Test
+    public void should_call_right_repository_backup_when_save() {
+        // Given
+        when(aBackupable.name()).thenReturn("aBackup");
+        when(otherBackupable.name()).thenReturn("anOtherBackup");
+
         // When
-        sut.save(new Backup(agentsNetwork, environments, components, globalVars, jiraLinks));
+        sut.save(new Backup(List.of(aBackupable.name())));
 
         // Then
-        verify(currentNetworkDescription, times(oneIfTrue(agentsNetwork))).backup(any());
-        verify(environmentApi, times(oneIfTrue(environments))).listEnvironments();
-        verify(orientComponentDB, times(oneIfTrue(components))).backup(any());
-        verify(globalvarRepository, times(oneIfTrue(globalVars))).backup(any());
-        verify(jiraRepository, times(oneIfTrue(jiraLinks))).getFolderPath();
+        verify(aBackupable, times(1)).backup(any());
+        verify(otherBackupable, never()).backup(any());
     }
 
     @Test
     public void should_delete_existing_backup() throws IOException {
         // Given
-        Path backupPath = stubBackup(Backup.backupIdTimeFormatter.format(LocalDateTime.now().minus(2, ChronoUnit.DAYS)), false, true, false, true);
+        when(aBackupable.name()).thenReturn("aBackup");
+        Path backupPath = stubBackup(Backup.backupIdTimeFormatter.format(LocalDateTime.now().minus(2, ChronoUnit.DAYS)), List.of(aBackupable));
 
         // When
         sut.delete(backupPath.getFileName().toString());
@@ -162,73 +149,22 @@ public class FileSystemBackupRepositoryTest {
             .isInstanceOf(BackupNotFoundException.class);
     }
 
-    @Test()
-    public void should_backup_all_environments() throws IOException {
-        // G
-        when(environmentApi.listEnvironments())
-            .thenReturn(Set.of(
-                new EnvironmentDto("envA"),
-                new EnvironmentDto("envB")
-            ));
-
-        Backup backup = new Backup(false, true, false, false, false);
-
-        // W
-        sut.save(backup);
-
-        // T
-        try (ZipFile zipFile = new ZipFile(backupsRootPath.resolve("backups")
-            .resolve("zip")
-            .resolve(backup.id())
-            .resolve("environments.zip")
-            .toFile()
-        )) {
-            ArrayList<? extends ZipEntry> list = Collections.list(zipFile.entries());
-
-            assertThat(list).hasSize(2);
-            assertThat(list).extracting("name")
-                .containsExactlyInAnyOrder("envA.json", "envB.json");
-        }
-    }
-
     private Path stubBackup(String backupName) throws IOException {
-        return stubBackup(backupName, false, false, false, false);
+        return stubBackup(backupName, List.of());
     }
 
-    private Path stubBackup(String backupName, Boolean agentsNetwork, Boolean environments, Boolean components, Boolean globalVars) throws IOException {
+    private Path stubBackup(String backupName, List<Backupable> backupables) throws IOException {
         Path backupPath = Files.createDirectories(backupsRootPath.resolve(ROOT_DIRECTORY_NAME).resolve(backupName));
-        if (agentsNetwork) Files.createFile(backupPath.resolve(FileSystemBackupRepository.AGENTS_BACKUP_NAME));
-        if (environments) Files.createFile(backupPath.resolve(FileSystemBackupRepository.ENVIRONMENTS_BACKUP_NAME));
-        if (components) Files.createFile(backupPath.resolve(FileSystemBackupRepository.COMPONENTS_BACKUP_NAME));
-        if (globalVars) Files.createFile(backupPath.resolve(FileSystemBackupRepository.GLOBAL_VARS_BACKUP_NAME));
+        backupables.stream().forEach(backupable -> createBackupFile(backupPath, backupable));
         return backupPath;
     }
 
-    private int oneIfTrue(boolean bool) {
-        return bool ? 1 : 0;
-    }
-
-    @SuppressWarnings("unused")
-    private static Object[] backupObjectsParameters() {
-        return new Object[]{
-            new Object[]{false, false, false, false, true},
-            new Object[]{true, false, false, false, false},
-            new Object[]{false, true, false, false, false},
-            new Object[]{false, false, true, false, false},
-            new Object[]{false, false, false, true, false},
-            new Object[]{true, true, false, false, false},
-            new Object[]{false, true, true, false, false},
-            new Object[]{false, false, true, true, false},
-            new Object[]{false, false, false, true, true},
-            new Object[]{true, true, true, false, false},
-            new Object[]{false, true, true, true, false},
-            new Object[]{false, false, true, true, true},
-            new Object[]{true, false, false, true, true},
-            new Object[]{true, true, true, true, false},
-            new Object[]{true, false, true, true, true},
-            new Object[]{true, true, false, true, true},
-            new Object[]{true, true, true, true, true}
-        };
+    private void createBackupFile(Path backupPath, Backupable backupable) {
+        try {
+            Files.createFile(backupPath.resolve(backupable.name() + BACKUP_FILE_EXTENSION));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
