@@ -29,7 +29,7 @@
             <ng-template ngbNavContent>
                 <chutney-scenario-execution [scenario]="scenario"
                                             [executionId]="exec.executionId"
-                                            [campaignExecution]="{id : exec.campaignReport?.executionId, name : exec.campaignReport?.campaignName, campaignId: exec.campaignReport?.campaignId }"
+                                            [campaignExecutionReport]="exec.campaignReport"
                                             (onExecutionStatusUpdate)="updateExecutionStatus(exec.executionId, $event)">
 
                 </chutney-scenario-execution>

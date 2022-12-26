@@ -7,6 +7,7 @@ import { EventManagerService } from '@shared/event-manager.service';
 
 import {
     Authorization,
+    CampaignExecutionReport,
     Execution,
     GwtTestCase,
     ScenarioComponent,
@@ -25,7 +26,7 @@ import { ExecutionStatus } from '@core/model/scenario/execution-status';
 })
 export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     @Input() executionId: number;
-    @Input() campaignExecution: object;
+    @Input() campaignExecutionReport: CampaignExecutionReport;
     @Input() scenario: ScenarioComponent | GwtTestCase;
     @Output() onExecutionStatusUpdate = new EventEmitter<{status: ExecutionStatus, error: string}>() ;
 

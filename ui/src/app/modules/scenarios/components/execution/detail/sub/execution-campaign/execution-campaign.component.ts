@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Authorization } from '@core/model';
+import { Authorization, CampaignExecutionReport } from '@core/model';
 
 
 @Component({
@@ -8,7 +8,7 @@ import { Authorization } from '@core/model';
     styleUrls: ['./execution-campaign.component.scss']
 })
 export class ScenarioExecutionCampaignComponent implements OnInit, OnDestroy {
-    @Input() campaignExecution: object;
+    @Input() campaignExecutionReport: CampaignExecutionReport;
 
     Authorization = Authorization;
     
