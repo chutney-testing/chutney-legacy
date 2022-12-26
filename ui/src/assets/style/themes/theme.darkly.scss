@@ -32,3 +32,7 @@ $table-striped-bg:$dark;
 .execution-panel {
     background-color: $info !important;
 }
+
+.highlight {
+    background-color: var(--bs-primary) !important;
+}
