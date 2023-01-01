@@ -89,7 +89,7 @@
         <springboot.version>2.7.5</springboot.version>
         <guava.version>31.0.1-jre</guava.version> <!-- Divergence on dependencies checker-qual and error_prone_annotations --> <!-- Test on https://github.com/FasterXML/jackson-datatypes-collections/tree/2.14/guava -->
 
-        <immutables.version>2.9.0</immutables.version>
+        <immutables.version>2.9.3</immutables.version>
         <commonstext.version>1.10.0</commonstext.version> <!-- Follow commons-lang3 spring boot version -->
         <commonsio.version>2.11.0</commonsio.version>
         <glacio.version>0.0.1</glacio.version>
