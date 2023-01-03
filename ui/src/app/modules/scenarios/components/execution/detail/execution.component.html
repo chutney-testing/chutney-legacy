@@ -17,8 +17,17 @@
                     -  {{'admin.targets.environment' | translate}} : <b>{{scenarioExecutionReport.environment}}</b>
                 </small>
                 <small class="text-muted ms-2">
-                    <chutney-scenario-execution-campaign [campaignExecutionReport]="campaignExecutionReport">
-                    </chutney-scenario-execution-campaign>
+                    <ng-container *ngIf="campaignExecutionReport">
+                        -  {{ 'scenarios.execution.history.campaign' | translate }} :
+                        <ng-container *hasAuthorization="[Authorization.CAMPAIGN_READ]">
+                                <a [routerLink]="['/campaign', campaignExecutionReport.campaignId, 'execution', campaignExecutionReport.executionId]">
+                                    {{campaignExecutionReport.campaignName}}
+                                </a>
+                        </ng-container>
+                        <ng-container *hasAuthorization="{not: true, authorizations: [Authorization.CAMPAIGN_READ]}">
+                            <span>{{campaignExecutionReport.campaignName}}</span>
+                        </ng-container>
+                    </ng-container>
                 </small>
             </span>
         </div>
