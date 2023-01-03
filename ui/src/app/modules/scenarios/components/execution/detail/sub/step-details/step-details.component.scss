@@ -8,19 +8,11 @@
 }
 
 .error {
-    color: #d9534f;
+    color: var(--bs-danger);
     font-weight: bold;
 }
 
 .information {
-    color: #58c69f;
+    color: var(--bs-teal);
     font-weight: bold;
-}
-
-.io-head {
-    cursor: pointer;
-    
-    span {
-        color: #7b8a8b;
-    }
 }

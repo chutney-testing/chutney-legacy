@@ -13,8 +13,8 @@
             </button>
         </div>
     <div *ngIf="hasInputs()">
-        <div class="io-head px-3 mb-0 float-none" (click)="switchCollapseInput()">
-            <span class="pe-2 fa" [ngClass]="collapseInput ? 'fa-eye' : 'fa-eye-slash'"></span>
+        <div class="px-3 mb-0 float-none cursor-pointer" (click)="switchCollapseInput()">
+            <span class="pe-2 fa text-secondary" [ngClass]="collapseInput ? 'fa-eye' : 'fa-eye-slash'"></span>
             <em>{{'scenarios.execution.inputs' | translate}}</em>
         </div>
         <ng-container *ngIf="!collapseInput" >
@@ -24,8 +24,8 @@
         </ng-container>
     </div>
     <div *ngIf="hasOutputs()">
-        <span class="io-head px-3 mb-0 float-none" (click)="switchCollapseOutput()">
-            <span class="pe-2 fa" [ngClass]="collapseOutput ? 'fa-eye' : 'fa-eye-slash'"></span>
+        <span class="px-3 mb-0 float-none cursor-pointer" (click)="switchCollapseOutput()">
+            <span class="pe-2 fa text-secondary" [ngClass]="collapseOutput ? 'fa-eye' : 'fa-eye-slash'"></span>
             <em>{{'scenarios.execution.outputs' | translate}}</em>
         </span>
         <ng-container *ngIf="!collapseOutput" >

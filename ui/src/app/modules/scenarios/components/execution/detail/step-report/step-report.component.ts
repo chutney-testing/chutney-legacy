@@ -26,7 +26,7 @@ export class StepReportComponent implements OnInit, OnDestroy {
             this.stepsCollapsed = data.expand;
         });
         this.stepsCollapsed = ('PAUSED' !== this.step.status && 'RUNNING' !== this.step.status && 'FAILURE' !== this.step.status);
-        this.highlightSubscription = this.eventManager.subscribe('highlightEvent_' + this.executionId, (data) => {
+        this.highlightSubscription = this.eventManager.subscribe('selectStepEvent_' + this.executionId, (data) => {
             this.highlighted = data.stepId === this.id;
         });
     }
@@ -38,8 +38,7 @@ export class StepReportComponent implements OnInit, OnDestroy {
 
     collapse(event: MouseEvent) {
         this.stepsCollapsed = !this.stepsCollapsed;
-        this.eventManager.broadcast({name: 'selectStepEvent_' + this.executionId , step: this.step});
-        this.eventManager.broadcast({name: 'highlightEvent_' + this.executionId, stepId: this.id});
+        this.eventManager.broadcast({name: 'selectStepEvent_' + this.executionId , step: this.step, stepId: this.id});
         event.stopPropagation();
     }
 }

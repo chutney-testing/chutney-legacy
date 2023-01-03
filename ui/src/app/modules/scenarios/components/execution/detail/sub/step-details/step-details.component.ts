@@ -37,23 +37,11 @@ export class StepDetailsComponent implements OnChanges {
     }
 
     hasInputs(): boolean {
-        let size = 0;
-        if (this.step.evaluatedInputs) {
-            for (const key of Object.getOwnPropertyNames(this.step.evaluatedInputs)) {
-                size++;
-            }
-        }
-        return size > 0;
+        return this.step.evaluatedInputs && !!Object.getOwnPropertyNames(this.step.evaluatedInputs).length;
     }
 
     hasOutputs(): boolean {
-        let size = 0;
-        if (this.step.stepOutputs) {
-            for (const key of Object.getOwnPropertyNames(this.step.stepOutputs)) {
-                size++;
-            }
-        }
-        return size > 0;
+        return this.step.stepOutputs && !!Object.getOwnPropertyNames(this.step.stepOutputs).length;
     }
 
     private switchCollapseInput() {
