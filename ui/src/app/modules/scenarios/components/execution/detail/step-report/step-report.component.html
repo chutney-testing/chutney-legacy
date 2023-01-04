@@ -12,7 +12,7 @@
               <span class="me-5 ps-1"><em>{{step.name}}</em></span>
               <div class="btn-group btn-group-sm">
                 <div *ngIf="step.steps && step.steps.length > 0" class="steps-btn">
-                  <span class="fa" [ngClass]="stepsCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'" [attr.aria-expanded]="!stepsCollapsed"></span>
+                  <span class="me-2 fa" [ngClass]="stepsCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'" [attr.aria-expanded]="!stepsCollapsed"></span>
                 </div>
               </div>
           </div>

@@ -85,7 +85,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row mt-2">
         <div class="col">
             <div class="steps" *ngIf="parseError">
                 <div class="error">
@@ -102,16 +102,18 @@
                 <div class="steps">
                     <div class="row">
                         <div>
-                            <button class="btn btn-sm btn-outline-primary float-end ms-2" (click)="showRootStep()">
-                                {{isRootStepDetailsVisible ? ('scenarios.execution.actions.details.hide' | translate) :
-                                ('scenarios.execution.actions.details.show' | translate)}}
-                            </button>
-                            <button class="btn btn-sm btn-outline-primary  float-end" (click)="expandAll()">
+                            <button class="btn btn-sm btn-outline-primary float-end" (click)="expandAll()">
                                 {{isAllStepsCollapsed? ('scenarios.execution.actions.steps.show' | translate) :
                                 ('scenarios.execution.actions.steps.hide' | translate)}}
                             </button>
                         </div>
                     </div>
+                    <div class="step-container-wrapper cursor-pointer" (click)="showRootStep()">
+                        <div class="row step-container ps-3 py-2" [class.highlight]="isRootStepDetailsVisible">
+                            {{ 'scenarios.execution.actions.details.show' | translate }}
+                        </div>
+                    </div>
+
                     <chutney-scenario-step-report
                         *ngFor="let report of scenarioExecutionReport.report.steps; let i = index"
                         [executionId]="execution.executionId"

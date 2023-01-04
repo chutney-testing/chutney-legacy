@@ -13,7 +13,6 @@ import {
     ScenarioExecutionReport,
     StepExecutionReport
 } from '@model';
-import { ScenarioService } from '@core/services';
 import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
 
@@ -37,7 +36,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     selectedStep: StepExecutionReport;
 
     isAllStepsCollapsed = true;
-    isRootStepDetailsVisible = false;
+    isRootStepDetailsVisible = true;
     collapseContextVariables = true;
 
     private scenarioExecutionAsyncSubscription: Subscription;
@@ -47,7 +46,6 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     constructor(
         private eventManager: EventManagerService,
-        private scenarioService: ScenarioService,
         private scenarioExecutionService: ScenarioExecutionService) {
     }
 
@@ -64,40 +62,6 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         this.eventManager.destroy(this.stepDetailsSubscription);
     }
 
-    onLastIdExecution(execution: Execution) {
-        if (Execution.NO_EXECUTION === execution) {
-            this.execution.executionId = null;
-        } else if (this.execution.executionId !== execution.executionId) {
-            this.execution.executionId = execution.executionId;
-            if (!this.scenarioExecutionAsyncSubscription || this.scenarioExecutionAsyncSubscription.closed) {
-                if (ExecutionStatus.RUNNING === execution.status) {
-                    this.observeScenarioExecution(execution.executionId);
-                } else {
-                    this.loadScenarioExecution(execution.executionId);
-                }
-            }
-        }
-    }
-
-    onSelectExecution(execution: Execution) {
-        if (execution != null) {
-            this.execution.executionId = execution.executionId;
-            this.executionError = '';
-
-            this.unsubscribeScenarioExecutionAsyncSubscription();
-
-            if (ExecutionStatus.RUNNING === execution.status) {
-                this.observeScenarioExecution(execution.executionId);
-            } else {
-                this.loadScenarioExecution(execution.executionId);
-            }
-        } else {
-            this.execution.executionId = null;
-            this.executionError = '';
-            this.scenarioExecutionReport = null;
-        }
-    }
-
     loadScenarioExecution(executionId: number) {
         this.executionError = '';
         this.execution.executionId = executionId;
@@ -108,6 +72,12 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                         this.observeScenarioExecution(executionId);
                     } else {
                         this.scenarioExecutionReport = scenarioExecutionReport;
+                        let failedStep  = this.getFailureSteps(this.scenarioExecutionReport);
+                        if(failedStep?.length > 0) {
+                            this.eventManager.broadcast({name: 'selectStepEvent_' + this.execution.executionId , step: failedStep[0]});
+                        } else {
+                            this.showRootStep();
+                        }
                     }
                 },
                 error: error => {
@@ -124,13 +94,8 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     showRootStep(){
-        this.isRootStepDetailsVisible = ! this.isRootStepDetailsVisible;
-        if (this.isRootStepDetailsVisible) {
-            this.eventManager.broadcast({name: 'selectStepEvent_' + this.execution.executionId , step: this.scenarioExecutionReport?.report});
-            this.eventManager.broadcast({name: 'highlightEvent_' + this.execution.executionId, stepId: null});
-        } else {
-            this.eventManager.broadcast({name: 'selectStepEvent_' + this.execution.executionId , step: null});
-        }
+        this.isRootStepDetailsVisible = true;
+        this.eventManager.broadcast({name: 'selectStepEvent_' + this.execution.executionId , step: this.scenarioExecutionReport?.report});
     }
 
     stopScenario() {
@@ -202,6 +167,9 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                     } else {
                         this.scenarioExecutionReport = scenarioExecutionReport;
                     }
+                    if(this.isRootStepDetailsVisible){
+                        this.showRootStep();
+                    }
                 },
                 error: (error) => {
                     if (error.status) {
@@ -219,13 +187,17 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     private getExecutionError(scenarioExecutionReport: ScenarioExecutionReport) {
-        return scenarioExecutionReport
-            .report
-            .steps
-            .filter(step => step.status === ExecutionStatus.FAILURE)
+        return this.getFailureSteps(scenarioExecutionReport)
             .map(step => step.errors)
             .flat()
             .toString();
+    }
+
+    private getFailureSteps(scenarioExecutionReport: ScenarioExecutionReport) {
+        return scenarioExecutionReport
+            .report
+            .steps
+            .filter(step => step.status === ExecutionStatus.FAILURE);
     }
 
     private unsubscribeScenarioExecutionAsyncSubscription() {

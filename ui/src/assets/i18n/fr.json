@@ -83,8 +83,7 @@
             },
             "actions": {
                 "details": {
-                    "show": "Voir détails",
-                    "hide": "Cacher détails"
+                    "show": "Voir tout"
                 },
                 "steps": {
                     "show": "Voir étapes",
