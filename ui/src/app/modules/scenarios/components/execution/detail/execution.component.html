@@ -17,15 +17,15 @@
                     -  {{'admin.targets.environment' | translate}} : <b>{{scenarioExecutionReport.environment}}</b>
                 </small>
                 <small class="text-muted ms-2">
-                    <ng-container *ngIf="campaignExecutionReport">
+                    <ng-container *ngIf="execution.campaignExecutionReport">
                         -  {{ 'scenarios.execution.history.campaign' | translate }} :
                         <ng-container *hasAuthorization="[Authorization.CAMPAIGN_READ]">
-                                <a [routerLink]="['/campaign', campaignExecutionReport.campaignId, 'execution', campaignExecutionReport.executionId]">
-                                    {{campaignExecutionReport.campaignName}}
+                                <a [routerLink]="['/campaign', execution.campaignExecutionReport.campaignId, 'execution', execution.campaignExecutionReport.executionId]">
+                                    {{execution.campaignExecutionReport.campaignName}}
                                 </a>
                         </ng-container>
                         <ng-container *hasAuthorization="{not: true, authorizations: [Authorization.CAMPAIGN_READ]}">
-                            <span>{{campaignExecutionReport.campaignName}}</span>
+                            <span>{{execution.campaignExecutionReport.campaignName}}</span>
                         </ng-container>
                     </ng-container>
                 </small>
@@ -114,14 +114,14 @@
                     </div>
                     <chutney-scenario-step-report
                         *ngFor="let report of scenarioExecutionReport.report.steps; let i = index"
-                        [executionId]="executionId"
+                        [executionId]="execution.executionId"
                         [id]="i"
                         [step]="report"></chutney-scenario-step-report>
                 </div>
             </ng-container>
         </div>
         <div class="col-6">
-            <chutney-scenario-step-details [executionId]="executionId"
+            <chutney-scenario-step-details [executionId]="execution.executionId"
                                            [step]="selectedStep"></chutney-scenario-step-details>
         </div>
     </div>
