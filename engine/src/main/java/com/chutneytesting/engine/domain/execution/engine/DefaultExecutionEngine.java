@@ -5,6 +5,8 @@ import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toList;
 
+import com.chutneytesting.action.spi.FinallyAction;
+import com.chutneytesting.action.spi.injectable.Target;
 import com.chutneytesting.engine.domain.delegation.DelegationService;
 import com.chutneytesting.engine.domain.execution.ExecutionEngine;
 import com.chutneytesting.engine.domain.execution.RxBus;
@@ -21,8 +23,6 @@ import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrate
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.chutneytesting.engine.domain.execution.strategies.StrategyProperties;
 import com.chutneytesting.engine.domain.report.Reporter;
-import com.chutneytesting.action.spi.FinallyAction;
-import com.chutneytesting.action.spi.injectable.Target;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -71,11 +71,13 @@ public class DefaultExecutionEngine implements ExecutionEngine {
 
                     final StepExecutionStrategy strategy = stepExecutionStrategies.buildStrategyFrom(rootStep.get());
                     strategy.execute(execution, rootStep.get(), scenarioContext, stepExecutionStrategies);
-                } catch (RuntimeException | LinkageError e) {
+                } catch (VirtualMachineError vme) {
+                    throw vme;
+                } catch (Throwable t) {
                     // Do not remove this fault barrier, the engine must not be stopped by external events
                     // (such as exceptions not raised by the engine)
-                    rootStep.get().failure(e);
-                    LOGGER.warn("Intercepted exception in root step execution !", e);
+                    rootStep.get().failure(t);
+                    LOGGER.warn("Intercepted exception in root step execution !", t);
                 }
 
                 executeFinallyActions(execution, rootStep, scenarioContext);
@@ -136,9 +138,11 @@ public class DefaultExecutionEngine implements ExecutionEngine {
                 try {
                     final StepExecutionStrategy strategy = stepExecutionStrategies.buildStrategyFrom(frs);
                     strategy.execute(execution, frs, scenarioContext, stepExecutionStrategies);
-                } catch (RuntimeException e) {
-                    frs.failure(e);
-                    LOGGER.warn("Teardown did not finish properly !", e);
+                } catch (VirtualMachineError vme) {
+                    throw vme;
+                } catch (Throwable t) {
+                    frs.failure(t);
+                    LOGGER.warn("Teardown did not finish properly !", t);
                 }
             });
         }
