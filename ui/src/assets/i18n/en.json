@@ -97,7 +97,8 @@
             },
             "dataset.title": "Dataset",
             "inputs": "Inputs",
-            "outputs": "Outputs"
+            "outputs": "Outputs",
+            "contextVariables": "Execution variables"
         },
         "edition": {
             "title": {

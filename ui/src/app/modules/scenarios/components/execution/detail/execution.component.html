@@ -55,12 +55,12 @@
         </div>
     </div>
 
-    <div class="row" *ngIf="!isRunning()">
+    <div class="row" *ngIf="hasContextVariables && !isRunning()">
         <div class="col">
             <fieldset [ngClass]="collapseContextVariables ? 'border-top ps-2' : 'border p-2'">
                 <legend class="fs-6 px-3 mb-0 float-none" (click)="switchCollapseContextVariables()">
                     <span>
-                        Execution context variables
+                        {{'scenarios.execution.contextVariables' | translate}}
                     </span>
                     <button class="btn btn-sm btn-light btn-outline-dark ms-sm-1 border-0" type="button"
                             title="{{(collapseContextVariables ? 'global.actions.show' : 'global.actions.hide') | translate}}">
@@ -70,14 +70,10 @@
                 <div *ngIf="!collapseContextVariables" class="form-group mb-0">
                     <table class="context-variables-table table table-sm table-borderless table-hover">
                         <tbody>
-                        <tr>
-                            <td>variable 1</td>
-                            <td>varialbe 1 value</td>
-                        </tr>
-                        <tr>
-                            <td>variable 2</td>
-                            <td>varialbe 2 value</td>
-                        </tr>
+                            <tr *ngFor="let entry of scenarioExecutionReport.contextVariables | objectAsEntryList ">
+                                <td>{{entry.key}}</td>
+                                <td>{{entry.value | stringify | prettyPrint}}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -87,19 +83,19 @@
 
     <div class="row mt-2">
         <div class="col">
-            <div class="steps" *ngIf="parseError">
+            <div *ngIf="parseError">
                 <div class="error">
                     <em>{{'scenarios.execution.errors.parse' | translate}} : {{parseError}}</em>
                 </div>
             </div>
-            <div class="steps" *ngIf="executionError">
+            <div *ngIf="executionError">
                 <div class="error">
                     <em>{{executionError}}</em>
                 </div>
             </div>
 
             <ng-container *ngIf="scenarioExecutionReport?.report">
-                <div class="steps">
+                <div>
                     <div class="row">
                         <div>
                             <button class="btn btn-sm btn-outline-primary float-end" (click)="expandAll()">

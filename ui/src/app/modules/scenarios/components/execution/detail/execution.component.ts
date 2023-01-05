@@ -15,6 +15,7 @@ import {
 } from '@model';
 import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
+import { ObjectAsEntryListPipe } from '@shared/pipes';
 
 @Component({
     selector: 'chutney-scenario-execution',
@@ -37,6 +38,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     isAllStepsCollapsed = true;
     isRootStepDetailsVisible = true;
+    hasContextVariables = false;
     collapseContextVariables = true;
 
     private scenarioExecutionAsyncSubscription: Subscription;
@@ -72,6 +74,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                         this.observeScenarioExecution(executionId);
                     } else {
                         this.scenarioExecutionReport = scenarioExecutionReport;
+                        this.hasContextVariables = this.scenarioExecutionReport.contextVariables && Object.getOwnPropertyNames(this.scenarioExecutionReport.contextVariables).length > 0;
                         let failedStep  = this.getFailureSteps(this.scenarioExecutionReport);
                         if(failedStep?.length > 0) {
                             this.eventManager.broadcast({name: 'selectStepEvent_' + this.execution.executionId , step: failedStep[0]});

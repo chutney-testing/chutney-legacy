@@ -83,7 +83,7 @@
             },
             "actions": {
                 "details": {
-                    "show": "Voir tout"
+                    "show": "Tout voir"
                 },
                 "steps": {
                     "show": "Voir étapes",
@@ -97,7 +97,8 @@
             },
             "dataset.title": "Paramètres",
             "inputs": "Entrées",
-            "outputs": "Sorties"
+            "outputs": "Sorties",
+            "contextVariables": "Variables d'éxécutions"
         },
         "edition": {
             "title": {
