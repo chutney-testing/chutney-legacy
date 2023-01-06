@@ -3,7 +3,6 @@ import { Observable } from 'rxjs';
 import { User } from '@model';
 import { LoginService } from '@core/services';
 import { ThemeService } from '@core/theme/theme.service';
-import { Theme } from '@core/theme/theme';
 import { LayoutOptions } from '@core/layout/layout-options.service';
 
 @Component({
@@ -14,8 +13,6 @@ import { LayoutOptions } from '@core/layout/layout-options.service';
 export class ChutneyMainHeaderComponent implements OnInit {
 
     public user$: Observable<User>;
-    FLATLY: string = Theme.FLATLY;
-    DARKLY: string = Theme.DARKLY;
 
     constructor(private loginService: LoginService,
                 private themeService: ThemeService,
@@ -42,14 +39,15 @@ export class ChutneyMainHeaderComponent implements OnInit {
         this.loginService.logout();
     }
 
-    public switchTheme(theme: string) {
-        this.themeService.switchTheme(theme);
+    public switchTheme() {
+        this.themeService.switchTheme();
     }
 
-    public isCurrentTheme(theme: string): boolean {
-        let currentTheme = this.themeService.getCurrentTheme();
-        console.log('current theme: ' + currentTheme)
-        console.log('passed theme: ' + theme)
-        return currentTheme === theme;
+    isLight(): boolean {
+        return this.themeService.isLight()
+    }
+
+    isDark(): boolean {
+        return !this.isLight()
     }
 }

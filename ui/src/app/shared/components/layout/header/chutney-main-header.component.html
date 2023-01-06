@@ -21,16 +21,16 @@
                         <i class="fa fa-bell"></i>
                     </span>
                 </div>
-                <div class="nav-item" *ngIf="isCurrentTheme(FLATLY)" (click)="switchTheme(DARKLY)"
+                <div class="nav-item" *ngIf="isLight()" (click)="switchTheme()"
                      placement="bottom"  ngbTooltip="{{'menu.principal.darkMode' | translate}}">
                     <span class="nav-link">
                         <i class="fa fa-moon"></i>
                     </span>
                 </div>
-                <div class="nav-item" *ngIf="isCurrentTheme(DARKLY)" (click)="switchTheme(FLATLY)"
+                <div class="nav-item" *ngIf="isDark()" (click)="switchTheme()"
                      placement="bottom"  ngbTooltip="{{'menu.principal.lightMode' | translate}}">
                     <span class="nav-link">
-                        <i class="fa fa-sun nav-item"></i>
+                        <i class="fa fa-sun"></i>
                     </span>
                 </div>
             <ng-container *ngIf="(user$ | async) as user">

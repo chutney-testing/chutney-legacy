@@ -26,10 +26,7 @@ export default {
             ]
         }),
     ],
-    args: {
-        FLATLY: Theme.FLATLY,
-        DARKLY: Theme.DARKLY
-    }
+    args: {}
 } as Meta;
 
 const Template: Story<ChutneyMainHeaderComponent> = (args: ChutneyMainHeaderComponent) => ({
