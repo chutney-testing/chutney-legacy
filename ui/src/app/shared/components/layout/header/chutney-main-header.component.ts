@@ -3,22 +3,23 @@ import { Observable } from 'rxjs';
 import { User } from '@model';
 import { LoginService } from '@core/services';
 import { ThemeService } from '@core/theme/theme.service';
-import { Theme } from '@core/theme/theme';
 import { LayoutOptions } from '@core/layout/layout-options.service';
 
 @Component({
-  selector: 'chutney-chutney-main-header',
-  templateUrl: './chutney-main-header.component.html',
-  styleUrls: ['./chutney-main-header.component.scss']
+    selector: 'chutney-chutney-main-header',
+    templateUrl: './chutney-main-header.component.html',
+    styleUrls: ['./chutney-main-header.component.scss']
 })
 export class ChutneyMainHeaderComponent implements OnInit {
+
     public user$: Observable<User>;
-    public Theme = Theme;
-  constructor(private loginService: LoginService,
-              private themeService: ThemeService,
-              public globals: LayoutOptions) {
-      this.user$ = this.loginService.getUser();
-  }
+
+    constructor(private loginService: LoginService,
+                private themeService: ThemeService,
+                public globals: LayoutOptions) {
+        this.user$ = this.loginService.getUser();
+    }
+
     @HostBinding('class.isActive')
     get isActiveAsGetter() {
         return this.isActive;
@@ -38,11 +39,15 @@ export class ChutneyMainHeaderComponent implements OnInit {
         this.loginService.logout();
     }
 
-    public switchTheme(theme: Theme) {
-        this.themeService.switchTheme(theme);
+    public switchTheme() {
+        this.themeService.switchTheme();
     }
 
-    public isCurrentTheme(theme: Theme): boolean {
-        return this.themeService.getCurrentTheme() === theme;
+    isLight(): boolean {
+        return this.themeService.isLight()
+    }
+
+    isDark(): boolean {
+        return !this.isLight()
     }
 }

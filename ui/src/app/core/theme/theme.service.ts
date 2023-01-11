@@ -5,7 +5,10 @@ import { Theme } from '@core/theme/theme';
     providedIn: 'root'
 })
 export class ThemeService {
-    private defaultTheme = Theme.FLATLY;
+
+    private defaultTheme: string = Theme.FLATLY;
+    private darkTheme: string = Theme.DARKLY;
+
     private readonly style: HTMLLinkElement;
 
     constructor() {
@@ -13,15 +16,23 @@ export class ThemeService {
         this.style.rel = 'stylesheet';
         document.head.appendChild(this.style);
 
-        this.switchTheme(this.getCurrentTheme());
+        this.setTheme(this.getCurrentTheme());
     }
 
-    public getCurrentTheme(): Theme {
+    private setTheme(theme: string) {
+        localStorage.setItem('theme', theme);
+        this.style.href = `${theme.toLowerCase()}.css`;
+    }
+
+    public getCurrentTheme(): string {
         return localStorage.getItem('theme') as Theme ?? this.defaultTheme;
     }
 
-    public switchTheme(theme: Theme) {
-        localStorage.setItem('theme', theme);
-        this.style.href = `${theme.toLowerCase()}.css`;
+    public isLight(): boolean {
+        return this.getCurrentTheme() === this.defaultTheme;
+    }
+
+    public switchTheme() {
+        this.setTheme(this.isLight() ? this.darkTheme : this.defaultTheme);
     }
 }
