@@ -35,11 +35,12 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     scenarioExecutionReport: ScenarioExecutionReport;
     selectedStep: StepExecutionReport;
+    selectedStepId: number;
 
     isAllStepsCollapsed = true;
-    isRootStepDetailsVisible = true;
     hasContextVariables = false;
     collapseContextVariables = true;
+    showDetails = true;
 
     private scenarioExecutionAsyncSubscription: Subscription;
     private stepDetailsSubscription: Subscription;
@@ -55,7 +56,8 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         this.loadScenarioExecution(this.execution.executionId);
         this.stepDetailsSubscription = this.eventManager.subscribe('selectStepEvent_' + this.execution.executionId, (data) => {
             this.selectedStep = data.step;
-            this.isRootStepDetailsVisible = this.selectedStep === this.scenarioExecutionReport?.report;
+            this.selectedStepId = data.stepId;
+            this.showDetails = !this.isRootStepSelected();
         });
     }
 
@@ -75,9 +77,9 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                     } else {
                         this.scenarioExecutionReport = scenarioExecutionReport;
                         this.hasContextVariables = this.scenarioExecutionReport.contextVariables && Object.getOwnPropertyNames(this.scenarioExecutionReport.contextVariables).length > 0;
-                        let failedStep  = this.getFailureSteps(this.scenarioExecutionReport);
+                         let failedStep = this.getFailureSteps(this.scenarioExecutionReport);
                         if(failedStep?.length > 0) {
-                            this.eventManager.broadcast({name: 'selectStepEvent_' + this.execution.executionId , step: failedStep[0]});
+                            this.eventManager.broadcast({name: 'selectStepEvent_' + this.execution.executionId , step: failedStep[0], stepId:this.scenarioExecutionReport.report.steps.indexOf(failedStep[0])});
                         } else {
                             this.showRootStep();
                         }
@@ -96,9 +98,12 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         this.eventManager.broadcast({name: 'toggleScenarioStep_' + this.execution.executionId, expand: this.isAllStepsCollapsed});
     }
 
+    toggleDetails() {
+        this.showDetails = !this.showDetails;
+    }
+
     showRootStep(){
-        this.isRootStepDetailsVisible = true;
-        this.eventManager.broadcast({name: 'selectStepEvent_' + this.execution.executionId , step: this.scenarioExecutionReport?.report});
+        this.eventManager.broadcast({name: 'selectStepEvent_' + this.execution.executionId , step: this.scenarioExecutionReport?.report, stepId: -1});
     }
 
     stopScenario() {
@@ -170,7 +175,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                     } else {
                         this.scenarioExecutionReport = scenarioExecutionReport;
                     }
-                    if(this.isRootStepDetailsVisible){
+                    if(this.isRootStepSelected()){
                         this.showRootStep();
                     }
                 },
@@ -201,6 +206,25 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
             .report
             .steps
             .filter(step => step.status === ExecutionStatus.FAILURE);
+    }
+
+    private hasSubSteps() {
+        return this.scenarioExecutionReport
+            .report
+            .steps
+            .filter(step => step.steps.length > 0)
+            .length > 0;
+    }
+
+    private hasInputOutputs(step: StepExecutionReport) {
+        if(step.steps.length ){
+            return step.steps.filter(s => this.hasInputOutputs(s)).length > 0;
+        }
+        return  Object.getOwnPropertyNames(step.evaluatedInputs).length > 0 || Object.getOwnPropertyNames(step.stepOutputs).length > 0 ;
+    }
+
+    private isRootStepSelected() {
+        return this.selectedStepId === -1 ;
     }
 
     private unsubscribeScenarioExecutionAsyncSubscription() {

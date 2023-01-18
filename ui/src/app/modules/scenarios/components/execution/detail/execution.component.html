@@ -81,6 +81,22 @@
         </div>
     </div>
 
+    <ng-container *ngIf="scenarioExecutionReport?.report">
+        <div class="row">
+            <div class="col">
+                <button *ngIf="hasSubSteps()" class="btn btn-sm btn-outline-primary float-end" (click)="expandAll()">
+                    {{isAllStepsCollapsed? ('scenarios.execution.actions.steps.show' | translate) :
+                    ('scenarios.execution.actions.steps.hide' | translate)}}
+                </button>
+            </div>
+            <div class="col">
+                <button *ngIf="hasInputOutputs(selectedStep)" class="btn btn-sm btn-outline-primary float-end" (click)="toggleDetails()">
+                    {{showDetails? ('scenarios.execution.actions.input-output.hide' | translate) :
+                    ('scenarios.execution.actions.input-output.show' | translate)}}
+                </button>
+            </div>
+        </div>
+    </ng-container>
     <div class="row mt-2">
         <div class="col">
             <div *ngIf="parseError">
@@ -95,32 +111,23 @@
             </div>
 
             <ng-container *ngIf="scenarioExecutionReport?.report">
-                <div>
-                    <div class="row">
-                        <div>
-                            <button class="btn btn-sm btn-outline-primary float-end" (click)="expandAll()">
-                                {{isAllStepsCollapsed? ('scenarios.execution.actions.steps.show' | translate) :
-                                ('scenarios.execution.actions.steps.hide' | translate)}}
-                            </button>
-                        </div>
+                <div class="step-container-wrapper cursor-pointer" (click)="showRootStep()">
+                    <div class="row step-container ps-3 py-2 text-center" [class.highlight]="isRootStepSelected()">
+                        <span>{{ 'scenarios.execution.actions.details.show' | translate }}</span>
                     </div>
-                    <div class="step-container-wrapper cursor-pointer" (click)="showRootStep()">
-                        <div class="row step-container ps-3 py-2" [class.highlight]="isRootStepDetailsVisible">
-                            {{ 'scenarios.execution.actions.details.show' | translate }}
-                        </div>
-                    </div>
-
-                    <chutney-scenario-step-report
-                        *ngFor="let report of scenarioExecutionReport.report.steps; let i = index"
-                        [executionId]="execution.executionId"
-                        [id]="i"
-                        [step]="report"></chutney-scenario-step-report>
                 </div>
+
+                <chutney-scenario-step-report
+                    *ngFor="let report of scenarioExecutionReport.report.steps; let i = index"
+                    [executionId]="execution.executionId"
+                    [id]="i"
+                    [step]="report"></chutney-scenario-step-report>
             </ng-container>
         </div>
         <div class="col-6">
             <chutney-scenario-step-details [executionId]="execution.executionId"
-                                           [step]="selectedStep"></chutney-scenario-step-details>
+                                           [step]="selectedStep"
+                                           [showDetails]="showDetails"></chutney-scenario-step-details>
         </div>
     </div>
 </div>

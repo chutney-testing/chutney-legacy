@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { StepExecutionReport } from '@model';
 import { Subscription } from 'rxjs';
 import { EventManagerService } from '@shared';

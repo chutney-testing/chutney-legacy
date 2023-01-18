@@ -9,6 +9,7 @@ import { StepExecutionReport } from '@model';
 export class StepDetailsComponent implements OnChanges {
     @Input() executionId: number;
     @Input() step: StepExecutionReport;
+    @Input() showDetails: boolean;
 
     collapseInput: boolean;
     collapseOutput: boolean;
@@ -16,8 +17,8 @@ export class StepDetailsComponent implements OnChanges {
     constructor() { }
     
     ngOnChanges(): void {
-        this.collapseInput = true;
-        this.collapseOutput = true;
+        this.collapseInput = !this.showDetails;
+        this.collapseOutput = !this.showDetails;
     }
 
     getInformation(): string[] {

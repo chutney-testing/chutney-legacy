@@ -89,7 +89,11 @@
                     "show": "Show steps",
                     "hide": "Hide steps"
                 },
-                "remove": "Confirm the deletion"
+                "remove": "Confirm the deletion",
+                "input-output": {
+                    "show": "Uncollapse entries/output",
+                    "hide": "Collapse entries/output"
+                }
             },
             "errors": {
                 "execution": "Scenario can't be executed",

@@ -89,7 +89,11 @@
                     "show": "Voir étapes",
                     "hide": "Cacher étapes"
                 },
-                "remove": "Etes-vous sur de vouloir supprimer le scénario ?"
+                "remove": "Etes-vous sur de vouloir supprimer le scénario ?",
+                "input-output": {
+                    "show": "Déplier entrées/sorties",
+                    "hide": "Replier entrées/sorties"
+                }
             },
             "errors": {
                 "execution": "Impossible d'exécuter le scénario",
