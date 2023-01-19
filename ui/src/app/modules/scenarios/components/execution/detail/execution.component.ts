@@ -205,20 +205,20 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         return scenarioExecutionReport
             .report
             .steps
-            .filter(step => step.status === ExecutionStatus.FAILURE);
+            .filter((step) => step.status === ExecutionStatus.FAILURE);
     }
 
     private hasSubSteps() {
         return this.scenarioExecutionReport
             .report
             .steps
-            .filter(step => step.steps.length > 0)
+            .filter((step) => step.steps.length > 0)
             .length > 0;
     }
 
     private hasInputOutputs(step: StepExecutionReport) {
         if(step.steps.length ){
-            return step.steps.filter(s => this.hasInputOutputs(s)).length > 0;
+            return step.steps.filter((s) => this.hasInputOutputs(s)).length > 0;
         }
         return  Object.getOwnPropertyNames(step.evaluatedInputs).length > 0 || Object.getOwnPropertyNames(step.stepOutputs).length > 0 ;
     }

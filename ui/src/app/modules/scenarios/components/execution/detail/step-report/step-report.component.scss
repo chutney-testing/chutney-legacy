@@ -68,7 +68,7 @@ div.result-body {
 }
 
 div.result-header-success {
-    border-left-color: #0275d8;
+    border-color: #0275d8;
 
     div.result-header-status {
         color: #0275d8;
@@ -86,7 +86,7 @@ div.result-header-running {
 }
 
 div.result-header-error {
-    border-left-color: #d9534f;
+    border-color: #d9534f;
     div.result-header-status {
         color: #d9534f;
     }
@@ -113,4 +113,8 @@ button.btn-link {
     --bs-btn-padding-x: 0.7rem;
     --bs-btn-font-size: 0.65rem;
     --bs-btn-border-radius: 0.25rem;
+}
+
+.highlight {
+    border: 4px solid;
 }

@@ -68,3 +68,8 @@ div.step-container {
 div.step-container:hover {
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+.highlight {
+    color: white;
+    background-color: var(--bs-primary) !important;
+}

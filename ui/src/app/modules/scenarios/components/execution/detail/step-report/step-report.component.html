@@ -1,5 +1,5 @@
 <div class="step-container-wrapper">
-    <div class="row step-container gx-0"
+    <div class="row step-container gx-0" [class.highlight]="highlighted"
         [ngClass]="{'result-header-success': step != undefined && step.status == 'SUCCESS',
                     'result-header-error': step != undefined && step.status == 'FAILURE',
                     'result-header-running': step != undefined && (step.status == 'RUNNING' || step.status == 'PAUSED')}">
@@ -8,7 +8,7 @@
             <div *ngIf="step && step.status != 'NOT_EXECUTED'" [ngbTooltip]="step.duration | duration" placement="left">{{step.duration | duration:'short'}}</div>
             <div *ngIf="step && step.status != 'NOT_EXECUTED'" class="exec-date" [ngbTooltip]="step.startDate | date" placement="left">{{step.startDate | date:'mediumTime'}}</div>
           </div>
-          <div class="d-flex col step-name align-items-center" [class.highlight]="highlighted">
+          <div class="d-flex col step-name align-items-center">
               <span class="me-5 ps-1"><em>{{step.name}}</em></span>
               <div class="btn-group btn-group-sm">
                 <div *ngIf="step.steps && step.steps.length > 0" class="steps-btn">
