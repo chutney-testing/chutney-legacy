@@ -55,7 +55,7 @@
         </div>
     </div>
 
-    <div class="row" *ngIf="hasContextVariables && !isRunning()">
+    <div class="row pb-2" *ngIf="hasContextVariables && !isRunning()">
         <div class="col">
             <fieldset [ngClass]="collapseContextVariables ? 'border-top ps-2' : 'border p-2'">
                 <legend class="fs-6 px-3 mb-0 float-none" (click)="switchCollapseContextVariables()">

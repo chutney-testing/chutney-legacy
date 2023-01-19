@@ -13,6 +13,15 @@
                 </button>
             </h6>
         </div>
+        <div [hidden]="getErrors().length == 0" >
+            <div *ngIf="getErrors().length > 1" class="error pt-2" >
+                <pre [innerHTML]="getErrors() | prettyPrint: true | thumbnail | safe: 'html'"></pre>
+            </div>
+            <div *ngIf="getErrors().length == 1" class="error pt-2">
+                <pre [innerHTML]="getErrors()[0] | prettyPrint: true | thumbnail | safe: 'html'"></pre>
+            </div>
+        </div>
+        <pre *ngIf="getInformation().length > 0" class="information" [innerHTML]="getInformation() | prettyPrint: true | thumbnail | safe: 'html'"></pre>
         <div *ngIf="hasInputs()">
             <div class="px-3 mb-0 float-none cursor-pointer" (click)="switchCollapseInput()">
                 <span class="pe-2 fa text-secondary" [ngClass]="collapseInput ? 'fa-eye' : 'fa-eye-slash'"></span>
@@ -34,15 +43,6 @@
                     <pre>{{output.key}} :  {{output.value | stringify | prettyPrint}}</pre>
                 </div>
             </ng-container>
-        </div>
-    </div>
-    <pre *ngIf="getInformation().length > 0" class="information" [innerHTML]="getInformation() | prettyPrint: true | thumbnail | safe: 'html'"></pre>
-    <div [hidden]="getErrors().length == 0" >
-        <div *ngIf="getErrors().length > 1" class="error pt-2" >
-            <pre [innerHTML]="getErrors() | prettyPrint: true | thumbnail | safe: 'html'"></pre>
-        </div>
-        <div *ngIf="getErrors().length == 1" class="error pt-2">
-            <pre [innerHTML]="getErrors()[0] | prettyPrint: true | thumbnail | safe: 'html'"></pre>
         </div>
     </div>
     <ng-container *ngIf="step.steps && step.steps.length > 0">
