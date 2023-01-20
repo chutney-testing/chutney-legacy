@@ -44,6 +44,7 @@ import {
 import {
     ScenarioExecutionMenuComponent
 } from '@modules/scenarios/components/execution/sub/right-side-bar/scenario-execution-menu.component';
+import { StepDetailsComponent } from './components/execution/detail/sub/step-details/step-details.component';
 const ROUTES = [
     ...scenarioRoute
 ];
@@ -75,6 +76,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         ScenariosComponent,
         ScenarioExecutionComponent,
         StepReportComponent,
+        StepDetailsComponent,
         StepComponent,
         ScenarioCampaignsComponent,
         ScenarioExecutionsHistoryComponent,

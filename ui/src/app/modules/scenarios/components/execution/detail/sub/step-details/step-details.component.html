@@ -1,0 +1,51 @@
+<div *ngIf="step" class="card ms-1 pt-1 ps-2 mb-2">
+    <div >
+        <div>
+            <ng-template #stepInfo>
+                <b class="me-1">{{step.type}}</b>
+                <span *ngIf="step.targetName" class="mx-2">on <b>{{step.targetName}}</b></span>
+                <span *ngIf="step.strategy">with <b>{{step.strategy}}</b> strategy</span>
+            </ng-template>
+            <h6 class="me-1">{{step.name}}
+                <button *ngIf="step.type || step.strategy" type="button" class="btn btn-link float-end cursor-default pt-0"
+                        [ngbPopover]="stepInfo" placement="left" triggers="mouseenter:mouseleave">
+                    <span class="fa fa-info-circle" aria-hidden="true"></span>
+                </button>
+            </h6>
+        </div>
+        <div [hidden]="getErrors().length == 0" >
+            <div *ngIf="getErrors().length > 1" class="error pt-2" >
+                <pre [innerHTML]="getErrors() | prettyPrint: true | thumbnail | safe: 'html'"></pre>
+            </div>
+            <div *ngIf="getErrors().length == 1" class="error pt-2">
+                <pre [innerHTML]="getErrors()[0] | prettyPrint: true | thumbnail | safe: 'html'"></pre>
+            </div>
+        </div>
+        <pre *ngIf="getInformation().length > 0" class="information" [innerHTML]="getInformation() | prettyPrint: true | thumbnail | safe: 'html'"></pre>
+        <div *ngIf="hasInputs()">
+            <div class="px-3 mb-0 float-none cursor-pointer" (click)="switchCollapseInput()">
+                <span class="pe-2 fa text-secondary" [ngClass]="collapseInput ? 'fa-eye' : 'fa-eye-slash'"></span>
+                <em>{{'scenarios.execution.inputs' | translate}}</em>
+            </div>
+            <ng-container *ngIf="!collapseInput" >
+                <div *ngFor="let input of step.evaluatedInputs | objectAsEntryList" class="ps-2">
+                    <pre>{{input.key}} :  {{input.value | stringify | prettyPrint}}</pre>
+                </div>
+            </ng-container>
+        </div>
+        <div *ngIf="hasOutputs()">
+            <span class="px-3 mb-0 float-none cursor-pointer" (click)="switchCollapseOutput()">
+                <span class="pe-2 fa text-secondary" [ngClass]="collapseOutput ? 'fa-eye' : 'fa-eye-slash'"></span>
+                <em>{{'scenarios.execution.outputs' | translate}}</em>
+            </span>
+            <ng-container *ngIf="!collapseOutput" >
+                <div *ngFor="let output of step.stepOutputs | objectAsEntryList" class="ps-2">
+                    <pre>{{output.key}} :  {{output.value | stringify | prettyPrint}}</pre>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+    <ng-container *ngIf="step.steps && step.steps.length > 0">
+        <chutney-scenario-step-details *ngFor="let subStep of step.steps" [step]="subStep" [executionId]="executionId" [showDetails]="showDetails"></chutney-scenario-step-details>
+    </ng-container>
+</div>

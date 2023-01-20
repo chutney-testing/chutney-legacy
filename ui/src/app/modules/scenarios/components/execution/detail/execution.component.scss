@@ -23,40 +23,9 @@ button span:not(:first-child) {
     margin: 10px 0 5px 20px;
 }
 
-div.steps {
-    margin-top: 20px;
-}
-
 .error {
     color: var(--bs-warning);
     margin-bottom: 30px;
-}
-
-.col-sm-3half, .col-sm-8half {
-    position: relative;
-    min-height: 1px;
-    padding-right: 15px;
-    padding-left: 15px;
-}
-
-@media (min-width: 768px) {
-    .col-sm-3half, .col-sm-8half {
-        float: left;
-    }
-    .col-sm-3half {
-        width: 17.16666667%;
-    }
-    .col-sm-8half {
-        width: 82.83333333%;
-    }
-}
-
-.campaigns-scenario {
-    position: absolute;
-    height: 50px;
-    right: 0;
-    z-index: 100;
-    margin: 0;
 }
 
 .background-white {
@@ -82,4 +51,25 @@ div.steps {
 
 #then::before {
     content: "Then";
+}
+
+div.step-container-wrapper {
+    margin: 1px;
+    line-height: normal;
+    font-size: 14px;
+}
+
+div.step-container {
+    margin: 5px 0 5px 0;
+    border-radius: 4px;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+div.step-container:hover {
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.highlight {
+    color: white;
+    background-color: var(--bs-primary) !important;
 }

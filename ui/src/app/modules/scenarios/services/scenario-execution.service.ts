@@ -96,7 +96,8 @@ export class ScenarioExecutionService {
             JSON.parse(jsonResponse.report).report,
             jsonResponse.environment,
             jsonResponse.user,
-            jsonResponse.testCaseTitle
+            jsonResponse.testCaseTitle,
+            JSON.parse(jsonResponse.report).contextVariables
         );
     }
 

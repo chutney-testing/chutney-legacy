@@ -11,11 +11,11 @@ import {
     GwtTestCase,
     ScenarioComponent,
     ScenarioExecutionReport,
-    StepExecutionReport, stepFromObject
+    StepExecutionReport
 } from '@model';
-import { ScenarioService } from '@core/services';
 import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
+import { ObjectAsEntryListPipe } from '@shared/pipes';
 
 @Component({
     selector: 'chutney-scenario-execution',
@@ -24,7 +24,7 @@ import { ExecutionStatus } from '@core/model/scenario/execution-status';
     styleUrls: ['./execution.component.scss']
 })
 export class ScenarioExecutionComponent implements OnInit, OnDestroy {
-    @Input() executionId: number;
+    @Input() execution: Execution;
     @Input() scenario: ScenarioComponent | GwtTestCase;
     @Output() onExecutionStatusUpdate = new EventEmitter<{status: ExecutionStatus, error: string}>() ;
 
@@ -34,75 +34,56 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     executionError: String;
 
     scenarioExecutionReport: ScenarioExecutionReport;
+    selectedStep: StepExecutionReport;
+    selectedStepId: number;
 
-    toggleScenarioDetails = true;
-    toggleScenarioInfo = true;
+    isAllStepsCollapsed = true;
+    hasContextVariables = false;
+    collapseContextVariables = true;
+    showDetails = true;
 
     private scenarioExecutionAsyncSubscription: Subscription;
+    private stepDetailsSubscription: Subscription;
 
     Authorization = Authorization;
 
     constructor(
         private eventManager: EventManagerService,
-        private scenarioService: ScenarioService,
         private scenarioExecutionService: ScenarioExecutionService) {
     }
 
     ngOnInit() {
-        this.loadScenarioExecution(this.executionId);
+        this.loadScenarioExecution(this.execution.executionId);
+        this.stepDetailsSubscription = this.eventManager.subscribe('selectStepEvent_' + this.execution.executionId, (data) => {
+            this.selectedStep = data.step;
+            this.selectedStepId = data.stepId;
+            this.showDetails = !this.isRootStepSelected();
+        });
     }
 
     ngOnDestroy() {
         this.unsubscribeScenarioExecutionAsyncSubscription();
-    }
-
-    onLastIdExecution(execution: Execution) {
-        if (Execution.NO_EXECUTION === execution) {
-            this.executionId = null;
-        } else if (this.executionId !== execution.executionId) {
-            this.executionId = execution.executionId;
-            if (!this.scenarioExecutionAsyncSubscription || this.scenarioExecutionAsyncSubscription.closed) {
-                if (ExecutionStatus.RUNNING === execution.status) {
-                    this.observeScenarioExecution(execution.executionId);
-                } else {
-                    this.loadScenarioExecution(execution.executionId);
-                }
-            }
-        }
-    }
-
-    onSelectExecution(execution: Execution) {
-        if (execution != null) {
-            this.executionId = execution.executionId;
-            this.executionError = '';
-
-            this.unsubscribeScenarioExecutionAsyncSubscription();
-
-            if (ExecutionStatus.RUNNING === execution.status) {
-                this.observeScenarioExecution(execution.executionId);
-            } else {
-                this.loadScenarioExecution(execution.executionId);
-            }
-        } else {
-            this.executionId = null;
-            this.executionError = '';
-            this.scenarioExecutionReport = null;
-        }
+        this.eventManager.destroy(this.stepDetailsSubscription);
     }
 
     loadScenarioExecution(executionId: number) {
         this.executionError = '';
-        this.executionId = executionId;
+        this.execution.executionId = executionId;
         this.scenarioExecutionService.findExecutionReport(this.scenario.id, executionId)
             .subscribe({
                 next: (scenarioExecutionReport: ScenarioExecutionReport) => {
                     if (scenarioExecutionReport?.report?.status === ExecutionStatus.RUNNING) {
                         this.observeScenarioExecution(executionId);
                     } else {
-                        this.toggleScenarioDetails = true;
                         this.scenarioExecutionReport = scenarioExecutionReport;
+                        this.hasContextVariables = this.scenarioExecutionReport.contextVariables && Object.getOwnPropertyNames(this.scenarioExecutionReport.contextVariables).length > 0;
+                        let failedStep = this.getFailureSteps(this.scenarioExecutionReport);
+                        if(failedStep?.length > 0) {
+                            this.eventManager.broadcast({name: 'selectStepEvent_' + this.execution.executionId , step: failedStep[0], stepId:this.scenarioExecutionReport.report.steps.indexOf(failedStep[0])});
+                        } else {
+                            this.showRootStep();
+                        }
                     }
-
                 },
                 error: error => {
                     console.error(error.message);
@@ -112,18 +93,21 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
             });
     }
 
-    expandAllDetails() {
-        this.toggleScenarioDetails = !this.toggleScenarioDetails;
-        this.eventManager.broadcast({name: 'toggleScenarioDetails', expand: this.toggleScenarioDetails});
+    expandAll() {
+        this.isAllStepsCollapsed = !this.isAllStepsCollapsed;
+        this.eventManager.broadcast({name: 'toggleScenarioStep_' + this.execution.executionId, expand: this.isAllStepsCollapsed});
     }
 
-    expandAllInfo() {
-        this.toggleScenarioInfo = !this.toggleScenarioInfo;
-        this.eventManager.broadcast({name: 'toggleScenarioInfo', expand: this.toggleScenarioInfo});
+    toggleDetails() {
+        this.showDetails = !this.showDetails;
+    }
+
+    showRootStep(){
+        this.eventManager.broadcast({name: 'selectStepEvent_' + this.execution.executionId , step: this.scenarioExecutionReport?.report, stepId: -1});
     }
 
     stopScenario() {
-        this.scenarioExecutionService.stopScenario(this.scenario.id, this.executionId).subscribe(() => {
+        this.scenarioExecutionService.stopScenario(this.scenario.id, this.execution.executionId).subscribe(() => {
         }, error => {
             const body = JSON.parse(error._body);
             this.executionError = 'Cannot stop scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
@@ -132,7 +116,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     pauseScenario() {
-        this.scenarioExecutionService.pauseScenario(this.scenario.id, this.executionId).subscribe(() => {
+        this.scenarioExecutionService.pauseScenario(this.scenario.id, this.execution.executionId).subscribe(() => {
         }, error => {
             const body = JSON.parse(error._body);
             this.executionError = 'Cannot pause scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
@@ -140,12 +124,12 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     resumeScenario() {
-        this.scenarioExecutionService.resumeScenario(this.scenario.id, this.executionId)
+        this.scenarioExecutionService.resumeScenario(this.scenario.id, this.execution.executionId)
             .pipe(
                 delay(1000)
             )
             .subscribe(
-                () => this.loadScenarioExecution(Number(this.executionId)),
+                () => this.loadScenarioExecution(Number(this.execution.executionId)),
                 error => {
                     const body = JSON.parse(error._body);
                     this.executionError = 'Cannot resume scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
@@ -155,6 +139,18 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     isComponentScenario() {
         return this.scenario instanceof ScenarioComponent;
+    }
+
+    isRunning() {
+        return ExecutionStatus.RUNNING === this.scenarioExecutionReport?.report?.status;
+    }
+
+    isPaused() {
+        return ExecutionStatus.PAUSED === this.scenarioExecutionReport?.report?.status;
+    }
+
+    private switchCollapseContextVariables() {
+        this.collapseContextVariables = !this.collapseContextVariables;
     }
 
     private observeScenarioExecution(executionId: number) {
@@ -173,12 +169,14 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                 next: (scenarioExecutionReport: ScenarioExecutionReport) => {
                     executionStatus = ExecutionStatus[scenarioExecutionReport.report.status];
                     executionError = this.getExecutionError(scenarioExecutionReport);
-                    this.toggleScenarioDetails = true;
                     if (this.scenarioExecutionReport) {
                         this.scenarioExecutionReport.report.duration = scenarioExecutionReport.report.duration;
                         this.updateStepExecutionReport(this.scenarioExecutionReport.report, scenarioExecutionReport.report, []);
                     } else {
                         this.scenarioExecutionReport = scenarioExecutionReport;
+                    }
+                    if(this.isRootStepSelected()){
+                        this.showRootStep();
                     }
                 },
                 error: (error) => {
@@ -197,13 +195,36 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     private getExecutionError(scenarioExecutionReport: ScenarioExecutionReport) {
-        return scenarioExecutionReport
-            .report
-            .steps
-            .filter(step => step.status === ExecutionStatus.FAILURE)
+        return this.getFailureSteps(scenarioExecutionReport)
             .map(step => step.errors)
             .flat()
             .toString();
+    }
+
+    private getFailureSteps(scenarioExecutionReport: ScenarioExecutionReport) {
+        return scenarioExecutionReport
+            .report
+            .steps
+            .filter((step) => step.status === ExecutionStatus.FAILURE);
+    }
+
+    private hasSubSteps() {
+        return this.scenarioExecutionReport
+            .report
+            .steps
+            .filter((step) => step.steps.length > 0)
+            .length > 0;
+    }
+
+    private hasInputOutputs(step: StepExecutionReport) {
+        if(step?.steps.length ){
+            return step.steps.filter((s) => this.hasInputOutputs(s)).length > 0;
+        }
+        return  step && (Object.getOwnPropertyNames(step.evaluatedInputs).length > 0 || Object.getOwnPropertyNames(step.stepOutputs).length > 0) ;
+    }
+
+    private isRootStepSelected() {
+        return this.selectedStepId === -1 ;
     }
 
     private unsubscribeScenarioExecutionAsyncSubscription() {

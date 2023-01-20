@@ -6,6 +6,7 @@ export class ScenarioExecutionReport {
         public report: StepExecutionReport,
         public environment: string,
         public user: string,
-        public scenarioName?: string
+        public scenarioName?: string,
+        public contextVariables?: Map<string, Object>
     ) { }
 }

@@ -83,10 +83,17 @@
             },
             "actions": {
                 "details": {
-                    "show": "Voir détails",
-                    "hide": "Cacher détails"
+                    "show": "Tout voir"
                 },
-                "remove": "Etes-vous sur de vouloir supprimer le scénario ?"
+                "steps": {
+                    "show": "Voir étapes",
+                    "hide": "Cacher étapes"
+                },
+                "remove": "Etes-vous sur de vouloir supprimer le scénario ?",
+                "input-output": {
+                    "show": "Déplier entrées/sorties",
+                    "hide": "Replier entrées/sorties"
+                }
             },
             "errors": {
                 "execution": "Impossible d'exécuter le scénario",
@@ -94,7 +101,8 @@
             },
             "dataset.title": "Paramètres",
             "inputs": "Entrées",
-            "outputs": "Sorties"
+            "outputs": "Sorties",
+            "contextVariables": "Variables d'éxécutions"
         },
         "edition": {
             "title": {
