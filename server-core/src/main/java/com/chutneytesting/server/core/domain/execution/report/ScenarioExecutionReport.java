@@ -28,7 +28,7 @@ public class ScenarioExecutionReport {
     private Map<String, Object> searchContextVariables(StepExecutionReportCore report) {
         Map<String, Object> contextVariables = new HashMap<>();
         report.steps.forEach(step -> {
-            if (step.steps.isEmpty()) {
+            if (step.steps.isEmpty() && step.stepOutputs != null) {
                 contextVariables.putAll(step.stepOutputs);
             } else {
                 contextVariables.putAll(searchContextVariables(step));

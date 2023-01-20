@@ -217,10 +217,10 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     }
 
     private hasInputOutputs(step: StepExecutionReport) {
-        if(step.steps.length ){
+        if(step?.steps.length ){
             return step.steps.filter((s) => this.hasInputOutputs(s)).length > 0;
         }
-        return  Object.getOwnPropertyNames(step.evaluatedInputs).length > 0 || Object.getOwnPropertyNames(step.stepOutputs).length > 0 ;
+        return  step && (Object.getOwnPropertyNames(step.evaluatedInputs).length > 0 || Object.getOwnPropertyNames(step.stepOutputs).length > 0) ;
     }
 
     private isRootStepSelected() {
