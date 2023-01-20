@@ -77,7 +77,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                     } else {
                         this.scenarioExecutionReport = scenarioExecutionReport;
                         this.hasContextVariables = this.scenarioExecutionReport.contextVariables && Object.getOwnPropertyNames(this.scenarioExecutionReport.contextVariables).length > 0;
-                         let failedStep = this.getFailureSteps(this.scenarioExecutionReport);
+                        let failedStep = this.getFailureSteps(this.scenarioExecutionReport);
                         if(failedStep?.length > 0) {
                             this.eventManager.broadcast({name: 'selectStepEvent_' + this.execution.executionId , step: failedStep[0], stepId:this.scenarioExecutionReport.report.steps.indexOf(failedStep[0])});
                         } else {

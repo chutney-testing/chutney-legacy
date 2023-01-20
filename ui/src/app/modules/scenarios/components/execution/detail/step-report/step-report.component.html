@@ -3,16 +3,16 @@
         [ngClass]="{'result-header-success': step != undefined && step.status == 'SUCCESS',
                     'result-header-error': step != undefined && step.status == 'FAILURE',
                     'result-header-running': step != undefined && (step.status == 'RUNNING' || step.status == 'PAUSED')}">
-      <div class="result-header collapsible" (click)="collapse($event)">
+      <div class="result-header collapsible" (click)="selectStep($event)">
           <div *ngIf="step && step.status != 'NOT_EXECUTED'" class="result-header-status">
             <div *ngIf="step && step.status != 'NOT_EXECUTED'" [ngbTooltip]="step.duration | duration" placement="left">{{step.duration | duration:'short'}}</div>
             <div *ngIf="step && step.status != 'NOT_EXECUTED'" class="exec-date" [ngbTooltip]="step.startDate | date" placement="left">{{step.startDate | date:'mediumTime'}}</div>
           </div>
           <div class="d-flex col step-name align-items-center">
               <span class="me-5 ps-1"><em>{{step.name}}</em></span>
-              <div class="btn-group btn-group-sm">
+              <div class="btn-group btn-group-sm" (click)="collapse($event)">
                 <div *ngIf="step.steps && step.steps.length > 0" class="steps-btn">
-                  <span class="me-2 fa" [ngClass]="stepsCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'" [attr.aria-expanded]="!stepsCollapsed"></span>
+                  <span class="m-2 fa" [ngClass]="stepsCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'" [attr.aria-expanded]="!stepsCollapsed"></span>
                 </div>
               </div>
           </div>

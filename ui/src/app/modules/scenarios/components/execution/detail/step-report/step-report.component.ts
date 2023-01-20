@@ -36,9 +36,12 @@ export class StepReportComponent implements OnInit, OnDestroy {
         this.eventManager.destroy(this.highlightSubscription);
     }
 
-    collapse(event: MouseEvent) {
-        this.stepsCollapsed = !this.stepsCollapsed;
+    selectStep(event: MouseEvent) {
         this.eventManager.broadcast({name: 'selectStepEvent_' + this.executionId , step: this.step, stepId: this.id});
         event.stopPropagation();
+    }
+
+    collapse(event: MouseEvent) {
+        this.stepsCollapsed = !this.stepsCollapsed;
     }
 }
