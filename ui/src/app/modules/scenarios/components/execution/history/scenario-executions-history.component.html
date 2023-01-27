@@ -3,8 +3,8 @@
     {{ error }}
 </div>
 <div *ngIf="scenario">
-    <h5>{{scenario.title}}</h5>
-    <h6>{{scenario.description}}</h6>
+    <h5 [innerHTML]="scenario.title | linkify"></h5>
+    <h6 [innerHTML]="scenario.description | linkify"></h6>
     <div class="mb-2">
         <chutney-scenario-campaigns [idScenario]="scenario.id"></chutney-scenario-campaigns>
     </div>
