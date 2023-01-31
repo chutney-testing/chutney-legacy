@@ -1,6 +1,6 @@
 package com.chutneytesting.component;
 
-import com.chutneytesting.component.dataset.domain.DataSetNotFoundException;
+import com.chutneytesting.server.core.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.component.scenario.domain.AlreadyExistingComposableStepException;
 import com.chutneytesting.component.scenario.domain.ComposableStepCyclicDependencyException;
 import com.chutneytesting.component.scenario.domain.ComposableStepNotFoundException;

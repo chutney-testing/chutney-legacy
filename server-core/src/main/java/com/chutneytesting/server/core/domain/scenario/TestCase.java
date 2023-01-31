@@ -14,4 +14,9 @@ public interface TestCase {
 
     TestCase usingExecutionParameters(final Map<String, String> parameters);
 
+
+    // TODO remove after component deprecation
+    default TestCase withDataSetId(String dataSetId) {
+        return this;
+    };
 }

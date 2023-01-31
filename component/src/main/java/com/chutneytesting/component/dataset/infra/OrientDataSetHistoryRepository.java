@@ -16,9 +16,9 @@ import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
 
 import com.chutneytesting.component.ComposableIdUtils;
-import com.chutneytesting.component.dataset.domain.DataSet;
-import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
-import com.chutneytesting.component.dataset.domain.DataSetNotFoundException;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
+import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
+import com.chutneytesting.server.core.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.component.scenario.infra.orient.OrientComponentDB;
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabasePool;

@@ -1,7 +1,7 @@
 package com.chutneytesting.component.dataset.api;
 
 
-import com.chutneytesting.component.dataset.domain.DataSet;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.tools.ui.KeyValue;
 import java.util.stream.Collectors;
 

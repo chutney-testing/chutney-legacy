@@ -4,7 +4,6 @@ import static com.chutneytesting.action.sql.SqlAction.CONFIGURABLE_NB_LOGGED_ROW
 
 import com.chutneytesting.action.api.EmbeddedActionEngine;
 import com.chutneytesting.campaign.domain.CampaignRepository;
-import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
 import com.chutneytesting.engine.api.execution.TestEngine;
@@ -13,6 +12,7 @@ import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngine;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngineAsync;
 import com.chutneytesting.server.core.domain.execution.ServerTestEngine;
@@ -29,6 +29,7 @@ import java.time.Clock;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import javax.annotation.PostConstruct;
@@ -230,7 +231,7 @@ public class ServerConfiguration implements AsyncConfigurer {
                                                     ScenarioExecutionEngine scenarioExecutionEngine,
                                                     ExecutionHistoryRepository executionHistoryRepository,
                                                     TestCaseRepositoryAggregator testCaseRepository,
-                                                    DataSetHistoryRepository dataSetHistoryRepository,
+                                                    Optional<DataSetHistoryRepository> dataSetHistoryRepository,
                                                     JiraXrayEmbeddedApi jiraXrayEmbeddedApi,
                                                     ChutneyMetrics metrics,
                                                     @Qualifier("campaignExecutor") TaskExecutor campaignExecutor,

@@ -2,7 +2,7 @@ package com.chutneytesting.component.dataset.infra;
 
 import static java.util.Collections.emptyMap;
 
-import com.chutneytesting.component.dataset.domain.DataSet;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.github.difflib.DiffUtils;
 import com.github.difflib.UnifiedDiffUtils;
 import com.github.difflib.algorithm.DiffException;

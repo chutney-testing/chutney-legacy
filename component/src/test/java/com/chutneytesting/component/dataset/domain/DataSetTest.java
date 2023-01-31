@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 

@@ -1,5 +1,6 @@
 package com.chutneytesting.component.dataset.domain;
 
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import java.util.List;
 
 public interface DataSetRepository {

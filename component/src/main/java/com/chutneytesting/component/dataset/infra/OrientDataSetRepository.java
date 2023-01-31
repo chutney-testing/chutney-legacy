@@ -9,8 +9,8 @@ import static com.chutneytesting.component.scenario.infra.orient.OrientUtils.loa
 import static com.chutneytesting.component.scenario.infra.orient.OrientUtils.rollback;
 
 import com.chutneytesting.component.ComposableIdUtils;
-import com.chutneytesting.component.dataset.domain.DataSet;
-import com.chutneytesting.component.dataset.domain.DataSetNotFoundException;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
+import com.chutneytesting.server.core.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.component.dataset.domain.DataSetRepository;
 import com.chutneytesting.component.scenario.infra.orient.OrientComponentDB;
 import com.google.common.collect.Lists;

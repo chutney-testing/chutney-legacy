@@ -12,8 +12,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.chutneytesting.component.ComponentRestExceptionHandler;
-import com.chutneytesting.component.dataset.domain.DataSet;
-import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
+import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.component.dataset.domain.DataSetRepository;
 import com.chutneytesting.server.core.domain.tools.ui.ImmutableKeyValue;
 import com.chutneytesting.server.core.domain.tools.ui.KeyValue;

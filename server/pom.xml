@@ -19,10 +19,6 @@
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
-            <artifactId>component</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.chutneytesting</groupId>
             <artifactId>engine</artifactId>
         </dependency>
         <dependency>
