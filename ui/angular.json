@@ -125,7 +125,22 @@
               "builder": "@storybook/angular:start-storybook",
               "options": {
                   "browserTarget": "chutney:build",
-                  "port": 6006
+                  "port": 6006,
+                  "styles": [
+                      "src/assets/style/style.scss",
+                      "src/assets/style/themes/theme.flatly.scss"
+                  ]
+              }
+          },
+          "storybook-darkly": {
+              "builder": "@storybook/angular:start-storybook",
+              "options": {
+                  "browserTarget": "chutney:build",
+                  "port": 6007,
+                  "styles": [
+                      "src/assets/style/style.scss",
+                      "src/assets/style/themes/theme.darkly.scss"
+                  ]
               }
           },
           "build-storybook": {
