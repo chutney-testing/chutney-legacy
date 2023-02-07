@@ -1,18 +1,17 @@
 
 chutney:
   db-server:
-    port: 9360
     base-dir: ./.chutney/data
 
 spring:
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-        show_sql: true
+        dialect: com.chutneytesting.SQLiteDialect
+        show_sql: false
         use-new-id-generator-mappings: false
   datasource:
-    url: jdbc:h2:tcp://localhost:${chutney.db-server.port}/chutney-ui;SCHEMA=PUBLIC
+    url: jdbc:sqlite:${chutney.db-server.base-dir}/sqlitesample.db
     username:
     password:
     configuration:

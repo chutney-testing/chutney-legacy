@@ -23,11 +23,14 @@ public class DBConfiguration {
     private static final String DBSERVER_PORT_SPRING_VALUE = "${chutney.db-server.port}";
     private static final String DBSERVER_H2_BASEDIR_SPRING_VALUE = "${chutney.db-server.base-dir:~/.chutney/data}";
 
-    @Bean
-    @DependsOn("dbServer")
-    public DataSource dataSource(DataSourceProperties internalDataSourceProperties) {
-        return internalDataSourceProperties.initializeDataSourceBuilder()
-            .type(HikariDataSource.class).build();
+    @Configuration
+    @Profile("db-sqlite")
+    static class SqliteConfiguration {
+        @Bean
+        public DataSource dataSource(DataSourceProperties internalDataSourceProperties) {
+            return internalDataSourceProperties.initializeDataSourceBuilder()
+                .type(HikariDataSource.class).build();
+        }
     }
 
     @Configuration
@@ -59,5 +62,24 @@ public class DBConfiguration {
             LOGGER.debug("Started H2 server " + h2Server.getURL());
             return h2Server;
         }
+
+        @Bean
+        @DependsOn("dbServer")
+        public DataSource dataSource(DataSourceProperties internalDataSourceProperties) {
+            return internalDataSourceProperties.initializeDataSourceBuilder()
+                .type(HikariDataSource.class).build();
+        }
+    }
+
+    @Configuration
+    @Profile("db-pg")
+    static class PGConfiguration {
+
+        @Bean
+        public DataSource dataSource(DataSourceProperties internalDataSourceProperties) {
+            return internalDataSourceProperties.initializeDataSourceBuilder()
+                .type(HikariDataSource.class).build();
+        }
+
     }
 }
