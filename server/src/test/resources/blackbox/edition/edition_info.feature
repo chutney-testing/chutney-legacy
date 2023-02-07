@@ -50,8 +50,8 @@ Feature: Support testcase edition metadata
                 | $.tags         | ${#json('["FIRST","SECOND"]', '$')} |
                 | $.creationDate | $isEqualDate:2020-01-01T12:00:03Z   |
                 | $.author       | robert                              |
-                | $.updateDate   | $isEqualDate:2020-01-01T12:00:03Z   |
-                | $.version      | 1                                   |
+                | $.updateDate   | $isAfterDate:${#isoFormatter.format(#startDate)}   |
+                | $.version      | 111                                 |
 
     Scenario: Consult new composable testcase metadata
         Given robert has created a composable testcase with metadata
@@ -70,7 +70,6 @@ Feature: Support testcase edition metadata
                     "author": "notCreator",
                     "creationDate": "2020-01-01T12:00:03Z",
                     "updateDate": "2020-02-02T12:00:03Z",
-                    "version": 111,
                     "scenario":{
                         "when":{},
                         "thens":[]
@@ -115,7 +114,6 @@ Feature: Support testcase edition metadata
                     "author": "notCreator",
                     "creationDate": "2020-01-01T12:00:03Z",
                     "updateDate": "2020-02-02T12:00:03Z",
-                    "version": 111,
                     "scenario":{
                         "when":{},
                         "thens":[]
@@ -166,7 +164,7 @@ Feature: Support testcase edition metadata
                 | $.creationDate | $isEqualDate:2020-01-01T12:00:03Z                |
                 | $.author       | paloma                                           |
                 | $.updateDate   | $isAfterDate:${#isoFormatter.format(#startDate)} |
-                | $.version      | 2                                                |
+                | $.version      | 2                                              |
 
     Scenario: Consult composable testcase metadata after update
         Given robert has created a testcase with metadata

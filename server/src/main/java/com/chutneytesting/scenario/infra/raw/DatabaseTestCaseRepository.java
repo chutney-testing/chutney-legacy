@@ -1,70 +1,60 @@
 package com.chutneytesting.scenario.infra.raw;
 
-import static java.time.temporal.ChronoUnit.MILLIS;
-import static java.util.Collections.emptyMap;
+import static com.chutneytesting.scenario.infra.jpa.ScenarioDao.fromTestCaseData;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.lang.Long.valueOf;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.scenario.infra.jpa.ScenarioDao;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
-import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.server.core.domain.security.User;
-import com.chutneytesting.tools.Try;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestCase> {
 
-    private static final ScenarioMetadataRowMapper SCENARIO_INDEX_ROW_MAPPER = new ScenarioMetadataRowMapper();
-    private final ScenarioRowMapper scenario_row_mapper;
-
     private final NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate;
-    private final ObjectMapper mapper;
+    private final DatabaseTestCaseRepositoryDao jpa;
 
     public DatabaseTestCaseRepository(NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate,
-                                      @Qualifier("persistenceObjectMapper") ObjectMapper objectMapper) {
+                                      DatabaseTestCaseRepositoryDao jpa) {
 
         this.uiNamedParameterJdbcTemplate = uiNamedParameterJdbcTemplate;
-        this.mapper = objectMapper;
-        this.scenario_row_mapper = new ScenarioRowMapper(mapper);
+        this.jpa = jpa;
     }
 
     @Override
+   //@Transactional(propagation = Propagation.NOT_SUPPORTED)
     public String save(GwtTestCase testCase) {
         TestCaseData testCaseData = TestCaseDataMapper.toDto(testCase);
-        if (isNewScenario(testCaseData)) {
-            return doSave(testCaseData);
-        }
-        return doUpdate(testCaseData);
+        return doSave(testCaseData).toString();
     }
 
     @Override
     public Optional<GwtTestCase> findById(String scenarioId) {
+        if(checkIdInput(scenarioId)) {
+            return empty();
+        }
         try {
-            TestCaseData testCaseData = uiNamedParameterJdbcTemplate.queryForObject("SELECT * FROM SCENARIO WHERE ID = :id and ACTIVATED = TRUE", buildIdParameterMap(scenarioId), scenario_row_mapper);
-            return Optional.ofNullable(testCaseData).map(TestCaseDataMapper::fromDto);
+            Optional<ScenarioDao> scenarioDao = jpa.findById(valueOf(scenarioId));
+            return scenarioDao.map(ScenarioDao::toGwtTestCase);
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
         }
@@ -72,6 +62,9 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     @Override
     public Optional<TestCase> findExecutableById(String id) {
+        if(checkIdInput(id)) {
+            return empty();
+        }
         Optional<GwtTestCase> byId = findById(id);
         if (byId.isPresent()) {
             return of(byId.get());
@@ -87,21 +80,28 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     @Override
     public List<TestCaseMetadata> findAll() {
-        return uiNamedParameterJdbcTemplate.query("SELECT ID, TITLE, DESCRIPTION, TAGS, CREATION_DATE, USER_ID, UPDATE_DATE, VERSION FROM SCENARIO where ACTIVATED is TRUE", emptyMap(), SCENARIO_INDEX_ROW_MAPPER);
+        return jpa.findAll().stream().map(ScenarioDao::toTestCaseMetadata).collect(toList());
     }
 
     @Override
+    @Transactional
     public void removeById(String scenarioId) {
+        if(checkIdInput(scenarioId)) {
+            return;
+        }
         // TODO - Refactor - Use CampaignRepository up in callstack
         uiNamedParameterJdbcTemplate.update("DELETE FROM CAMPAIGN_EXECUTION_HISTORY WHERE SCENARIO_ID = :id", buildIdParameterMap(scenarioId));
         uiNamedParameterJdbcTemplate.update("DELETE FROM CAMPAIGN_SCENARIOS WHERE SCENARIO_ID = :id", buildIdParameterMap(scenarioId));
-        uiNamedParameterJdbcTemplate.update("UPDATE SCENARIO SET ACTIVATED = FALSE WHERE ID = :id", buildIdParameterMap(scenarioId));
+        jpa.deactivateScenario(valueOf(scenarioId));
     }
 
     @Override
     public Optional<Integer> lastVersion(String scenarioId) {
+        if(checkIdInput(scenarioId)) {
+            return empty();
+        }
         try {
-            return of(uiNamedParameterJdbcTemplate.queryForObject("SELECT VERSION FROM SCENARIO WHERE ID = :id", buildIdParameterMap(scenarioId), Integer.class));
+            return jpa.getLastVersion(valueOf(scenarioId));
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
         }
@@ -111,114 +111,40 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     public List<TestCaseMetadata> search(String textFilter) {
         if (!textFilter.isEmpty()) {
             String[] words = StringEscapeUtils.escapeSql(textFilter).split("\\s");
-            String sqlSearch = Arrays.stream(words).map(w -> " CONTENT LIKE '%" + w + "%' ").collect(Collectors.joining(" AND "));
-            return uiNamedParameterJdbcTemplate.query(
-                "SELECT ID, TITLE, DESCRIPTION, TAGS, CREATION_DATE, USER_ID, UPDATE_DATE, VERSION " +
-                    "FROM SCENARIO " +
-                    "WHERE ACTIVATED is TRUE " +
-                    "AND " + sqlSearch, emptyMap(), SCENARIO_INDEX_ROW_MAPPER);
+            Specification<ScenarioDao> scenarioDaoSpecification = buildLikeSpecificationOnContent(words);
+            List<ScenarioDao> all = jpa.findAll(scenarioDaoSpecification);
+            return all.stream().map(ScenarioDao::toTestCaseMetadata).collect(Collectors.toList());
         } else {
             return findAll();
         }
     }
 
-    private boolean isNewScenario(TestCaseData scenario) {
-        return scenario.id == null || uiNamedParameterJdbcTemplate.queryForObject("SELECT COUNT(ID) FROM SCENARIO WHERE ID = :id", buildIdParameterMap(scenario.id), int.class) == 0;
+    private Specification<ScenarioDao> buildLikeSpecificationOnContent(String[] words) {
+        Specification<ScenarioDao> scenarioDaoSpecification = null;
+        for(String word : words) {
+            Specification<ScenarioDao> wordSpecification = DatabaseTestCaseRepositoryDao.contentContains(word);
+            if(scenarioDaoSpecification == null) {
+                scenarioDaoSpecification = wordSpecification;
+            } else {
+                scenarioDaoSpecification = scenarioDaoSpecification.or(wordSpecification);
+            }
+        }
+        return scenarioDaoSpecification;
     }
 
-    private String doSave(TestCaseData scenario) {
-        String nextId = uiNamedParameterJdbcTemplate.queryForObject("SELECT nextval('SCENARIO_SEQ')", emptyMap(), String.class);
-        uiNamedParameterJdbcTemplate.update("INSERT INTO SCENARIO(CONTENT_VERSION, ID, TITLE, DESCRIPTION, CONTENT, TAGS, CREATION_DATE, DATASET, ACTIVATED, USER_ID, UPDATE_DATE, VERSION) VALUES (:contentVersion, :id, :title, :description, :content, :tags, :creationDate, :dataSet, TRUE, :author, :creationDate, 1)",
-            scenarioQueryParameterMap(nextId, scenario));
-        return nextId;
-    }
-
-    private String doUpdate(TestCaseData scenario) {
-        int update = uiNamedParameterJdbcTemplate.update("UPDATE SCENARIO SET CONTENT_VERSION = :contentVersion, TITLE = :title, DESCRIPTION = :description, CONTENT = :content, TAGS = :tags, DATASET = :dataSet, USER_ID = :author, UPDATE_DATE = CURRENT_TIMESTAMP, VERSION = VERSION+1 WHERE ID = :id AND VERSION = :version",
-            scenarioQueryParameterMap(scenario.id, scenario));
-        if (update == 0) {
+    private Long doSave(TestCaseData scenario) {
+        try {
+            return jpa.save(fromTestCaseData(scenario)).getId();
+        } catch(ObjectOptimisticLockingFailureException e) {
             throw new ScenarioNotFoundException(scenario.id, scenario.version);
-        }
-        return scenario.id;
-    }
-
-    private MapSqlParameterSource scenarioQueryParameterMap(String nextId, TestCaseData scenario) {
-        return Try.exec(() ->
-            new MapSqlParameterSource()
-                .addValue("contentVersion", scenario.contentVersion)
-                .addValue("id", nextId)
-                .addValue("title", scenario.title)
-                .addValue("description", scenario.description)
-                .addValue("dataSet", mapper.writeValueAsString(scenario.executionParameters))
-                .addValue("content", scenario.rawScenario)
-                .addValue("creationDate", Date.from(scenario.creationDate))
-                .addValue("tags", TagListMapper.tagsListToString(scenario.tags))
-                .addValue("author", User.isAnonymous(scenario.author) ? null : scenario.author)
-                .addValue("version", scenario.version)
-        ).runtime();
-    }
-
-    private static class ScenarioMetadataRowMapper implements RowMapper<TestCaseMetadata> {
-        @Override
-        public TestCaseMetadata mapRow(ResultSet rs, int rowNum) throws SQLException {
-            String id = rs.getString("ID");
-            String title = rs.getString("TITLE");
-            String description = rs.getString("DESCRIPTION");
-            Timestamp creationDate = rs.getTimestamp("CREATION_DATE");
-            List<String> tags = TagListMapper.tagsStringToList(rs.getString("TAGS"));
-            String author = rs.getString("USER_ID");
-            Timestamp updateDate = rs.getTimestamp("UPDATE_DATE");
-            Integer version = rs.getInt("VERSION");
-            return TestCaseMetadataImpl.builder()
-                .withId(id)
-                .withTitle(title)
-                .withDescription(description)
-                .withTags(tags)
-                .withCreationDate(creationDate != null ? creationDate.toInstant() : Instant.now().truncatedTo(MILLIS))
-                .withAuthor(author)
-                .withUpdateDate(updateDate.toInstant())
-                .withVersion(version)
-                .build();
-        }
-    }
-
-    private static class ScenarioRowMapper implements RowMapper<TestCaseData> {
-        private final ObjectMapper mapper;
-
-        private ScenarioRowMapper(ObjectMapper mapper) {
-            this.mapper = mapper;
-        }
-
-        @Override
-        public TestCaseData mapRow(ResultSet rs, int rowNum) throws SQLException {
-            TestCaseData.TestCaseDataBuilder testCaseDataBuilder = TestCaseData.builder()
-                .withContentVersion(rs.getString("CONTENT_VERSION"))
-                .withId(rs.getString("ID"))
-                .withTitle(rs.getString("TITLE"))
-                .withDescription(rs.getString("DESCRIPTION"))
-                .withTags(TagListMapper.tagsStringToList(rs.getString("TAGS")))
-                .withRawScenario(rs.getString("CONTENT"))
-                .withAuthor(rs.getString("USER_ID"))
-                .withVersion(rs.getInt("VERSION"));
-
-            Try.exec(() -> {
-                TypeReference<Map<String, String>> typeRef = new TypeReference<>() {
-                };
-                String executionParameters = rs.getString("DATASET");
-                return testCaseDataBuilder.withExecutionParameters(mapper.readValue(executionParameters != null ? executionParameters : "{}", typeRef));
-            }).runtime();
-
-            Timestamp creationDate = rs.getTimestamp("CREATION_DATE");
-            testCaseDataBuilder.withCreationDate(creationDate != null ? creationDate.toInstant() : Instant.now().truncatedTo(MILLIS));
-
-            Timestamp updateDate = rs.getTimestamp("UPDATE_DATE");
-            testCaseDataBuilder.withUpdateDate(updateDate.toInstant());
-
-            return testCaseDataBuilder.build();
         }
     }
 
     private ImmutableMap<String, Object> buildIdParameterMap(String scenarioId) {
         return ImmutableMap.<String, Object>builder().put("id", scenarioId).build();
+    }
+
+    private boolean checkIdInput(String scenarioId) {
+        return isNullOrEmpty(scenarioId) || !isNumeric(scenarioId);
     }
 }
