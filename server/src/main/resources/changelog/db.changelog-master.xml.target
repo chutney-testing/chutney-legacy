@@ -1,0 +1,176 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="generated" id="1671027108756-10">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="SCENARIO"/></not>
+        </preConditions>
+        <createTable tableName="SCENARIO">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(300)"/>
+            <column name="CONTENT" type="CLOB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAGS" type="VARCHAR(300)"/>
+            <column name="CREATION_DATE" type="NUMBER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATASET" type="CLOB"/>
+            <column defaultValueBoolean="true" name="ACTIVATED" type="BOOLEAN"/>
+            <column name="CONTENT_VERSION" type="VARCHAR(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USER_ID" type="VARCHAR(64)"/>
+            <column name="UPDATE_DATE" type="NUMBER">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="generated" id="1671027108756-6">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="CAMPAIGN"/></not>
+        </preConditions>
+        <createTable tableName="CAMPAIGN">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true" />
+            </column>
+            <column name="TITLE" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="GLOBAL" name="ENVIRONMENT" type="VARCHAR(64)"/>
+            <column defaultValueBoolean="false" name="PARALLEL_RUN" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="RETRY_AUTO" type="BOOLEAN"/>
+            <column name="DATASET_ID" type="VARCHAR(20)"/>
+            <column name="TAGS" type="VARCHAR(300)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="generated" id="1671027108756-7">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="CAMPAIGN_EXECUTION_HISTORY"/></not>
+        </preConditions>
+        <createTable tableName="CAMPAIGN_EXECUTION_HISTORY">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="CAMPAIGN_ID" type="INT">
+                <constraints nullable="false" foreignKeyName="FK_CEH_CAMPAIGN_ID" references="CAMPAIGN(ID)" />
+            </column>
+            <column name="SCENARIO_ID" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SCENARIO_EXECUTION_ID" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="false" name="PARTIAL_EXECUTION" type="BOOLEAN"/>
+            <column name="EXECUTION_ENVIRONMENT" type="VARCHAR(64)"/>
+            <column defaultValue="" name="USER_ID" type="VARCHAR(64)"/>
+            <column name="DATASET_ID" type="VARCHAR(20)"/>
+            <column name="DATASET_VERSION" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="generated" id="1671027108756-8">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="CAMPAIGN_PARAMETER"/></not>
+        </preConditions>
+        <createTable tableName="CAMPAIGN_PARAMETER">
+            <column name="CAMPAIGN_ID" type="INT">
+                <constraints nullable="false" foreignKeyName="FK_CD_CAMPAIGN_ID" references="CAMPAIGN(ID)"/>
+            </column>
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="PARAMETER" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARAMETER_VALUE" type="CLOB"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="generated" id="1671027108756-9">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="CAMPAIGN_SCENARIOS"/></not>
+        </preConditions>
+        <createTable tableName="CAMPAIGN_SCENARIOS">
+            <column name="CAMPAIGN_ID" type="INT">
+                <constraints nullable="false" foreignKeyName="FK_CS_CAMPAIGN_ID" references="CAMPAIGN(ID)"/>
+            </column>
+            <column name="SCENARIO_ID" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="INDEX" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="generated" id="1671027108756-11">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="SCENARIO_EXECUTION_HISTORY"/></not>
+        </preConditions>
+        <createTable tableName="SCENARIO_EXECUTION_HISTORY">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="SCENARIO_ID" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXECUTION_TIME" type="BIGINT"/>
+            <column name="DURATION" type="INT"/>
+            <column name="STATUS" type="VARCHAR(32)"/>
+            <column name="INFORMATION" type="VARCHAR(512)"/>
+            <column name="ERROR" type="VARCHAR(512)"/>
+            <column name="REPORT" type="CLOB">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="Undefined scenario title" name="TEST_CASE_TITLE" type="VARCHAR(300)"/>
+            <column defaultValue="" name="ENVIRONMENT" type="VARCHAR(20)"/>
+            <column defaultValue="" name="USER_ID" type="VARCHAR(64)"/>
+            <column name="DATASET_ID" type="VARCHAR(20)"/>
+            <column name="DATASET_VERSION" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="generated" id="1671027108756-15">
+        <preConditions onFail="MARK_RAN">
+            <not><indexExists indexName="FK_CD_CAMPAIGN_ID_INDEX_7"/></not>
+        </preConditions>
+        <createIndex indexName="FK_CD_CAMPAIGN_ID_INDEX_7" tableName="CAMPAIGN_PARAMETER">
+            <column name="CAMPAIGN_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="generated" id="1671027108756-16">
+        <preConditions onFail="MARK_RAN">
+            <not><indexExists indexName="FK_CS_CAMPAIGN_ID_INDEX_C"/></not>
+        </preConditions>
+        <createIndex indexName="FK_CS_CAMPAIGN_ID_INDEX_C" tableName="CAMPAIGN_SCENARIOS">
+            <column name="CAMPAIGN_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="generated" id="1671027108756-17">
+        <preConditions onFail="MARK_RAN">
+            <not><indexExists indexName="IDX_CEH_CAMPAIGN_ID"/></not>
+        </preConditions>
+        <createIndex indexName="IDX_CEH_CAMPAIGN_ID" tableName="CAMPAIGN_EXECUTION_HISTORY">
+            <column name="CAMPAIGN_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="generated" id="1671027108756-18">
+        <preConditions onFail="MARK_RAN">
+            <not><indexExists indexName="IDX_SEH_SCENARIO_ID"/></not>
+        </preConditions>
+        <createIndex indexName="IDX_SEH_SCENARIO_ID" tableName="SCENARIO_EXECUTION_HISTORY">
+            <column name="SCENARIO_ID"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

@@ -565,4 +565,42 @@
         <renameColumn tableName="CAMPAIGN_PARAMETER" oldColumnName="VALUE" newColumnName="PARAMETER_VALUE"></renameColumn>
     </changeSet>
 
+    <changeSet id="Migration-table-scenario" author="ICG">
+        <comment>Migrate Scenario table</comment>
+        <renameTable oldTableName="SCENARIO" newTableName="SCENARIO_OLD"></renameTable>
+        <createTable tableName="SCENARIO">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(300)"/>
+            <column name="CONTENT" type="CLOB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAGS" type="VARCHAR(300)"/>
+            <column name="CREATION_DATE" type="NUMBER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATASET" type="CLOB"/>
+            <column defaultValueBoolean="true" name="ACTIVATED" type="BOOLEAN"/>
+            <column name="CONTENT_VERSION" type="VARCHAR(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USER_ID" type="VARCHAR(64)"/>
+            <column name="UPDATE_DATE" type="NUMBER">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <sql>
+            INSERT INTO SCENARIO ( ID, TITLE, DESCRIPTION, CONTENT, TAGS, CREATION_DATE, DATASET, ACTIVATED, CONTENT_VERSION, USER_ID, UPDATE_DATE, VERSION )
+            SELECT  ID, TITLE, DESCRIPTION, CONTENT, TAGS,  EXTRACT(EPOCH FROM CREATION_DATE) * 1000, DATASET, ACTIVATED, CONTENT_VERSION, USER_ID,  EXTRACT(EPOCH FROM UPDATE_DATE) * 1000, VERSION
+            FROM    SCENARIO_OLD
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
