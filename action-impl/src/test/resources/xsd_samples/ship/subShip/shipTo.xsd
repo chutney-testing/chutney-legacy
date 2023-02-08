@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:addr="http://chutney/test/address"
+           xmlns="http://chutney/test/ship"
+           targetNamespace="http://chutney/test/ship"
+           elementFormDefault="qualified">
+
+    <xs:import namespace="http://chutney/test/address" schemaLocation="../../address/address.xsd"/>
+
+    <xs:element name="shipTo" type="shipToType"></xs:element>
+
+    <xs:complexType name="shipToType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="address" type="addr:addressType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
