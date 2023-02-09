@@ -17,8 +17,8 @@ import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.component.scenario.domain.ComposableStep;
 import com.chutneytesting.component.scenario.domain.ComposableStepNotFoundException;
-import com.chutneytesting.component.scenario.domain.Strategy;
 import com.chutneytesting.component.scenario.infra.orient.OrientUtils;
+import com.chutneytesting.server.core.domain.execution.Strategy;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.ODirection;

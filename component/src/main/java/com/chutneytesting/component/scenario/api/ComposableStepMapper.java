@@ -7,7 +7,7 @@ import com.chutneytesting.component.scenario.api.dto.ImmutableComposableStepDto;
 import com.chutneytesting.component.scenario.api.dto.ImmutableStrategyDto;
 import com.chutneytesting.component.scenario.api.dto.StrategyDto;
 import com.chutneytesting.component.scenario.domain.ComposableStep;
-import com.chutneytesting.component.scenario.domain.Strategy;
+import com.chutneytesting.server.core.domain.execution.Strategy;
 import com.chutneytesting.server.core.domain.tools.ui.KeyValue;
 import java.util.HashMap;
 import java.util.Map;
