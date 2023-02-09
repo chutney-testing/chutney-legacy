@@ -34,8 +34,7 @@ public class ScenarioDao {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "CONTENT")
-    @Lob
+    @Column(name = "CONTENT", columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "TAGS")
@@ -44,8 +43,7 @@ public class ScenarioDao {
     @Column(name = "CREATION_DATE", updatable = false)
     private Long creationDate;
 
-    @Column(name = "DATASET")
-    @Lob
+    @Column(name = "DATASET", columnDefinition = "TEXT")
     private String dataset;
 
     @Column(name = "ACTIVATED")

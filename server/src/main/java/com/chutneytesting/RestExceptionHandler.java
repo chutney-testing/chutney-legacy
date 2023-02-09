@@ -129,7 +129,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private void logException(RuntimeException ex, HttpStatus status) {
         if (status == HttpStatus.INTERNAL_SERVER_ERROR) {
-            LOGGER.error("{} >> {}", status.name(), ex.getMessage());
+            LOGGER.error(status.name(), ex);
         } else {
             LOGGER.warn("{} >> {}", status.name(), ex.getMessage());
         }
