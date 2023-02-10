@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface DatabaseTestCaseRepositoryDao extends CrudRepository<ScenarioDao, Long>, JpaSpecificationExecutor<ScenarioDao> {
 
-    @Query("SELECT s FROM  SCENARIO s WHERE s.id = :id and s.activated = true")
+    @Query("SELECT s FROM SCENARIO s WHERE s.id = :id and s.activated = true")
     Optional<ScenarioDao> findById(@Param("id") Long id);
 
     @Query("SELECT s FROM SCENARIO s WHERE s.activated = true")

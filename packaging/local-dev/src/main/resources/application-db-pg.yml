@@ -1,5 +1,3 @@
-
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost:10457/postgres

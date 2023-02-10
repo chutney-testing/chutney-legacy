@@ -1,4 +1,3 @@
-
 chutney:
   db-server:
     base-dir: ./.chutney/data
@@ -16,4 +15,3 @@ spring:
     password:
     configuration:
       maximum-pool-size: 5
-

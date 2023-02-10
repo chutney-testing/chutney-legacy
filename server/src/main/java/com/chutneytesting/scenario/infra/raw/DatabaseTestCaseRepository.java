@@ -24,7 +24,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
@@ -41,7 +40,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     }
 
     @Override
-   //@Transactional(propagation = Propagation.NOT_SUPPORTED)
+    //@Transactional(propagation = Propagation.NOT_SUPPORTED)
     public String save(GwtTestCase testCase) {
         TestCaseData testCaseData = TestCaseDataMapper.toDto(testCase);
         return doSave(testCaseData).toString();
@@ -49,7 +48,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     @Override
     public Optional<GwtTestCase> findById(String scenarioId) {
-        if(checkIdInput(scenarioId)) {
+        if (checkIdInput(scenarioId)) {
             return empty();
         }
         try {
@@ -62,7 +61,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     @Override
     public Optional<TestCase> findExecutableById(String id) {
-        if(checkIdInput(id)) {
+        if (checkIdInput(id)) {
             return empty();
         }
         Optional<GwtTestCase> byId = findById(id);
@@ -86,7 +85,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     @Override
     @Transactional
     public void removeById(String scenarioId) {
-        if(checkIdInput(scenarioId)) {
+        if (checkIdInput(scenarioId)) {
             return;
         }
         // TODO - Refactor - Use CampaignRepository up in callstack
@@ -97,7 +96,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     @Override
     public Optional<Integer> lastVersion(String scenarioId) {
-        if(checkIdInput(scenarioId)) {
+        if (checkIdInput(scenarioId)) {
             return empty();
         }
         try {
@@ -121,9 +120,9 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     private Specification<ScenarioDao> buildLikeSpecificationOnContent(String[] words) {
         Specification<ScenarioDao> scenarioDaoSpecification = null;
-        for(String word : words) {
+        for (String word : words) {
             Specification<ScenarioDao> wordSpecification = DatabaseTestCaseRepositoryDao.contentContains(word);
-            if(scenarioDaoSpecification == null) {
+            if (scenarioDaoSpecification == null) {
                 scenarioDaoSpecification = wordSpecification;
             } else {
                 scenarioDaoSpecification = scenarioDaoSpecification.or(wordSpecification);
@@ -135,7 +134,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     private Long doSave(TestCaseData scenario) {
         try {
             return jpa.save(fromTestCaseData(scenario)).getId();
-        } catch(ObjectOptimisticLockingFailureException e) {
+        } catch (ObjectOptimisticLockingFailureException e) {
             throw new ScenarioNotFoundException(scenario.id, scenario.version);
         }
     }
