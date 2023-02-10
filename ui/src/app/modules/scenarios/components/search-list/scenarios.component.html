@@ -83,10 +83,7 @@
                     <span *ngIf="orderBy == 'lastExecution' && reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'lastExecution' && !reverseOrder" class="fa fa-caret-up"></span>
                 </th>
-                <th class="filter w3" scope="col" (click)="sortBy('executionCount')">{{ 'scenarios.list.header.execCount'  | translate  }}
-                    <span *ngIf="orderBy == 'executionCount' && reverseOrder" class="fa fa-caret-down"></span>
-                    <span *ngIf="orderBy == 'executionCount' && !reverseOrder" class="fa fa-caret-up"></span>
-                </th>
+
                 <th class="filter w40" scope="col" (click)="sortBy('title')">{{ 'scenarios.list.header.title'  | translate  }}
                     <span *ngIf="orderBy == 'title' && reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'title' && !reverseOrder" class="fa fa-caret-up"></span>
@@ -127,8 +124,6 @@
                 <td scope="row" class="text-center">
                     {{ scenario.lastExecution != null ? (scenario.lastExecution | amLocale:'fr' | amTimeAgo) : "" }}
                 </td>
-
-                <td scope="row" class="text-center">{{scenario.executionCount}}</td>
 
                 <td [routerLink]="['/scenario', scenario.id, 'executions']" (click)="$event.stopPropagation()" class="scenario-title cursor-pointer">{{scenario.title}}</td>
 

@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -28,6 +29,27 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
 
     DatabaseExecutionHistoryRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    }
+
+    @Override
+    public Map<String, ExecutionSummary> getLastExecutions(List<String> scenarioIds) {
+        Map<String, ExecutionSummary> result = new HashMap<>();
+        namedParameterJdbcTemplate.query(
+            "SELECT t1.SCENARIO_ID, t1.ID, t1.EXECUTION_TIME, t1.DURATION, t1.STATUS, t1.INFORMATION, t1.ERROR, t1.TEST_CASE_TITLE, t1.ENVIRONMENT, t1.DATASET_ID, t1.DATASET_VERSION, t1.USER_ID " +
+                "FROM SCENARIO_EXECUTION_HISTORY t1 " +
+                "inner join ( "+
+                    "select max(ID) max_ID, SCENARIO_ID "+
+                    "from SCENARIO_EXECUTION_HISTORY "+
+                    "WHERE SCENARIO_ID in (" + scenarioIds.stream().map(s -> "'" + s + "'").collect(Collectors.joining(",")) + ") "+
+                    "group by SCENARIO_ID "+
+                ") t2 " +
+            "on t1.SCENARIO_ID= t2.SCENARIO_ID "+
+            "and t1.id= t2.max_ID",
+            (rs, rowNum) ->
+                result.put(rs.getString("SCENARIO_ID"), executionSummaryRowMapper.mapRow(rs,0))
+        );
+
+        return result;
     }
 
     @Override
