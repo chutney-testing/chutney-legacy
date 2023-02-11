@@ -28,16 +28,20 @@ export class ThemeService {
     }
 
     applyCurrentTheme() {
-        this.themeLink = this.document.querySelector<HTMLLinkElement>(`link[rel="stylesheet"][href="${this.toStyleRel(this.defaultTheme)}"]`);
         const currentTheme = this.getCurrentTheme();
-        if (currentTheme !== this.defaultTheme) {
-            this.setTheme(currentTheme);
-        }
+        this.createThemeLinkElement();
+        this.themeLink.href = this.toStyleRel(currentTheme);
     }
 
     private setTheme(theme: string) {
         localStorage.setItem('theme', theme);
         this.themeLink.href = this.toStyleRel(theme);
+    }
+
+    private createThemeLinkElement() {
+        this.themeLink = this.document.createElement("link");
+        this.themeLink.rel = "stylesheet";
+        this.document.head.appendChild(this.themeLink);
     }
 
     private toStyleRel(theme: string) {
