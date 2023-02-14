@@ -1,4 +1,4 @@
-package com.chutneytesting.execution.infra.execution;
+package com.chutneytesting.component.execution.infra;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -17,12 +17,9 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
-import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
+import com.chutneytesting.server.core.domain.execution.ExecutionRequestMapper;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,35 +28,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.groovy.util.Maps;
-import org.assertj.core.util.Files;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("unchecked")
-public class ExecutionRequestMapperTest {
+public class ComponentExecutionRequestMapperTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
     private final EmbeddedEnvironmentApi environmentApplication = mock(EmbeddedEnvironmentApi.class);
     private final CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
 
-    private final ExecutionRequestMapper sut = new ExecutionRequestMapper(objectMapper, environmentApplication, currentNetworkDescription);
-
-    @Test
-    public void should_map_test_case_to_execution_request() {
-        // Given
-        RawTestCase testCase = RawTestCase.builder()
-            .withScenario(Files.contentOf(new File(ExecutionRequestMapperTest.class.getResource("/raw_scenarios/scenario.json").getPath()), StandardCharsets.UTF_8))
-            .build();
-        ExecutionRequest request = new ExecutionRequest(testCase, "", "");
-
-        // When
-        ExecutionRequestDto executionRequestDto = sut.toDto(request);
-
-        // Then
-        assertThat(executionRequestDto.scenario).isNotNull();
-        assertThat(executionRequestDto.scenario.name).isEqualTo("root step");
-        assertThat(executionRequestDto.scenario.steps.get(0).name).isEqualTo("context-put name");
-        assertThat(executionRequestDto.scenario.steps.get(0).inputs).containsKey("someID");
-    }
+    private final ExecutionRequestMapper sut = new ComponentExecutionRequestMapper(environmentApplication, currentNetworkDescription);
 
     @Test
     public void should_map_composed_test_case_to_execution_request() {

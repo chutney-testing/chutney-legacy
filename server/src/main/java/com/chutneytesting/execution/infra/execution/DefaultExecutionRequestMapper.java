@@ -10,8 +10,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.component.execution.domain.ExecutableComposedStep;
-import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
@@ -21,10 +19,11 @@ import com.chutneytesting.environment.api.EnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
+import com.chutneytesting.server.core.domain.execution.ExecutionRequestMapper;
 import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
+import com.chutneytesting.server.core.domain.execution.Strategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
@@ -33,18 +32,19 @@ import org.hjson.JsonValue;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ExecutionRequestMapper {
+public class DefaultExecutionRequestMapper implements ExecutionRequestMapper {
 
     private final ObjectMapper objectMapper;
     private final EnvironmentApi environmentApi;
     private final CurrentNetworkDescription currentNetworkDescription;
 
-    public ExecutionRequestMapper(ObjectMapper objectMapper, EmbeddedEnvironmentApi environmentApi, CurrentNetworkDescription currentNetworkDescription) {
+    public DefaultExecutionRequestMapper(ObjectMapper objectMapper, EmbeddedEnvironmentApi environmentApi, CurrentNetworkDescription currentNetworkDescription) {
         this.objectMapper = objectMapper;
         this.environmentApi = environmentApi;
         this.currentNetworkDescription = currentNetworkDescription;
     }
 
+    @Override
     public ExecutionRequestDto toDto(ExecutionRequest executionRequest) {
         final StepDefinitionRequestDto stepDefinitionRequestDto = convertToStepDef(executionRequest);
         return new ExecutionRequestDto(stepDefinitionRequestDto, executionRequest.environment);
@@ -57,10 +57,6 @@ public class ExecutionRequestMapper {
 
         if (executionRequest.testCase instanceof GwtTestCase) {
             return convertGwt(executionRequest);
-        }
-
-        if (executionRequest.testCase instanceof ExecutableComposedTestCase) {
-            return convertComposed(executionRequest);
         }
 
         throw new ScenarioConversionException(executionRequest.testCase.metadata().id(),
@@ -137,13 +133,6 @@ public class ExecutionRequestMapper {
         );
     }
 
-    private ExecutionRequestDto.StepStrategyDefinitionRequestDto mapStrategy(com.chutneytesting.component.scenario.domain.Strategy strategy) {
-        return new ExecutionRequestDto.StepStrategyDefinitionRequestDto(
-            strategy.type,
-            strategy.parameters
-        );
-    }
-
     private TargetExecutionDto toExecutionTargetDto(TargetDto targetDto, String env) {
         if (targetDto == null || NO_TARGET_DTO.equals(targetDto)) {
             targetDto = NO_TARGET_DTO;
@@ -153,41 +142,6 @@ public class ExecutionRequestMapper {
             targetDto.url,
             targetDto.propertiesToMap(),
             getAgents(targetDto, env)
-        );
-    }
-
-    private StepDefinitionRequestDto convertComposed(ExecutionRequest executionRequest) {
-        ExecutableComposedTestCase composedTestCase = (ExecutableComposedTestCase) executionRequest.testCase;
-        try {
-            return new StepDefinitionRequestDto(
-                composedTestCase.metadata.title(),
-                toExecutionTargetDto(NO_TARGET_DTO, executionRequest.environment),
-                null,
-                null,
-                null,
-                convertComposedSteps(composedTestCase.composedScenario.composedSteps, executionRequest.environment),
-                null,
-                null
-            );
-        } catch (Exception e) {
-            throw new ScenarioConversionException(composedTestCase.metadata().id(), e);
-        }
-    }
-
-    private List<StepDefinitionRequestDto> convertComposedSteps(List<ExecutableComposedStep> composedSteps, String env) {
-        return composedSteps.stream().map(f -> convert(f, env)).collect(toList());
-    }
-
-    private StepDefinitionRequestDto convert(ExecutableComposedStep composedStep, String env) {
-        return new StepDefinitionRequestDto(
-            composedStep.name,
-            toExecutionTargetDto(getTargetForExecution(env, composedStep.stepImplementation.map(si -> si.target).orElse("")), env),
-            this.mapStrategy(composedStep.strategy),
-            composedStep.stepImplementation.map(si -> si.type).orElse(""),
-            composedStep.stepImplementation.map(si -> si.inputs).orElse(emptyMap()),
-            composedStep.steps.stream().map(f -> convert(f, env)).collect(toList()),
-            composedStep.stepImplementation.map(si -> si.outputs).orElse(emptyMap()),
-            composedStep.stepImplementation.map(si -> si.validations).orElse(emptyMap())
         );
     }
 

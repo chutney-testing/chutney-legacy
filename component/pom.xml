@@ -19,6 +19,15 @@
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
+            <artifactId>server</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.chutneytesting</groupId>
+            <artifactId>environment</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.chutneytesting</groupId>
             <artifactId>tools</artifactId>
         </dependency>
         <!-- Orient -->
@@ -67,6 +76,16 @@
             <artifactId>java-diff-utils</artifactId>
         </dependency>
         <!-- Tests -->
+        <dependency>
+            <groupId>com.chutneytesting</groupId>
+            <artifactId>chutney-junit-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

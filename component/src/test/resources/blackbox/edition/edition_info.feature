@@ -8,11 +8,11 @@ Feature: Support testcase edition metadata
             | startDate         | ${#now().toInstant()}           |
             | isoFormatter      | ${#isoDateFormatter('instant')} |
 
-    Scenario: Consult new testcase metadata
-        Given robert has created a testcase with metadata
+    Scenario: Consult new composable testcase metadata
+        Given robert has created a composable testcase with metadata
             Do http-post
                 On CHUTNEY_LOCAL_NO_USER
-                With uri /api/scenario/v2
+                With uri /api/scenario/component-edition
                 With headers
                 | Content-Type  | application/json;charset=UTF-8                                                         |
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("robert:robert").getBytes())} |
@@ -37,7 +37,7 @@ Feature: Support testcase edition metadata
         When admin consult it
             Do http-get
                 On CHUTNEY_LOCAL_NO_USER
-                With uri /api/scenario/v2/${#testcaseId}
+                With uri /api/scenario/component-edition/${#testcaseId}
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("admin:admin").getBytes())} |
                 Validate httpStatusCode_200 ${#status == 200}
@@ -51,13 +51,13 @@ Feature: Support testcase edition metadata
                 | $.creationDate | $isEqualDate:2020-01-01T12:00:03Z                |
                 | $.author       | robert                                           |
                 | $.updateDate   | $isAfterDate:${#isoFormatter.format(#startDate)} |
-                | $.version      | 111                                              |
+                | $.version      | 1                                                |
 
-    Scenario: Consult testcase metadata after update
+    Scenario: Consult composable testcase metadata after update
         Given robert has created a testcase with metadata
             Do http-post
                 On CHUTNEY_LOCAL_NO_USER
-                With uri /api/scenario/v2
+                With uri /api/scenario/component-edition
                 With headers
                 | Content-Type  | application/json;charset=UTF-8                                                         |
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("robert:robert").getBytes())} |
@@ -70,6 +70,7 @@ Feature: Support testcase edition metadata
                     "author": "notCreator",
                     "creationDate": "2020-01-01T12:00:03Z",
                     "updateDate": "2020-02-02T12:00:03Z",
+                    "version": 111,
                     "scenario":{
                         "when":{},
                         "thens":[]
@@ -79,9 +80,9 @@ Feature: Support testcase edition metadata
                 Take testcaseId ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
         And paloma has updated it with metadata
-            Do http-patch
+            Do http-post
                 On CHUTNEY_LOCAL_NO_USER
-                With uri /api/scenario/v2
+                With uri /api/scenario/component-edition
                 With headers
                 | Content-Type  | application/json;charset=UTF-8                                                         |
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
@@ -106,7 +107,7 @@ Feature: Support testcase edition metadata
         When admin consult it
             Do http-get
                 On CHUTNEY_LOCAL_NO_USER
-                With uri /api/scenario/v2/${#testcaseId}
+                With uri /api/scenario/component-edition/${#testcaseId}
                 With headers
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("admin:admin").getBytes())} |
                 Validate httpStatusCode_200 ${#status == 200}
@@ -122,11 +123,11 @@ Feature: Support testcase edition metadata
                 | $.updateDate   | $isAfterDate:${#isoFormatter.format(#startDate)} |
                 | $.version      | 2                                                |
 
-    Scenario: Update testcase with wrong version
-        Given robert has created a testcase with metadata
+    Scenario: Update composable testcase with wrong version
+        Given robert has created a composable testcase with metadata
             Do http-post
                 On CHUTNEY_LOCAL_NO_USER
-                With uri /api/scenario/v2
+                With uri /api/scenario/component-edition
                 With headers
                 | Content-Type  | application/json;charset=UTF-8                                                         |
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("robert:robert").getBytes())} |
@@ -148,10 +149,10 @@ Feature: Support testcase edition metadata
                 """
                 Take testcaseId ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
-        When paloma has updated it with wrong version
-            Do http-patch
+        When paloma updates it with wrong version
+            Do http-post
                 On CHUTNEY_LOCAL_NO_USER
-                With uri /api/scenario/v2
+                With uri /api/scenario/component-edition
                 With headers
                 | Content-Type  | application/json;charset=UTF-8                                                         |
                 | Authorization | Basic ${T(java.util.Base64).getEncoder().encodeToString(("paloma:paloma").getBytes())} |
@@ -165,7 +166,7 @@ Feature: Support testcase edition metadata
                     "author": "notEditor",
                     "creationDate": "2020-06-01T14:00:00Z",
                     "updateDate": "2001-01-01T00:00:00Z",
-                    "version": 666,
+                    "version": 999,
                     "scenario":{
                         "when":{},
                         "thens":[]
@@ -180,5 +181,5 @@ Feature: Support testcase edition metadata
         And message contains "version [666] not found"
             Do compare
                 With actual ${#json(#body, '$')}
-                With expected version [666] not found
+                With expected version [999] not found
                 With mode contains
