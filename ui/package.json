@@ -10,6 +10,7 @@
         "e2e": "ng e2e",
         "init-sb": "npx sb init --type angular",
         "start-sb": "ng run chutney:storybook",
+        "start-sb-darkly": "ng run chutney:storybook-darkly",
         "build-sb": "ng run chutney:build-storybook"
     },
     "private": true,

@@ -1,6 +1,6 @@
 // Core
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -18,6 +18,8 @@ import { DefaultMissingTranslationHandler, HttpLoaderFactory } from './app.trans
 import { SharedModule } from '@shared/shared.module';
 import { CoreModule } from '@core/core.module';
 import { ModalModule, BsModalService  } from 'ngx-bootstrap/modal';
+import { ThemeService } from '@core/theme/theme.service';
+import { initializeThemeFactory } from './app.theme.factory';
 
 @NgModule({
   declarations: [
@@ -52,7 +54,13 @@ import { ModalModule, BsModalService  } from 'ngx-bootstrap/modal';
     // Internal common
     SharedModule,
   ],
-  providers: [BsModalService],
+  providers: [BsModalService,
+      {
+          provide: APP_INITIALIZER,
+          useFactory: initializeThemeFactory,
+          deps: [ThemeService],
+          multi: true
+      }],
   bootstrap: [AppComponent]
 })
 export class ChutneyAppModule { }
