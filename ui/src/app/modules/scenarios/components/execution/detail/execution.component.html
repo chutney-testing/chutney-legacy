@@ -70,10 +70,10 @@
                 <div *ngIf="!collapseContextVariables" class="form-group mb-0">
                     <table class="context-variables-table table table-sm table-borderless table-hover">
                         <tbody>
-                            <tr *ngFor="let entry of scenarioExecutionReport.contextVariables | objectAsEntryList ">
-                                <td>{{entry.key}}</td>
-                                <td>{{entry.value | stringify | prettyPrint}}</td>
-                            </tr>
+                        <tr *ngFor="let entry of scenarioExecutionReport.contextVariables | objectAsEntryList ">
+                            <td>{{entry.key}}</td>
+                            <td>{{entry.value | stringify | prettyPrint}}</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -83,22 +83,18 @@
 
     <ng-container *ngIf="scenarioExecutionReport?.report">
         <div class="row">
-            <div class="col">
-                <button *ngIf="hasSubSteps()" class="btn btn-sm btn-outline-primary float-end" (click)="expandAll()">
-                    {{isAllStepsCollapsed? ('scenarios.execution.actions.steps.show' | translate) :
-                    ('scenarios.execution.actions.steps.hide' | translate)}}
-                </button>
-            </div>
-            <div class="col">
-                <button *ngIf="hasInputOutputs(selectedStep)" class="btn btn-sm btn-outline-primary float-end" (click)="toggleDetails()">
-                    {{showDetails? ('scenarios.execution.actions.input-output.hide' | translate) :
-                    ('scenarios.execution.actions.input-output.show' | translate)}}
-                </button>
-            </div>
+
         </div>
     </ng-container>
     <div class="row mt-2">
         <div class="col">
+            <div class="d-flex flex-column">
+            <div *ngIf="scenarioExecutionReport?.report">
+                <button *ngIf="hasSubSteps()" class="btn btn-sm btn-outline-primary float-end" (click)="expandAll()">
+                    {{isAllStepsCollapsed ? ('scenarios.execution.actions.steps.show' | translate) :
+                    ('scenarios.execution.actions.steps.hide' | translate)}}
+                </button>
+            </div>
             <div *ngIf="parseError">
                 <div class="error">
                     <em>{{'scenarios.execution.errors.parse' | translate}} : {{parseError}}</em>
@@ -123,11 +119,22 @@
                     [id]="i"
                     [step]="report"></chutney-scenario-step-report>
             </ng-container>
+            </div>
         </div>
         <div class="col-6">
-            <chutney-scenario-step-details [executionId]="execution.executionId"
-                                           [step]="selectedStep"
-                                           [showDetails]="showDetails"></chutney-scenario-step-details>
+            <div class="sticky-top">
+                <div class="d-flex flex-column">
+                    <div class="mb-2" *ngIf="scenarioExecutionReport?.report">
+                        <button *ngIf="hasInputOutputs(selectedStep)" class="btn btn-sm btn-outline-primary float-end" (click)="toggleDetails()">
+                            {{showDetails? ('scenarios.execution.actions.input-output.hide' | translate) :
+                            ('scenarios.execution.actions.input-output.show' | translate)}}
+                        </button>
+                    </div>
+                    <chutney-scenario-step-details [executionId]="execution.executionId"
+                                                   [step]="selectedStep"
+                                                   [showDetails]="showDetails"></chutney-scenario-step-details>
+                </div>
+            </div>
         </div>
     </div>
 </div>
