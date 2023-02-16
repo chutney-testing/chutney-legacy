@@ -152,8 +152,8 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     load(id) {
         if (id != null) {
-            this.campaignService.find(id).subscribe(
-                (campaignFound) => {
+            this.campaignService.find(id).subscribe({
+                next: (campaignFound) => {
                     this.campaign = campaignFound;
                     this.campaignForm.controls['title'].setValue(this.campaign.title);
                     this.campaignForm.controls['description'].setValue(this.campaign.description);
@@ -166,26 +166,26 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                     this.datasetId = this.campaign.datasetId;
                     this.initJiraPlugin();
                 },
-                (error) => {
+                error: (error) => {
                     this.errorMessage = error._body;
                 }
-            );
+            });
         }
     }
 
     loadAllScenarios() {
-        this.subscription = this.scenarioService.findScenarios().subscribe(
-            (res) => {
+        this.subscription = this.scenarioService.findScenarios().subscribe({
+            next: (res) => {
                 this.scenarios = res;
                 this.routeParamsSubscription = this.route.params.subscribe((params) => {
                     this.load(params['id']);
                 });
                 this.initTags();
             },
-            (error) => {
+            error: (error) => {
                 this.errorMessage = error.error;
             }
-        );
+        });
     }
 
     private initTags() {
@@ -197,27 +197,26 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     loadEnvironment() {
-        this.environmentAdminService.listEnvironmentsNames().subscribe(
-            (res) => {
+        this.environmentAdminService.listEnvironmentsNames().subscribe({
+            next: (res) => {
                 this.environments = res.sort((t1, t2) => t1.toUpperCase() > t2.toUpperCase() ? 1 : 0);
             },
-            (error) => {
+            error: (error) => {
                 this.errorMessage = error.error;
             }
-        );
+        });
     }
 
     loadJiraLink() {
-        this.jiraLinkService.findByCampaignId(this.campaign.id).subscribe(
-            (jiraId) => {
+        this.jiraLinkService.findByCampaignId(this.campaign.id).subscribe({
+            next: (jiraId) => {
                 this.campaignForm.controls['jiraId'].setValue(jiraId);
                 this.refreshJiraScenarios();
             },
-            (error) => {
+            error: (error) => {
                 this.errorMessage = error.error;
             }
-        );
-
+        });
     }
 
     initJiraPlugin() {
@@ -265,8 +264,8 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     refreshJiraScenarios() {
         if (this.campaignForm.value['jiraId'] !== '') {
             this.jiraLinkService.findTestExecScenarios(this.campaignForm.value['jiraId'])
-                .subscribe(
-                    (result) => {
+                .subscribe({
+                    next: (result) => {
                         this.jiraScenarios = result;
                         let index = 0;
                         this.jiraScenarios.forEach((currentValue) => {
@@ -277,11 +276,11 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                         });
                         this.jiraFilter();
                     },
-                    (error) => {
+                    error: (error) => {
                         this.errorMessage = error.error;
                         this.clearJiraScenarios();
                     }
-                );
+                });
         } else {
             this.clearJiraScenarios();
         }
@@ -313,7 +312,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         this.campaignForm.reset();
         let url: string;
         if (this.campaign.id) {
-            url = '/campaign/' + this.campaign.id + '/execution';
+            url = '/campaign/' + this.campaign.id + '/executions';
         } else {
             url = '/campaign';
         }
@@ -425,14 +424,15 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     private subscribeToSaveResponse(result: Observable<Campaign>) {
-        result.subscribe(
-            (res: Campaign) => this.onSaveSuccess(res),
-            (error) => this.onSaveError(error));
+        result.subscribe({
+            next: (res: Campaign) => this.onSaveSuccess(res),
+            error: (error) => this.onSaveError(error)
+        });
     }
 
     private onSaveSuccess(result: Campaign) {
         this.submitted = false;
-        const url = '/campaign/' + result.id + '/execution';
+        const url = '/campaign/' + result.id + '/executions';
         this.updateJiraLink(result.id);
         this.router.navigateByUrl(url);
     }
@@ -463,10 +463,10 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     private updateJiraLink(campaignId: number) {
         this.jiraId = this.campaignForm.value['jiraId'];
-        this.jiraLinkService.saveForCampaign(campaignId, this.jiraId).subscribe(
-            () => {},
-            (error) => {
+        this.jiraLinkService.saveForCampaign(campaignId, this.jiraId).subscribe({
+            error: (error) => {
                 this.errorMessage = error.error;
-            });
+            }
+        });
     }
 }

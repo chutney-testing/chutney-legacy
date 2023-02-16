@@ -160,7 +160,6 @@
             }
         },
         "execution": {
-            "name": "Execution",
             "last": {
                 "actual": "Last full execution",
                 "ok": "OK",
@@ -171,7 +170,14 @@
             "replay": "Replay failed scenarios",
             "on_env": "on environment",
             "history": {
-                "title": "Execution history"
+                "title": "Execution history",
+                "header": {
+                    "date": "Date",
+                    "status": "Status",
+                    "env": "Environment",
+                    "executor": "Executor"
+                },
+                "empty": "No executions"
             },
             "scenarios": {
                 "header": {
@@ -183,9 +189,10 @@
                 "result": "Execution result",
                 "item": {
                     "header": {
-                        "id": "Id",
-                        "state": "State",
+                        "id": "#",
+                        "state": "Status",
                         "title": "Title",
+                        "error": "Report",
                         "duration": "Duration",
                         "jiraStatus": "Jira status"
                     },
@@ -250,6 +257,9 @@
                 "date": "Date required"
             },
             "nothing": "Nothing scheduled"
+        },
+        "export": {
+            "component.error": "Campaign has a component scenario which cannot be exported"
         }
     },
     "dataset": {

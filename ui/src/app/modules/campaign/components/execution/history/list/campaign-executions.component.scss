@@ -1,0 +1,46 @@
+.executions {
+    min-height: 70vh;
+
+    table {
+        .headers-labels th {
+            padding-bottom: 0;
+        }
+        .headers-filters th {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+    }
+
+    .dp-hidden {
+        width: 0;
+        margin: 0;
+        border: none;
+        padding: 0;
+    }
+
+    .chutney-tag {
+        padding: .5rem;
+        font-size: 1rem;
+    }
+
+}
+
+:host ::ng-deep
+.cuppa-dropdown {
+    border: none;
+    .selected-list {
+        .c-angle-up {
+            display: none!important;
+        }
+        .c-angle-down {
+            display: none!important;
+        }
+    }
+    .dropdown-list {
+        width: max-content!important;
+    }
+}
+
+td.status div.btn {
+    border: none;
+}

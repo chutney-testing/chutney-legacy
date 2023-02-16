@@ -1,0 +1,9 @@
+<chutney-chutney-right-menu *ngIf="rightMenuItems" [menuItems]="rightMenuItems"></chutney-chutney-right-menu>
+
+<ng-template #delete_modal>
+    <div class="modal-body text-center">
+        <p>{{'campaigns.confirm.deletion.prefix' | translate}} {{'campaigns.confirm.deletion.suffix' | translate}}</p>
+        <button type="button" class="btn btn-default" (click)="confirmDelete()">{{'global.confirm.yes' | translate}}</button>
+        <button type="button" class="btn btn-primary" (click)="declineDelete()">{{'global.confirm.no' | translate}}</button>
+    </div>
+</ng-template>

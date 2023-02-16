@@ -52,7 +52,6 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
         });
     }
 
-
     private onQueryParamsChange() {
         let executionsFilters: Params;
         this.route.queryParams.pipe(

@@ -46,7 +46,7 @@
                 <tbody>
                 <tr *ngFor="let campaign of (viewedCampaigns | searchTextPipe : campaignFilter:campaignFilterAttributes)">
                     <td class="small_text w93 align-middle">
-                        <a [routerLink]="['/campaign',campaign.id,'execution']"
+                        <a [routerLink]="['/campaign', campaign.id, 'executions']"
                            title="{{ 'campaigns.list.item.title.link.title' | translate }} {{campaign.title}}">{{campaign.title}}</a>
                     </td>
                     <td class="ps-0 w1">
@@ -129,7 +129,8 @@
                     <td class="w25 text-nowrap">{{ report.startDate | amDateFormat: 'DD MMM. YYYY HH:mm' }}</td>
                     <td class="ps-0 w60">
                         <a
-                           [routerLink]="['/campaign', campaignIdFromName(report.campaignName), 'execution', report.executionId]"
+                           [routerLink]="['/campaign', campaignIdFromName(report.campaignName), 'executions']"
+                           [queryParams]="{active: report.executionId, open: report.executionId}"
                         >
                             {{ report.campaignName }}
                         </a>
