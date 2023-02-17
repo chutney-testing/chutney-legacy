@@ -18,7 +18,7 @@ import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
-import com.chutneytesting.server.core.domain.execution.ExecutionRequestMapper;
+import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import java.util.ArrayList;
 import java.util.Arrays;

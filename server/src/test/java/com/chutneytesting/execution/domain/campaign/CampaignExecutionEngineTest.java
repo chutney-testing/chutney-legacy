@@ -5,6 +5,7 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static java.util.Map.entry;
 import static java.util.Optional.of;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -43,12 +44,14 @@ import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
+import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -342,8 +345,7 @@ public class CampaignExecutionEngineTest {
             .isInstanceOf(CampaignNotFoundException.class);
     }
 
-    // TODO fix after component deprecation
-    /*@Test
+    @Test
     public void should_override_scenario_dataset_with_campaign_dataset_before_execution() {
         // Given
         Map<String, String> gwtTestCaseDataSet = Maps.of(
@@ -351,17 +353,15 @@ public class CampaignExecutionEngineTest {
             "key", "gwt value"
         );
         TestCase gwtTestCase = createGwtTestCase(gwtTestCaseDataSet);
-       *//* TestCase composedTestCase = createExecutableComposedTestCase();*//*
 
         Map<String, String> campaignDataSet = Maps.of(
             "campaign key", "campaign specific value",
             "key", "campaign value"
         );
-        Campaign campaign = createCampaign(campaignDataSet, "campaignDataSetId", gwtTestCase, composedTestCase);
+        Campaign campaign = createCampaign(campaignDataSet, "campaignDataSetId", gwtTestCase);
 
         when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
         when(testCaseRepository.findExecutableById(gwtTestCase.id())).thenReturn(of(gwtTestCase));
-        when(testCaseRepository.findExecutableById(composedTestCase.id())).thenReturn(of(composedTestCase));
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class), any())).thenReturn(mock(ScenarioExecutionReport.class));
         when(executionHistoryRepository.getExecution(any(), any())).thenReturn(executionWithId(42L));
 
@@ -370,17 +370,15 @@ public class CampaignExecutionEngineTest {
 
         // Then
         ArgumentCaptor<ExecutionRequest> argumentCaptor = ArgumentCaptor.forClass(ExecutionRequest.class);
-        verify(scenarioExecutionEngine, times(2)).execute(argumentCaptor.capture(), any());
+        verify(scenarioExecutionEngine, times(1)).execute(argumentCaptor.capture(), any());
         List<ExecutionRequest> executionRequests = argumentCaptor.getAllValues();
-        assertThat(executionRequests).hasSize(2);
+        assertThat(executionRequests).hasSize(1);
         assertThat(((GwtTestCase) executionRequests.get(0).testCase).executionParameters).containsOnly(
             entry("gwt key", gwtTestCaseDataSet.get("gwt key")),
             entry("key", campaignDataSet.get("key")),
             entry("campaign key", "campaign specific value")
         );
-        assertThat(((ExecutableComposedTestCase) executionRequests.get(1).testCase).metadata.datasetId())
-            .hasValue(campaign.externalDatasetId);
-    }*/
+    }
 
     private final static Random campaignIdGenerator = new Random();
 
@@ -428,15 +426,6 @@ public class CampaignExecutionEngineTest {
             .withExecutionParameters(dataSet)
             .build();
     }
-
-   /* private ExecutableComposedTestCase createExecutableComposedTestCase() {
-        return new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder()
-                .withDatasetId("composableDataSetId")
-                .build(),
-            ExecutableComposedScenario.builder().build()
-        );
-    }*/
 
     private Campaign createCampaign() {
         return new Campaign(generateId(), "...", null, null, null, "campaignEnv", false, false, null, null);

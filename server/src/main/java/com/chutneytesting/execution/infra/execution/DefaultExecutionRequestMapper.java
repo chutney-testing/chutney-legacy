@@ -21,7 +21,6 @@ import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
-import com.chutneytesting.server.core.domain.execution.ExecutionRequestMapper;
 import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
 import com.chutneytesting.server.core.domain.execution.Strategy;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -18,10 +18,6 @@
     <dependencies>
         <!-- Engine -->
         <dependency>
-            <groupId>com.chutneytesting</groupId>
-            <artifactId>engine</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.reactivex.rxjava2</groupId>
             <artifactId>rxjava</artifactId>
         </dependency>

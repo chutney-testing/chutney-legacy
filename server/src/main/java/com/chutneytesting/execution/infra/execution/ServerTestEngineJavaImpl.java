@@ -4,7 +4,6 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
 import com.chutneytesting.engine.api.execution.TestEngine;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
-import com.chutneytesting.server.core.domain.execution.ExecutionRequestMapper;
 import com.chutneytesting.server.core.domain.execution.ServerTestEngine;
 import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
 import io.reactivex.Observable;

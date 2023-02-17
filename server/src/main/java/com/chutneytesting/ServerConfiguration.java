@@ -12,7 +12,7 @@ import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
-import com.chutneytesting.server.core.domain.execution.ExecutionRequestMapper;
+import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngine;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngineAsync;
 import com.chutneytesting.server.core.domain.execution.ServerTestEngine;
