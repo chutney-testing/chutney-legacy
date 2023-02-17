@@ -5,7 +5,7 @@ import com.chutneytesting.component.scenario.api.dto.ComposableStepDto;
 import com.chutneytesting.component.scenario.api.dto.ImmutableComposableStepDto;
 import com.chutneytesting.component.scenario.api.dto.ImmutableStrategyDto;
 import com.chutneytesting.component.scenario.api.dto.StrategyDto;
-import com.chutneytesting.server.core.domain.execution.Strategy;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.server.core.domain.tools.ui.KeyValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

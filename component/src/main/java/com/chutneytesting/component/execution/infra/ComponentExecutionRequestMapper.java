@@ -21,7 +21,7 @@ import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
-import com.chutneytesting.server.core.domain.execution.Strategy;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.context.annotation.Primary;

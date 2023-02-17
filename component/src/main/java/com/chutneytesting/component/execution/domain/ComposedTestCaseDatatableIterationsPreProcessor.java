@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toSet;
 import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.component.dataset.domain.DataSetRepository;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
-import com.chutneytesting.server.core.domain.execution.Strategy;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessor;
 import java.util.ArrayList;
 import java.util.Collection;

@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.component.dataset.domain.DataSetRepository;
 import com.chutneytesting.server.core.domain.dataset.DataSet;
-import com.chutneytesting.server.core.domain.execution.Strategy;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import java.util.Arrays;

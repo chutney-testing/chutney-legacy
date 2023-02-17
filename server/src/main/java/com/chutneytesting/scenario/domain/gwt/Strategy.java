@@ -1,4 +1,4 @@
-package com.chutneytesting.server.core.domain.execution;
+package com.chutneytesting.scenario.domain.gwt;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;

@@ -17,7 +17,7 @@ import com.chutneytesting.component.scenario.infra.orient.OrientConfigurationPro
 import com.chutneytesting.component.scenario.infra.orient.OrientDBManager;
 import com.chutneytesting.component.scenario.infra.orient.changelog.OrientChangelogExecutor;
 import com.chutneytesting.component.scenario.infra.wrapper.StepVertex;
-import com.chutneytesting.server.core.domain.execution.Strategy;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

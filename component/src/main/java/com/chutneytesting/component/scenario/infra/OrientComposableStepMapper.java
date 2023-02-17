@@ -3,7 +3,7 @@ package com.chutneytesting.component.scenario.infra;
 import com.chutneytesting.component.ComposableIdUtils;
 import com.chutneytesting.component.scenario.domain.ComposableStep;
 import com.chutneytesting.component.scenario.infra.wrapper.StepVertex;
-import com.chutneytesting.server.core.domain.execution.Strategy;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
 import com.orientechnologies.orient.core.record.OElement;
 import com.orientechnologies.orient.core.record.OVertex;

@@ -17,7 +17,7 @@ import com.chutneytesting.scenario.api.raw.dto.StrategyDto;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtStepImplementation;
-import com.chutneytesting.server.core.domain.execution.Strategy;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;

@@ -22,7 +22,7 @@ import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
-import com.chutneytesting.server.core.domain.execution.Strategy;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;

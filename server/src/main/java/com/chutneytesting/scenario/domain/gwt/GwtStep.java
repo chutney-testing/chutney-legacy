@@ -4,7 +4,6 @@ import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.server.core.domain.execution.Strategy;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
