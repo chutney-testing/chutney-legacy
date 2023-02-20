@@ -76,8 +76,9 @@
         <renameColumn tableName="CAMPAIGN_EXECUTION_HISTORY" oldColumnName="ID_SCENARIO_EXECUTION" newColumnName="SCENARIO_EXECUTION_ID"/>
     </changeSet>
     <changeSet id="drop_scenario_exeuction_sequence" author="ICG">
+        <validCheckSum>8:6c57f5fa420d9a562007768c65274aa3</validCheckSum>
         <preConditions onFail="MARK_RAN">
-            <sequenceExists sequenceName="SEQ_SCENARIO_EXECUTION_HISTORY"/>
+            <sequenceExists schemaName="fake_name"  sequenceName="SEQ_SCENARIO_EXECUTION_HISTORY"/> <!-- check issue https://github.com/liquibase/liquibase/issues/3598 -->
         </preConditions>
         <comment>Drop SCENARIO_EXECUTION_HISTORY id sequence</comment>
         <dropSequence sequenceName="SEQ_SCENARIO_EXECUTION_HISTORY"/>
@@ -271,6 +272,7 @@
     </changeSet>
 
     <changeSet id="20190719-010" author="ICG">
+        <validCheckSum>8:90bed7790f3a234999e657bc194b2632</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="CAMPAIGN_EXECUTION_HISTORY"/>
@@ -282,7 +284,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="CAMPAIGN_ID" type="INTEGER">
-                <constraints nullable="false" references="CAMPAIGN(ID)" foreignKeyName="FK_CEH_CAMPAIGN_ID"/>
+                <constraints nullable="false"/>
             </column>
             <column name="SCENARIO_ID" type="VARCHAR(64)">
                 <constraints nullable="false"/>
@@ -371,7 +373,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="20200121" author="ICG">
+    <changeSet id="20200121" author="ICG" >
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="CAMPAIGN_EXECUTION_HISTORY" columnName="PARTIAL_EXECUTION"/>
@@ -528,7 +530,7 @@
         <sql>UPDATE SCENARIO SET CREATION_DATE = CURRENT_TIMESTAMP WHERE CREATION_DATE IS NULL</sql>
         <sql>UPDATE SCENARIO SET UPDATE_DATE = CREATION_DATE</sql>
     </changeSet>
-    <changeSet id="20201026_scenario_creation_update_dates_not_nullable" author="ICG">
+    <changeSet id="20201026_scenario_creation_update_dates_not_nullable" dbms="h2,postgresql" author="ICG">
         <preConditions onFail="MARK_RAN">
             <and>
                 <columnExists tableName="SCENARIO" columnName="CREATION_DATE"/>
@@ -565,4 +567,53 @@
         <renameColumn tableName="CAMPAIGN_PARAMETER" oldColumnName="VALUE" newColumnName="PARAMETER_VALUE"></renameColumn>
     </changeSet>
 
+    <changeSet id="Migration-table-scenario" author="ICG">
+        <comment>Migrate Scenario table</comment>
+        <renameTable oldTableName="SCENARIO" newTableName="SCENARIO_OLD"></renameTable>
+        <createTable tableName="SCENARIO">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(300)"/>
+            <column name="CONTENT" type="LONGVARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAGS" type="VARCHAR(300)"/>
+            <column name="CREATION_DATE" type="NUMBER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATASET" type="LONGVARCHAR"/>
+            <column defaultValueBoolean="true" name="ACTIVATED" type="BOOLEAN"/>
+            <column name="CONTENT_VERSION" type="VARCHAR(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USER_ID" type="VARCHAR(64)"/>
+            <column name="UPDATE_DATE" type="NUMBER">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="migrate data" dbms="h2,postgresql" author="ICG">
+        <sql>
+            INSERT INTO SCENARIO ( ID, TITLE, DESCRIPTION, CONTENT, TAGS, CREATION_DATE, DATASET, ACTIVATED, CONTENT_VERSION, USER_ID, UPDATE_DATE, VERSION )
+            SELECT  CAST(ID AS INTEGER), TITLE, DESCRIPTION, CONTENT, TAGS,  EXTRACT(EPOCH FROM CREATION_DATE) * 1000, DATASET, ACTIVATED, CONTENT_VERSION, USER_ID,  EXTRACT(EPOCH FROM UPDATE_DATE) * 1000, VERSION
+            FROM    SCENARIO_OLD
+        </sql>
+    </changeSet>
+    <changeSet id="migrate data - initialize id" dbms="h2" author="ICG">
+        <sql>
+            ALTER TABLE SCENARIO ALTER COLUMN ID RESTART WITH (SELECT MAX(ID) + 1 FROM SCENARIO)
+        </sql>
+    </changeSet>
+    <changeSet id="migrate data - initialize id" dbms="postgresql" author="ICG">
+        <sql>
+            SELECT SETVAL('scenario_id_seq', (SELECT MAX(id) FROM SCENARIO))
+        </sql>
+    </changeSet>
 </databaseChangeLog>

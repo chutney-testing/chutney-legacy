@@ -1,6 +1,7 @@
 package com.chutneytesting.scenario.infra.raw;
 
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
+import static java.lang.Long.valueOf;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,19 +20,23 @@ import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl.TestCaseMetadataBuilder;
 import com.chutneytesting.server.core.domain.security.User;
 import com.chutneytesting.tests.AbstractLocalDatabaseTest;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import liquibase.exception.LiquibaseException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
+@SpringBootTest
 public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
     private static final GwtTestCase GWT_TEST_CASE = GwtTestCase.builder()
@@ -41,7 +46,21 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
             GwtScenario.builder().withWhen(GwtStep.NONE).build()
         ).build();
 
-    private final DatabaseTestCaseRepository repository = new DatabaseTestCaseRepository(namedParameterJdbcTemplate, new ObjectMapper());
+    @Autowired
+    private DatabaseTestCaseRepository repository;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
+    private TransactionTemplate transactionTemplate;
+
+    @BeforeEach
+    void setUp() {
+        transactionTemplate = new TransactionTemplate(transactionManager);
+    }
 
     @Test
     public void should_generate_id_when_scenario_is_persisted() {
@@ -147,9 +166,11 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         Optional<GwtTestCase> optScena = repository.findById(scenarioID);
         assertThat(optScena).isEmpty();
 
-        RowMapper<String> rowMapper = (rs, rowNum) -> rs.getString("ID");
-        List<String> queryResult = namedParameterJdbcTemplate.query("SELECT ID FROM SCENARIO WHERE ID = :id", ImmutableMap.<String, Object>builder().put("id", scenarioID).build(), rowMapper);
-        assertThat(queryResult).hasSize(1).containsExactly(scenarioID);
+        List<Long> foundScenario = entityManager.createQuery("SELECT s.id FROM SCENARIO s WHERE s.id = :id")
+            .setParameter("id", valueOf(scenarioID))
+            .getResultList();
+
+        assertThat(foundScenario).hasSize(1).containsExactly(valueOf(scenarioID));
     }
 
     @Test
@@ -168,6 +189,10 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
     @Test
     public void should_not_find_removed_scenario_metadata_when_findAll() {
+        transactionTemplate.execute(status ->
+            entityManager.createQuery("DELETE FROM SCENARIO s").executeUpdate()
+        );
+
         // Given: 2 scenarios in the repository
         GwtTestCaseBuilder anotherScenario = GwtTestCase.builder().from(GWT_TEST_CASE)
             .withMetadata(
@@ -328,8 +353,12 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         final String scenarioId = repository.save(GWT_TEST_CASE);
 
         //Then
-        String id = namedParameterJdbcTemplate.queryForObject("select user_id from scenario where id = :id", ImmutableMap.<String, Object>builder().put("id", scenarioId).build(), String.class);
-        assertThat(id).isNull();
+        List<String> foundScenario = entityManager.createQuery("SELECT s.userId FROM SCENARIO s WHERE s.id = :id")
+            .setParameter("id", valueOf(scenarioId))
+            .getResultList();
+
+        assertThat(foundScenario).hasSize(1);
+        assertThat(foundScenario.get(0)).isNull();
 
         Optional<GwtTestCase> testCaseById = repository.findById(scenarioId);
         assertThat(testCaseById).hasValueSatisfying(tc -> assertThat(tc.metadata().author()).isEqualTo(User.ANONYMOUS.id));
@@ -337,18 +366,28 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
     @Test
     public void should_search_scenario() {
+        GwtTestCase GWT_TEST_CASE = GwtTestCase.builder()
+            .withMetadata(TestCaseMetadataImpl.builder()
+                .build())
+            .withExecutionParameters(Collections.emptyMap())
+            .withScenario(
+                GwtScenario.builder()
+                    .withGivens(List.of(GwtStep.builder().withDescription("chutney of momos").build()))
+                    .withWhen(GwtStep.NONE).build()
+            ).build();
         // Given
         String scenarioID = repository.save(GWT_TEST_CASE);
 
         // When
-        List<TestCaseMetadata> raw = repository.search("when");
+        List<TestCaseMetadata> raw = repository.search("momos");
         // Then
         assertThat(raw).hasSize(1);
         assertThat(raw.get(0).id()).isEqualTo(scenarioID);
 
         // When
-        List<TestCaseMetadata> raw2 = repository.search("not in content");
+        List<TestCaseMetadata> raw2 = repository.search("curry");
         // Then
         assertThat(raw2).hasSize(0);
     }
+
 }
