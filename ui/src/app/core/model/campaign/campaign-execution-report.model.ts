@@ -46,60 +46,56 @@ export class CampaignReport {
         var notExecuted = 0;
         var pauses = 0;
         report.scenarioExecutionReports.forEach(r => {
-            if (ExecutionStatus.NOT_EXECUTED === r.status) {
-                notExecuted++;
-                return;
-            }
-            if (ExecutionStatus.RUNNING === r.status) {
-                runnings++;
-                return;
-            }
-            if (ExecutionStatus.SUCCESS === r.status) {
-                success++;
-                return;
-            }
-            if (ExecutionStatus.FAILURE === r.status) {
-                failures++;
-                return;
-            }
-            if (ExecutionStatus.STOPPED === r.status) {
-                stops++;
-                return;
-            }
-            if (ExecutionStatus.STOPPED === r.status) {
-                pauses++;
-                return;
+            switch(r.status) {
+                case ExecutionStatus.NOT_EXECUTED:
+                    notExecuted++;
+                    break;
+                case ExecutionStatus.RUNNING:
+                    runnings++;
+                    break;
+                case ExecutionStatus.SUCCESS:
+                    success++;
+                    break;
+                case ExecutionStatus.FAILURE:
+                    failures++;
+                    break;
+                case ExecutionStatus.STOPPED:
+                    stops++;
+                    break;
+                case ExecutionStatus.PAUSED:
+                    pauses++;
+                    break;
             }
         });
         return [notExecuted, runnings, success, failures, stops, pauses];
     }
 
     allPassed() {
-        return this.passed == this.report.scenarioExecutionReports.length;
+        return this.passed === this.report.scenarioExecutionReports.length;
     }
 
     hasPassed() {
-        return this.passed > 0;
+        return !!this.passed;
     }
 
     hasFailed() {
-        return this.failed > 0;
+        return !!this.failed;
     }
 
     hasStopped() {
-        return this.stopped > 0;
+        return !!this.stopped;
     }
 
     hasNotExecuted() {
-        return this.notexecuted > 0;
+        return !!this.notexecuted;
     }
 
     hasPaused() {
-        return this.pause > 0;
+        return !!this.pause;
     }
 
     hasRunning() {
-        return this.running > 0;
+        return !!this.running;
     }
 
     isRunning() {

@@ -99,17 +99,19 @@ export class CampaignExecutionsHistoryComponent implements OnInit, OnDestroy {
     }
 
     private openTabs$(): Observable<CampaignReport[]> {
+        let executionsFilters: Params;
         return this.route.queryParams.pipe(
-            switchMap(queryParams => this.openTabs(queryParams))
+            tap(queryParams => executionsFilters = queryParams),
+            switchMap(queryParams => this.openTabs(queryParams)),
+            tap(() => this.executionsFilters = executionsFilters)
         );
     }
 
     private refreshCampaign() {
         if (!this.isRefreshActive()) {
-            this.campaign$().subscribe();
-            if (this.activeTab !== '0') {
-                this.onTabChange({nextId: null, activeId: this.tabFilters['active'], preventDefault: null});
-            }
+            this.campaign$().subscribe(c => {
+                this.openReport({ execution: this.campaignReports[0], focus: true });
+            });
         }
     }
 
@@ -223,7 +225,7 @@ export class CampaignExecutionsHistoryComponent implements OnInit, OnDestroy {
     }
 
     private getOpenTabs(opens: string) {
-        return this.tabs. map((exec, i) => {
+        return this.tabs.map((exec, i) => {
             if (opens.includes(CampaignExecutionsHistoryComponent.LAST_ID) && i === 0) {
                 return CampaignExecutionsHistoryComponent.LAST_ID;
             }

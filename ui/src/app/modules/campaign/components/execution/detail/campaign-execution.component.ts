@@ -104,19 +104,19 @@ export class CampaignExecutionComponent implements OnInit {
 
     statusClass(scenarioReportOutline: ScenarioExecutionReportOutline): string {
         if (scenarioReportOutline.status === ExecutionStatus.SUCCESS) {
-            return 'fa-solid fa-circle-check icon-info';
+            return 'fa-solid fa-circle-check text-info';
         }
         if (scenarioReportOutline.status === ExecutionStatus.FAILURE) {
-            return 'fa-solid fa-circle-xmark icon-danger';
+            return 'fa-solid fa-circle-xmark text-danger';
         }
         if (scenarioReportOutline.status === ExecutionStatus.RUNNING || scenarioReportOutline.status === ExecutionStatus.PAUSED) {
-            return 'fa-solid fa-spinner fa-pulse icon-warning';
+            return 'fa-solid fa-spinner fa-pulse text-warning';
         }
         if (scenarioReportOutline.status === ExecutionStatus.STOPPED) {
-            return 'fa-solid fa-circle-stop icon-light';
+            return 'fa-solid fa-circle-stop text-warning';
         }
         if (scenarioReportOutline.status === ExecutionStatus.NOT_EXECUTED) {
-            return 'fa-regular fa-circle icon-light';
+            return 'fa-regular fa-circle text-warning';
         }
         return null;
     }

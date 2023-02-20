@@ -99,9 +99,9 @@
                     <td class="status">
                         <ng-container *ngIf="execution.hasRunning()">
                             <div class="btn btn-sm position-relative"
-                                [ngbTooltip]="ExecutionStatus.toString(ExecutionStatus.RUNNNING) | translate" placement="right">
-                                <span class="fa-solid fa-2xl fa-spinner fa-pulse icon-warning"></span>
-                                <span class="position-absolute top-0 start-75 translate-middle badge rounded-pill text-bg-dark">
+                                [ngbTooltip]="ExecutionStatus.toString(ExecutionStatus.RUNNING) | translate" placement="right">
+                                <span class="fa-solid fa-2xl fa-spinner fa-pulse text-warning"></span>
+                                <span class="position-absolute top-0 start-75 translate-middle badge border border-warning rounded-circle text-warning">
                                     {{ execution.running }}
                                 </span>
                             </div>
@@ -109,8 +109,8 @@
                         <ng-container *ngIf="execution.hasPaused()">
                             <div class="btn btn-sm position-relative"
                                 [ngbTooltip]="ExecutionStatus.toString(ExecutionStatus.PAUSED) | translate" placement="right">
-                                <span class="fa-solid fa-2xl fa-circle-pause icon-warning"></span>
-                                <span class="position-absolute top-0 start-75 translate-middle badge rounded-pill text-bg-dark">
+                                <span class="fa-solid fa-2xl fa-circle-pause text-warning"></span>
+                                <span class="position-absolute top-0 start-75 translate-middle badge border border-warning rounded-circle text-warning">
                                     {{ execution.pause }}
                                 </span>
                             </div>
@@ -118,8 +118,8 @@
                         <ng-container *ngIf="execution.hasPassed()">
                             <div class="btn btn-sm position-relative"
                                 [ngbTooltip]="ExecutionStatus.toString(ExecutionStatus.SUCCESS) | translate" placement="right">
-                                <span class="fa-solid fa-2xl fa-circle-check icon-info"></span>
-                                <span class="position-absolute top-0 start-75 translate-middle badge rounded-pill text-bg-dark">
+                                <span class="fa-solid fa-2xl fa-circle-check text-info"></span>
+                                <span class="position-absolute top-0 start-75 translate-middle badge border border-info rounded-circle text-info">
                                     {{ execution.passed }}
                                 </span>
                             </div>
@@ -127,8 +127,8 @@
                         <ng-container *ngIf="execution.hasFailed()">
                             <div class="btn btn-sm position-relative"
                                 [ngbTooltip]="ExecutionStatus.toString(ExecutionStatus.FAILURE) | translate" placement="right">
-                                <span class="fa-solid fa-2xl fa-circle-xmark icon-danger"></span>
-                                <span class="position-absolute top-0 start-75 translate-middle badge rounded-pill text-bg-dark">
+                                <span class="fa-solid fa-2xl fa-circle-xmark text-danger"></span>
+                                <span class="position-absolute top-0 start-75 translate-middle badge border border-danger rounded-circle text-danger">
                                     {{ execution.failed }}
                                 </span>
                             </div>
@@ -136,8 +136,8 @@
                         <ng-container *ngIf="execution.hasStopped()">
                             <div class="btn btn-sm position-relative"
                                 [ngbTooltip]="ExecutionStatus.toString(ExecutionStatus.STOPPED) | translate" placement="right">
-                                <span class="fa-solid fa-2xl fa-circle-stop icon-light"></span>
-                                <span class="position-absolute top-0 start-75 translate-middle badge rounded-pill text-bg-dark">
+                                <span class="fa-solid fa-2xl fa-circle-stop text-warning"></span>
+                                <span class="position-absolute top-0 start-75 translate-middle badge border border-warning rounded-circle text-warning">
                                     {{ execution.stopped }}
                                 </span>
                             </div>
@@ -145,8 +145,8 @@
                         <ng-container *ngIf="execution.hasNotExecuted()">
                             <div class="btn btn-sm position-relative"
                                 [ngbTooltip]="ExecutionStatus.toString(ExecutionStatus.NOT_EXECUTED) | translate" placement="right">
-                                <span class="fa-regular fa-2xl fa-circle icon-light"></span>
-                                <span class="position-absolute top-0 start-75 translate-middle badge rounded-pill text-bg-dark">
+                                <span class="fa-regular fa-2xl fa-circle text-warning"></span>
+                                <span class="position-absolute top-0 start-75 translate-middle badge border border-warning rounded-circle text-warning">
                                     {{ execution.notexecuted }}
                                 </span>
                             </div>
@@ -161,7 +161,7 @@
                             [term]="filtersForm.get('keyword').value"></ngb-highlight>
                     </td>
                 </tr>
-                <tr *ngIf="filteredExecutions.length == 0">
+                <tr *ngIf="!filteredExecutions">
                     <td colspan="6">{{'campaigns.execution.history.empty' | translate}}</td>
                 </tr>
             </tbody>

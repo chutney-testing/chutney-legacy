@@ -63,7 +63,7 @@ export class CampaignExecutionMenuComponent implements OnInit {
     private initTranslation() {
       this.translateService.get('campaigns.export.component.error').subscribe((res: string) => {
           this.campaignWithComponentError = res;
-      });
+        });
     }
 
     private environments$(): Observable<string[]> {
@@ -97,12 +97,16 @@ export class CampaignExecutionMenuComponent implements OnInit {
     private createZip(campaignTitle: string, scenarios: ScenarioIndex[]) {
         const $rawTestCases: Array<Observable<TestCase>> = [];
 
+        var existComponentScenarios: number = 0;
         for (const testCase of scenarios) {
             if (!TestCase.isComposed(testCase.id)) {
                 $rawTestCases.push(this.scenarioService.findRawTestCase(testCase.id));
             } else {
-                this.broadcastError(this.campaignWithComponentError);
+                existComponentScenarios++;
             }
+        }
+        if (!!existComponentScenarios) {
+            this.broadcastError(this.campaignWithComponentError + ` (${existComponentScenarios})`);
         }
 
         combineLatest($rawTestCases).subscribe(rawTestCases => {

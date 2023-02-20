@@ -69,7 +69,7 @@
                 "status": "Status",
                 "date": "Date",
                 "env": "Environment",
-                "executor": "Executor",
+                "executor": "User",
                 "campaign": "Campaign",
                 "report": "Report",
                 "empty": "No execution"
@@ -175,7 +175,7 @@
                     "date": "Date",
                     "status": "Status",
                     "env": "Environment",
-                    "executor": "Executor"
+                    "executor": "User"
                 },
                 "empty": "No executions"
             },
@@ -259,7 +259,7 @@
             "nothing": "Nothing scheduled"
         },
         "export": {
-            "component.error": "Campaign has a component scenario which cannot be exported"
+            "component.error": "Campaign has some component scenarios which cannot be exported"
         }
     },
     "dataset": {

@@ -69,7 +69,7 @@
                 "status": "Statut",
                 "date": "Date",
                 "env": "Environnement",
-                "executor": "Executeur",
+                "executor": "Utilisateur",
                 "campaign": "Campagne",
                 "report": "Rapport",
                 "empty": "Aucune exécution"
@@ -175,7 +175,7 @@
                     "date": "Date",
                     "status": "Statut",
                     "env": "Environnement",
-                    "executor": "Executeur"
+                    "executor": "Utilisateur"
                 },
                 "empty": "Aucune exécution"
             },
@@ -259,7 +259,7 @@
             "nothing": "Aucune planification"
         },
         "export": {
-            "component.error": "La campagne possede un scénario de type composant qui n'est pas exportable"
+            "component.error": "La campagne possède des scénarios de type composant qui ne sont pas exportables"
         }
     },
     "dataset": {
