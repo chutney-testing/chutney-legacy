@@ -5,7 +5,6 @@ export class ScenarioIndex {
 
     public status;
     public lastExecution;
-    public executionCount;
     public isComposed;
     public type;
 
@@ -24,7 +23,6 @@ export class ScenarioIndex {
     ) {
         this.status = this.findStatus();
         this.lastExecution = this.lastTimeExec();
-        this.executionCount = this.countExecutions();
         this.isComposed = this.findIfComposed();
         this.type = this.setType();
     }
@@ -42,14 +40,6 @@ export class ScenarioIndex {
             return this.executions[0].time;
         } else {
             return null;
-        }
-    }
-
-    private countExecutions() {
-        if (this.executions && this.executions.length > 0) {
-            return this.executions.length;
-        } else {
-            return 0;
         }
     }
 

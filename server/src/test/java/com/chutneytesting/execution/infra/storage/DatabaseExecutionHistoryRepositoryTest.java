@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabaseTest {
@@ -48,8 +47,6 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
         initCampaignRepositories();
 
     }
-
-
 
     @Test
     public void repository_is_empty_at_startup() {
@@ -64,6 +61,22 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
 
         assertThat(executionHistoryRepository.getExecutions("1"))
             .extracting(summary -> summary.info().get()).containsExactly("exec3", "exec2", "exec1");
+    }
+
+    @Test
+    public void last_execution_return_newest_first() {
+        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec1", ""));
+        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
+        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.FAILURE, "exec3", ""));
+
+        executionHistoryRepository.store("2", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec6", ""));
+        executionHistoryRepository.store("2", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec5", ""));
+        executionHistoryRepository.store("2", buildDetachedExecution(ServerReportStatus.FAILURE, "exec4", ""));
+
+        Map<String, ExecutionSummary> lastExecutions = executionHistoryRepository.getLastExecutions(List.of("1", "2"));
+        assertThat(lastExecutions).containsOnlyKeys("1", "2");
+        assertThat(lastExecutions.get("1").info().get()).isEqualTo("exec3");
+        assertThat(lastExecutions.get("2").info().get()).isEqualTo("exec4");
     }
 
     @Test

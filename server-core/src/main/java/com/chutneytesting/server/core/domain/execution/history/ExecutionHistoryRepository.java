@@ -1,8 +1,10 @@
 package com.chutneytesting.server.core.domain.execution.history;
 
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.ExecutionSummary;
 import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundException;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Repository storing execution executionHistory by scenario.
@@ -18,10 +20,17 @@ public interface ExecutionHistoryRepository {
     ExecutionHistory.Execution store(String scenarioId, ExecutionHistory.DetachedExecution executionProperties) throws IllegalStateException;
 
     /**
+     * @param scenarioIds
+     * @return the last report. Key of the map are scenarioIds
+     */
+    Map<String, ExecutionSummary> getLastExecutions(List<String> scenarioIds);
+
+    /**
      * @return last reports of the indicated scenario.
      **/
-    List<ExecutionHistory.ExecutionSummary> getExecutions(String scenarioId);
-    ExecutionHistory.ExecutionSummary getExecutionSummary(Long executionId);
+    List<ExecutionSummary> getExecutions(String scenarioId);
+
+    ExecutionSummary getExecutionSummary(Long executionId);
 
     /**
      * @return the matching {@link ExecutionHistory.Execution}
@@ -35,5 +44,6 @@ public interface ExecutionHistoryRepository {
 
     int setAllRunningExecutionsToKO();
 
-    List<ExecutionHistory.ExecutionSummary> getExecutionsWithStatus(ServerReportStatus status);
+    List<ExecutionSummary> getExecutionsWithStatus(ServerReportStatus status);
+
 }

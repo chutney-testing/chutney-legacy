@@ -17,7 +17,6 @@ import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,7 +86,7 @@ public class CampaignController {
     public List<TestCaseIndexDto> getCampaignScenarios(@PathVariable("campaignId") Long campaignId) {
         return campaignRepository.findScenariosIds(campaignId).stream()
             .map(id -> repositoryAggregator.findMetadataById(id).orElseThrow(() -> new ScenarioNotFoundException(id)))
-            .map(meta -> TestCaseIndexDto.from(meta, Collections.emptyList()))
+            .map(TestCaseIndexDto::from)
             .collect(Collectors.toList());
     }
 
