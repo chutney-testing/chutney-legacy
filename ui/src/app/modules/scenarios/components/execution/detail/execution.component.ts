@@ -149,6 +149,21 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         return ExecutionStatus.PAUSED === this.scenarioExecutionReport?.report?.status;
     }
 
+    hasSubSteps() {
+        return this.scenarioExecutionReport
+            .report
+            .steps
+            .filter((step) => step.steps.length > 0)
+            .length > 0;
+    }
+
+    hasInputOutputs(step: StepExecutionReport) {
+        if(step?.steps.length ){
+            return step.steps.filter((s) => this.hasInputOutputs(s)).length > 0;
+        }
+        return  step && (Object.getOwnPropertyNames(step.evaluatedInputs).length > 0 || Object.getOwnPropertyNames(step.stepOutputs).length > 0) ;
+    }
+
     private switchCollapseContextVariables() {
         this.collapseContextVariables = !this.collapseContextVariables;
     }
@@ -206,21 +221,6 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
             .report
             .steps
             .filter((step) => step.status === ExecutionStatus.FAILURE);
-    }
-
-    private hasSubSteps() {
-        return this.scenarioExecutionReport
-            .report
-            .steps
-            .filter((step) => step.steps.length > 0)
-            .length > 0;
-    }
-
-    private hasInputOutputs(step: StepExecutionReport) {
-        if(step?.steps.length ){
-            return step.steps.filter((s) => this.hasInputOutputs(s)).length > 0;
-        }
-        return  step && (Object.getOwnPropertyNames(step.evaluatedInputs).length > 0 || Object.getOwnPropertyNames(step.stepOutputs).length > 0) ;
     }
 
     private isRootStepSelected() {
