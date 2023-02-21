@@ -20,6 +20,7 @@ import com.chutneytesting.environment.api.dto.TargetDto;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,10 +34,11 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("unchecked")
 public class ComponentExecutionRequestMapperTest {
 
+    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
     private final EmbeddedEnvironmentApi environmentApplication = mock(EmbeddedEnvironmentApi.class);
     private final CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
 
-    private final ExecutionRequestMapper sut = new ComponentExecutionRequestMapper(environmentApplication, currentNetworkDescription);
+    private final ExecutionRequestMapper sut = new ComponentExecutionRequestMapper(objectMapper, environmentApplication, currentNetworkDescription);
 
     @Test
     public void should_map_composed_test_case_to_execution_request() {

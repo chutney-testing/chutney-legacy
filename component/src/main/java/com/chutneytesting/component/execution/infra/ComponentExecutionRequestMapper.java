@@ -18,10 +18,12 @@ import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.EnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.execution.infra.execution.DefaultExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
-import com.chutneytesting.scenario.domain.gwt.Strategy;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.context.annotation.Primary;
@@ -33,16 +35,22 @@ public class ComponentExecutionRequestMapper implements ExecutionRequestMapper {
 
     private final EnvironmentApi environmentApi;
     private final CurrentNetworkDescription currentNetworkDescription;
+    private final DefaultExecutionRequestMapper defaultExecutionRequestMapper;
 
-    public ComponentExecutionRequestMapper(EmbeddedEnvironmentApi environmentApi, CurrentNetworkDescription currentNetworkDescription) {
+    public ComponentExecutionRequestMapper(ObjectMapper objectMapper, EmbeddedEnvironmentApi environmentApi, CurrentNetworkDescription currentNetworkDescription) {
         this.environmentApi = environmentApi;
         this.currentNetworkDescription = currentNetworkDescription;
+        this.defaultExecutionRequestMapper = new DefaultExecutionRequestMapper(objectMapper, environmentApi, currentNetworkDescription);
     }
 
     @Override
     public ExecutionRequestDto toDto(ExecutionRequest executionRequest) {
-        final StepDefinitionRequestDto stepDefinitionRequestDto = convertToStepDef(executionRequest);
-        return new ExecutionRequestDto(stepDefinitionRequestDto, executionRequest.environment);
+        if (executionRequest.testCase.id().contains("-")) {
+            final StepDefinitionRequestDto stepDefinitionRequestDto = convertToStepDef(executionRequest);
+            return new ExecutionRequestDto(stepDefinitionRequestDto, executionRequest.environment);
+        } else {
+            return this.defaultExecutionRequestMapper.toDto(executionRequest);
+        }
     }
 
     private StepDefinitionRequestDto convertToStepDef(ExecutionRequest executionRequest) {
@@ -88,7 +96,6 @@ public class ComponentExecutionRequestMapper implements ExecutionRequestMapper {
             composedStep.stepImplementation.map(si -> si.validations).orElse(emptyMap())
         );
     }
-
 
     private ExecutionRequestDto.StepStrategyDefinitionRequestDto mapStrategy(Strategy strategy) {
         return new ExecutionRequestDto.StepStrategyDefinitionRequestDto(
