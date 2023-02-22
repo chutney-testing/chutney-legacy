@@ -11,6 +11,7 @@ import java.util.Optional;
 public class Strategy {
 
     public static final Optional<Strategy> NONE = empty();
+    public static final Strategy DEFAULT = new Strategy("", emptyMap());
 
     public final String type;
     public final Map<String, Object> parameters;

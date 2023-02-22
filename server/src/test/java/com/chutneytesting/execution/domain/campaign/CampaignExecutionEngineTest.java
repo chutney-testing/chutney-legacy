@@ -5,13 +5,13 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static java.util.Map.entry;
 import static java.util.Optional.of;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -24,13 +24,11 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
-import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
-import com.chutneytesting.component.execution.domain.ExecutableComposedScenario;
-import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.jira.api.ReportForJira;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngine;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
@@ -97,7 +95,7 @@ public class CampaignExecutionEngineTest {
 
     @BeforeEach
     public void setUp() {
-        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, dataSetHistoryRepository, jiraXrayPlugin, metrics, executorService, objectMapper);
+        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, Optional.of(dataSetHistoryRepository), jiraXrayPlugin, metrics, executorService, objectMapper);
         firstTestCase = createGwtTestCase("1");
         secondTestCase = createGwtTestCase("2");
         when(testCaseRepository.findExecutableById(firstTestCase.id())).thenReturn(of(firstTestCase));
@@ -356,17 +354,14 @@ public class CampaignExecutionEngineTest {
         );
         TestCase gwtTestCase = createGwtTestCase(gwtTestCaseDataSet);
 
-        TestCase composedTestCase = createExecutableComposedTestCase();
-
         Map<String, String> campaignDataSet = Maps.of(
             "campaign key", "campaign specific value",
             "key", "campaign value"
         );
-        Campaign campaign = createCampaign(campaignDataSet, "campaignDataSetId", gwtTestCase, composedTestCase);
+        Campaign campaign = createCampaign(campaignDataSet, "campaignDataSetId", gwtTestCase);
 
         when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
         when(testCaseRepository.findExecutableById(gwtTestCase.id())).thenReturn(of(gwtTestCase));
-        when(testCaseRepository.findExecutableById(composedTestCase.id())).thenReturn(of(composedTestCase));
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class), any())).thenReturn(mock(ScenarioExecutionReport.class));
         when(executionHistoryRepository.getExecution(any(), any())).thenReturn(executionWithId(42L));
 
@@ -375,16 +370,14 @@ public class CampaignExecutionEngineTest {
 
         // Then
         ArgumentCaptor<ExecutionRequest> argumentCaptor = ArgumentCaptor.forClass(ExecutionRequest.class);
-        verify(scenarioExecutionEngine, times(2)).execute(argumentCaptor.capture(), any());
+        verify(scenarioExecutionEngine, times(1)).execute(argumentCaptor.capture(), any());
         List<ExecutionRequest> executionRequests = argumentCaptor.getAllValues();
-        assertThat(executionRequests).hasSize(2);
+        assertThat(executionRequests).hasSize(1);
         assertThat(((GwtTestCase) executionRequests.get(0).testCase).executionParameters).containsOnly(
             entry("gwt key", gwtTestCaseDataSet.get("gwt key")),
             entry("key", campaignDataSet.get("key")),
             entry("campaign key", "campaign specific value")
         );
-        assertThat(((ExecutableComposedTestCase) executionRequests.get(1).testCase).metadata.datasetId())
-            .hasValue(campaign.externalDatasetId);
     }
 
     private final static Random campaignIdGenerator = new Random();
@@ -432,15 +425,6 @@ public class CampaignExecutionEngineTest {
             )
             .withExecutionParameters(dataSet)
             .build();
-    }
-
-    private ExecutableComposedTestCase createExecutableComposedTestCase() {
-        return new ExecutableComposedTestCase(
-            TestCaseMetadataImpl.builder()
-                .withDatasetId("composableDataSetId")
-                .build(),
-            ExecutableComposedScenario.builder().build()
-        );
     }
 
     private Campaign createCampaign() {

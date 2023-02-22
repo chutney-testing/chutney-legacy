@@ -11,8 +11,8 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.component.scenario.domain.Strategy;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.server.core.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.tests.OrientDatabaseHelperTest;

@@ -23,6 +23,7 @@
 
     <modules>
         <module>local-dev</module>
+        <module>local-dev-component</module>
     </modules>
 
     <dependencyManagement>

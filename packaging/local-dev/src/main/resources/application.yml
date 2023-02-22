@@ -90,16 +90,6 @@ chutney:
     sql:
       max-logged-rows: 30
 
-  component:
-    orient:
-      path: .chutney/data/orient
-      #    dBProperties:
-      #      dbName: chutney_component_db
-      #      dbType: PLOCAL
-      contextConfiguration:
-        "[storage.diskCache.diskFreeSpaceLimit]": 384
-        "[storage.diskCache.bufferSize]": 1024
-
 jasypt:
   encryptor:
     private-key-format: pem

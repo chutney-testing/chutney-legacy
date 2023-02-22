@@ -5,10 +5,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
-import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
-import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.FailedExecutionAttempt;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngine;
@@ -67,7 +66,7 @@ public class CampaignExecutionEngine {
                                    ScenarioExecutionEngine scenarioExecutionEngine,
                                    ExecutionHistoryRepository executionHistoryRepository,
                                    TestCaseRepositoryAggregator testCaseRepository,
-                                   DataSetHistoryRepository dataSetHistoryRepository,
+                                   Optional<DataSetHistoryRepository> dataSetHistoryRepository,
                                    JiraXrayEmbeddedApi jiraXrayEmbeddedApi,
                                    ChutneyMetrics metrics,
                                    ExecutorService executorService,
@@ -76,7 +75,7 @@ public class CampaignExecutionEngine {
         this.scenarioExecutionEngine = scenarioExecutionEngine;
         this.executionHistoryRepository = executionHistoryRepository;
         this.testCaseRepository = testCaseRepository;
-        this.dataSetHistoryRepository = dataSetHistoryRepository;
+        this.dataSetHistoryRepository = dataSetHistoryRepository.orElse(null);
         this.jiraXrayEmbeddedApi = jiraXrayEmbeddedApi;
         this.metrics = metrics;
         this.executor = executorService;
@@ -242,7 +241,7 @@ public class CampaignExecutionEngine {
 
     private ExecutionRequest buildExecutionRequest(Campaign campaign, TestCase testCase, String userId) {
         // Only composable test cases can use an external dataset, which can be override if set on the campaign
-        if (isNotBlank(campaign.externalDatasetId) && testCase instanceof ExecutableComposedTestCase) {
+        if (isNotBlank(campaign.externalDatasetId) && testCase.id().contains("-")) {  // TODO remove after component deprecation
             return executionWithDatasetIdOverrideByCampaign(campaign, testCase, userId);
         } else {
             return executionWithCombinedParametersFromCampaignAndTestCase(campaign, testCase, userId);
@@ -251,7 +250,7 @@ public class CampaignExecutionEngine {
 
     private ExecutionRequest executionWithDatasetIdOverrideByCampaign(Campaign campaign, TestCase testCase, String userId) {
         return new ExecutionRequest(
-            ((ExecutableComposedTestCase) testCase).withDataSetId(campaign.externalDatasetId),
+            testCase.withDataSetId(campaign.externalDatasetId),
             campaign.executionEnvironment(),
             userId
         );

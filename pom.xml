@@ -403,6 +403,12 @@
                 <version>9.2</version>
                 <scope>compile</scope>
             </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>4.3.1</version>
+                <scope>runtime</scope>
+            </dependency>
             <!-- Actions -->
             <dependency>
                 <groupId>org.apache.santuario</groupId>

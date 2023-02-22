@@ -6,8 +6,8 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import com.chutneytesting.component.scenario.domain.Strategy;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessor;
 import com.chutneytesting.server.core.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;

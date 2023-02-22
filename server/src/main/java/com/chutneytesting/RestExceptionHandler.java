@@ -2,8 +2,6 @@ package com.chutneytesting;
 
 import com.chutneytesting.admin.domain.BackupNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
-import com.chutneytesting.component.dataset.domain.DataSetNotFoundException;
-import com.chutneytesting.component.scenario.domain.ComposableStepNotFoundException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
@@ -72,9 +70,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         BackupNotFoundException.class,
         CampaignExecutionNotFoundException.class,
         CampaignNotFoundException.class,
-        ComposableStepNotFoundException.class,
         CurrentUserNotFoundException.class,
-        DataSetNotFoundException.class,
         EnvironmentNotFoundException.class,
         GlobalVarNotFoundException.class,
         ReportNotFoundException.class,

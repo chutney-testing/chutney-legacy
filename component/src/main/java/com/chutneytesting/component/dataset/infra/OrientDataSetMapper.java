@@ -9,7 +9,7 @@ import static com.chutneytesting.component.scenario.infra.orient.OrientComponent
 import static java.time.temporal.ChronoUnit.MILLIS;
 
 import com.chutneytesting.component.ComposableIdUtils;
-import com.chutneytesting.component.dataset.domain.DataSet;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.OElement;
 import java.sql.Date;

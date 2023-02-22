@@ -4,7 +4,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.chutneytesting.component.dataset.domain.DataSet;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.github.difflib.patch.PatchFailedException;
 import java.io.IOException;
 import java.net.URISyntaxException;

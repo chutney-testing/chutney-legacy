@@ -4,7 +4,7 @@ import static com.chutneytesting.component.dataset.infra.DataSetPatchUtils.dataS
 import static com.chutneytesting.component.dataset.infra.DataSetPatchUtils.unifiedDiff;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.component.dataset.domain.DataSet;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package com.chutneytesting.component.dataset.domain;
+package com.chutneytesting.server.core.domain.dataset;
 
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Collections.emptyList;

@@ -51,12 +51,3 @@ chutney:
         publisher:
           ttl: 5
           debounce: 250
-
-  component:
-    orient:
-      path: target/.chutney/data/orient
-      dbproperties:
-        dbName: blackbox_component_db-${random.value}
-      contextConfiguration:
-        "[storage.diskCache.diskFreeSpaceLimit]": 384
-        "[storage.diskCache.bufferSize]": 1024

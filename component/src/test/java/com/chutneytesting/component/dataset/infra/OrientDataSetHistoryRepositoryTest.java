@@ -4,8 +4,8 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.chutneytesting.component.dataset.domain.DataSet;
-import com.chutneytesting.component.dataset.domain.DataSetNotFoundException;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
+import com.chutneytesting.server.core.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.component.scenario.infra.orient.OrientComponentDB;
 import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.orientechnologies.common.log.OLogManager;

@@ -4,9 +4,9 @@ import static com.chutneytesting.component.dataset.api.DataSetMapper.fromDto;
 import static com.chutneytesting.component.dataset.api.DataSetMapper.toDto;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.component.dataset.domain.DataSet;
-import com.chutneytesting.component.dataset.domain.DataSetHistoryRepository;
-import com.chutneytesting.component.dataset.domain.DataSetNotFoundException;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
+import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
+import com.chutneytesting.server.core.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.component.dataset.domain.DataSetRepository;
 import java.util.List;
 import java.util.Optional;

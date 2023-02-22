@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -109,13 +108,20 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     @Override
     public List<TestCaseMetadata> search(String textFilter) {
         if (!textFilter.isEmpty()) {
-            String[] words = StringEscapeUtils.escapeSql(textFilter).split("\\s");
+            String[] words = escapeSql(textFilter).split("\\s");
             Specification<ScenarioDao> scenarioDaoSpecification = buildLikeSpecificationOnContent(words);
             List<ScenarioDao> all = jpa.findAll(scenarioDaoSpecification);
             return all.stream().map(ScenarioDao::toTestCaseMetadata).collect(Collectors.toList());
         } else {
             return findAll();
         }
+    }
+
+    private static String escapeSql(String str) {
+        if (str == null) {
+            return null;
+        }
+        return str.replace("'", "''");
     }
 
     private Specification<ScenarioDao> buildLikeSpecificationOnContent(String[] words) {

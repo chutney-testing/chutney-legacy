@@ -1,4 +1,4 @@
-package com.chutneytesting.component.dataset.domain;
+package com.chutneytesting.server.core.domain.dataset;
 
 import java.util.Map;
 import java.util.Optional;

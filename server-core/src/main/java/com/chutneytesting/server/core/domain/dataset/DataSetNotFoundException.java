@@ -1,4 +1,4 @@
-package com.chutneytesting.component.dataset.domain;
+package com.chutneytesting.server.core.domain.dataset;
 
 public class DataSetNotFoundException extends RuntimeException {
     public DataSetNotFoundException(String id) {

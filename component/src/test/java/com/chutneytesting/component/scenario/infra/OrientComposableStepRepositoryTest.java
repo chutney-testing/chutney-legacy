@@ -10,9 +10,9 @@ import com.chutneytesting.component.scenario.domain.AlreadyExistingComposableSte
 import com.chutneytesting.component.scenario.domain.ComposableStep;
 import com.chutneytesting.component.scenario.domain.ComposableStepRepository;
 import com.chutneytesting.component.scenario.domain.ParentStepId;
-import com.chutneytesting.component.scenario.domain.Strategy;
 import com.chutneytesting.component.scenario.infra.orient.OrientComponentDB;
 import com.chutneytesting.component.scenario.infra.orient.changelog.OrientChangelog;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.tests.OrientDatabaseHelperTest;
 import com.orientechnologies.common.log.OLogManager;
 import com.orientechnologies.orient.core.db.ODatabaseSession;
