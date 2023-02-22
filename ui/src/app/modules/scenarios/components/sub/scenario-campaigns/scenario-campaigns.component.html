@@ -3,7 +3,7 @@
     {{ 'menu.principal.campaigns' | translate }} :
     <ng-container *hasAuthorization="[Authorization.CAMPAIGN_READ]">
         <ng-container *ngFor="let campaign of campaignsForScenario">
-            <a [routerLink]="['/campaign', campaign.id,'execution']"
+            <a [routerLink]="['/campaign', campaign.id,'executions']"
                title="{{ 'campaigns.list.item.title.link.title' | translate }} {{campaign.title}}">
                 {{campaign.title}}
             </a>

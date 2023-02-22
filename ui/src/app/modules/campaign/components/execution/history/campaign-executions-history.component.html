@@ -1,0 +1,37 @@
+<div *ngIf="errors.length > 0" class="alert alert-dismissible alert-danger mt-4">
+    <button type="button" class="btn-close" data-bs-dismiss="alert" (click)="errors = []"></button>
+    <ng-container *ngFor="let err of errors">
+        {{ err }}<br />
+    </ng-container>
+</div>
+
+<div *ngIf="campaign">
+    <h5>{{ campaign.title }}</h5>
+    <h6>{{ campaign.description }}</h6>
+
+    <ul ngbNav #nav="ngbNav" [activeId]="getActiveTab()" (navChange)="onTabChange($event)" class="nav-tabs">
+        <li [ngbNavItem]="'0'" [destroyOnHide]="false">
+            <a ngbNavLink>
+                {{ 'campaigns.execution.history.title' | translate }}
+            </a>
+            <ng-template ngbNavContent>
+                <chutney-campaign-executions [executions]="campaignReports" [(filters)]="executionsFilters"
+                    (onExecutionSelect)="openReport($event)">
+                </chutney-campaign-executions>
+            </ng-template>
+        </li>
+
+        <li *ngFor="let exec of tabs" [ngbNavItem]="exec.report.executionId.toString()" [destroyOnHide]="false">
+            <a ngbNavLink>
+                <small><strong>#{{ exec.report.executionId }}</strong> ({{ exec.report.startDate | amCalendar}})</small>
+                <i class="fa-regular fa-x fa-xs ms-2 fw-light" (click)="closeReport($event, exec.report.executionId)"></i>
+            </a>
+            <ng-template ngbNavContent>
+                <chutney-campaign-execution [campaignId]="campaign.id" [report]="exec" [jiraUrl]="jiraUrl">
+                </chutney-campaign-execution>
+            </ng-template>
+        </li>
+
+    </ul>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+</div>

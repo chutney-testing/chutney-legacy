@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { Execution } from '@model';
+import { CampaignExecutionReport, CampaignReport } from '@model';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -12,19 +12,32 @@ import { NgbDate } from '@ng-bootstrap/ng-bootstrap/datepicker/ngb-date';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-    selector: 'chutney-scenario-executions',
-    templateUrl: './scenario-executions.component.html',
-    styleUrls: ['./scenario-executions.component.scss']
+    selector: 'chutney-campaign-executions',
+    templateUrl: './campaign-executions.component.html',
+    styleUrls: ['./campaign-executions.component.scss']
 })
-export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
+export class CampaignExecutionsComponent implements OnChanges, OnDestroy {
+
+    @Input() executions: CampaignReport[] = [];
+    @Output() onExecutionSelect = new EventEmitter<{ execution: CampaignReport, focus: boolean }>();
+    @Input() filters: Params;
+    @Output() filtersChange = new EventEmitter<Params>();
+
     ExecutionStatus = ExecutionStatus;
-    filteredExecutions: Execution[] = [];
+
     filtersForm: FormGroup;
+    private filters$: Subscription;
+    filteredExecutions: CampaignReport[] = [];
 
     status: { id: string, itemName: string }[] = [];
+    @ViewChild('statusDropdown', {static: false}) statusDropdown: AngularMultiSelect;
+
     environments: { id: string, itemName: string }[] = [];
+    @ViewChild('envsDropdown', {static: false}) envsDropdown: AngularMultiSelect;
+
     executors: { id: string, itemName: string }[] = [];
-    campaigns: { id: string, itemName: string }[] = [];
+    @ViewChild('executorsDropdown', {static: false}) executorsDropdown: AngularMultiSelect;
+
     selectSettings = {
         text: '',
         enableCheckAll: false,
@@ -33,19 +46,7 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
         classes: 'dropdown-list1'
     };
 
-    private filters$: Subscription;
-
     private readonly iso_Date_Delimiter = '-';
-    @ViewChild('statusDropdown', {static: false}) statusDropdown: AngularMultiSelect;
-
-    @ViewChild('envsDropdown', {static: false}) envsDropdown: AngularMultiSelect;
-    @ViewChild('executorsDropdown', {static: false}) executorsDropdown: AngularMultiSelect;
-    @ViewChild('campsDropdown', {static: false}) campsDropdown: AngularMultiSelect;
-
-    @Input() executions: Execution[] = [];
-    @Output() onExecutionSelect = new EventEmitter<{ execution: Execution, focus: boolean }>();
-    @Input() filters: Params;
-    @Output() filtersChange = new EventEmitter<Params>();
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
@@ -54,11 +55,14 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
                 private translateService: TranslateService) {
     }
 
-
     ngOnChanges(changes: SimpleChanges): void {
         this.initFiltersOptions();
         this.applyFilters();
         this.onFiltersChange();
+    }
+
+    ngOnDestroy(): void {
+        this.filters$.unsubscribe();
     }
 
     toggleDropDown(dropDown: AngularMultiSelect, event) {
@@ -72,23 +76,17 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
     }
 
     noExecutionAt() {
-        return (date: NgbDate) => !this.executions.filter(exec => this.matches(exec, {date: date})).length;
+        return (date: NgbDate) => !this.executions.filter(exec => this.matches(exec.report, {date: date})).length;
     }
 
-    openReport(execution: Execution, focus: boolean = true) {
+    openReport(execution: CampaignReport, focus: boolean = true) {
         this.onExecutionSelect.emit({execution, focus});
     }
 
-    ngOnDestroy(): void {
-        this.filters$.unsubscribe();
-    }
-
-
     private initFiltersOptions() {
-        this.status = [...new Set(this.executions.map(exec => exec.status))].map(status => this.toSelectOption(status,  this.translateService.instant(ExecutionStatus.toString(status))));
-        this.environments = [...new Set(this.executions.map(exec => exec.environment))].map(env => this.toSelectOption(env));
-        this.executors = [...new Set(this.executions.map(exec => exec.user))].map(user => this.toSelectOption(user));
-        this.campaigns = [...new Set(this.executions.filter(exec => !!exec.campaignReport).map(exec => exec.campaignReport.campaignName))].map(camp => this.toSelectOption(camp));
+        this.status = [...new Set(this.executions.map(exec => exec.report.status))].map(status => this.toSelectOption(status,  this.translateService.instant(ExecutionStatus.toString(status))));
+        this.environments = [...new Set(this.executions.map(exec => exec.report.executionEnvironment))].map(env => this.toSelectOption(env));
+        this.executors = [...new Set(this.executions.map(exec => exec.report.user))].map(user => this.toSelectOption(user));
     }
 
     private applyFilters() {
@@ -102,13 +100,12 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
             date: this.formBuilder.control(this.toNgbDate(this.filters['date'])),
             status: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['status'],  (status) => this.translateService.instant(ExecutionStatus.toString(status)))),
             environments: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['env'])),
-            executors: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['exec'])),
-            campaigns: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['camp'])),
+            executors: this.formBuilder.control(this.selectedOptionsFromUri(this.filters['exec']))
         });
     }
 
     private applyFiltersOnExecutions() {
-        this.filteredExecutions = this.executions.filter(exec => this.matches(exec, this.filtersForm.value))
+        this.filteredExecutions = this.executions.filter(exec => this.matches(exec.report, this.filtersForm.value))
     }
 
     private onFiltersChange() {
@@ -117,10 +114,9 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
             .pipe(
                 debounceTime(500),
                 map(value => this.toQueryParams(value)),
-                tap(params => this.filtersChange.emit(params)))
-            .subscribe();
+                tap(params => this.filtersChange.emit(params))
+            ).subscribe();
     }
-
 
     private selectedOptionsFromUri(param: string, labelResolver?: (param) => string) {
         if (param) {
@@ -129,7 +125,6 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
                 .map(part => this.toSelectOption(part, labelResolver ? labelResolver(part) : part));
         }
         return [];
-
     }
 
     private toSelectOption(id: string, label: string = id) {
@@ -149,9 +144,6 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
         }
         if (filters.environments && filters.environments.length) {
             params['env'] = filters.environments.map(env => env.id).toString();
-        }
-        if (filters.campaigns && filters.campaigns.length) {
-            params['camp'] = filters.campaigns.map(env => env.id).toString();
         }
         if (filters.executors && filters.executors.length) {
             params['exec'] = filters.executors.map(env => env.id).toString();
@@ -178,62 +170,45 @@ export class ScenarioExecutionsComponent implements OnChanges, OnDestroy {
         return null;
     }
 
-    private matches(exec: Execution, filters: any): boolean {
+    private matches(report: CampaignExecutionReport, filters: any): boolean {
         let keywordMatch = true;
         if (filters.keyword) {
             let space = ' ';
-            let searchScope = exec.user
+            let searchScope = report.user
                 + space
-                + exec.environment
+                + report.executionEnvironment
                 + space
-                + this.datePipe.transform(exec.time, 'DD MMM. YYYY HH:mm')
+                + this.datePipe.transform(report.startDate, 'DD MMM. YYYY HH:mm')
                 + space
-                + exec.executionId
+                + report.executionId
                 + space
-                + this.translateService.instant(ExecutionStatus.toString(exec.status))
+                + this.translateService.instant(ExecutionStatus.toString(report.status))
                 + space;
-            if (exec.campaignReport) {
-                searchScope += space + exec.campaignReport.campaignName;
-            }
 
-            if (exec.error) {
-                searchScope += space + exec.error;
-            }
             keywordMatch = searchScope.toLowerCase().includes(filters.keyword.toLowerCase());
         }
+
         let statusMatch = true;
         if (filters.status && filters.status.length) {
-            statusMatch = !!filters.status.find(status => status.id === exec.status);
+            statusMatch = !!filters.status.find(status => status.id === report.status);
         }
+
         let dateMatch = true;
         if (filters.date) {
             const dateFilter = new Date(filters.date.year, filters.date.month - 1, filters.date.day);
-            dateMatch = dateFilter.toDateString() === new Date(exec.time).toDateString();
+            dateMatch = dateFilter.toDateString() === new Date(report.startDate).toDateString();
         }
 
         let userMatch = true;
         if (filters.executors && filters.executors.length) {
-            userMatch = !!filters.executors.find(executor => executor.id === exec.user);
+            userMatch = !!filters.executors.find(executor => executor.id === report.user);
         }
 
         let envMatch = true;
         if (filters.environments && filters.environments.length) {
-            envMatch = !!filters.environments.find(env => env.id === exec.environment);
+            envMatch = !!filters.environments.find(env => env.id === report.executionEnvironment);
         }
 
-        let campaignMatch = true;
-        if (filters.campaigns && filters.campaigns.length) {
-            campaignMatch = !!filters.campaigns.find(camp => exec.campaignReport && camp.id === exec.campaignReport.campaignName);
-        }
-
-        return keywordMatch && statusMatch && dateMatch && userMatch && envMatch && campaignMatch;
-    }
-
-    openCampaignExecution(execution: Execution, event: MouseEvent) {
-        if (execution.campaignReport) {
-            event.stopPropagation();
-            this.router.navigate(['/campaign', execution.campaignReport.campaignId, 'executions'], {queryParams: {open: execution.campaignReport.executionId, active: execution.campaignReport.executionId}});
-        }
-
+        return keywordMatch && statusMatch && dateMatch && userMatch && envMatch;
     }
 }

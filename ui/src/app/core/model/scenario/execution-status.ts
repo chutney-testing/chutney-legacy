@@ -9,7 +9,7 @@ export enum ExecutionStatus {
 
 export namespace ExecutionStatus {
 
-    export function toString(status: ExecutionStatus): string {
+    export function toString(status: ExecutionStatus | string): string {
         return status && `global.status.${status.toLowerCase()}`
     }
 }

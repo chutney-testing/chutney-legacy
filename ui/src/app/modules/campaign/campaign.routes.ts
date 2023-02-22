@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
 
 import { CampaignListComponent } from './components/campaign-list/campaign-list.component';
-import { CampaignExecutionComponent } from './components/execution/execution-campaign.component';
 import { CampaignEditionComponent } from './components/create-campaign/campaign-edition.component';
 import { CampaignSchedulingComponent } from './components/campaign-scheduling/campaign-scheduling.component';
+import { CampaignExecutionsHistoryComponent } from './components/execution/history/campaign-executions-history.component';
+import { CampaignExecutionMenuComponent } from './components/execution/sub/right-side-bar/campaign-execution-menu.component';
 import { AuthGuard } from '@core/guards';
 import { Authorization } from '@model';
 
@@ -15,15 +16,20 @@ export const CampaignRoute: Routes = [
         data: { 'authorizations': [ Authorization.CAMPAIGN_READ ] }
     },
     {
-        path: ':id/execution',
-        redirectTo: ':id/execution/last',
-        pathMatch: 'full'
-    },
-    {
-        path: ':id/execution/:execId',
-        component: CampaignExecutionComponent,
+        path: ':id/executions',
         canActivate: [AuthGuard],
-        data: { 'authorizations': [ Authorization.CAMPAIGN_READ ] }
+        data: { 'authorizations': [ Authorization.CAMPAIGN_READ ] },
+        children: [
+            {
+                path: '',
+                component: CampaignExecutionsHistoryComponent
+            },
+            {
+                path: '',
+                component: CampaignExecutionMenuComponent,
+                outlet: 'right-side-bar'
+            }
+        ]
     },
     {
         path: ':id/edition',component: CampaignEditionComponent,

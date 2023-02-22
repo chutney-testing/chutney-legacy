@@ -1,0 +1,183 @@
+<div *ngIf="filtersForm" class="executions">
+    <div [formGroup]="filtersForm">
+        <div class="mb-3 row">
+            <div class="col-4">
+                <input id="keyword" type="text" class="form-control" name="keyword"
+                    placeholder="{{ 'global.actions.global-search' | translate }}" formControlName="keyword">
+            </div>
+        </div>
+        <table class="table table-hover table-borderless table-striped text-center align-middle">
+            <thead>
+                <tr class="headers-labels">
+                    <th class="w1 text-center">#</th>
+                    <th class="w1"></th>
+                    <th scope="col">
+                        <div class="cursor-pointer d-flex justify-content-center" (click)="datepicker.toggle()">
+                            <span>{{ 'campaigns.execution.history.header.date' | translate }}</span>
+                            <i #dateToggleButton class="ms-2 fa-regular fa-calendar-days"></i>
+                        </div>
+                    </th>
+                    <th scope="col">
+                        <div class="cursor-pointer d-flex justify-content-center"
+                            (click)="toggleDropDown(statusDropdown, $event)">
+                            <span>{{ 'campaigns.execution.history.header.status' | translate }}</span>
+                            <i class="ms-2 fa" [ngClass]="{
+                                'fa-chevron-up': statusDropdown.isActive,
+                                'fa-chevron-down': !statusDropdown.isActive}"></i>
+                        </div>
+                    </th>
+                    <th scope="col">
+                        <div class="cursor-pointer d-flex justify-content-center"
+                            (click)="toggleDropDown(envsDropdown, $event)">
+                            <span>{{ 'campaigns.execution.history.header.env' | translate }}</span>
+                            <i class="ms-2 fa" [ngClass]="{
+                                'fa-chevron-up': envsDropdown.isActive,
+                                'fa-chevron-down': !envsDropdown.isActive}"></i>
+                        </div>
+                    </th>
+                    <th scope="col">
+                        <div class="cursor-pointer d-flex justify-content-center"
+                            (click)="toggleDropDown(executorsDropdown, $event)">
+                            <span>{{ 'campaigns.execution.history.header.executor' | translate }}</span>
+                            <i class="ms-2 fa" [ngClass]="{
+                                'fa-chevron-up': executorsDropdown.isActive,
+                                'fa-chevron-down': !executorsDropdown.isActive}"></i>
+                        </div>
+                    </th>
+                </tr>
+                <tr class="headers-filters">
+                    <th></th>
+                    <th></th>
+                    <th>
+                        <div *ngIf="filtersForm.controls.date.value" (click)="filtersForm.get('date').reset()"
+                            class="chutney-tag chutney-tag-selected">
+                            {{ getDateFilterValue() | amDateFormat:'LL'}}
+                            <i class="fa-regular fa-x fa-xs ms-2"></i>
+                        </div>
+                    </th>
+                    <th>
+                        <angular2-multiselect #statusDropdown formControlName="status"
+                            [data]="status"
+                            [settings]="selectSettings">
+                        </angular2-multiselect>
+                    </th>
+                    <th>
+                        <angular2-multiselect #envsDropdown formControlName="environments"
+                            [data]="environments"
+                            [settings]="selectSettings">
+                        </angular2-multiselect>
+                    </th>
+                    <th>
+                        <angular2-multiselect #executorsDropdown formControlName="executors"
+                            [data]="executors"
+                            [settings]="selectSettings">
+                        </angular2-multiselect>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let execution of filteredExecutions" (click)="openReport(execution, !$event.ctrlKey)"
+                    class="cursor-pointer">
+                    <td class="text-center align-middle">
+                        <span class="fw-bold text-nowrap">
+                            <ngb-highlight [result]="execution.report.executionId.toString()"
+                                [term]="filtersForm.get('keyword').value">
+                            </ngb-highlight>
+                        </span>
+                    </td>
+                    <td class="text-center align-middle"><span class="fa fa-lg fa-sync" *ngIf="execution.report.partialExecution"></span></td>
+                    <td>
+                        <ngb-highlight class="text-nowrap" [result]="execution.report.startDate | amCalendar"
+                            [term]="filtersForm.get('keyword').value">
+                        </ngb-highlight>
+                        <div>
+                            <small>
+                                ({{ 'global.time.in' | translate }} {{execution.report.duration | amDuration:'ms' }})
+                            </small>
+                        </div>
+                    </td>
+                    <td class="status">
+                        <ng-container *ngIf="execution.hasRunning()">
+                            <div class="btn btn-sm position-relative"
+                                [ngbTooltip]="ExecutionStatus.toString(ExecutionStatus.RUNNING) | translate" placement="right">
+                                <span class="fa-solid fa-2xl fa-spinner fa-pulse text-warning"></span>
+                                <span class="position-absolute top-0 start-75 translate-middle badge border border-warning rounded-circle text-warning">
+                                    {{ execution.running }}
+                                </span>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="execution.hasPaused()">
+                            <div class="btn btn-sm position-relative"
+                                [ngbTooltip]="ExecutionStatus.toString(ExecutionStatus.PAUSED) | translate" placement="right">
+                                <span class="fa-solid fa-2xl fa-circle-pause text-warning"></span>
+                                <span class="position-absolute top-0 start-75 translate-middle badge border border-warning rounded-circle text-warning">
+                                    {{ execution.pause }}
+                                </span>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="execution.hasPassed()">
+                            <div class="btn btn-sm position-relative"
+                                [ngbTooltip]="ExecutionStatus.toString(ExecutionStatus.SUCCESS) | translate" placement="right">
+                                <span class="fa-solid fa-2xl fa-circle-check text-info"></span>
+                                <span class="position-absolute top-0 start-75 translate-middle badge border border-info rounded-circle text-info">
+                                    {{ execution.passed }}
+                                </span>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="execution.hasFailed()">
+                            <div class="btn btn-sm position-relative"
+                                [ngbTooltip]="ExecutionStatus.toString(ExecutionStatus.FAILURE) | translate" placement="right">
+                                <span class="fa-solid fa-2xl fa-circle-xmark text-danger"></span>
+                                <span class="position-absolute top-0 start-75 translate-middle badge border border-danger rounded-circle text-danger">
+                                    {{ execution.failed }}
+                                </span>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="execution.hasStopped()">
+                            <div class="btn btn-sm position-relative"
+                                [ngbTooltip]="ExecutionStatus.toString(ExecutionStatus.STOPPED) | translate" placement="right">
+                                <span class="fa-solid fa-2xl fa-circle-stop text-warning"></span>
+                                <span class="position-absolute top-0 start-75 translate-middle badge border border-warning rounded-circle text-warning">
+                                    {{ execution.stopped }}
+                                </span>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="execution.hasNotExecuted()">
+                            <div class="btn btn-sm position-relative"
+                                [ngbTooltip]="ExecutionStatus.toString(ExecutionStatus.NOT_EXECUTED) | translate" placement="right">
+                                <span class="fa-regular fa-2xl fa-circle text-warning"></span>
+                                <span class="position-absolute top-0 start-75 translate-middle badge border border-warning rounded-circle text-warning">
+                                    {{ execution.notexecuted }}
+                                </span>
+                            </div>
+                        </ng-container>
+                    </td>
+                    <td>
+                        <ngb-highlight [result]="execution.report.executionEnvironment"
+                            [term]="filtersForm.get('keyword').value"></ngb-highlight>
+                    </td>
+                    <td>
+                        <ngb-highlight [result]="execution.report.user"
+                            [term]="filtersForm.get('keyword').value"></ngb-highlight>
+                    </td>
+                </tr>
+                <tr *ngIf="!filteredExecutions">
+                    <td colspan="6">{{'campaigns.execution.history.empty' | translate}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="input-group ">
+            <input class="form-control d-none"
+                   name="datepicker"
+                   ngbDatepicker
+                   #datepicker="ngbDatepicker"
+                   formControlName="date"
+                   [readonly]="true"
+                   (click)="datepicker.toggle()"
+                   [positionTarget]="dateToggleButton"
+                   [markDisabled]="noExecutionAt()"
+                   placement="bottom-end">
+        </div>
+    </div>
+</div>
