@@ -80,7 +80,7 @@
                     <th scope="col" class="filter w10 text-center">
                         {{ 'campaigns.execution.scenarios.item.header.duration' | translate }}
                     </th>
-                    <th *ngIf="jiraTestExecutionId" scope="col"></th>
+                    <th *ngIf="jiraTestExecutionId" class="w2" scope="col"></th>
                     <th *ngIf="jiraTestExecutionId" scope="col">
                         {{ 'campaigns.execution.scenarios.item.header.jiraStatus' | translate }}
                     </th>
@@ -132,9 +132,9 @@
                             [btnSizeClass]="'sm'" [btnClassIcon]="'fa-pencil-alt'" [btnColor]="'primary'"
                             (deleteEvent)="updateStatus(scenarioReportOutline.scenarioId)">
                         </chutney-delete-confirm-dialog>
-                        <select class="custom-select small_text mt-1"
+                        <select class="custom-select mt-1"
                             (change)="selectedUpdateStatus(scenarioReportOutline.scenarioId, $event)"
-                            style="width: 120px;font-size: 0.5em;">
+                            style="width: 120px">
                             <option *ngFor="let enum of xrayStatuses()"
                                 [selected]="scenarioStatus(scenarioReportOutline.scenarioId) === enum">
                                 {{ enum }}

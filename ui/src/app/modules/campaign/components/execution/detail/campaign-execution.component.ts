@@ -24,6 +24,7 @@ export class CampaignExecutionComponent implements OnInit {
     jiraTestExecutionId: string;
     private jiraScenarios: JiraScenario[] = [];
     UNSUPPORTED = 'UNSUPPORTED';
+    selectedStatusByScenarioId: Map<string, string> = new Map();
 
     constructor(
         private jiraLinkService: JiraPluginService,
@@ -57,6 +58,27 @@ export class CampaignExecutionComponent implements OnInit {
                 }
             })
         );
+    }
+
+    xrayStatuses(): Array<string> {
+        const keys = Object.keys(XrayStatus);
+        return keys.slice();
+    }
+
+    selectedUpdateStatus(scenarioId: string, event: any) {
+        this.selectedStatusByScenarioId.set(scenarioId, event.target.value);
+    }
+
+    updateStatus(scenarioId: string) {
+        const newStatus = this.selectedStatusByScenarioId.get(scenarioId);
+        if (newStatus === XrayStatus.PASS || newStatus === XrayStatus.FAIL) {
+            this.jiraLinkService.updateScenarioStatus(this.jiraTestExecutionId, scenarioId, newStatus).subscribe(
+                () => {},
+                (error) => {
+                    console.log(error);
+                }
+            );
+        }
     }
 
     scenarioStatus(scenarioId: String): string {
