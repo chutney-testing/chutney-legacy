@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.7.0](https://github.com/chutney-testing/chutney/tree/1.7.0)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.6.0...1.7.0)
+## What's Changed
+
+### 🚀 Implemented enhancements:
+* New campaign execution ui [\#1001](https://github.com/chutney-testing/chutney/pull/1001)
+* Log stepDefinition raw inputs on assert action [\#968](https://github.com/chutney-testing/chutney/pull/968)
+* Execution report new UX [\#971](https://github.com/chutney-testing/chutney/pull/971)
+### 🐛 Fixed bugs:
+* Fix xsd validation action using file [\#998](https://github.com/chutney-testing/chutney/pull/998)
+* Performance issue on scenario list [\#1002](https://github.com/chutney-testing/chutney/pull/1002)
+* Make step details sticky in scenario report [\#1000](https://github.com/chutney-testing/chutney/pull/1000)
+* Scenario creation date should not be updated [\#965](https://github.com/chutney-testing/chutney/pull/965)
+* Fix ts errors on scenario and campaign pages [\#970](https://github.com/chutney-testing/chutney/pull/970)
+* Scenario execution fault barrier extension to catch Throwable but VM Errors [\#984](https://github.com/chutney-testing/chutney/pull/984)
+* Fix doc broken link [\#985](https://github.com/chutney-testing/chutney/pull/985)
+* Missing linkifier pipe in Scenario title & desc [\#987](https://github.com/chutney-testing/chutney/pull/987)
+### 🔧 Technical enhancements:
+* Refactor theme switch & add themes to storybook [\#997](https://github.com/chutney-testing/chutney/pull/997)
+* Remove component dependency [\#999](https://github.com/chutney-testing/chutney/pull/999)
+* Fix chutney version and update release management [\#967](https://github.com/chutney-testing/chutney/pull/967)
+* Decouple components backup [\#972](https://github.com/chutney-testing/chutney/pull/972)
+* Add storybook components & pages [\#973](https://github.com/chutney-testing/chutney/pull/973)
+* Test fault barrier only with catch errors [\#986](https://github.com/chutney-testing/chutney/pull/986)
+* Add support of sqlite and jpa for scenario repository only [\#974](https://github.com/chutney-testing/chutney/pull/974)
+
+
 ## [1.6.0](https://github.com/chutney-testing/chutney/tree/1.6.0)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.5.6...1.6.0)
