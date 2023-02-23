@@ -282,18 +282,10 @@ In order to do so :
 ### Update Changelog file
 
 Do it first, because changelog updates should be part of the release being made.  
-Either do it manually or use a github-changelog-generator.
+Check page:  [Automatically generated release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes)
 
-#### Using github-changelog-generator
-
-- Install [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator#installation)
-- Generate the changelog with https://github.com/github-changelog-generator/github-changelog-generator
-
-```shell
-github_changelog_generator -u chutney-testing -p chutney --token <YOUR_TOKEN> --since-tag <previous RELEASE_VERSION>
-```
-
-- Copy-paste the generated content and use it to update [CHANGELOG.md](https://github.com/chutney-testing/chutney/blob/master/CHANGELOG.md)
+Do not hesitate to update the release note generated especially the titles of pull request :) 
+Use it to update [CHANGELOG.md](https://github.com/chutney-testing/chutney/blob/master/CHANGELOG.md)
 
 ### Releasing
 
