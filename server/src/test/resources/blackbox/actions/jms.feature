@@ -6,7 +6,7 @@ Feature: Jms Task test
         Given A target pointing to an unknown service
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
-                With uri /api/v2/environment
+                With uri /api/v2/environments
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body
@@ -85,7 +85,7 @@ Feature: Jms Task test
         And an associated target
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
-                With uri /api/v2/environment
+                With uri /api/v2/environments
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body

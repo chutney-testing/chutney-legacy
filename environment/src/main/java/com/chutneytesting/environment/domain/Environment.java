@@ -30,7 +30,7 @@ public class Environment {
 
     Environment addTarget(Target target) {
         if (this.containsTarget(target)) {
-            throw new AlreadyExistingTargetException("Target [" + target.name + "] already exists");
+            throw new AlreadyExistingTargetException("Target [" + target.name + "] already exists in [" + this.name + "] environment");
         }
 
         return Environment.builder()

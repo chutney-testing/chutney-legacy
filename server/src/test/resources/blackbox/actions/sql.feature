@@ -6,7 +6,7 @@ Feature: SQL Task test
         Given a sql database target
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
-                With uri /api/v2/environment
+                With uri /api/v2/environments
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body
@@ -88,7 +88,7 @@ Feature: SQL Task test
         Given a sql database target
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
-                With uri /api/v2/environment
+                With uri /api/v2/environments
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body

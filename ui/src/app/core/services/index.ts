@@ -6,7 +6,7 @@ export * from './component.service';
 export * from './database-admin.service';
 export * from './dataset.service';
 export * from './edition.service';
-export * from './environment-admin.service';
+export * from './environment.service';
 export * from './jira-plugin.service';
 export * from './jira-plugin-configuration.service';
 export * from './linkifier.service';

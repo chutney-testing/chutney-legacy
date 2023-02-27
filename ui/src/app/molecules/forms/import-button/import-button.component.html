@@ -1,5 +1,12 @@
-<form enctype="multipart/form-data" class="btn btn-success m-3">
-    <input type="file" id="input-file-browser"
-           [accept]="acceptedTypes"/> <span class="fa fa-upload"></span>
-    {{'global.actions.import'| translate}}
-</form>
+<label class="btn {{btnSizeClass ? 'btn-' + btnSizeClass : ''}} btn-{{btnColor}}" for="file_browser_{{uuid}}">
+    <span class="bi bi-upload"></span>
+    <span *ngIf="label">{{ label| translate}}</span>
+</label>
+<input type="file" id="file_browser_{{uuid}}"
+       class="d-none"
+       [accept]="acceptedTypes"
+       [multiple]="false"
+       (change)="handleFileSelection($event)"
+       [formControl]="fileControl"
+/>
+

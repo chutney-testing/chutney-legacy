@@ -15,7 +15,10 @@ export class PropertyTablePanelComponent {
     constructor(public validationService: ValidationService) { }
 
     createEntry() {
-        this.entries.push(new Entry('', ''));
+        if (!this.entries) {
+            this.entries = [];
+        }
+        this.entries.unshift(new Entry('', ''));
     }
 
     deleteEntry(entry: Entry) {

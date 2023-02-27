@@ -117,7 +117,7 @@ export class LoginService {
         if (contains(authorizations, Authorization.SCENARIO_READ)) return '/scenario';
         if (contains(authorizations, Authorization.CAMPAIGN_READ)) return '/campaign';
         if (contains(authorizations, Authorization.COMPONENT_READ)) return '/component';
-        if (contains(authorizations, Authorization.ENVIRONMENT_ACCESS)) return '/environmentAdmin';
+        if (contains(authorizations, Authorization.ENVIRONMENT_ACCESS)) return '/targets';
         if (contains(authorizations, Authorization.GLOBAL_VAR_READ)) return '/variable';
         if (contains(authorizations, Authorization.DATASET_READ)) return '/dataset';
         if (contains(authorizations, Authorization.ADMIN_ACCESS)) return '/';

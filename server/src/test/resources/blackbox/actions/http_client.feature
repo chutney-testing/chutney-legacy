@@ -6,7 +6,7 @@ Feature: HTTP Task test
         Given A target pointing to an unknown http server
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
-                With uri /api/v2/environment
+                With uri /api/v2/environments
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body
@@ -83,7 +83,7 @@ Feature: HTTP Task test
         And a configured target for an endpoint
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
-                With uri /api/v2/environment
+                With uri /api/v2/environments
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body

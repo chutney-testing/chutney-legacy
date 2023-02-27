@@ -10,19 +10,19 @@ import {
 import { Authorization, ScenarioIndex, TestCase } from '@model';
 import {
     ComponentService,
-    EnvironmentAdminService,
     JiraPluginService,
     LoginService,
     ScenarioService
 } from '@core/services';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatestWith, EMPTY, Observable, of, switchMap, tap } from 'rxjs';
+import { combineLatestWith, Observable, of, switchMap, tap } from 'rxjs';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { EventManagerService } from '@shared';
 import { MenuItem } from '@shared/components/layout/menuItem';
+import { EnvironmentService } from '@core/services/environment.service';
 
 @Component({
     selector: 'chutney-scenario-execution-menu',
@@ -49,7 +49,7 @@ export class ScenarioExecutionMenuComponent implements OnInit {
     rightMenuItems: MenuItem[];
 
     constructor(private componentService: ComponentService,
-                private environmentAdminService: EnvironmentAdminService,
+                private environmentService: EnvironmentService,
                 private fileSaverService: FileSaverService,
                 private jiraLinkService: JiraPluginService,
                 private router: Router,
@@ -172,7 +172,7 @@ export class ScenarioExecutionMenuComponent implements OnInit {
 
     private getEnvironments(): Observable<Array<string>> {
         if (this.loginService.hasAuthorization(Authorization.SCENARIO_EXECUTE)) {
-            return this.environmentAdminService.listEnvironmentsNames();
+            return this.environmentService.names();
         }
         return of([])
     }

@@ -64,8 +64,14 @@ export const appRoutes: Routes = [
                 data: { 'authorizations': [ Authorization.ADMIN_ACCESS ] }
             },
             {
-                path: 'environmentAdmin',
-                loadChildren: () => import('./organisms/environment-admin/environment-admin.module').then(m => m.EnvironmentAdminModule),
+                path: 'targets',
+                loadChildren: () => import('./modules/target/target.module').then(m => m.TargetModule),
+                canActivate: [AuthGuard],
+                data: { 'authorizations': [ Authorization.ENVIRONMENT_ACCESS,Authorization.ADMIN_ACCESS ] }
+            },
+            {
+                path: 'environments',
+                loadChildren: () => import('./modules/environment/environment.module').then(m => m.EnvironmentModule),
                 canActivate: [AuthGuard],
                 data: { 'authorizations': [ Authorization.ENVIRONMENT_ACCESS,Authorization.ADMIN_ACCESS ] }
             },

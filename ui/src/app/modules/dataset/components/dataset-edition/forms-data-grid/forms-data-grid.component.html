@@ -34,7 +34,7 @@
                             <span class="fa fa-times"></span>
                         </button>
                     </div>
-                    <input type="text" class="form-control" id="{{i}}-header" placeholder="{{ 'dataset.key' | translate }}" value="{{header}}"
+                    <input type="text" class="form-control" id="{{i}}-header" placeholder="{{ 'global.smallword.key' | translate }}" value="{{header}}"
                            (change)="updateHeader(i, $event.target.value)"/>
                 </th>
             </tr>
@@ -51,7 +51,7 @@
                 <td [formGroupName]="i" *ngFor="let keyValue of line.controls; let j = index" style="min-width:250px">
                     <div [formGroupName]="j">
                         <input type="text" class="form-control" id="{{i-j}}-value"
-                               formControlName="value" placeholder="{{ 'dataset.value' | translate }}"/>
+                               formControlName="value" placeholder="{{ 'global.smallword.value' | translate }}"/>
                     </div>
                 </td>
             </tr>

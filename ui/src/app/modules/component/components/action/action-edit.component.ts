@@ -11,7 +11,7 @@ import {
     Task,
     Authorization
 } from '@model';
-import { ComponentService, EnvironmentAdminService, LoginService } from '@core/services';
+import { ComponentService, EnvironmentService, LoginService } from '@core/services';
 import { newInstance } from '@shared/tools/array-utils';
 
 
@@ -48,7 +48,7 @@ export class ActionEditComponent implements OnChanges {
 
     constructor(
         private formBuilder: FormBuilder,
-        private environmentService: EnvironmentAdminService,
+        private environmentService: EnvironmentService,
         private componentService: ComponentService,
         private loginService: LoginService
     ) {

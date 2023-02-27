@@ -1,22 +1,20 @@
-<button type="button" class="btn btn-link" (click)="createEntry()"><span class="fa fa-plus"></span> Add property</button>
-<table class="table table-sm mb-0">
+<table class="table table-sm mb-0 props">
     <thead>
         <tr>
-            <th scope="col">Key</th>
-            <th scope="col">Value</th>
-            <th scope="col"></th>
+            <th scope="col">{{'global.smallword.key' | translate}}</th>
+            <th scope="col">{{'global.smallword.value' | translate}}</th>
+            <th scope="col" class="w5"><button type="button" class="btn btn-sm" (click)="createEntry()"><span class="fa fa-plus"></span></button></th>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let entry of entries">
             <td>
-                <chutney-forms-input id="{{entry.key}} + '_key_input'" placeholder="Key" [(model)]="entry.key" [validate]="validationService.isNotEmpty"></chutney-forms-input>
+                <chutney-forms-input id="{{entry.key}} + '_key_input'" [(model)]="entry.key" [validate]="validationService.isNotEmpty"></chutney-forms-input>
             </td>
             <td>
-                <chutney-forms-input id="{{entry.key}} + '_value_input'" placeholder="Value" [(model)]="entry.value" [validate]="validationService.isNotEmpty"></chutney-forms-input>
+                <chutney-forms-input id="{{entry.key}} + '_value_input'" [(model)]="entry.value" [validate]="validationService.isNotEmpty"></chutney-forms-input>
             </td>
-            <td><button type="button" class="btn btn-lg ms-3" (click)="deleteEntry(entry)"><span class="fa fa-trash" style="color: red;"></span></button></td>
+            <td class="align-middle"><button type="button" class="btn btn-sm" (click)="deleteEntry(entry)"><span class="fa fa-trash" style="color: red;"></span></button></td>
         </tr>
     </tbody>
 </table>
-<button type="button" class="btn btn-link" (click)="createEntry()"><span class="fa fa-plus"></span> Add property</button>

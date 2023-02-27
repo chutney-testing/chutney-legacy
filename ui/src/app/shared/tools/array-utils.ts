@@ -100,6 +100,10 @@ function normalize(value) {
         '' + value;
 }
 
+export function match(item: any, query: string): boolean {
+return !!item && normalize(item).indexOf(normalize(query)) !== -1
+}
+
 export function filterOnTextContent(input: any, filter: string, attr: any[]) {
     if (!input || !filter || !attr) { return input; }
     if (attr.length === 0) { return input; }
@@ -107,7 +111,7 @@ export function filterOnTextContent(input: any, filter: string, attr: any[]) {
     return input.filter((item) => {
         return filter === undefined
             || filter === ''
-            || attr.map(a => item[a] != null && normalize(item[a]).indexOf(normalize(filter)) !== -1)
+            || attr.map(a => match(item[a], filter))
                 .reduce((p, c) => p || c);
     });
 }

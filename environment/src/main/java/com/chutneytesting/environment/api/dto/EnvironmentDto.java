@@ -37,7 +37,7 @@ public class EnvironmentDto {
         return Environment.builder()
             .withName(name)
             .withDescription(description)
-            .withTargets(
+            .withTargets( // TODO check if env name is mapped
                 ofNullable(targets).orElse(emptyList()).stream().map(t -> t.toTarget(name)).collect(Collectors.toSet())
             )
             .build();

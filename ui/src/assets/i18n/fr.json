@@ -4,6 +4,7 @@
             "scenarios": "Scénarios",
             "campaigns": "Campagnes",
             "targets": "Targets",
+            "environments": "Environnements",
             "workers": "Agents",
             "plugins": "Plugins",
             "databaseAdmin": "BDD",
@@ -262,16 +263,17 @@
             "component.error": "La campagne possède des scénarios de type composant qui ne sont pas exportables"
         }
     },
-    "dataset": {
-        "key": "Clé",
-        "value": "Valeur"
-    },
     "admin": {
         "targets": {
             "name.placeholder": "Nom du serveur",
             "url": {
                 "placeholder": "URL du serveur",
                 "label": "Url"
+            },
+            "actions": {
+                "properties": {
+                    "show": "Voir propriétés"
+                }
             },
             "username.label": "Utilisateur",
             "password.label": "Mot de passe",
@@ -281,6 +283,10 @@
             "keystorepass.label": "Mot de passe du keystore",
             "properties.label": "Propriétés",
             "environment": "Environnement"
+        },
+        "environment": {
+            "name.placeholder": "Nom",
+            "description.placeholder": "Description"
         },
         "agents": {
             "name.placeholder": "Nom",
@@ -479,7 +485,9 @@
             "of": "de",
             "On": "Sur",
             "by": "par",
-            "at": "à"
+            "at": "à",
+            "key": "Clé",
+            "value": "Valeur"
         }
     }
 }

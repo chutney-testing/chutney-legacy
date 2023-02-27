@@ -13,7 +13,7 @@ import {
 import {
     CampaignService,
     ComponentService,
-    EnvironmentAdminService,
+    EnvironmentService,
     ScenarioService,
     JiraPluginService,
     JiraPluginConfigurationService
@@ -72,7 +72,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         private router: Router,
         private route: ActivatedRoute,
         private dragulaService: DragulaService,
-        private environmentAdminService: EnvironmentAdminService,
+        private environmentService: EnvironmentService,
         private translate: TranslateService,
     ) {
         this.campaignForm = this.formBuilder.group({
@@ -197,7 +197,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     loadEnvironment() {
-        this.environmentAdminService.listEnvironmentsNames().subscribe({
+        this.environmentService.names().subscribe({
             next: (res) => {
                 this.environments = res.sort((t1, t2) => t1.toUpperCase() > t2.toUpperCase() ? 1 : 0);
             },

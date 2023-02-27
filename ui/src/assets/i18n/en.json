@@ -4,6 +4,7 @@
             "scenarios": "Scenarios",
             "campaigns": "Campaigns",
             "targets": "Targets",
+            "environments": "Environments",
             "workers": "Nodes",
             "plugins": "Plugins",
             "databaseAdmin": "DB",
@@ -262,16 +263,17 @@
             "component.error": "Campaign has some component scenarios which cannot be exported"
         }
     },
-    "dataset": {
-        "key": "Key",
-        "value": "Value"
-    },
     "admin": {
         "targets": {
             "name.placeholder": "Target name",
             "url": {
                 "placeholder": "Target url",
                 "label": "Url"
+            },
+            "actions": {
+                "properties": {
+                    "show": "Show properties"
+                }
             },
             "username.label": "Username",
             "password.label": "Password",
@@ -281,6 +283,10 @@
             "keystorepass.label": "Password of keystore",
             "properties.label": "Properties",
             "environment": "Environment"
+        },
+        "environment": {
+            "name.placeholder": "Name",
+            "description.placeholder": "Description"
         },
         "agents": {
             "name.placeholder": "Name",
@@ -479,7 +485,9 @@
             "of": "of",
             "On": "On",
             "by": "by",
-            "at": "at"
+            "at": "at",
+            "key": "Key",
+            "value": "Value"
         }
     }
 }

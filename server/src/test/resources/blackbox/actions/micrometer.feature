@@ -9,7 +9,7 @@ Feature: Micrometer Tasks test
             | micrometerEnv | MICROMETER_ENV_${#generate().randomInt(99999)} |
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
-                With uri /api/v2/environment
+                With uri /api/v2/environments
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body

@@ -26,6 +26,5 @@
 </div>
 
 <chutney-delete-confirm-dialog  class="ms-xl-4 ms-1" (deleteEvent)="delete()"
-                            [btnSizeClass]="'m'"
                             [disabled]="(!editComponent || !editComponent.id) || (parents?.parentSteps.length > 0 || parents?.parentScenario.length > 0)">
 </chutney-delete-confirm-dialog>

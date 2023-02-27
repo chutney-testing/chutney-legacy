@@ -17,7 +17,7 @@ export class DeleteConfirmDialogComponent {
     @Input() label: string;
     @Input() title: string;
     @Input() disabled = false;
-    @Input() btnSizeClass: string;
+    @Input() btnSizeClass: 'lg' | 'sm';
     @Input() btnClassIcon: string;
     @Input() btnColor: string;
     @Output() deleteEvent = new EventEmitter();

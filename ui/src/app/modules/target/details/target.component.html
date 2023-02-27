@@ -1,0 +1,72 @@
+<div class="row cursor-pointer" *ngIf="errorMessage" (click)="errorMessage = null">
+    <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
+</div>
+<div class="ms-3 mb-3 d-flex justify-content-between">
+    <chutney-forms-input-line [id]="'targetName'"
+                              [label]="'Name *'"
+                              [placeholder]="'Name'"
+                              [(model)]="name"
+                              [validate]="validationService.isNotEmpty"
+                              class="w-25"></chutney-forms-input-line>
+    <div>
+        <button type="button" class="btn btn-info rounded me-2" [disabled]="!canSave()"
+                (click)="save()">{{'global.actions.save' | translate}}</button>
+        <button type="button" class="btn btn-outline-info rounded" routerLink="/targets">{{'global.actions.cancel' | translate}}</button>
+
+        <chutney-delete-confirm-dialog *ngIf="existingEnvs.length"
+                                       [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + name"
+                                       [label]="'Delete Target'"
+                                       [disabled]="null"
+                                       (deleteEvent)="deleteAll()"
+                                       class="ms-2">
+        </chutney-delete-confirm-dialog>
+    </div>
+</div>
+<div class="row">
+    <div *ngFor="let target of targets, let i = index" class="col-12 col-md-6 mb-3">
+        <ng-container [ngTemplateOutlet]="details"
+                      [ngTemplateOutletContext]="{item:target, index: i}">
+
+        </ng-container>
+    </div>
+</div>
+
+<ng-template #details let-item='item' let-index='index'>
+    <div class="card border-primary h-100">
+        <div class="card-header">
+            <strong>{{item.environment}}</strong>
+            <div class="float-end">
+                <button *ngIf="existOn(item.environment)" type="button" class="btn btn-primary btn-sm rounded"
+                        ngbTooltip="{{'global.actions.export' | translate}}"
+                        (click)="export(item)"><i class="bi bi-download"> </i>
+                </button>
+                <chutney-import-button
+                    ngbTooltip="{{'global.actions.import' | translate}}"
+                    *ngIf="!existOn(item.environment)"
+                    class="ms-2"
+                    [label]="null"
+                    [btnSizeClass]="'sm'"
+                    [btnColor]="'primary'"
+                    (submitEvent)="import($event, index)"></chutney-import-button>
+                <chutney-delete-confirm-dialog *ngIf="existOn(item.environment)"
+                                               [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n'
+                                            + name + ' ' + ('global.smallword.On' | translate | lowercase) + ' ' + item.environment"
+                                               [label]="'Delete Target'"
+                                               [btnSizeClass]="'sm'"
+                                               (deleteEvent)="delete(index)" class="ms-2">
+                </chutney-delete-confirm-dialog>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="mb-1">
+                <chutney-forms-input-line [id]="'targetUrl'"
+                                          [label]="'URL *'"
+                                          [placeholder]="'protocol://server:port or ${#dynamicUri}'"
+                                          [(model)]="item.url"
+                                          [validate]="validationService.isValidUrlOrSpel.bind(validationService) "></chutney-forms-input-line>
+            </div>
+            <chutney-property-table-panel
+                [entries]="item.properties"></chutney-property-table-panel>
+        </div>
+    </div>
+</ng-template>

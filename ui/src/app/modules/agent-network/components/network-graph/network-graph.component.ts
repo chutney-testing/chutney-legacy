@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { AgentGraphe, Agent, EnvironmentMetadata } from '@model';
-import { EnvironmentAdminService } from '@core/services';
+import { AgentGraphe, Agent, Environment } from '@model';
+import { EnvironmentService } from '@core/services';
 
 @Component({
   selector: 'chutney-network-graph',
@@ -11,11 +11,11 @@ export class NetworkGraphComponent {
 
   agentNodes: Array<Agent>;
 
-  environments: Array<EnvironmentMetadata> = [];
+  environments: Array<Environment> = [];
   targetReachByAgent = new Map<string, Array<string>>();
   targetFilter = '';
 
-  public constructor( private environmentAdminService: EnvironmentAdminService) {
+  public constructor( private environmentAdminService: EnvironmentService) {
   }
 
   @Input() message: string;
@@ -30,7 +30,7 @@ export class NetworkGraphComponent {
   }
 
   loadUnreachableTarget() {
-    this.environmentAdminService.listEnvironments().subscribe(
+    this.environmentAdminService.list().subscribe(
         (res) => {
             this.environments = res.sort((t1, t2) =>  t1.name.toUpperCase() > t2.name.toUpperCase() ? 1 : 0);
             this.targetReachByAgent = new Map<string, Array<string>>();

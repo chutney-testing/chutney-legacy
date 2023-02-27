@@ -1,7 +1,7 @@
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { MomentModule } from 'ngx-moment';
@@ -26,6 +26,8 @@ import { AsciiDoctorComponent } from './asciidoctor/asciidoctor.component';
 import { ToastInfoComponent } from './toast/toast-info/toast-info';
 import { ImportFileComponent } from './forms/import-file/import-file.component';
 import { ImportButtonComponent } from './forms/import-button/import-button.component';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -39,6 +41,8 @@ import { ImportButtonComponent } from './forms/import-button/import-button.compo
         RouterModule,
         SharedModule,
         TranslateModule,
+        NgbTooltipModule,
+        ReactiveFormsModule
     ],
     exports: [
         AsciiDoctorComponent,
