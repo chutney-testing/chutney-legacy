@@ -108,7 +108,7 @@
 
         <!-- action-impl test dependencies versions -->
         <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
-        <activemq-junit.version>5.16.5</activemq-junit.version> <!-- = Follow spring boot version -->
+        <activemq-junit.version>5.17.4</activemq-junit.version> <!-- = Follow spring boot version -->
         <rabbitmq-mock.version>1.2.0</rabbitmq-mock.version>
 
         <!-- test dependencies versions -->
