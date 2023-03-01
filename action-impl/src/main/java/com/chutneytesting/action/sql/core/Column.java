@@ -17,6 +17,10 @@ public class Column {
         return this.name;
     }
 
+    public boolean hasName(String name) {
+        return this.name.trim().equalsIgnoreCase(name.trim());
+    }
+
     public String printHeader(int length) {
         return name + " ".repeat(length - name.length());
     }
@@ -27,7 +31,7 @@ public class Column {
         if (o == null || getClass() != o.getClass()) return false;
         Column column = (Column) o;
         return index == column.index &&
-            Objects.equals(name, column.name);
+            column.hasName(name);
     }
 
     @Override

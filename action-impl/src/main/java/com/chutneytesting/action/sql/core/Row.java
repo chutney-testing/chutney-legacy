@@ -16,7 +16,7 @@ public class Row {
 
     public Object get(Column column) {
         return cells.stream()
-            .filter(v -> v.column.equals(column))
+            .filter(c -> c.column.equals(column))
             .findFirst()
             .orElse(Cell.NONE)
             .value;
@@ -24,7 +24,7 @@ public class Row {
 
     public Object get(String header) {
         return cells.stream()
-            .filter(v -> v.column.name.equals(header))
+            .filter(c -> c.column.hasName(header))
             .findFirst()
             .orElse(Cell.NONE)
             .value;
@@ -32,7 +32,7 @@ public class Row {
 
     public Object get(int index) {
         return cells.stream()
-            .filter(v -> v.column.index == index)
+            .filter(c -> c.column.index == index)
             .findFirst()
             .orElse(Cell.NONE)
             .value;
