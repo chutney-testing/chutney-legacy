@@ -11,7 +11,9 @@
         "init-sb": "npx sb init --type angular",
         "start-sb": "ng run chutney:storybook",
         "start-sb-darkly": "ng run chutney:storybook-darkly",
-        "build-sb": "ng run chutney:build-storybook"
+        "build-sb": "ng run chutney:build-storybook",
+        "open-e2e": ".\\node_modules\\.bin\\cypress open",
+        "run-e2e": "npx cypress run"
     },
     "private": true,
     "dependencies": {
@@ -77,12 +79,13 @@
         "@storybook/addon-links": "^6.5.15",
         "@storybook/angular": "^6.5.15",
         "@storybook/builder-webpack5": "^6.5.15",
+        "@storybook/jest": "^0.0.10",
         "@storybook/manager-webpack5": "^6.5.15",
         "@storybook/testing-library": "^0.0.13",
-        "@storybook/jest": "^0.0.10",
         "@types/jasmine": "~4.0.2",
         "@types/node": "^12.11.1",
         "babel-loader": "^8.2.5",
+        "cypress": "^12.7.0",
         "jasmine-core": "~4.0.0",
         "karma": "^6.3.17",
         "karma-chrome-launcher": "~3.1.0",
