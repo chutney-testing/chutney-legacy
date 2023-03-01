@@ -96,7 +96,7 @@
         <hjson.version>3.0.0</hjson.version>
         <orientdb.version>3.2.12</orientdb.version> <!-- Divergence on dependencies istack-commons-runtime and asm-->
         <jsr305.version>3.0.2</jsr305.version>
-        <liquibase.version>4.18.0</liquibase.version>
+        <liquibase.version>4.19.0</liquibase.version>
 
         <!-- action-impl dependencies versions -->
         <sshj.version>0.34.0</sshj.version>
