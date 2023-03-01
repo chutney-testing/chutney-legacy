@@ -20,9 +20,9 @@ public class RecordsTest {
         Column c3 = new Column("Number", 3);
         Column c4 = new Column("Number", 4);
 
-        Records actual = new Records(-1, List.of(c0, c1, c2, c3, c4), emptyList());
+        Records sut = new Records(-1, List.of(c0, c1, c2, c3, c4), emptyList());
 
-        assertThat(actual.getHeaders()).isEqualTo(List.of("Test", "Letter", "Letter", "Number", "Number"));
+        assertThat(sut.getHeaders()).isEqualTo(List.of("Test", "Letter", "Letter", "Number", "Number"));
     }
 
     @Test
@@ -34,10 +34,10 @@ public class RecordsTest {
             new Row(List.of(new Cell(fake, "AA"), new Cell(fake, "BB")))
         );
 
-        Records actual = new Records(-1, emptyList(), records);
+        Records sut = new Records(-1, emptyList(), records);
 
-        assertThat(actual.getRows().get(0)).isEqualTo(List.of("A", "B"));
-        assertThat(actual.getRows().get(1)).isEqualTo(List.of("AA", "BB"));
+        assertThat(sut.getRows().get(0)).isEqualTo(List.of("A", "B"));
+        assertThat(sut.getRows().get(1)).isEqualTo(List.of("AA", "BB"));
     }
 
     @Test

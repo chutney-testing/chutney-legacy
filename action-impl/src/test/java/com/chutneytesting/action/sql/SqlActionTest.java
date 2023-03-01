@@ -51,7 +51,7 @@ public class SqlActionTest {
     }
 
     @Test
-    public void should_output_only_on_result_when_single_statement() {
+    public void should_output_only_one_result_when_single_statement() {
         // Given
         ActionsConfiguration configuration = new TestActionsConfiguration();
         Action action = new SqlAction(sqlTarget, logger, configuration, Collections.singletonList("select * from users"), 2);
@@ -124,5 +124,22 @@ public class SqlActionTest {
             "|----|---------|-----------------|\n" +
             "| 2  | carotte | kakarot@fake.db |\n"
         );
+    }
+
+    @Test
+    public void should_be_non_sensitive_to_header_case_or_spaces() {
+        // Given
+        ActionsConfiguration configuration = new TestActionsConfiguration();
+        Action action = new SqlAction(sqlTarget, logger, configuration, Lists.newArrayList("select * from users"), 2);
+
+        // When
+        ActionExecutionResult result = action.execute();
+
+        // Then
+        Rows rows = (Rows) result.outputs.get("rows");
+
+        assertThat(rows.get("id")).isEqualTo(List.of(1,2,3));
+        assertThat(rows.get("NaMe")).isEqualTo(List.of("laitue","carotte", "tomate"));
+        assertThat(rows.get(" EMAIL ")).isEqualTo(List.of("laitue@fake.com","kakarot@fake.db","null"));
     }
 }
