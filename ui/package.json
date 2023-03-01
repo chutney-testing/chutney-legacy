@@ -12,7 +12,7 @@
         "start-sb": "ng run chutney:storybook",
         "start-sb-darkly": "ng run chutney:storybook-darkly",
         "build-sb": "ng run chutney:build-storybook",
-        "open-e2e": ".\\node_modules\\.bin\\cypress open",
+        "open-e2e": "npx cypress open",
         "run-e2e": "npx cypress run"
     },
     "private": true,
