@@ -1,10 +1,12 @@
 package com.chutneytesting.engine.domain.execution.engine;
 
+import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.action.domain.ActionTemplateRegistry;
 import com.chutneytesting.action.spi.FinallyAction;
 import com.chutneytesting.engine.domain.delegation.DelegationService;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
@@ -12,11 +14,14 @@ import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEvaluator;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
+import com.chutneytesting.engine.domain.execution.strategies.DefaultStepExecutionStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.SoftAssertStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategies;
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategy;
 import com.chutneytesting.engine.domain.report.Reporter;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
@@ -105,6 +110,36 @@ class DefaultExecutionEngineTest {
         assertThat(tearDownRootNode.steps.get(0).name).isEqualTo(finallyAction.name());
         assertThat(tearDownRootNode.steps.get(0).type).isEqualTo(finallyAction.type());
         assertThat(tearDownRootNode.steps.get(0).environment).isEqualTo(fakeEnvironment);
+    }
+
+    @Test
+    void should_set_environment_in_scenario_context() {
+        // Given
+        StepExecutionStrategy strategy = DefaultStepExecutionStrategy.instance;
+        when(stepExecutionStrategies.buildStrategyFrom(any()))
+            .thenReturn(strategy);
+        ActionTemplateRegistry actionTemplateRegistry = mock(ActionTemplateRegistry.class);
+        when(delegationService.findExecutor(any()))
+            .thenReturn(new DefaultStepExecutor(actionTemplateRegistry));
+        when(actionTemplateRegistry.getByIdentifier(any()))
+            .thenReturn(Optional.empty());
+
+        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
+        Reporter reporter = new Reporter();
+        DefaultExecutionEngine sut = new DefaultExecutionEngine(new StepDataEvaluator(null), stepExecutionStrategies, delegationService, reporter, actionExecutor);
+
+        String environment = "FakeTestEnvironment";
+        Map<String, Object> inputs = Collections.singletonMap("currentEnvironment", "${#environment}");
+        StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, inputs, null, null, null, environment);
+
+        // When
+        Long executionId = sut.execute(stepDefinition, scenarioExecution);
+        assertThat(executionId).isNotNull();
+        StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
+
+        // Then
+        assertThat(report).isNotNull();
+        assertThat(report.scenarioContext).contains(entry("environment", environment));
     }
 
     @ParameterizedTest(name = "{index}: {0}")

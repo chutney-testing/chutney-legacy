@@ -24,7 +24,7 @@ public interface ScenarioContext extends Map<String, Object> {
 
         public int size() {return scenarioContext.size();}
         public boolean isEmpty() {return scenarioContext.isEmpty();}
-        public boolean containsKey(Object key) {return false;}
+        public boolean containsKey(Object key) {return scenarioContext.containsKey(key);}
         public boolean containsValue(Object value) {return scenarioContext.containsValue(value);}
         public Object get(Object key) {return scenarioContext.get(key);}
 

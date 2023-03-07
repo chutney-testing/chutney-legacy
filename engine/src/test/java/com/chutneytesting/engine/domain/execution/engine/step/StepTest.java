@@ -231,14 +231,12 @@ public class StepTest {
     }
 
     @Test
-    public void target_and_environment_are_set_in_scenario_context_in_order_to_be_used_by_evaluated_inputs() {
+    public void target_is_set_in_scenario_context_in_order_to_be_used_by_evaluated_inputs() {
         // Given
         TargetImpl fakeTarget = TargetImpl.builder().withName("fakeTargetName").build();
-        String environment = "FakeTestEnvironment";
 
         Map<String, Object> inputs = new HashMap<>();
         inputs.put("targetName", "${#target.name}");
-        inputs.put("currentEnvironment", "${#environment}");
 
         StepDefinition fakeStepDefinition = new StepDefinition("fakeScenario", fakeTarget, "actionType", null, inputs, null, null, null, environment);
         Step step = new Step(dataEvaluator, fakeStepDefinition, mock(StepExecutor.class), emptyList());
@@ -248,11 +246,9 @@ public class StepTest {
 
         // Then
         StepContext context = step.stepContext();
-        assertThat(context.getEvaluatedInputs()).hasSize(2);
+        assertThat(context.getEvaluatedInputs()).hasSize(1);
         assertThat(context.getEvaluatedInputs()).containsKeys("targetName");
         assertThat(context.getEvaluatedInputs().get("targetName")).isEqualTo("fakeTargetName");
-        assertThat(context.getEvaluatedInputs()).containsKeys("currentEnvironment");
-        assertThat(context.getEvaluatedInputs().get("currentEnvironment")).isEqualTo(environment);
     }
 
     @Test
