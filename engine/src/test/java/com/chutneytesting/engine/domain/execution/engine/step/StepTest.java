@@ -22,9 +22,9 @@ import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
-import com.chutneytesting.engine.domain.execution.action.PauseExecutionAction;
-import com.chutneytesting.engine.domain.execution.action.ResumeExecutionAction;
-import com.chutneytesting.engine.domain.execution.action.StopExecutionAction;
+import com.chutneytesting.engine.domain.execution.command.PauseExecutionCommand;
+import com.chutneytesting.engine.domain.execution.command.ResumeExecutionCommand;
+import com.chutneytesting.engine.domain.execution.command.StopExecutionCommand;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEvaluator;
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContextImpl;
@@ -63,7 +63,7 @@ public class StepTest {
 
         ScenarioExecution execution = ScenarioExecution.createScenarioExecution(null);
         awaitDuring(500, MILLISECONDS);
-        RxBus.getInstance().post(new StopExecutionAction(execution.executionId));
+        RxBus.getInstance().post(new StopExecutionCommand(execution.executionId));
         await().atMost(5, SECONDS).untilAsserted(() -> assertThat(execution.hasToStop()).isTrue());
 
         Status result = step.execute(execution, new ScenarioContextImpl());
@@ -77,20 +77,20 @@ public class StepTest {
 
         ScenarioExecution execution = ScenarioExecution.createScenarioExecution(null);
 
-        RxBus.getInstance().registerOnExecutionId(PauseExecutionAction.class, execution.executionId, e -> {
+        RxBus.getInstance().registerOnExecutionId(PauseExecutionCommand.class, execution.executionId, e -> {
             Schedulers.io().createWorker().schedule(() -> step.execute(execution, new ScenarioContextImpl()));
             await().atMost(1100, MILLISECONDS).untilAsserted(() ->
                 verify(stepExecutor, times(0)).execute(any(), any(), any(), any())
             );
         });
-        RxBus.getInstance().post(new PauseExecutionAction(execution.executionId));
+        RxBus.getInstance().post(new PauseExecutionCommand(execution.executionId));
 
-        RxBus.getInstance().registerOnExecutionId(ResumeExecutionAction.class, execution.executionId, e -> {
+        RxBus.getInstance().registerOnExecutionId(ResumeExecutionCommand.class, execution.executionId, e -> {
             await().atMost(1100, MILLISECONDS).untilAsserted(() ->
                 verify(stepExecutor, times(1)).execute(any(), any(), any(), any())
             );
         });
-        RxBus.getInstance().post(new ResumeExecutionAction(execution.executionId));
+        RxBus.getInstance().post(new ResumeExecutionCommand(execution.executionId));
     }
 
     @Test

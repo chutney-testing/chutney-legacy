@@ -1,8 +1,8 @@
 package com.chutneytesting.engine.domain.execution;
 
-import com.chutneytesting.engine.domain.execution.action.PauseExecutionAction;
-import com.chutneytesting.engine.domain.execution.action.ResumeExecutionAction;
-import com.chutneytesting.engine.domain.execution.action.StopExecutionAction;
+import com.chutneytesting.engine.domain.execution.command.PauseExecutionCommand;
+import com.chutneytesting.engine.domain.execution.command.ResumeExecutionCommand;
+import com.chutneytesting.engine.domain.execution.command.StopExecutionCommand;
 import com.chutneytesting.engine.domain.execution.event.EndScenarioExecutionEvent;
 import com.chutneytesting.action.spi.FinallyAction;
 import com.chutneytesting.action.spi.injectable.ActionsConfiguration;
@@ -33,11 +33,11 @@ public class ScenarioExecution {
         this.actionConfiguration = actionConfiguration;
 
         final Disposable pauseSubscriber = RxBus.getInstance()
-            .registerOnExecutionId(PauseExecutionAction.class, executionId, e -> this.pause());
+            .registerOnExecutionId(PauseExecutionCommand.class, executionId, e -> this.pause());
         final Disposable stopSubscriber = RxBus.getInstance()
-            .registerOnExecutionId(StopExecutionAction.class, executionId, e -> this.stop());
+            .registerOnExecutionId(StopExecutionCommand.class, executionId, e -> this.stop());
         final Disposable resumeSubscriber = RxBus.getInstance()
-            .registerOnExecutionId(ResumeExecutionAction.class, executionId, e -> this.resume());
+            .registerOnExecutionId(ResumeExecutionCommand.class, executionId, e -> this.resume());
 
         endExecutionSubscriber = RxBus.getInstance().registerOnExecutionId(EndScenarioExecutionEvent.class, executionId, e -> {
             pauseSubscriber.dispose();
