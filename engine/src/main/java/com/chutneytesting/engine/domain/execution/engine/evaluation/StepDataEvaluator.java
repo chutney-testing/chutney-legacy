@@ -51,6 +51,15 @@ public class StepDataEvaluator {
         return evaluatedNamedData;
     }
 
+    public String evaluate(final String s, final Map<String, Object> contextVariables) throws EvaluationException {
+        return (String) this.evaluate((Object) s, contextVariables);
+    }
+
+    public Object evaluate(final Object o, final Map<String, Object> contextVariables) throws EvaluationException {
+        StandardEvaluationContext evaluationContext = buildEvaluationContext(contextVariables);
+        return evaluateObject(o, evaluationContext);
+    }
+
     public Target evaluateTarget(final Target target, final Map<String, Object> contextVariables) throws EvaluationException {
         TargetImpl.TargetBuilder builder = TargetImpl.builder();
 

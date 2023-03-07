@@ -2,17 +2,19 @@ package com.chutneytesting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
-import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
-import com.chutneytesting.engine.api.execution.StatusDto;
-import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
-import com.chutneytesting.engine.api.execution.TestEngine;
 import com.chutneytesting.action.domain.ActionTemplate;
 import com.chutneytesting.action.domain.ActionTemplateParserV2;
 import com.chutneytesting.action.domain.ActionTemplateRegistry;
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
+import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
+import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
+import com.chutneytesting.engine.api.execution.StatusDto;
+import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
+import com.chutneytesting.engine.api.execution.TestEngine;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Observable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,6 +56,39 @@ public class ExecutionConfigurationTest {
         StepExecutionReportDto result = testEngine.execute(requestDto);
 
         //T
+        assertThat(result).hasFieldOrPropertyWithValue("status", StatusDto.SUCCESS);
+    }
+
+    private static final class Jsons {
+        private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().findAndRegisterModules();
+
+        private Jsons() {
+        }
+
+        static <T> T loadJsonFromClasspath(String path, Class<T> targetClass) {
+            try {
+                return OBJECT_MAPPER.readValue(Jsons.class.getClassLoader().getResourceAsStream(path), targetClass);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Cannot deserialize " + path + " to " + targetClass.getSimpleName(), e);
+            }
+        }
+
+        static ObjectMapper objectMapper() {
+            return OBJECT_MAPPER;
+        }
+    }
+
+    @Test
+    public void should_repeat_step() {
+        //G
+        final TestEngine testEngine = sut.embeddedTestEngine();
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/step_iterations.json", ExecutionRequestDto.class);
+
+        //W
+        StepExecutionReportDto result = testEngine.execute(requestDto);
+
+        //T
+        assertThat(result.steps.get(0).steps).hasSize(2);
         assertThat(result).hasFieldOrPropertyWithValue("status", StatusDto.SUCCESS);
     }
 

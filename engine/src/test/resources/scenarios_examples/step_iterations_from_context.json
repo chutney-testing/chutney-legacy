@@ -1,0 +1,45 @@
+{
+    "scenario": {
+        "name": "Test iterations",
+        "steps": [
+            {
+                "name": "Given a list of environment and users",
+                "type": "context-put",
+                "inputs": {
+                    "entries": {
+                        "environments": [
+                            {
+                                "env": "A",
+                                "user": "Tata"
+                            },
+                            {
+                                "env": "B",
+                                "user": "Baba"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "name": "<index> - Hello website on <env> with user <user>",
+                "type": "complex",
+                "inputs": {
+                    "stringParam": "/<env>/<user>",
+                    "pojoParam": {
+                        "param1":  "<env>",
+                        "param2": "<users>"
+                    }
+                },
+                "outputs": {
+                    "pouet_<index>": "${#stringParam + \"_\" + \"<index>\"}"
+                },
+                "strategy": {
+                    "type": "for",
+                    "parameters": {
+                        "dataset": "${#environments}"
+                    }
+                }
+            }
+        ]
+    }
+}

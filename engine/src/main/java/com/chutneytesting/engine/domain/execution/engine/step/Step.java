@@ -67,6 +67,10 @@ public class Step {
     }
 
     public Status execute(ScenarioExecution scenarioExecution, ScenarioContext scenarioContext) {
+        return this.execute(scenarioExecution, scenarioContext, emptyMap());
+    }
+
+    public Status execute(ScenarioExecution scenarioExecution, ScenarioContext scenarioContext, Map<String, Object> localContext) {
 
         if (scenarioExecution.hasToPause()) {
             final Instant startPauseInstant = Instant.now();
@@ -86,6 +90,7 @@ public class Step {
         try {
             this.stepContext = new StepContext();
             this.stepContext.addLocalContext(scenarioContext);
+            this.stepContext.addLocalContext(localContext);
             this.stepContext.addLocalContext(entry("target", target));
             final Map<String, Object> evaluatedInputs = definition.type.equals("final") ? definition.inputs() : unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs(), this.stepContext.localContext));
             this.stepContext.addLocalContext(evaluatedInputs);
@@ -224,6 +229,14 @@ public class Step {
         return steps;
     }
 
+    public StepExecutor executor() {
+        return executor;
+    }
+
+    public StepDataEvaluator dataEvaluator() {
+        return dataEvaluator;
+    }
+
     public boolean isParentStep() {
         return !steps.isEmpty();
     }
@@ -243,13 +256,12 @@ public class Step {
                     this.stepContext.addLocalContext(evaluatedOutputs);
                     this.stepContext.addStepOutputs(evaluatedOutputs);
                     this.stepContext.addScenarioContext(evaluatedOutputs); // ça oui
+                    this.success();
                     return null;
                 })
                 .ifFailed(e -> failure("Cannot evaluate outputs."
                     + " - Exception: " + e.getClass() + " with message: \"" + e.getMessage() + "\"")
                 );
-
-            this.success();
         } else {
             this.failure(Lists.newArrayList(errors).toArray(new String[errors.size()]));
         }
@@ -315,6 +327,7 @@ public class Step {
 
         private Map<String, Object> allEvaluatedVariables() {
             final Map<String, Object> allResults = Maps.newLinkedHashMap(scenarioContext);
+            allResults.putAll(localContext);
             allResults.putAll(stepOutputs);
             return allResults;
         }

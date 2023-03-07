@@ -2,7 +2,7 @@
 
 Feature: Execution success action
 
-    Scenario: Task instantiation and execution of a success scenario
+    Scenario: Action instantiation and execution of a success scenario
         Given this scenario is saved
             Do http-post Post scenario to Chutney instance
                 On CHUTNEY_LOCAL

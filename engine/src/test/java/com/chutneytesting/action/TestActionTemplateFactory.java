@@ -165,6 +165,20 @@ public abstract class TestActionTemplateFactory {
         }
     }
 
+    public static class ContextPutAction implements Action {
+
+        private final Map<String, Object> entries;
+
+        public ContextPutAction(@Input("entries") Map<String, Object> entries) {
+            this.entries = entries;
+        }
+
+        @Override
+        public ActionExecutionResult execute() {
+            return ActionExecutionResult.ok(entries);
+        }
+    }
+
     public static class Pojo {
         public final String param1;
         public final String param2;

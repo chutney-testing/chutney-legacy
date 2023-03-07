@@ -41,7 +41,6 @@ class DefaultExecutionEngineTest {
     private final Executor actionExecutor = Executors.newSingleThreadExecutor();
     public static final String tearDownRootNodeName = "TearDown";
     private static final String throwableToCatchMessage = "Should be caught by fault barrier";
-    private static final String throwableToNotCatchMessage = "Should not be caught by fault barrier";
 
     @ParameterizedTest(name = "{index}: {0}")
     @MethodSource("execution_throwable")
