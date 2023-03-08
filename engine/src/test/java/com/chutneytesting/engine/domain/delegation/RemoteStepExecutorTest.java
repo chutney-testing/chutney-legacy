@@ -14,7 +14,6 @@ import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEvaluator;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
-import com.chutneytesting.engine.domain.execution.engine.step.StepContext;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReportBuilder;
@@ -26,7 +25,7 @@ import org.junit.jupiter.api.Test;
 public class RemoteStepExecutorTest {
 
     @Test
-    public void should_call_next_agent_and_update_context_and_information_from_report() {
+    public void should_call_next_agent_and_update_step_from_report() {
 
         // Given
         StepExecutionReport fakeRemoteReport = new StepExecutionReportBuilder().setName("name")
@@ -38,27 +37,22 @@ public class RemoteStepExecutorTest {
             .createStepExecutionReport();
 
         DelegationClient mockHttpClient = mock(DelegationClient.class);
-        StepContext spyCurrentStepContext = spy(StepContext.class);
-        Step step = new Step(mock(StepDataEvaluator.class), mock(StepDefinition.class), mock(StepExecutor.class), emptyList());
-        Step spyCurrentStep = spy(step);
+        Step mockStep = mock(Step.class);
         NamedHostAndPort mockDelegate = mock(NamedHostAndPort.class);
         when(mockHttpClient.handDown(any(), any()))
             .thenReturn(fakeRemoteReport);
 
         // When
         RemoteStepExecutor remoteStepExecutor = new RemoteStepExecutor(mockHttpClient, mockDelegate);
-        remoteStepExecutor.execute(null, spyCurrentStepContext, mock(TargetImpl.class), spyCurrentStep);
+        remoteStepExecutor.execute(null, mock(TargetImpl.class), mockStep);
 
         // Then
-        verify(spyCurrentStepContext, times(1)).addScenarioContext(fakeRemoteReport.scenarioContext);
-        verify(spyCurrentStepContext, times(1)).addStepOutputs(fakeRemoteReport.stepResults);
-
-        verify(spyCurrentStep, times(1)).addInformation(
-            (String[]) Lists.newArrayList(fakeRemoteReport.information).toArray(new String[fakeRemoteReport.information.size()])
-        );
-
-        verify(spyCurrentStep, times(0)).failure(
-            (String[]) Lists.newArrayList(fakeRemoteReport.errors).toArray(new String[fakeRemoteReport.errors.size()])
+        verify(mockStep, times(1)).updateFrom(
+            fakeRemoteReport.actionStatus,
+            fakeRemoteReport.stepResults,
+            fakeRemoteReport.scenarioContext,
+            fakeRemoteReport.errors,
+            fakeRemoteReport.information
         );
     }
 
@@ -66,7 +60,6 @@ public class RemoteStepExecutorTest {
     public void should_throw_if_remote_context_is_null() {
 
         // Given
-        StepContext mockCurrentStepContext = mock(StepContext.class);
         StepExecutionReport mockStepExecutionReport = mock(StepExecutionReport.class);
         DelegationClient mockHttpClient = mock(DelegationClient.class);
         NamedHostAndPort mockDelegate = mock(NamedHostAndPort.class);
@@ -78,7 +71,7 @@ public class RemoteStepExecutorTest {
 
         // When & Then
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> /* When */ remoteStepExecutor.execute(null, mockCurrentStepContext, mock(TargetImpl.class), mock(Step.class)));
+            .isThrownBy(() -> /* When */ remoteStepExecutor.execute(null, mock(TargetImpl.class), mock(Step.class)));
     }
 
     @Test
@@ -94,7 +87,6 @@ public class RemoteStepExecutorTest {
             .createStepExecutionReport();
 
         DelegationClient mockHttpClient = mock(DelegationClient.class);
-        StepContext spyCurrentStepContext = spy(StepContext.class);
         Step step = new Step(mock(StepDataEvaluator.class), mock(StepDefinition.class), mock(StepExecutor.class), emptyList());
         Step spyCurrentStep = spy(step);
         NamedHostAndPort mockDelegate = mock(NamedHostAndPort.class);
@@ -103,18 +95,18 @@ public class RemoteStepExecutorTest {
 
         // When
         RemoteStepExecutor remoteStepExecutor = new RemoteStepExecutor(mockHttpClient, mockDelegate);
-        remoteStepExecutor.execute(null, spyCurrentStepContext, mock(TargetImpl.class), spyCurrentStep);
+        remoteStepExecutor.execute(null, mock(TargetImpl.class), spyCurrentStep);
 
         // Then
-        verify(spyCurrentStepContext, times(1)).addScenarioContext(fakeRemoteReport.scenarioContext);
-        verify(spyCurrentStepContext, times(1)).addStepOutputs(fakeRemoteReport.stepResults);
-
-        verify(spyCurrentStep, times(1)).addInformation(
-            (String[]) Lists.newArrayList(fakeRemoteReport.information).toArray(new String[fakeRemoteReport.information.size()])
+        verify(spyCurrentStep, times(1)).updateFrom(
+            fakeRemoteReport.actionStatus,
+            fakeRemoteReport.stepResults,
+            fakeRemoteReport.scenarioContext,
+            fakeRemoteReport.errors,
+            fakeRemoteReport.information
         );
-
         verify(spyCurrentStep, times(1)).failure(
-            (String[]) Lists.newArrayList(fakeRemoteReport.errors).toArray(new String[fakeRemoteReport.errors.size()])
+            Lists.newArrayList(fakeRemoteReport.errors).toArray(new String[fakeRemoteReport.errors.size()])
         );
     }
 

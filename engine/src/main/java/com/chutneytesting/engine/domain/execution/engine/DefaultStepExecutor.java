@@ -18,7 +18,6 @@ import com.chutneytesting.engine.domain.execution.engine.parameterResolver.Deleg
 import com.chutneytesting.engine.domain.execution.engine.parameterResolver.InputParameterResolver;
 import com.chutneytesting.engine.domain.execution.engine.parameterResolver.TypedValueParameterResolver;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
-import com.chutneytesting.engine.domain.execution.engine.step.StepContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,13 +34,13 @@ public class DefaultStepExecutor implements StepExecutor {
     }
 
     @Override
-    public void execute(ScenarioExecution scenarioExecution, StepContext stepContext, Target targetServer, Step step) {
+    public void execute(ScenarioExecution scenarioExecution, Target targetServer, Step step) {
         String type = step.type();
 
         Optional<ActionTemplate> matchedAction = actionTemplateRegistry.getByIdentifier(type);
 
         if (matchedAction.isPresent()) {
-            List<ParameterResolver> parameterResolvers = gatherResolvers(scenarioExecution, stepContext, targetServer, step);
+            List<ParameterResolver> parameterResolvers = gatherResolvers(scenarioExecution, targetServer, step);
 
             ActionExecutionResult executionResult;
             try {
@@ -49,8 +48,7 @@ public class DefaultStepExecutor implements StepExecutor {
                 List<String> errors = action.validateInputs();
                 if (errors.isEmpty()) {
                     executionResult = action.execute();
-                    updateStepFromActionResult(step, executionResult);
-                    updateStepContextFromActionResult(stepContext, executionResult);
+                    step.updateFrom(executionResult.status, executionResult.outputs);
                 } else {
                     step.failure(errors.toArray(new String[0]));
                 }
@@ -66,30 +64,15 @@ public class DefaultStepExecutor implements StepExecutor {
 
     }
 
-    private void updateStepContextFromActionResult(StepContext stepContext, ActionExecutionResult executionResult) {
-        if (executionResult.status == ActionExecutionResult.Status.Success) {
-            stepContext.addStepOutputs(executionResult.outputs);
-            stepContext.getScenarioContext().putAll(executionResult.outputs);
-        }
-    }
-
-    private void updateStepFromActionResult(Step step, ActionExecutionResult executionResult) {
-        if (executionResult.status == ActionExecutionResult.Status.Success) {
-            step.success();
-        } else {
-            step.failure();
-        }
-    }
-
-    private List<ParameterResolver> gatherResolvers(ScenarioExecution scenarioExecution, StepContext stepContext, Target target, Step step) {
+    private List<ParameterResolver> gatherResolvers(ScenarioExecution scenarioExecution, Target target, Step step) {
         List<ParameterResolver> parameterResolvers = new ArrayList<>();
-        parameterResolvers.add(new InputParameterResolver(stepContext.getEvaluatedInputs()));
+        parameterResolvers.add(new InputParameterResolver(step.getEvaluatedInputs()));
         parameterResolvers.add(new TypedValueParameterResolver<>(Target.class, target));
         parameterResolvers.add(new TypedValueParameterResolver<>(Logger.class, new DelegateLogger(step::addInformation, step::failure)));
         parameterResolvers.add(new TypedValueParameterResolver<>(StepDefinitionSpi.class, step.definition()));
         parameterResolvers.add(new TypedValueParameterResolver<>(FinallyActionRegistry.class, scenarioExecution::registerFinallyAction));
         parameterResolvers.add(new TypedValueParameterResolver<>(ActionsConfiguration.class, scenarioExecution.getActionsConfiguration()));
-        parameterResolvers.add(new ContextParameterResolver(stepContext.getScenarioContext()));
+        parameterResolvers.add(new ContextParameterResolver(step.getScenarioContext()));
         return parameterResolvers;
     }
 }

@@ -1,7 +1,9 @@
 package com.chutneytesting.engine.domain.execution.report;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
+import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.Instant;
@@ -29,6 +31,8 @@ public class StepExecutionReport implements Status.HavingStatus {
     public Map<String, Object> stepResults;
     @JsonIgnore
     public Map<String, Object> scenarioContext;
+    @JsonIgnore
+    public ActionExecutionResult.Status actionStatus;
 
     @JsonCreator
     public StepExecutionReport(Long executionId,
@@ -71,8 +75,9 @@ public class StepExecutionReport implements Status.HavingStatus {
         this.duration = duration;
         this.startDate = startDate;
         this.status = status;
-        this.information = information;
-        this.errors = errors;
+        this.actionStatus = status == Status.SUCCESS ? ActionExecutionResult.Status.Success : ActionExecutionResult.Status.Failure;
+        this.information = evaluatedInputs != null ? information : emptyList();
+        this.errors = evaluatedInputs != null ? errors : emptyList();
         this.steps = steps;
         this.type = type;
         this.targetName = targetName;

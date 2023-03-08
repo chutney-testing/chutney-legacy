@@ -1,12 +1,11 @@
 package com.chutneytesting.engine.domain.execution.engine;
 
+import com.chutneytesting.action.spi.injectable.Target;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
-import com.chutneytesting.engine.domain.execution.engine.step.StepContext;
-import com.chutneytesting.action.spi.injectable.Target;
 
 public interface StepExecutor {
 
-    void execute(ScenarioExecution scenarioExecution, StepContext stepContext, Target target, Step step);
+    void execute(ScenarioExecution scenarioExecution, Target target, Step step);
 
 }

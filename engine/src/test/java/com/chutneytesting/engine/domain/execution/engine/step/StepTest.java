@@ -58,7 +58,7 @@ public class StepTest {
     @Test
     public void stop_should_not_execute_test() {
         StepExecutor stepExecutor = mock(StepExecutor.class);
-        doThrow(new RuntimeException()).when(stepExecutor).execute(any(), any(), any(), any());
+        doThrow(new RuntimeException()).when(stepExecutor).execute(any(), any(), any());
         Step step = buildEmptyStep(stepExecutor);
 
         ScenarioExecution execution = ScenarioExecution.createScenarioExecution(null);
@@ -80,14 +80,14 @@ public class StepTest {
         RxBus.getInstance().registerOnExecutionId(PauseExecutionCommand.class, execution.executionId, e -> {
             Schedulers.io().createWorker().schedule(() -> step.execute(execution, new ScenarioContextImpl()));
             await().atMost(1100, MILLISECONDS).untilAsserted(() ->
-                verify(stepExecutor, times(0)).execute(any(), any(), any(), any())
+                verify(stepExecutor, times(0)).execute(any(), any(), any())
             );
         });
         RxBus.getInstance().post(new PauseExecutionCommand(execution.executionId));
 
         RxBus.getInstance().registerOnExecutionId(ResumeExecutionCommand.class, execution.executionId, e -> {
             await().atMost(1100, MILLISECONDS).untilAsserted(() ->
-                verify(stepExecutor, times(1)).execute(any(), any(), any(), any())
+                verify(stepExecutor, times(1)).execute(any(), any(), any())
             );
         });
         RxBus.getInstance().post(new ResumeExecutionCommand(execution.executionId));
@@ -110,9 +110,8 @@ public class StepTest {
         step.execute(ScenarioExecution.createScenarioExecution(null), scenarioContext);
 
         // Then
-        StepContext context = step.stepContext();
-        assertThat(context.getStepOutputs().get("aValue")).isEqualTo("42");
-        assertThat(context.getStepOutputs().get("anotherValue")).isEqualTo("43");
+        assertThat(step.getStepOutputs().get("aValue")).isEqualTo("42");
+        assertThat(step.getStepOutputs().get("anotherValue")).isEqualTo("43");
     }
 
     @Test
@@ -181,11 +180,10 @@ public class StepTest {
         step.execute(ScenarioExecution.createScenarioExecution(null), scenarioContext);
 
         // Then
-        StepContext context = step.stepContext();
-        assertThat(context.getScenarioContext().get("aValue")).as("New value").isEqualTo(500);
-        assertThat(context.getScenarioContext().get("anotherValue")).as("New value").isEqualTo("{ new value }");
-        assertThat(context.getStepOutputs().get("aValue")).as("New value").isEqualTo(500);
-        assertThat(context.getStepOutputs().get("anotherValue")).as("New value").isEqualTo("{ new value }");
+        assertThat(step.getScenarioContext().get("aValue")).as("New value").isEqualTo(500);
+        assertThat(step.getScenarioContext().get("anotherValue")).as("New value").isEqualTo("{ new value }");
+        assertThat(step.getStepOutputs().get("aValue")).as("New value").isEqualTo(500);
+        assertThat(step.getStepOutputs().get("anotherValue")).as("New value").isEqualTo("{ new value }");
     }
 
     @Test
@@ -222,11 +220,10 @@ public class StepTest {
         step.execute(ScenarioExecution.createScenarioExecution(null), scenarioContext);
 
         // Then
-        StepContext context = step.stepContext();
-        assertThat(context.getScenarioContext().get("anAliasForReuse")).as("New value from Remote").isEqualTo(4242);
-        assertThat(context.getScenarioContext().get("anotherAliasForReuse")).as("New value from Remote").isEqualTo("{ a value as string }");
-        assertThat(context.getStepOutputs().get("anAliasForReuse")).as("New value from Remote").isEqualTo(4242);
-        assertThat(context.getStepOutputs().get("anotherAliasForReuse")).as("New value from Remote").isEqualTo("{ a value as string }");
+        assertThat(step.getScenarioContext().get("anAliasForReuse")).as("New value from Remote").isEqualTo(4242);
+        assertThat(step.getScenarioContext().get("anotherAliasForReuse")).as("New value from Remote").isEqualTo("{ a value as string }");
+        assertThat(step.getStepOutputs().get("anAliasForReuse")).as("New value from Remote").isEqualTo(4242);
+        assertThat(step.getStepOutputs().get("anotherAliasForReuse")).as("New value from Remote").isEqualTo("{ a value as string }");
 
     }
 
@@ -245,10 +242,9 @@ public class StepTest {
         step.execute(ScenarioExecution.createScenarioExecution(null), new ScenarioContextImpl());
 
         // Then
-        StepContext context = step.stepContext();
-        assertThat(context.getEvaluatedInputs()).hasSize(1);
-        assertThat(context.getEvaluatedInputs()).containsKeys("targetName");
-        assertThat(context.getEvaluatedInputs().get("targetName")).isEqualTo("fakeTargetName");
+        assertThat(step.getEvaluatedInputs()).hasSize(1);
+        assertThat(step.getEvaluatedInputs()).containsKeys("targetName");
+        assertThat(step.getEvaluatedInputs().get("targetName")).isEqualTo("fakeTargetName");
     }
 
     @Test
@@ -321,7 +317,7 @@ public class StepTest {
         // Then
         assertThat(step.status()).isEqualTo(Status.FAILURE);
         assertThat(step.errors()).isEmpty(); // checking validations
-        assertThat(step.stepContext().getStepOutputs()).isEmpty();
+        assertThat(step.getStepOutputs()).isEmpty();
     }
 
     @Test
@@ -340,11 +336,10 @@ public class StepTest {
         step.execute(ScenarioExecution.createScenarioExecution(null), new ScenarioContextImpl());
 
         // Then
-        StepContext context = step.stepContext();
-        assertThat(context.getEvaluatedInputs()).hasSize(2);
-        assertThat(context.getEvaluatedInputs().get("currentEnvironment")).isEqualTo("${#environment}");
-        assertThat(context.getEvaluatedInputs()).containsKeys("validations");
-        assertThat(((Map) context.getEvaluatedInputs().get("validations")).get("validation_1")).isEqualTo("${#validation}");
+        assertThat(step.getEvaluatedInputs()).hasSize(2);
+        assertThat(step.getEvaluatedInputs().get("currentEnvironment")).isEqualTo("${#environment}");
+        assertThat(step.getEvaluatedInputs()).containsKeys("validations");
+        assertThat(((Map<?, ?>) step.getEvaluatedInputs().get("validations")).get("validation_1")).isEqualTo("${#validation}");
 
     }
 
@@ -373,7 +368,7 @@ public class StepTest {
 
         // Then
         ArgumentCaptor<Target> targetCaptor = ArgumentCaptor.forClass(Target.class);
-        verify(stepExecutorMock).execute(any(), any(), targetCaptor.capture(), any());
+        verify(stepExecutorMock).execute(any(), targetCaptor.capture(), any());
 
         Target target = targetCaptor.getValue();
         assertThat(target.name()).isEqualTo("NAME");
@@ -444,29 +439,8 @@ public class StepTest {
         }
 
         @Override
-        public void execute(ScenarioExecution scenarioExecution, StepContext stepContext, Target target, Step step) {
-            this.execute(stepContext, step);
-        }
-
-        public void execute(StepContext stepContext, Step step) {
-            updateStepFromActionResult(step, executionResult);
-            updateStepContextFromActionResult(stepContext, executionResult);
-
-        }
-
-        private void updateStepContextFromActionResult(StepContext stepContext, ActionExecutionResult executionResult) {
-            if (executionResult.status == ActionExecutionResult.Status.Success) {
-                stepContext.addStepOutputs(executionResult.outputs);
-                stepContext.getScenarioContext().putAll(executionResult.outputs);
-            }
-        }
-
-        private void updateStepFromActionResult(Step step, ActionExecutionResult executionResult) {
-            if (executionResult.status == ActionExecutionResult.Status.Success) {
-                step.success();
-            } else {
-                step.failure();
-            }
+        public void execute(ScenarioExecution scenarioExecution, Target target, Step step) {
+            step.updateFrom(executionResult.status, executionResult.outputs);
         }
     }
 }

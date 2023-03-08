@@ -5,6 +5,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Target;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.RxBus;
@@ -14,6 +15,7 @@ import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.evaluation.EvaluationException;
 import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEvaluator;
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContext;
+import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContextImpl;
 import com.chutneytesting.engine.domain.execution.event.BeginStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.event.EndStepExecutionEvent;
 import com.chutneytesting.engine.domain.execution.event.PauseStepExecutionEvent;
@@ -47,7 +49,7 @@ public class Step {
     private final StepExecutor executor;
     private final StepDataEvaluator dataEvaluator;
 
-    private StepContextImpl stepContext;
+    private StepContext stepContext;
 
     public Step(StepDataEvaluator dataEvaluator, StepDefinition definition, StepExecutor executor, List<Step> steps) {
         this.dataEvaluator = dataEvaluator;
@@ -56,7 +58,7 @@ public class Step {
         this.executor = executor;
         this.steps = steps;
         this.state = new StepState();
-        this.stepContext = new StepContextImpl();
+        this.stepContext = new StepContext();
     }
 
     public static Step nonExecutable(StepDefinition definition) {
@@ -81,20 +83,19 @@ public class Step {
         beginExecution(scenarioExecution);
 
         try {
-            makeTargetAccessibleForInputEvaluation(scenarioContext);
-
+            scenarioContext.put("target", target);
             final Map<String, Object> evaluatedInputs = definition.type.equals("final") ? definition.inputs() : unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs(), scenarioContext));
             target = dataEvaluator.evaluateTarget(target, scenarioContext);
 
             Try
-                .exec(() -> new StepContextImpl(evaluatedInputs, scenarioContext))
+                .exec(() -> this.stepContext = new StepContext(scenarioContext, evaluatedInputs))
                 .ifSuccess(stepContextExecuted -> {
-                    executor.execute(scenarioExecution, stepContextExecuted, target, this);
+                    executor.execute(scenarioExecution, target, this);
                     if (Status.SUCCESS.equals(this.state.status())) {
                         executeStepValidations(stepContextExecuted);
-                        copyStepResultsToScenarioContext(stepContextExecuted, scenarioContext);
+                        copyStepResultsToScenarioContext(stepContextExecuted, scenarioContext); // todo check
                     }
-                    this.stepContext = (StepContextImpl) stepContextExecuted.copy();
+                    this.stepContext = stepContextExecuted.copy(); // todo check
                 })
                 .ifFailed(this::failure);
         } catch (RuntimeException e) {
@@ -204,10 +205,6 @@ public class Step {
         return target;
     }
 
-    public StepContextImpl stepContext() {
-        return stepContext;
-    }
-
     public StepDefinition definition() {
         return definition;
     }
@@ -228,15 +225,11 @@ public class Step {
         return !steps.isEmpty();
     }
 
-    private void makeTargetAccessibleForInputEvaluation(ScenarioContext scenarioContext) {
-        scenarioContext.put("target", target);
-    }
-
-    private void copyStepResultsToScenarioContext(StepContextImpl stepContext, ScenarioContext scenarioContext) {
+    private void copyStepResultsToScenarioContext(StepContext stepContext, ScenarioContext scenarioContext) {
         final Map<String, Object> contextAndStepResults = stepContext.allEvaluatedVariables();
         Try.exec(() -> {
                 final Map<String, Object> evaluatedOutputs = dataEvaluator.evaluateNamedDataWithContextVariables(definition.outputs, contextAndStepResults);
-                stepContext.stepOutputs.putAll(evaluatedOutputs);
+                stepContext.addStepOutputs(evaluatedOutputs);
                 scenarioContext.putAll(evaluatedOutputs);
                 return null;
             })
@@ -244,7 +237,24 @@ public class Step {
                 + " - Exception: " + e.getClass() + " with message: \"" + e.getMessage() + "\""));
     }
 
-    private void executeStepValidations(StepContextImpl stepContext) {
+    public void updateFrom(ActionExecutionResult.Status status, Map<String, Object> stepOutputs) {
+        updateFrom(status, stepOutputs, stepOutputs, emptyList(), emptyList());
+    }
+
+    public void updateFrom(ActionExecutionResult.Status status, Map<String, Object> stepOutputs, Map<String, Object> scenarioContext, List<String> information, List<String> errors) {
+        if (status == ActionExecutionResult.Status.Success) {
+            this.success();
+            this.stepContext.addStepOutputs(stepOutputs);
+            this.stepContext.addScenarioContext(scenarioContext);
+        }
+        else {
+            this.failure(Lists.newArrayList(errors).toArray(new String[errors.size()]));
+        }
+
+        this.addInformation(Lists.newArrayList(information).toArray(new String[information.size()]));
+    }
+
+    private void executeStepValidations(StepContext stepContext) {
         final Map<String, Object> contextAndStepResults = stepContext.allEvaluatedVariables();
         Try.exec(() -> {
                 final Map<String, Object> evaluatedValidations = dataEvaluator.evaluateNamedDataWithContextVariables(definition.validations, contextAndStepResults);
@@ -265,24 +275,37 @@ public class Step {
         this.steps.add(step);
     }
 
-    public static class StepContextImpl implements StepContext {
+    public Map<String, Object> getEvaluatedInputs() {
+        return unmodifiableMap(this.stepContext.getEvaluatedInputs());
+    }
+
+    public Map<String, Object> getScenarioContext() {
+        return this.stepContext.getScenarioContext().unmodifiable();
+    }
+
+    public Map<String, Object> getStepOutputs() {
+        return unmodifiableMap(this.stepContext.getStepOutputs());
+    }
+
+
+    private static class StepContext {
 
         private final ScenarioContext scenarioContext;
         private final Map<String, Object> evaluatedInputs;
         private final Map<String, Object> stepOutputs;
 
-        private StepContextImpl(Map<String, Object> evaluatedInputs, ScenarioContext scenarioContext) throws EvaluationException {
+        private StepContext() {
+            this(new ScenarioContextImpl(), new LinkedHashMap<>(), new LinkedHashMap<>());
+        }
+
+        private StepContext(ScenarioContext scenarioContext, Map<String, Object> evaluatedInputs) throws EvaluationException {
             this(scenarioContext, evaluatedInputs, new LinkedHashMap<>());
         }
 
-        private StepContextImpl(ScenarioContext scenarioContext, Map<String, Object> evaluatedInputs, Map<String, Object> stepOutputs) {
+        private StepContext(ScenarioContext scenarioContext, Map<String, Object> evaluatedInputs, Map<String, Object> stepOutputs) {
             this.scenarioContext = scenarioContext;
             this.evaluatedInputs = evaluatedInputs;
             this.stepOutputs = stepOutputs;
-        }
-
-        private StepContextImpl() {
-            this(null, emptyMap(), emptyMap());
         }
 
         private Map<String, Object> allEvaluatedVariables() {
@@ -291,33 +314,32 @@ public class Step {
             return allResults;
         }
 
-        @Override
-        public ScenarioContext getScenarioContext() {
+        private ScenarioContext getScenarioContext() {
             return scenarioContext;
         }
 
-        @Override
-        public Map<String, Object> getEvaluatedInputs() {
+        private Map<String, Object> getEvaluatedInputs() {
             return ofNullable(evaluatedInputs).orElse(emptyMap());
         }
 
-        @Override
-        public void addStepOutputs(Map<String, Object> stepOutputs) { // TODO any - clarify that it is only used for outputs evaluation
-            this.stepOutputs.putAll(stepOutputs);
+        private void addStepOutputs(Map<String, Object> stepOutputs) {
+            if(stepOutputs != null) {
+                this.stepOutputs.putAll(stepOutputs);
+            }
         }
 
-        @Override
-        public void addScenarioContext(Map<String, Object> context) {
-            this.scenarioContext.putAll(context);
+        private void addScenarioContext(Map<String, Object> context) {
+            if(context != null) {
+                this.scenarioContext.putAll(context);
+            }
         }
 
-        @Override
-        public Map<String, Object> getStepOutputs() { // TODO any - clarify that it is only used for outputs evaluation
-            return unmodifiableMap(ofNullable(stepOutputs).orElse(emptyMap()));
+        private Map<String, Object> getStepOutputs() {
+            return ofNullable(stepOutputs).orElse(emptyMap());
         }
 
-        StepContext copy() {
-            return new StepContextImpl(scenarioContext.unmodifiable(), unmodifiableMap(evaluatedInputs), unmodifiableMap(stepOutputs));
+        private StepContext copy() {
+            return new StepContext(scenarioContext.unmodifiable(), unmodifiableMap(evaluatedInputs), unmodifiableMap(stepOutputs));
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.chutneytesting.engine.domain.execution.engine;
 
-import static com.chutneytesting.engine.domain.execution.ScenarioExecution.createScenarioExecution;
 import static com.chutneytesting.action.spi.ActionExecutionResult.ok;
+import static com.chutneytesting.engine.domain.execution.ScenarioExecution.createScenarioExecution;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.of;
@@ -12,13 +12,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.engine.domain.environment.TargetImpl;
-import com.chutneytesting.engine.domain.execution.engine.step.Step;
-import com.chutneytesting.engine.domain.execution.engine.step.StepContext;
 import com.chutneytesting.action.TestActionTemplateFactory.ComplexAction;
 import com.chutneytesting.action.domain.ActionTemplate;
 import com.chutneytesting.action.domain.ActionTemplateParserV2;
 import com.chutneytesting.action.domain.ActionTemplateRegistry;
+import com.chutneytesting.engine.domain.environment.TargetImpl;
+import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -34,10 +33,8 @@ public class DefaultStepExecutorTest {
         when(actionTemplateRegistry.getByIdentifier(any())).thenReturn(of(actionTemplate));
         Step step = mock(Step.class, RETURNS_DEEP_STUBS);
 
-        StepContext stepContext = mock(StepContext.class);
-
         StepExecutor stepExecutor = new DefaultStepExecutor(actionTemplateRegistry);
-        stepExecutor.execute(createScenarioExecution(null), stepContext, mock(TargetImpl.class), step);
+        stepExecutor.execute(createScenarioExecution(null), mock(TargetImpl.class), step);
 
         verify(actionTemplate.create(any()), times(1)).execute();
         verify(step, times(0)).failure(any(Exception.class));
@@ -52,10 +49,8 @@ public class DefaultStepExecutorTest {
         when(actionTemplateRegistry.getByIdentifier(any())).thenReturn(of(actionTemplate));
         Step step = mock(Step.class, RETURNS_DEEP_STUBS);
 
-        StepContext stepContext = mock(StepContext.class);
-
         StepExecutor stepExecutor = new DefaultStepExecutor(actionTemplateRegistry);
-        stepExecutor.execute(createScenarioExecution(null), stepContext, mock(TargetImpl.class), step);
+        stepExecutor.execute(createScenarioExecution(null), mock(TargetImpl.class), step);
 
         verify(step, times(1)).failure("Action [null] failed: java.lang.RuntimeException");
     }
@@ -68,10 +63,8 @@ public class DefaultStepExecutorTest {
         when(actionTemplateRegistry.getByIdentifier(any())).thenReturn(of(actionTemplate));
         Step step = mock(Step.class, RETURNS_DEEP_STUBS);
 
-        StepContext stepContext = mock(StepContext.class);
-
         StepExecutor stepExecutor = new DefaultStepExecutor(actionTemplateRegistry);
-        stepExecutor.execute(createScenarioExecution(null), stepContext, mock(TargetImpl.class), step);
+        stepExecutor.execute(createScenarioExecution(null), mock(TargetImpl.class), step);
 
         verify(step, times(1)).failure("validation error");
     }
@@ -83,17 +76,16 @@ public class DefaultStepExecutorTest {
 
         when(actionTemplateRegistry.getByIdentifier(any())).thenReturn(of(actionTemplate));
 
-        StepContext stepContext = mock(StepContext.class);
         Map<String, Object> inputs = new HashMap<>();
         inputs.put("stringParam", "teststring");
         inputs.put("param1", "a");
         inputs.put("param2", "b");
-        when(stepContext.getEvaluatedInputs()).thenReturn(inputs);
 
         Step step = mock(Step.class, RETURNS_DEEP_STUBS);
+        when(step.getEvaluatedInputs()).thenReturn(inputs);
 
         StepExecutor stepExecutor = new DefaultStepExecutor(actionTemplateRegistry);
-        stepExecutor.execute(createScenarioExecution(null), stepContext, mock(TargetImpl.class), step);
+        stepExecutor.execute(createScenarioExecution(null), mock(TargetImpl.class), step);
 
         verify(step, times(0)).failure(any(Exception.class));
     }
