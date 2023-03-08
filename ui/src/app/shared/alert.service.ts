@@ -35,6 +35,10 @@ export class AlertService {
     this.toastr.warning(msg, this.warningTitle, config);
   }
 
+  removeAll() {
+    this.toastr.clear();
+  }
+
   private initTranslation() {
     this.getTranslation();
     this.translateService.onLangChange.subscribe(() => {

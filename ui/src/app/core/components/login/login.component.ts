@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { AlertService } from '@shared';
 
 import { InfoService, LoginService } from '@core/services';
 
@@ -26,6 +27,7 @@ export class LoginComponent implements OnDestroy, OnInit {
     private loginService: LoginService,
     private infoService: InfoService,
     private route: ActivatedRoute,
+    private alertService: AlertService,
   ) {
     this.paramsSubscription = this.route.params.subscribe(params => {
       this.action = params['action'];
@@ -59,8 +61,11 @@ export class LoginComponent implements OnDestroy, OnInit {
   login() {
     this.loginService.login(this.username, this.password)
       .subscribe(
-        user => this.loginService.navigateAfterLogin(this.forwardUrl),
-        error => {
+        (user) => {
+          this.loginService.navigateAfterLogin(this.forwardUrl);
+          this.alertService.removeAll();
+        },
+        (error) => {
             this.connectionError = error.error.message;
             this.action = null;
         }
