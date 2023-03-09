@@ -70,9 +70,9 @@ public class InputParameterResolver implements ParameterResolver {
         if (parameter.rawType().equals(String.class)) {
             if (isPrimitiveOrWrapper(inputClassType)) {
                 return inputValue.toString();
-            } else if (inputValue instanceof Map) {
+            } else if (inputValue instanceof Map map) {
                 // TODO ugly hack since it is related to parsing, it should be out of the engine
-                return new JSONObject((Map) inputValue).toString();
+                return new JSONObject(map).toString();
             }
         } else if (inputClassType.equals(String.class)) {
             Object inputResolution = valueOf(parameter.rawType(), (String) inputValue);

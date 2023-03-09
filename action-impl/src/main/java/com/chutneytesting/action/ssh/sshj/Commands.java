@@ -31,8 +31,8 @@ public class Commands {
 
     @SuppressWarnings("unchecked")
     private static Command buildCommand(Object command) {
-        if (command instanceof String) {
-            return new Command((String) command);
+        if (command instanceof String stringCommand) {
+            return new Command(stringCommand);
         }
 
         if (command instanceof Map) {

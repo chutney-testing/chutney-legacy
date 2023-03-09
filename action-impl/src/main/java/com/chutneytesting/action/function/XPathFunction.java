@@ -31,12 +31,12 @@ public class XPathFunction {
 
     private static Object unwrapJdomSimpleObject(Object jDomObject) {
         final Object result;
-        if (jDomObject instanceof Text) {
-            result = ((Text) jDomObject).getText();
-        } else if(jDomObject instanceof Attribute) {
-            result = ((Attribute) jDomObject).getValue();
-        } else if (jDomObject instanceof Element) {
-            result = unwrapJdomElement((Element) jDomObject);
+        if (jDomObject instanceof Text text) {
+            result = text.getText();
+        } else if(jDomObject instanceof Attribute attribute) {
+            result = attribute.getValue();
+        } else if (jDomObject instanceof Element element) {
+            result = unwrapJdomElement(element);
         } else {
             result = jDomObject;
         }

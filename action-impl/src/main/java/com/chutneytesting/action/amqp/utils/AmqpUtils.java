@@ -40,16 +40,16 @@ public class AmqpUtils {
             return value.toString();
         }
 
-        if (value instanceof List) {
+        if (value instanceof List listValue) {
             List<Object> newList = new ArrayList<>();
-            for (Object item : (List<?>) value) {
+            for (Object item : listValue) {
                 newList.add(convertLongStringToString(item));
             }
             return newList;
         }
 
-        if (value instanceof Map) {
-            return convertMapLongStringToString((Map) value);
+        if (value instanceof Map mapValue) {
+            return convertMapLongStringToString(mapValue);
         }
 
         return value;

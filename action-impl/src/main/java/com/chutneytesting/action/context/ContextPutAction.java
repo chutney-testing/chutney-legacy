@@ -34,12 +34,12 @@ public class ContextPutAction implements Action {
             return "null";
         } else if (value instanceof String) {
             return value.toString();
-        } else if (value instanceof Object[]) {
-            return Arrays.toString((Object[]) value);
-        } else if (value instanceof List) {
-            return Arrays.toString(((List) value).toArray());
-        } else if (value instanceof Map) {
-            return Arrays.toString(((Map)value).entrySet().toArray());
+        } else if (value instanceof Object[] objects) {
+            return Arrays.toString(objects);
+        } else if (value instanceof List list) {
+            return Arrays.toString(list.toArray());
+        } else if (value instanceof Map map) {
+            return Arrays.toString(map.entrySet().toArray());
         } else {
             return value.toString();
         }

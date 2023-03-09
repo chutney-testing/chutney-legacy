@@ -13,8 +13,8 @@ abstract class TextMessageBodySelector implements BodySelector {
     @Override
     public boolean match(Message message) {
         final boolean matches;
-        if (message instanceof TextMessage) {
-            Optional<String> messageBody = textContent((TextMessage) message);
+        if (message instanceof TextMessage textMessage) {
+            Optional<String> messageBody = textContent(textMessage);
             matches = messageBody.map(this::match).orElse(Boolean.FALSE);
         } else {
             matches = false;

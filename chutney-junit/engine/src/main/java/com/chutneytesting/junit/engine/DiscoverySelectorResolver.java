@@ -255,8 +255,8 @@ public class DiscoverySelectorResolver {
     private TestSource featureSource(TestSource testSource) {
         if (classMode) {
             String name = testSource.toString();
-            if (testSource instanceof UriSource) {
-                name = ((UriSource) testSource).getUri().getSchemeSpecificPart();
+            if (testSource instanceof UriSource uriSource) {
+                name = uriSource.getUri().getSchemeSpecificPart();
             }
             return ClassSource.from(name);
         }

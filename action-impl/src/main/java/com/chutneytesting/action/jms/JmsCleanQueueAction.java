@@ -69,8 +69,8 @@ public class JmsCleanQueueAction implements Action {
         Map<String, String> properties = propertiesToMap(message);
 
         final String body;
-        if (message instanceof TextMessage) {
-            body = ((TextMessage) message).getText();
+        if (message instanceof TextMessage textMessage) {
+            body = textMessage.getText();
         } else {
             body = "";
         }
