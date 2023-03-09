@@ -82,7 +82,6 @@ public class Step {
 
         try {
             makeTargetAccessibleForInputEvaluation(scenarioContext);
-            makeEnvironmentAccessibleForInputEvaluation(scenarioContext);
 
             final Map<String, Object> evaluatedInputs = definition.type.equals("final") ? definition.inputs() : unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs(), scenarioContext));
             target = dataEvaluator.evaluateTarget(target, scenarioContext);
@@ -231,10 +230,6 @@ public class Step {
 
     private void makeTargetAccessibleForInputEvaluation(ScenarioContext scenarioContext) {
         scenarioContext.put("target", target);
-    }
-
-    private void makeEnvironmentAccessibleForInputEvaluation(ScenarioContext scenarioContext) {
-        scenarioContext.put("environment", definition.environment);
     }
 
     private void copyStepResultsToScenarioContext(StepContextImpl stepContext, ScenarioContext scenarioContext) {

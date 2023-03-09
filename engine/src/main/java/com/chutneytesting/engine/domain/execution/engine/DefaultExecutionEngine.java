@@ -64,6 +64,8 @@ public class DefaultExecutionEngine implements ExecutionEngine {
         actionExecutor.execute(() -> {
 
             final ScenarioContext scenarioContext = new ScenarioContextImpl();
+            scenarioContext.put("environment", stepDefinition.environment);
+
             try {
                 try {
                     rootStep.set(buildStep(stepDefinition));
