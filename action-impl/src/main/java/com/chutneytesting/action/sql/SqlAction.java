@@ -59,7 +59,7 @@ public class SqlAction implements Action {
     public ActionExecutionResult execute() {
         SqlClient sqlClient = clientFactory.create(target);
         try {
-            List<Records> records = new ArrayList<>();
+            var records = new ArrayList<Records>();
             Map<String, Object> outputs = new HashMap<>();
             AtomicBoolean failure = new AtomicBoolean(false);
             statements.forEach(statement -> {

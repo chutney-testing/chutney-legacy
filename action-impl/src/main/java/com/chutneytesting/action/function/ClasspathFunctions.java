@@ -26,7 +26,7 @@ public class ClasspathFunctions {
     @SpelFunction
     public static List<String> resourcesPath(String name) throws IOException, URISyntaxException {
         Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(name);
-        List<String> paths = new ArrayList<>();
+        var paths = new ArrayList<String>();
         while (urls.hasMoreElements()) {
             paths.add(
                 uriToPath(urls.nextElement().toURI()).toString()

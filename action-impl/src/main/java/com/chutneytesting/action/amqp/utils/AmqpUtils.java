@@ -41,7 +41,7 @@ public class AmqpUtils {
         }
 
         if (value instanceof List listValue) {
-            List<Object> newList = new ArrayList<>();
+            var newList = new ArrayList<>();
             for (Object item : listValue) {
                 newList.add(convertLongStringToString(item));
             }

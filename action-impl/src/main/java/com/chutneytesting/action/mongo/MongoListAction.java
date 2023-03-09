@@ -36,7 +36,7 @@ public class MongoListAction implements Action {
     public ActionExecutionResult execute() {
         try (CloseableResource<MongoDatabase> database = mongoDatabaseFactory.create(target)) {
             MongoIterable<String> collectionNames = database.getResource().listCollectionNames();
-            List<String> collectionNameList = new ArrayList<>();
+            var collectionNameList = new ArrayList<String>();
             collectionNames.iterator().forEachRemaining(collectionNameList::add);
             logger.info("Found " + collectionNameList.size() + " collection(s)");
             return ActionExecutionResult.ok(Collections.singletonMap("collectionNames", collectionNameList));
