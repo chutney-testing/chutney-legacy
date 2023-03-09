@@ -92,38 +92,26 @@ public class SeleniumWaitAction extends SeleniumAction implements SeleniumFindBe
         }
 
         ExpectedCondition<?> toExpectedCondition(By by) {
-            switch (expectedByConditionEnum) {
-                case ELEMENT_TO_BE_SELECTED:
-                    return ExpectedConditions.elementToBeSelected(by);
-                case ELEMENT_TO_BE_CLICKABLE:
-                    return ExpectedConditions.elementToBeClickable(by);
-                case FRAME_TO_BE_AVALAIBLE_AND_SWITCH_TO_IT:
-                    return ExpectedConditions.frameToBeAvailableAndSwitchToIt(by);
-                case INVISIBILITY_OF_ELEMENT_LOCATED:
-                    return ExpectedConditions.invisibilityOfElementLocated(by);
-                case VISIBILITY_OF_ELEMENT_LOCATED:
-                    return ExpectedConditions.visibilityOfElementLocated(by);
-                case VISIBILITY_OF_ALL_ELEMENT_LOCATED:
-                    return ExpectedConditions.visibilityOfAllElementsLocatedBy(by);
-                case PRESENCE_OF_ELEMENT_LOCATED:
-                    return ExpectedConditions.presenceOfElementLocated(by);
-                case PRESENCE_OF_ALL_ELEMENT_LOCATED:
-                    return ExpectedConditions.presenceOfAllElementsLocatedBy(by);
-                case AND:
-                    return ExpectedConditions.and(
-                        (ExpectedCondition<?>[]) expectedByConditions.parallelStream()
-                            .map(expectedByCondition -> expectedByCondition.toExpectedCondition(by)).toArray()
-                    );
-                case OR:
-                    return ExpectedConditions.or(
-                        (ExpectedCondition<?>[]) expectedByConditions.parallelStream()
-                            .map(expectedByCondition -> expectedByCondition.toExpectedCondition(by)).toArray()
-                    );
-                case NOT:
-                    return ExpectedConditions.not(expectedByConditions.get(0).toExpectedCondition(by));
-            }
+            return switch (expectedByConditionEnum) {
+                case ELEMENT_TO_BE_SELECTED -> ExpectedConditions.elementToBeSelected(by);
+                case ELEMENT_TO_BE_CLICKABLE -> ExpectedConditions.elementToBeClickable(by);
+                case FRAME_TO_BE_AVALAIBLE_AND_SWITCH_TO_IT -> ExpectedConditions.frameToBeAvailableAndSwitchToIt(by);
+                case INVISIBILITY_OF_ELEMENT_LOCATED -> ExpectedConditions.invisibilityOfElementLocated(by);
+                case VISIBILITY_OF_ELEMENT_LOCATED -> ExpectedConditions.visibilityOfElementLocated(by);
+                case VISIBILITY_OF_ALL_ELEMENT_LOCATED -> ExpectedConditions.visibilityOfAllElementsLocatedBy(by);
+                case PRESENCE_OF_ELEMENT_LOCATED -> ExpectedConditions.presenceOfElementLocated(by);
+                case PRESENCE_OF_ALL_ELEMENT_LOCATED -> ExpectedConditions.presenceOfAllElementsLocatedBy(by);
+                case AND -> ExpectedConditions.and(
+                    (ExpectedCondition<?>[]) expectedByConditions.parallelStream()
+                        .map(expectedByCondition -> expectedByCondition.toExpectedCondition(by)).toArray()
+                );
+                case OR -> ExpectedConditions.or(
+                    (ExpectedCondition<?>[]) expectedByConditions.parallelStream()
+                        .map(expectedByCondition -> expectedByCondition.toExpectedCondition(by)).toArray()
+                );
+                case NOT -> ExpectedConditions.not(expectedByConditions.get(0).toExpectedCondition(by));
+            };
 
-            return null;
         }
     }
 

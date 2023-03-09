@@ -40,19 +40,9 @@ public class SeleniumRemoteDriverInitAction implements Action {
     public ActionExecutionResult execute() {
         WebDriver webDriver;
         switch (Optional.ofNullable(browser).orElse("")) {
-            case "chrome": {
-                webDriver = createChromeRemoteWebDriver();
-                break;
-            }
-            case "internet explorer": {
-                webDriver = createInternetExplorerRemoteWebDriver();
-                break;
-            }
-            case "firefox":
-            default: {
-                webDriver = createFirefoxRemoteWebDriver();
-                break;
-            }
+            case "chrome" -> webDriver = createChromeRemoteWebDriver();
+            case "internet explorer" -> webDriver = createInternetExplorerRemoteWebDriver();
+            default -> webDriver = createFirefoxRemoteWebDriver();
         }
 
         if (webDriver != null) {
