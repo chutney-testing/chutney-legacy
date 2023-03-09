@@ -141,7 +141,7 @@ public class Records {
         List<String> lines = records.stream()
             .limit(limit)
             .map(r -> r.print(maximumColumnLength))
-            .collect(toList());
+            .toList();
         StringBuilder sb = new StringBuilder();
         lines.forEach(sb::append);
         return sb.toString();

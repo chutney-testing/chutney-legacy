@@ -133,7 +133,7 @@ public class OrientComponentDBTest {
 
         // Then
         ZipFile zipFile = new ZipFile(backup.toString());
-        List<String> entriesNames = zipFile.stream().map(ZipEntry::getName).collect(Collectors.toList());
+        List<String> entriesNames = zipFile.stream().map(ZipEntry::getName).toList();
         int dbchangelogCount = 0;
         int denoteCount = 0;
         int funcstepCount = 0;

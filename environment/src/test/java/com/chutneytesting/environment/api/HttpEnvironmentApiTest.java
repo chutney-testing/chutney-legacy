@@ -93,7 +93,7 @@ public class HttpEnvironmentApiTest {
 
         List<String> expectedEnvNames = stream(environmentNames)
             .sorted(Comparator.naturalOrder())
-            .collect(Collectors.toList());
+            .toList();
 
         for (int i = 0; i < expectedEnvNames.size(); i++) {
             resultActions.andExpect(jsonPath("$.[" + i + "].description", equalTo(expectedEnvNames.get(i) + " description")));

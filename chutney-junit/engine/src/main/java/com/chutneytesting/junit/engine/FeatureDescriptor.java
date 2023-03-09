@@ -56,7 +56,7 @@ public class FeatureDescriptor extends AbstractTestDescriptor implements Node<Ch
             .reduce(StatusDto.SUCCESS, EXECUTION_STATUS_STATUS_ORDERING::min);
 
         if (reducedStatus.equals(StatusDto.NOT_EXECUTED)) {
-            List<StatusDto> notExecutedStatus = severalStatus.stream().filter(s -> !s.equals(StatusDto.NOT_EXECUTED)).collect(Collectors.toList());
+            List<StatusDto> notExecutedStatus = severalStatus.stream().filter(s -> !s.equals(StatusDto.NOT_EXECUTED)).toList();
             if (!notExecutedStatus.isEmpty()) {
                 return StatusDto.RUNNING;
             }

@@ -103,7 +103,7 @@ public class JiraXrayService {
         Map<String, String> errors = new HashMap<>();
         if (!currentStep.errors.isEmpty()) {
             errors.put(parentStep + " > " + currentStep.name,
-                currentStep.errors.stream().filter(s -> !s.startsWith("data:image/png")).collect(Collectors.toList()).toString());
+                currentStep.errors.stream().filter(s -> !s.startsWith("data:image/png")).toList().toString());
         }
         if (!currentStep.steps.isEmpty()) {
             currentStep.steps
@@ -120,7 +120,7 @@ public class JiraXrayService {
                     .stream()
                     .filter(s -> s.startsWith("data:image/png"))
                     .map(s -> new XrayEvidence(s.replace("data:image/png;base64,", ""), formatEvidenceFilename(parentStep, currentStep.name) + ".png", "image/png"))
-                    .collect(Collectors.toList())
+                    .toList()
             );
         }
         if (!currentStep.steps.isEmpty()) {

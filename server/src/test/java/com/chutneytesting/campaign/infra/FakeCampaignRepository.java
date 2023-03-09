@@ -116,9 +116,8 @@ public class FakeCampaignRepository implements CampaignRepository {
 
     @Override
     public List<Campaign> findCampaignsByScenarioId(String scenarioId) {
-        return campaignsById.entrySet().stream()
-            .filter(campaignEntry -> campaignEntry.getValue().scenarioIds.contains(scenarioId))
-            .map(campaign -> campaign.getValue())
+        return campaignsById.values().stream()
+            .filter(campaign -> campaign.scenarioIds.contains(scenarioId))
             .collect(Collectors.toList());
     }
 

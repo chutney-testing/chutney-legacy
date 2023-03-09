@@ -60,7 +60,7 @@ public class ComposableStep {
         parentsAcc.add(composableStep.id);
         List<String> childrenIds = composableStep.steps.stream()
             .map(cs -> cs.id)
-            .collect(Collectors.toList());
+            .toList();
 
         if (!Collections.disjoint(childrenIds, parentsAcc)) {
             return true;

@@ -11,6 +11,7 @@ import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution
 import com.google.common.collect.ImmutableMap;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -249,11 +250,9 @@ public class DatabaseCampaignRepository implements CampaignRepository {
 
     public List<Campaign> findCampaignsByScenarioId(String scenarioId) {
         String sqlQuery = "SELECT C.* FROM campaign C INNER JOIN campaign_scenarios ON campaign_scenarios.campaign_id = C.id WHERE scenario_id= :scenarioId";
-        return uiNamedParameterJdbcTemplate.query(sqlQuery,
+        return new ArrayList<>(uiNamedParameterJdbcTemplate.query(sqlQuery,
             ImmutableMap.of("scenarioId", scenarioId),
-            CAMPAIGN_ENTITY_ROW_MAPPER)
-            .stream()
-            .collect(Collectors.toList());
+            CAMPAIGN_ENTITY_ROW_MAPPER));
     }
 
     public CampaignExecutionReport findByExecutionId(Long campaignExecutionId) {

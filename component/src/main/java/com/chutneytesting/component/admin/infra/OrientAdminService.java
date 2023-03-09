@@ -148,7 +148,7 @@ class OrientAdminService implements DatabaseAdminService {
                 properties.addAll(
                     result.getPropertyNames().stream()
                         .filter(s -> !s.equalsIgnoreCase("count"))
-                        .collect(Collectors.toList())
+                        .toList()
                 );
             } else {
                 properties.addAll(result.getPropertyNames());

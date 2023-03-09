@@ -17,7 +17,7 @@ public enum Status {
             .reduce(SUCCESS, EXECUTION_STATUS_STATUS_ORDERING::min);
 
         if(reducedStatus.equals(Status.NOT_EXECUTED)) {
-            List<Status> notExecutedStatus = severalStatus.stream().filter(s -> !s.equals(NOT_EXECUTED)).collect(Collectors.toList());
+            List<Status> notExecutedStatus = severalStatus.stream().filter(s -> !s.equals(NOT_EXECUTED)).toList();
             if(!notExecutedStatus.isEmpty()) {
                 return RUNNING;
             }

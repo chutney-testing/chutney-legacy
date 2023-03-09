@@ -194,7 +194,7 @@ public class ReporterTest {
     }
 
     private Step buildStep(StepDefinition definition) {
-        final List<Step> steps = definition.steps.stream().map(this::buildStep).collect(Collectors.toUnmodifiableList());
+        final List<Step> steps = definition.steps.stream().map(this::buildStep).toList();
         return new Step(dataEvaluator, definition, null, steps);
     }
 

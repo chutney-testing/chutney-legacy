@@ -109,7 +109,7 @@ public class InputParameterResolver implements ParameterResolver {
                         String inputName = getValidParameter(Parameter.fromJavaParameter(p));
                         return inputs.get(inputName);
                     })
-                .collect(Collectors.toList());
+                .toList();
             try {
                 return Optional.of(constructor.newInstance(parameters.toArray()));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {

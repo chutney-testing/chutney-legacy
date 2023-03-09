@@ -29,7 +29,7 @@ class FileUtilsTest {
             }
         };
 
-        Collection<Thread> threads = IntStream.range(0, nbSync).mapToObj(i -> new Thread(run)).collect(toList());
+        Collection<Thread> threads = IntStream.range(0, nbSync).mapToObj(i -> new Thread(run)).toList();
         threads.forEach(Thread::start);
         threads.forEach(thread -> {
             try {

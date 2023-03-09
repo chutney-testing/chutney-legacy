@@ -82,7 +82,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
             ResponseEntity<XrayTestExecTest[]> response = restTemplate.getForEntity(uri, XrayTestExecTest[].class);
             if (response.getStatusCode().equals(HttpStatus.OK) && response.getBody() != null) {
                 tests = Arrays.stream(response.getBody())
-                    .collect(Collectors.toList());
+                    .toList();
             } else {
                 LOGGER.error(response.toString());
             }
