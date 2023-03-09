@@ -27,17 +27,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-@Component
-@Primary
 public class JsonFileAgentNetworkDao {
 
     static final Path ROOT_DIRECTORY_NAME = Paths.get("agents");
     static final String AGENTS_FILE_NAME = "endpoints.json";
-    private final ObjectMapper objectMapper = buildObjectMapper();
+    private final ObjectMapper objectMapper;
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock(false);
     private final File file;
 
-    public JsonFileAgentNetworkDao(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) {
+    public JsonFileAgentNetworkDao(String storeFolderPath) {
+        this(storeFolderPath, buildObjectMapper());
+    }
+
+    public JsonFileAgentNetworkDao(String storeFolderPath, ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
         Path dir = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
         initFolder(dir);
         this.file = dir.resolve(AGENTS_FILE_NAME).toFile();
@@ -75,7 +78,7 @@ public class JsonFileAgentNetworkDao {
         }
     }
 
-    private ObjectMapper buildObjectMapper() {
+    private static ObjectMapper buildObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper()
             .findAndRegisterModules()
             .enable(SerializationFeature.INDENT_OUTPUT);

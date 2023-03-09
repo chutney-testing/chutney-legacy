@@ -50,8 +50,7 @@ public class JsonFileAgentNetworkDaoTest {
 
     @BeforeEach
     public void setUp(@TempDir Path tempDir) throws Exception {
-        sut = new JsonFileAgentNetworkDao(tempDir.toAbsolutePath().toString());
-        setFinal(sut, JsonFileAgentNetworkDao.class.getDeclaredField("objectMapper"), objectMapper);
+        sut = new JsonFileAgentNetworkDao(tempDir.toAbsolutePath().toString(), objectMapper);
         Path filePath = tempDir.resolve(ROOT_DIRECTORY_NAME).resolve(AGENTS_FILE_NAME);
         file = Files.createFile(filePath).toFile();
     }
@@ -221,13 +220,5 @@ public class JsonFileAgentNetworkDaoTest {
         } catch (Exception e) {
             errors.add(e.getMessage() != null ? e.getMessage() : "an error with no message occurred");
         }
-    }
-
-    private static void setFinal(Object object, Field field, Object newValue) throws Exception {
-        field.setAccessible(true);
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        field.set(object, newValue);
     }
 }

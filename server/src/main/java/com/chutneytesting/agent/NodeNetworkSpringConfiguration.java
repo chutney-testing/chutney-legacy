@@ -1,5 +1,6 @@
 package com.chutneytesting.agent;
 
+import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.ServerConfiguration.LOCAL_AGENT_DEFAULT_HOSTNAME_SPRING_VALUE;
 import static com.chutneytesting.ServerConfiguration.LOCAL_AGENT_DEFAULT_NAME_SPRING_VALUE;
 import static com.chutneytesting.ServerConfiguration.SERVER_PORT_SPRING_VALUE;
@@ -11,6 +12,7 @@ import com.chutneytesting.agent.domain.configure.GetCurrentNetworkDescriptionSer
 import com.chutneytesting.agent.domain.configure.LocalServerIdentifier;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.explore.ExploreAgentsService;
+import com.chutneytesting.agent.infra.storage.JsonFileAgentNetworkDao;
 import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.tools.ui.MyMixInForIgnoreType;
@@ -88,5 +90,10 @@ public class NodeNetworkSpringConfiguration {
     @Bean
     GetCurrentNetworkDescriptionService getCurrentNetworkDescriptionService(CurrentNetworkDescription currentNetworkDescription) {
         return new GetCurrentNetworkDescriptionService(currentNetworkDescription);
+    }
+
+    @Bean
+    JsonFileAgentNetworkDao getJsonFileAgentNetworkDao(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath){
+        return new JsonFileAgentNetworkDao(storeFolderPath);
     }
 }

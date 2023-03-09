@@ -39,9 +39,9 @@ public class ContextPutAction implements Action {
         } else if (value instanceof List) {
             return Arrays.toString(((List) value).toArray());
         } else if (value instanceof Map) {
-            return Arrays.toString(((Map) value).entrySet().toArray());
+            return Arrays.toString(((Map)value).entrySet().toArray());
         } else {
-            return ToStringBuilder.reflectionToString(value, NO_CLASS_NAME_STYLE);
+            return value.toString();
         }
     }
 
