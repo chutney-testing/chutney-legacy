@@ -1,12 +1,12 @@
-package com.chutneytesting.engine.domain.execution.action;
+package com.chutneytesting.engine.domain.execution.command;
 
 import com.chutneytesting.engine.domain.execution.event.Event;
 
-public class PauseExecutionAction implements Event {
+public class PauseExecutionCommand implements Event {
 
     private final Long executionId;
 
-    public PauseExecutionAction(Long executionId) {
+    public PauseExecutionCommand(Long executionId) {
         this.executionId = executionId;
     }
 

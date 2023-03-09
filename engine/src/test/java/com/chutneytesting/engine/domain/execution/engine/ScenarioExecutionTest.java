@@ -6,9 +6,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
-import com.chutneytesting.engine.domain.execution.action.PauseExecutionAction;
-import com.chutneytesting.engine.domain.execution.action.ResumeExecutionAction;
-import com.chutneytesting.engine.domain.execution.action.StopExecutionAction;
+import com.chutneytesting.engine.domain.execution.command.PauseExecutionCommand;
+import com.chutneytesting.engine.domain.execution.command.ResumeExecutionCommand;
+import com.chutneytesting.engine.domain.execution.command.StopExecutionCommand;
 import org.junit.jupiter.api.Test;
 
 public class ScenarioExecutionTest {
@@ -22,7 +22,7 @@ public class ScenarioExecutionTest {
         assertThat(scenarioExecution.hasToStop()).isFalse();
 
         // Pause
-        getInstance().post(new PauseExecutionAction(scenarioExecution.executionId));
+        getInstance().post(new PauseExecutionCommand(scenarioExecution.executionId));
         await().atMost(1, SECONDS).untilAsserted(() -> {
                 assertThat(scenarioExecution.hasToPause()).isTrue();
                 assertThat(scenarioExecution.hasToStop()).isFalse();
@@ -30,7 +30,7 @@ public class ScenarioExecutionTest {
         );
 
         // Resume
-        getInstance().post(new ResumeExecutionAction(scenarioExecution.executionId));
+        getInstance().post(new ResumeExecutionCommand(scenarioExecution.executionId));
         await().atMost(1, SECONDS).untilAsserted(() -> {
                 assertThat(scenarioExecution.hasToPause()).isFalse();
                 assertThat(scenarioExecution.hasToStop()).isFalse();
@@ -38,7 +38,7 @@ public class ScenarioExecutionTest {
         );
 
         // Stop
-        getInstance().post(new StopExecutionAction(scenarioExecution.executionId));
+        getInstance().post(new StopExecutionCommand(scenarioExecution.executionId));
         await().atMost(1, SECONDS).untilAsserted(() -> {
                 assertThat(scenarioExecution.hasToPause()).isFalse();
                 assertThat(scenarioExecution.hasToStop()).isTrue();
