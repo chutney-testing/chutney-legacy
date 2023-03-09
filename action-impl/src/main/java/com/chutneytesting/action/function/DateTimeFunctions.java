@@ -66,6 +66,7 @@ public class DateTimeFunctions {
                 case "ISO_WEEK_DATE" -> DateTimeFormatter.ISO_WEEK_DATE;
                 case "BASIC_DATE" -> DateTimeFormatter.BASIC_ISO_DATE;
                 case "RFC_DATE_TIME" -> DateTimeFormatter.RFC_1123_DATE_TIME;
+                default -> throw new IllegalArgumentException("Unknown date time formatter type [" + type + "]");
             };
         }
         throw new IllegalArgumentException("Unknown date time formatter type [" + type + "]");
