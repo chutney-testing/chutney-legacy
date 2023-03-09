@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * time_unit : the duration unit. Valid values are:
  * - "min" or "m" for minutes
  * - "sec" or "s" for seconds
- * - "ms" for miliseconds
+ * - "ms" for milliseconds
  * empty values are interpreted as seconds
  * Example: timeOut: "5 min", or "300 sec", ...
  */
@@ -110,7 +110,7 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
         return Status.SUCCESS;
     }
 
-    // convert duration strings in strategy parameters to milli seconds
+    // convert duration strings in strategy parameters to milliseconds
     private long toMilliSeconds(String duration) {
         double durationInMS = Duration.parse(duration).toMilliseconds();
         return Math.round(durationInMS);

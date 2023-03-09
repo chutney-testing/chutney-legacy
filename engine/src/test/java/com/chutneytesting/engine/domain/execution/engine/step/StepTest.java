@@ -228,7 +228,7 @@ public class StepTest {
     }
 
     @Test
-    public void target_is_set_in_scenario_context_in_order_to_be_used_by_evaluated_inputs() {
+    public void target_is_set_in_local_context_in_order_to_be_used_by_evaluated_inputs() {
         // Given
         TargetImpl fakeTarget = TargetImpl.builder().withName("fakeTargetName").build();
 
