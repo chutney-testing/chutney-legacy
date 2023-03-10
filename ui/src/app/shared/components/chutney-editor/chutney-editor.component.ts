@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import * as ace from 'ace-builds';
 import { Ace } from 'ace-builds';
+import 'ace-builds/webpack-resolver';
 
 @Component({
     selector: 'chutney-editor',
@@ -66,7 +67,6 @@ export class ChutneyEditorComponent implements OnInit, AfterViewInit, OnChanges 
     }
 
     private initEditor() {
-        ace.config.set('basePath', 'https://unpkg.com/ace-builds@1.4.12/src-noconflict/');
         this.aceEditor = ace.edit(this.editorHtmlElement.nativeElement);
         this.aceEditor.session.setValue(this.content ? this.content : '');
         this.aceEditor.setTheme(`ace/theme/${this.currentTheme}`);
