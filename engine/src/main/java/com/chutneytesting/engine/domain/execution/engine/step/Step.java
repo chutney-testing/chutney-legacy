@@ -103,7 +103,7 @@ public class Step {
                     if (Status.SUCCESS.equals(this.state.status())) {
                         executeStepValidations(stepContextExecuted);
                     }
-                    this.stepContext = stepContextExecuted.copy(); // todo check
+                    this.stepContext = stepContextExecuted.copy();
                 })
                 .ifFailed(this::failure);
         } catch (RuntimeException e) {
@@ -255,7 +255,7 @@ public class Step {
                     final Map<String, Object> evaluatedOutputs = dataEvaluator.evaluateNamedDataWithContextVariables(definition.outputs, contextAndStepResults);
                     this.stepContext.addLocalContext(evaluatedOutputs);
                     this.stepContext.addStepOutputs(evaluatedOutputs);
-                    this.stepContext.addScenarioContext(evaluatedOutputs); // ça oui
+                    this.stepContext.addScenarioContext(evaluatedOutputs);
                     this.success();
                     return null;
                 })
@@ -290,6 +290,10 @@ public class Step {
         this.steps.add(step);
     }
 
+    public void addStepExecution(List<Step> steps) {
+        steps.forEach(this::addStepExecution);
+    }
+
     public Map<String, Object> getEvaluatedInputs() {
         return unmodifiableMap(this.stepContext.getEvaluatedInputs());
     }
@@ -300,6 +304,10 @@ public class Step {
 
     public Map<String, Object> getStepOutputs() {
         return unmodifiableMap(this.stepContext.getStepOutputs());
+    }
+
+    public void removeStepExecution() {
+        this.steps.clear();
     }
 
 

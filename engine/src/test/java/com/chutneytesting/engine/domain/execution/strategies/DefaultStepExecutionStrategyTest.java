@@ -43,7 +43,7 @@ public class DefaultStepExecutionStrategyTest {
 
         strategy.execute(null, step, null, null);
 
-        verify(step, times(1)).execute(any(), any());
+        verify(step, times(1)).execute(any(), any(), any());
     }
 
     @Test

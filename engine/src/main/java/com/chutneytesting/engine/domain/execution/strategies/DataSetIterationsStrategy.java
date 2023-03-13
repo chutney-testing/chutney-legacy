@@ -7,6 +7,7 @@ import com.chutneytesting.engine.domain.execution.report.Status;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +25,7 @@ public final class DataSetIterationsStrategy implements StepExecutionStrategy {
     public Status execute(ScenarioExecution scenarioExecution,
                           Step step,
                           ScenarioContext scenarioContext,
+                          Map<String, Object> localContext,
                           StepExecutionStrategies strategies) {
         if (step.isParentStep()) {
             List<Status> childrenStatus = new ArrayList<>();
@@ -34,7 +36,7 @@ public final class DataSetIterationsStrategy implements StepExecutionStrategy {
                 while (subStepsIterator.hasNext()) {
                     currentRunningStep = subStepsIterator.next();
                     StepExecutionStrategy strategy = strategies.buildStrategyFrom(currentRunningStep);
-                    childrenStatus.add(strategy.execute(scenarioExecution, currentRunningStep, scenarioContext, strategies));
+                    childrenStatus.add(strategy.execute(scenarioExecution, currentRunningStep, scenarioContext, localContext, strategies));
                 }
             } catch (RuntimeException e) {
                 currentRunningStep.failure(e);

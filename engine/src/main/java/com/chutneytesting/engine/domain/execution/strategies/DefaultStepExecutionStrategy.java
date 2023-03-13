@@ -5,6 +5,7 @@ import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContex
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import java.util.Iterator;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,7 @@ public final class DefaultStepExecutionStrategy implements StepExecutionStrategy
     public Status execute(ScenarioExecution scenarioExecution,
                           Step step,
                           ScenarioContext scenarioContext,
+                          Map<String, Object> localContext,
                           StepExecutionStrategies strategies) {
         if (step.isParentStep()) {
             Iterator<Step> subStepsIterator = step.subSteps().iterator();
@@ -36,7 +38,7 @@ public final class DefaultStepExecutionStrategy implements StepExecutionStrategy
                 while (subStepsIterator.hasNext() && childStatus != Status.FAILURE) {
                     currentRunningStep = subStepsIterator.next();
                     StepExecutionStrategy strategy = strategies.buildStrategyFrom(currentRunningStep);
-                    childStatus = strategy.execute(scenarioExecution, currentRunningStep, scenarioContext, strategies);
+                    childStatus = strategy.execute(scenarioExecution, currentRunningStep, scenarioContext, localContext, strategies);
                 }
                 return childStatus;
             } catch (RuntimeException e) {
@@ -48,6 +50,6 @@ public final class DefaultStepExecutionStrategy implements StepExecutionStrategy
             return step.status();
         }
 
-        return step.execute(scenarioExecution, scenarioContext);
+        return step.execute(scenarioExecution, scenarioContext, localContext);
     }
 }

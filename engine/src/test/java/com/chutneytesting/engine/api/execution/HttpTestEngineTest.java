@@ -11,8 +11,8 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReportBuilder;
+import com.chutneytesting.tools.Jsons;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import java.time.Instant;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
@@ -77,25 +77,6 @@ public class HttpTestEngineTest {
         ;
 
         verify(engine, times(1)).execute(any());
-    }
-
-    private static final class Jsons {
-        private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().findAndRegisterModules();
-
-        private Jsons() {
-        }
-
-        static <T> T loadJsonFromClasspath(String path, Class<T> targetClass) {
-            try {
-                return OBJECT_MAPPER.readValue(Jsons.class.getClassLoader().getResourceAsStream(path), targetClass);
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Cannot deserialize " + path + " to " + targetClass.getSimpleName(), e);
-            }
-        }
-
-        static ObjectMapper objectMapper() {
-            return OBJECT_MAPPER;
-        }
     }
 
     @Test

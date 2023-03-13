@@ -1,0 +1,48 @@
+{
+    "scenario": {
+        "name": "Test iterations",
+        "steps": [
+            {
+                "name": "<index> - Hello website on ${#env} with user ${#user}",
+                "steps": [
+                    {
+                        "name": "<index> - I am soft",
+                        "steps": [
+                            {
+                                "name": "<index> - USER ${#user}",
+                                "type": "failure"
+                            },
+                            {
+                                "name": "<index> - ENV ${#env}",
+                                "type": "success"
+                            }
+                        ],
+                        "strategy": {
+                            "type": "soft-assert",
+                            "parameters": {}
+                        }
+                    }
+                ],
+                "strategy": {
+                    "type": "for",
+                    "parameters": {
+                        "dataset": [
+                            {
+                                "env": "X",
+                                "user": "Xoxo"
+                            },
+                            {
+                                "env": "Y",
+                                "user": "Yoyo"
+                            },
+                            {
+                                "env": "Z",
+                                "user": "Zozo"
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}
