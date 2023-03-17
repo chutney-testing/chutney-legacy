@@ -108,7 +108,7 @@ public class JiraFileRepository implements JiraRepository {
 
     @Override
     public void saveServerConfiguration(JiraTargetConfiguration jiraTargetConfiguration) {
-        JiraTargetConfigurationDto jiraTargetConfigurationDto = new JiraTargetConfigurationDto(jiraTargetConfiguration.url, jiraTargetConfiguration.username, jiraTargetConfiguration.password);
+        JiraTargetConfigurationDto jiraTargetConfigurationDto = new JiraTargetConfigurationDto(jiraTargetConfiguration.url(), jiraTargetConfiguration.username(), jiraTargetConfiguration.password());
         Path resolvedFilePath = storeFolderPath.resolve(CONFIGURATION_FILE);
         doSave(resolvedFilePath, jiraTargetConfigurationDto);
     }

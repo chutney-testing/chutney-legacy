@@ -53,9 +53,9 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
 
     @Override
     public void updateRequest(Xray xray) {
-        String updateUri = jiraTargetConfiguration.url + "/rest/raven/1.0/import/execution";
+        String updateUri = jiraTargetConfiguration.url() + "/rest/raven/1.0/import/execution";
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username, jiraTargetConfiguration.password);
+        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username(), jiraTargetConfiguration.password());
 
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(updateUri, xray, String.class);
@@ -74,10 +74,10 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
     public List<XrayTestExecTest> getTestExecutionScenarios(String xrayId) {
         List<XrayTestExecTest> tests = new ArrayList<>();
 
-        String uriTemplate = jiraTargetConfiguration.url + "/rest/raven/1.0/api/%s/%s/test";
+        String uriTemplate = jiraTargetConfiguration.url() + "/rest/raven/1.0/api/%s/%s/test";
         String uri = String.format(uriTemplate, isTestPlan(xrayId) ? "testplan" : "testexec", xrayId);
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username, jiraTargetConfiguration.password);
+        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username(), jiraTargetConfiguration.password());
         try {
             ResponseEntity<XrayTestExecTest[]> response = restTemplate.getForEntity(uri, XrayTestExecTest[].class);
             if (response.getStatusCode().equals(HttpStatus.OK) && response.getBody() != null) {
@@ -94,10 +94,10 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
 
     @Override
     public void updateStatusByTestRunId(String testRuntId, String executionStatus) {
-        String uriTemplate = jiraTargetConfiguration.url + "/rest/raven/1.0/api/testrun/%s/status?status=%s";
+        String uriTemplate = jiraTargetConfiguration.url() + "/rest/raven/1.0/api/testrun/%s/status?status=%s";
         String uri = String.format(uriTemplate, testRuntId, executionStatus);
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username, jiraTargetConfiguration.password);
+        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username(), jiraTargetConfiguration.password());
         try {
             restTemplate.put(uri, null);
         } catch (RestClientException e) {
@@ -107,10 +107,10 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
 
     @Override
     public void associateTestExecutionFromTestPlan(String testPlanId, String testExecutionId) {
-        String uriTemplate = jiraTargetConfiguration.url + "/rest/raven/1.0/api/testplan/%s/testexecution";
+        String uriTemplate = jiraTargetConfiguration.url() + "/rest/raven/1.0/api/testplan/%s/testexecution";
         String uri = String.format(uriTemplate, testPlanId);
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username, jiraTargetConfiguration.password);
+        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username(), jiraTargetConfiguration.password());
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(uri, Map.of("add", List.of(testExecutionId)), String.class);
             if (response.getStatusCode().equals(HttpStatus.OK)) {
@@ -159,10 +159,10 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
     }
 
     private JiraIssueType getIssueTypeByName(String issueTypeName) {
-        String uri = jiraTargetConfiguration.url + "/rest/api/latest/issuetype";
+        String uri = jiraTargetConfiguration.url() + "/rest/api/latest/issuetype";
         Optional<JiraIssueType> issueTypeOptional = Optional.empty();
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username, jiraTargetConfiguration.password);
+        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username(), jiraTargetConfiguration.password());
         try {
             ResponseEntity<JiraIssueType[]> response = restTemplate.getForEntity(uri, JiraIssueType[].class);
             if (response.getStatusCode().equals(HttpStatus.OK) && response.getBody() != null) {
@@ -211,11 +211,11 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
             AsynchronousJiraRestClientFactory asynchronousJiraRestClientFactory = new AsynchronousJiraRestClientFactory();
             return asynchronousJiraRestClientFactory
                 .createWithBasicHttpAuthentication(
-                    new URI(jiraTargetConfiguration.url),
-                    jiraTargetConfiguration.username,
-                    jiraTargetConfiguration.password);
+                    new URI(jiraTargetConfiguration.url()),
+                    jiraTargetConfiguration.username(),
+                    jiraTargetConfiguration.password());
         } catch (URISyntaxException e) {
-            throw new RuntimeException("Unable to instantiate Jira rest client from url [" + jiraTargetConfiguration.url + "] : ", e);
+            throw new RuntimeException("Unable to instantiate Jira rest client from url [" + jiraTargetConfiguration.url() + "] : ", e);
         }
     }
 }
