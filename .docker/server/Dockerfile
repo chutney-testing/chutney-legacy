@@ -1,4 +1,4 @@
-FROM openjdk:12-jdk-alpine
+FROM openjdk:17-alpine
 VOLUME /config
 VOLUME /.chutney
 ARG JAR_PATH=packaging/local-dev/target
