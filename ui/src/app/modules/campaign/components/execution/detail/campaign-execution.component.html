@@ -65,23 +65,28 @@
         <table class="table table-sm table-striped table-hover">
             <thead>
                 <tr>
-                    <th scope="col" class="filter w3 text-center">
-                        {{ 'campaigns.execution.scenarios.item.header.id' | translate }}
+                    <th scope="col" class="filter w3 text-center" (click)="sortBy('scenarioId')">{{ 'campaigns.execution.scenarios.item.header.id' | translate }}
+                        <span *ngIf="orderBy == 'scenarioId' && reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'scenarioId' && !reverseOrder" class="fa fa-caret-up"></span>
                     </th>
-                    <th scope="col" class="filter w5 text-center">
-                        {{ 'campaigns.execution.scenarios.item.header.state' | translate }}
+                    <th scope="col" class="filter w5 text-center" (click)="sortBy('status')">{{ 'campaigns.execution.scenarios.item.header.state' | translate }}
+                        <span *ngIf="orderBy == 'status' && reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'status' && !reverseOrder" class="fa fa-caret-up"></span>
                     </th>
-                    <th scope="col" class="filter">
-                        {{ 'campaigns.execution.scenarios.item.header.title' | translate }}
+                    <th scope="col" class="filter w45" (click)="sortBy('scenarioName')">{{ 'campaigns.execution.scenarios.item.header.title' | translate }}
+                        <span *ngIf="orderBy == 'scenarioName' && reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'scenarioName' && !reverseOrder" class="fa fa-caret-up"></span>
                     </th>
-                    <th scope="col" class="filter text-center">
-                        {{ 'campaigns.execution.scenarios.item.header.error' | translate }}
+                    <th scope="col" class="filter" (click)="sortBy('error')">{{ 'campaigns.execution.scenarios.item.header.error' | translate }}
+                        <span *ngIf="orderBy == 'error' && reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'error' && !reverseOrder" class="fa fa-caret-up"></span>
                     </th>
-                    <th scope="col" class="filter w10 text-center">
-                        {{ 'campaigns.execution.scenarios.item.header.duration' | translate }}
+                    <th scope="col" class="filter w8 text-center" (click)="sortBy('duration')">{{ 'campaigns.execution.scenarios.item.header.duration' | translate }}
+                        <span *ngIf="orderBy == 'duration' && reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'duration' && !reverseOrder" class="fa fa-caret-up"></span>
                     </th>
                     <th *ngIf="jiraTestExecutionId" class="w2" scope="col"></th>
-                    <th *ngIf="jiraTestExecutionId" scope="col">
+                    <th *ngIf="jiraTestExecutionId" class="w12" scope="col">
                         {{ 'campaigns.execution.scenarios.item.header.jiraStatus' | translate }}
                     </th>
                 </tr>
@@ -109,40 +114,44 @@
                             {{ scenarioReportOutline.scenarioName }}
                         </ng-container>
                     </td>
-                    <td class="text-center align-middle">
+                    <td class="align-middle">
                         <span><small>{{ scenarioReportOutline.error }}</small></span>
                     </td>
                     <td class="text-center align-middle text-nowrap">
                         <span><small>{{ scenarioReportOutline.duration | duration:'short' }}</small></span>
                     </td>
-                    <td *ngIf="jiraTestExecutionId && jiraLinkFrom(scenarioReportOutline.scenarioId) !== null">
-                        <a role="button" class="btn btn-sm btn-link m-0" target="_blank"
-                            href="{{ jiraLinkFrom(scenarioReportOutline.scenarioId) }}" rel="noopener noreferrer"
-                            ngbPopover="{{ jiraLinkFrom(scenarioReportOutline.scenarioId) }}" placement="left"
-                            (click)="$event.stopPropagation()" triggers="mouseenter:mouseleave">
-                            <span class="fab fa-jira" aria-hidden="true">
-                            </span>
-                        </a>
+                    <td *ngIf="jiraTestExecutionId">
+                        <ng-container *ngIf="jiraLinkFrom(scenarioReportOutline.scenarioId) !== null">
+                            <a role="button" class="btn btn-sm btn-link m-0" target="_blank"
+                                href="{{ jiraLinkFrom(scenarioReportOutline.scenarioId) }}" rel="noopener noreferrer"
+                                ngbPopover="{{ jiraLinkFrom(scenarioReportOutline.scenarioId) }}" placement="left"
+                                (click)="$event.stopPropagation()" triggers="mouseenter:mouseleave">
+                                <span class="fab fa-jira" aria-hidden="true">
+                                </span>
+                            </a>
+                        </ng-container>
                     </td>
-                    <td *ngIf="jiraTestExecutionId && jiraLinkFrom(scenarioReportOutline.scenarioId) !== null">
-                        <chutney-delete-confirm-dialog class="me-2 mt-1"
-                            [dialogMessage]="('campaigns.execution.update.jira' | translate)" [label]=null
-                            [title]="('global.actions.update' | translate)"
-                            [disabled]="selectedStatusByScenarioId.get(scenarioReportOutline.scenarioId) !=='PASS' && selectedStatusByScenarioId.get(scenarioReportOutline.scenarioId) !=='FAIL'"
-                            [btnSizeClass]="'sm'" [btnClassIcon]="'fa-pencil-alt'" [btnColor]="'primary'"
-                            (deleteEvent)="updateStatus(scenarioReportOutline.scenarioId)">
-                        </chutney-delete-confirm-dialog>
-                        <select class="custom-select mt-1"
-                            (change)="selectedUpdateStatus(scenarioReportOutline.scenarioId, $event)"
-                            style="width: 120px">
-                            <option *ngFor="let enum of xrayStatuses()"
-                                [selected]="scenarioStatus(scenarioReportOutline.scenarioId) === enum">
-                                {{ enum }}
-                            </option>
-                            <option [selected]="scenarioStatus(scenarioReportOutline.scenarioId) === UNSUPPORTED">
-                                {{ UNSUPPORTED }}
-                            </option>
-                        </select>
+                    <td *ngIf="jiraTestExecutionId">
+                        <ng-container *ngIf="jiraLinkFrom(scenarioReportOutline.scenarioId) !== null">
+                            <chutney-delete-confirm-dialog class="me-2 mt-1"
+                                [dialogMessage]="('campaigns.execution.update.jira' | translate)" [label]=null
+                                [title]="('global.actions.update' | translate)"
+                                [disabled]="selectedStatusByScenarioId.get(scenarioReportOutline.scenarioId) !=='PASS' && selectedStatusByScenarioId.get(scenarioReportOutline.scenarioId) !=='FAIL'"
+                                [btnSizeClass]="'sm'" [btnClassIcon]="'fa-pencil-alt'" [btnColor]="'primary'"
+                                (deleteEvent)="updateStatus(scenarioReportOutline.scenarioId)">
+                            </chutney-delete-confirm-dialog>
+                            <select class="custom-select mt-1"
+                                (change)="selectedUpdateStatus(scenarioReportOutline.scenarioId, $event)"
+                                style="width: 120px">
+                                <option *ngFor="let enum of xrayStatuses()"
+                                    [selected]="scenarioStatus(scenarioReportOutline.scenarioId) === enum">
+                                    {{ enum }}
+                                </option>
+                                <option [selected]="scenarioStatus(scenarioReportOutline.scenarioId) === UNSUPPORTED">
+                                    {{ UNSUPPORTED }}
+                                </option>
+                            </select>
+                        </ng-container>
                     </td>
                 </tr>
             </tbody>

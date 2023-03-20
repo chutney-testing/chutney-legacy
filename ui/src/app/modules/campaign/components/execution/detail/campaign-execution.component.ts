@@ -6,6 +6,7 @@ import { CampaignService, JiraPluginService } from "@core/services";
 import { Params } from "@angular/router";
 import { ExecutionStatus } from "@core/model/scenario/execution-status";
 import { EventManagerService } from "@shared";
+import { sortByAndOrder } from '@shared/tools';
 
 @Component({
     selector: 'chutney-campaign-execution',
@@ -25,6 +26,9 @@ export class CampaignExecutionComponent implements OnInit {
     private jiraScenarios: JiraScenario[] = [];
     UNSUPPORTED = 'UNSUPPORTED';
     selectedStatusByScenarioId: Map<string, string> = new Map();
+
+    orderBy: string;
+    reverseOrder: boolean;
 
     constructor(
         private jiraLinkService: JiraPluginService,
@@ -141,5 +145,18 @@ export class CampaignExecutionComponent implements OnInit {
             return 'fa-regular fa-circle text-warning';
         }
         return null;
+    }
+
+    sortBy(property) {
+        if (this.orderBy === property) {
+            this.reverseOrder = !this.reverseOrder;
+        }
+        this.orderBy = property;
+
+        return sortByAndOrder(
+            this.report.report.scenarioExecutionReports,
+            (i) => i[property] == null ? '' : i[property],
+            this.reverseOrder
+        );
     }
 }
