@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 
+import com.chutneytesting.action.spi.injectable.Target;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.RxBus;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
@@ -21,11 +22,9 @@ import com.chutneytesting.engine.domain.execution.event.EndScenarioExecutionEven
 import com.chutneytesting.engine.domain.execution.event.StartScenarioExecutionEvent;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
-import com.chutneytesting.action.spi.injectable.Target;
 import io.reactivex.observers.TestObserver;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

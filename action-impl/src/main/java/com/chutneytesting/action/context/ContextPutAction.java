@@ -2,7 +2,6 @@ package com.chutneytesting.action.context;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.builder.ToStringStyle.NO_CLASS_NAME_STYLE;
 
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
@@ -11,7 +10,6 @@ import com.chutneytesting.action.spi.injectable.Logger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class ContextPutAction implements Action {
 

@@ -1,12 +1,11 @@
 package com.chutneytesting.agent.infra.storage;
 
-import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 import static java.util.Optional.of;
 
+import com.chutneytesting.server.core.domain.tools.ZipUtils;
 import com.chutneytesting.tools.ThrowingRunnable;
 import com.chutneytesting.tools.ThrowingSupplier;
-import com.chutneytesting.server.core.domain.tools.ZipUtils;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -23,9 +22,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.ZipOutputStream;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
 public class JsonFileAgentNetworkDao {
 

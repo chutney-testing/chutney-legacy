@@ -2,9 +2,9 @@ package com.chutneytesting.action.selenium;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
 
-import com.chutneytesting.action.spi.FinallyAction;
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
+import com.chutneytesting.action.spi.FinallyAction;
 import com.chutneytesting.action.spi.injectable.FinallyActionRegistry;
 import com.chutneytesting.action.spi.injectable.Input;
 import com.chutneytesting.action.spi.injectable.Logger;

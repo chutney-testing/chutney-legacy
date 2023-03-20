@@ -3,7 +3,6 @@ package com.chutneytesting.engine.domain.execution.report;
 import com.google.common.collect.Ordering;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public enum Status {
     SUCCESS, WARN, FAILURE, NOT_EXECUTED, STOPPED, PAUSED, RUNNING, EXECUTED;
