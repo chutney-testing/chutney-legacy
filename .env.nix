@@ -1,7 +1,7 @@
 { nixpkgs ? import <nixpkgs> {} }:
 with nixpkgs;
 let
-  jdk = openjdk11;
+  jdk = openjdk17;
   mvn = maven.override { jdk  = jdk; };
 in
 mkShell {
