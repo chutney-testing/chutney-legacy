@@ -3,10 +3,10 @@
         "name": "Test iterations",
         "steps": [
             {
-                "name": "<index> - Hello website on ${#env} with user ${#user}",
+                "name": "<i> - Hello website on ${#env} with user ${#user}",
                 "type": "success",
                 "validations" : {
-                    "pouet_<index>_ok": "${#env == \"B\"}"
+                    "pouet_<i>_ok": "${#env == \"B\"}"
                 },
                 "strategy": {
                     "type": "for",

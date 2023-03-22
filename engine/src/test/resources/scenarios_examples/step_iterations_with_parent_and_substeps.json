@@ -3,17 +3,17 @@
         "name": "Test iterations",
         "steps": [
             {
-                "name": "<index> - Hello website on ${#env} with user ${#user}",
+                "name": "<i> - Hello website on ${#env} with user ${#user}",
                 "steps": [
                     {
-                        "name": "<index> - I am soft",
+                        "name": "<i> - I am soft",
                         "steps": [
                             {
-                                "name": "<index> - USER ${#user}",
+                                "name": "<i> - USER ${#user}",
                                 "type": "failure"
                             },
                             {
-                                "name": "<index> - ENV ${#env}",
+                                "name": "<i> - ENV ${#env}",
                                 "type": "success"
                             }
                         ],

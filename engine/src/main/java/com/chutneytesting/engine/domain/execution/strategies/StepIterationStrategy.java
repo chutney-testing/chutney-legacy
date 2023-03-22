@@ -11,6 +11,7 @@ import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
@@ -34,6 +35,7 @@ public class StepIterationStrategy implements StepExecutionStrategy {
         );
 
         List<Map<String, Object>> dataset = (List<Map<String, Object>>) step.dataEvaluator().evaluate(strategyDefinition.strategyProperties.get("dataset"), scenarioContext);
+        final String indexName = (String) Optional.ofNullable(strategyDefinition.strategyProperties.get("index")).orElse("i");
         step.beginExecution(scenarioExecution);
         AtomicInteger index = new AtomicInteger(0);
 
@@ -42,17 +44,16 @@ public class StepIterationStrategy implements StepExecutionStrategy {
             step.removeStepExecution();
 
             List<Pair<Step, Map<String, Object>>> iterations = dataset.stream()
-                .map(data -> buildParentIteration(index.getAndIncrement(), step, subSteps, data))
+                .map(data -> buildParentIteration(indexName, index.getAndIncrement(), step, subSteps, data))
                 .peek(p -> step.addStepExecution(p.getLeft()))
                 .collect(Collectors.toList());
 
             iterations.forEach(it ->
                 DefaultStepExecutionStrategy.instance.execute(scenarioExecution, it.getLeft()/*step*/, scenarioContext, it.getRight()/*localContext*/, strategies));
 
-        }
-        else {
+        } else {
             List<Pair<Step, Map<String, Object>>> iterations = dataset.stream()
-                .map(data -> buildIteration(index.getAndIncrement(), step, data))
+                .map(data -> buildIteration(indexName, index.getAndIncrement(), step, data))
                 .peek(e -> step.addStepExecution(e.getKey()))
                 .collect(Collectors.toList());
 
@@ -63,12 +64,12 @@ public class StepIterationStrategy implements StepExecutionStrategy {
         return step.status();
     }
 
-    private Pair<Step, Map<String, Object>> buildParentIteration(Integer index, Step step, List<Step> subSteps, Map<String, Object> data) {
+    private Pair<Step, Map<String, Object>> buildParentIteration(String indexName, Integer index, Step step, List<Step> subSteps, Map<String, Object> data) {
 
-        StepDefinition newDef = iterationDefinition(index, step.definition(), step.dataEvaluator(), new StepStrategyDefinition("", new StrategyProperties()), data);
+        StepDefinition newDef = iterationDefinition(indexName, index, step.definition(), step.dataEvaluator(), new StepStrategyDefinition("", new StrategyProperties()), data);
         List<Step> newSubSteps = subSteps.stream().map(
             subStep -> {
-                StepDefinition subStepDef = iterationDefinition(index, subStep.definition(), subStep.dataEvaluator(), subStep.strategy().orElse(new StepStrategyDefinition("", new StrategyProperties())), data);
+                StepDefinition subStepDef = iterationDefinition(indexName, index, subStep.definition(), subStep.dataEvaluator(), subStep.strategy().orElse(new StepStrategyDefinition("", new StrategyProperties())), data);
                 return new Step(subStep.dataEvaluator(), subStepDef, subStep.executor(), subStep.subSteps());
             }
         ).collect(Collectors.toList());
@@ -79,32 +80,32 @@ public class StepIterationStrategy implements StepExecutionStrategy {
         );
     }
 
-    private Pair<Step, Map<String, Object>> buildIteration(Integer index, Step step, Map<String, Object> data) {
+    private Pair<Step, Map<String, Object>> buildIteration(String indexName, Integer index, Step step, Map<String, Object> data) {
         return Pair.of(
-            new Step(step.dataEvaluator(), iterationDefinition(index, step.definition(), step.dataEvaluator(), new StepStrategyDefinition("", new StrategyProperties()), data), step.executor(), emptyList()),
+            new Step(step.dataEvaluator(), iterationDefinition(indexName, index, step.definition(), step.dataEvaluator(), new StepStrategyDefinition("", new StrategyProperties()), data), step.executor(), emptyList()),
             data
         );
     }
 
-    private StepDefinition iterationDefinition(Integer index, StepDefinition definition, StepDataEvaluator evaluator, StepStrategyDefinition strategyDefinition, Map<String, Object> data) {
+    private StepDefinition iterationDefinition(String indexName, Integer index, StepDefinition definition, StepDataEvaluator evaluator, StepStrategyDefinition strategyDefinition, Map<String, Object> data) {
         return StepDefinitionBuilder.copyFrom(definition)
-            .withName(evaluator.evaluate(index(index, definition.name), data))
-            .withInputs(index(index, definition.inputs()))
-            .withOutputs(index(index, definition.outputs))
-            .withValidations(index(index, definition.validations))
+            .withName(evaluator.evaluate(index(indexName, index, definition.name), data))
+            .withInputs(index(indexName, index, definition.inputs()))
+            .withOutputs(index(indexName, index, definition.outputs))
+            .withValidations(index(indexName, index, definition.validations))
             .withStrategy(strategyDefinition)
             .build();
     }
 
-    private String index(Integer index, String string) {
-        return string.replace("<index>", index.toString());
+    private String index(String indexName, Integer index, String string) {
+        return string.replace("<" + indexName + ">", index.toString());
     }
 
-    private Map<String, Object> index(Integer index, Map<String, Object> inputs) {
+    private Map<String, Object> index(String indexName, Integer index, Map<String, Object> inputs) {
         return inputs.entrySet().stream()
             .collect(Collectors.toMap(
-                e -> index(index, e.getKey()),
-                e -> index(index, e.getValue().toString())
+                e -> index(indexName, index, e.getKey()),
+                e -> index(indexName, index, e.getValue().toString())
             ));
     }
 }
