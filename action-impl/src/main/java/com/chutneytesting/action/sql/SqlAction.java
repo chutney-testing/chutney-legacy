@@ -8,10 +8,10 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
+import com.chutneytesting.action.spi.injectable.ActionsConfiguration;
 import com.chutneytesting.action.spi.injectable.Input;
 import com.chutneytesting.action.spi.injectable.Logger;
 import com.chutneytesting.action.spi.injectable.Target;
-import com.chutneytesting.action.spi.injectable.ActionsConfiguration;
 import com.chutneytesting.action.spi.validation.Validator;
 import com.chutneytesting.action.sql.core.DefaultSqlClientFactory;
 import com.chutneytesting.action.sql.core.Records;
@@ -59,7 +59,7 @@ public class SqlAction implements Action {
     public ActionExecutionResult execute() {
         SqlClient sqlClient = clientFactory.create(target);
         try {
-            List<Records> records = new ArrayList<>();
+            var records = new ArrayList<Records>();
             Map<String, Object> outputs = new HashMap<>();
             AtomicBoolean failure = new AtomicBoolean(false);
             statements.forEach(statement -> {

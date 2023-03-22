@@ -35,7 +35,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -93,7 +92,7 @@ public class HttpEnvironmentApiTest {
 
         List<String> expectedEnvNames = stream(environmentNames)
             .sorted(Comparator.naturalOrder())
-            .collect(Collectors.toList());
+            .toList();
 
         for (int i = 0; i < expectedEnvNames.size(); i++) {
             resultActions.andExpect(jsonPath("$.[" + i + "].description", equalTo(expectedEnvNames.get(i) + " description")));

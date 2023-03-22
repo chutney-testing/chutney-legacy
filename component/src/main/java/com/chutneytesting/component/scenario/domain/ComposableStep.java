@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 public class ComposableStep {
@@ -60,7 +59,7 @@ public class ComposableStep {
         parentsAcc.add(composableStep.id);
         List<String> childrenIds = composableStep.steps.stream()
             .map(cs -> cs.id)
-            .collect(Collectors.toList());
+            .toList();
 
         if (!Collections.disjoint(childrenIds, parentsAcc)) {
             return true;

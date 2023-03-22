@@ -99,15 +99,15 @@ public class DiscoverySelectorResolver {
             resolvePackage(engineDescriptor, "");
         }
 
-        List<String> uniqueIdsStrings = uniqueIds.stream().map(UniqueId::toString).collect(toList());
+        List<String> uniqueIdsStrings = uniqueIds.stream().map(UniqueId::toString).toList();
         List<? extends TestDescriptor> testDescriptors = engineDescriptor.getChildren().stream()
             .flatMap(td -> td.getChildren().stream())
             .filter(ts -> uniqueIdsStrings.stream().noneMatch(uis -> ts.getUniqueId().toString().contains(uis)))
-            .collect(toList());
+            .toList();
 
         testDescriptors.forEach(TestDescriptor::removeFromHierarchy);
 
-        List<? extends TestDescriptor> emptyFeatures = engineDescriptor.getChildren().stream().filter(ts -> ts.getChildren().isEmpty()).collect(toList());
+        List<? extends TestDescriptor> emptyFeatures = engineDescriptor.getChildren().stream().filter(ts -> ts.getChildren().isEmpty()).toList();
         emptyFeatures.forEach(TestDescriptor::removeFromHierarchy);
     }
 
@@ -161,7 +161,7 @@ public class DiscoverySelectorResolver {
                 List<Path> features = Files.walk(dir.toPath())
                     .filter(path -> path.toFile().isFile())
                     .filter(path -> hasFeatureExtension(path.toFile().getName()))
-                    .collect(toList());
+                    .toList();
 
                 features.forEach(path -> resolveFile(parent, path.toFile()));
             } catch (IOException ioe) {
@@ -255,8 +255,8 @@ public class DiscoverySelectorResolver {
     private TestSource featureSource(TestSource testSource) {
         if (classMode) {
             String name = testSource.toString();
-            if (testSource instanceof UriSource) {
-                name = ((UriSource) testSource).getUri().getSchemeSpecificPart();
+            if (testSource instanceof UriSource uriSource) {
+                name = uriSource.getUri().getSchemeSpecificPart();
             }
             return ClassSource.from(name);
         }

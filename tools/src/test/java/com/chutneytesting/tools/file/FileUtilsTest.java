@@ -1,6 +1,5 @@
 package com.chutneytesting.tools.file;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.nio.file.Path;
@@ -29,7 +28,7 @@ class FileUtilsTest {
             }
         };
 
-        Collection<Thread> threads = IntStream.range(0, nbSync).mapToObj(i -> new Thread(run)).collect(toList());
+        Collection<Thread> threads = IntStream.range(0, nbSync).mapToObj(i -> new Thread(run)).toList();
         threads.forEach(Thread::start);
         threads.forEach(thread -> {
             try {

@@ -15,7 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 
 public final class DataSetPatchUtils {
@@ -103,7 +102,7 @@ public final class DataSetPatchUtils {
             List<String> originalLines = stringLines(original);
             Patch<String> diff = DiffUtils.diff(originalLines, stringLines(revised));
             List<String> unifiedDiff = UnifiedDiffUtils.generateUnifiedDiff("original", "revised", originalLines, diff, 0);
-            return unifiedDiff.stream().collect(Collectors.joining("\r"));
+            return String.join("\r", unifiedDiff);
         } catch (DiffException e) {
             throw new RuntimeException(e);
         }

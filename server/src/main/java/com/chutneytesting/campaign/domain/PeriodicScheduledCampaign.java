@@ -48,23 +48,13 @@ public class PeriodicScheduledCampaign {
     }
 
     public PeriodicScheduledCampaign nextScheduledExecution() {
-        LocalDateTime scheduledDate;
-        switch (this.frequency) {
-            case HOURLY:
-                scheduledDate = this.nextExecutionDate.plusHours(1);
-                break;
-            case DAILY:
-                scheduledDate = this.nextExecutionDate.plusDays(1);
-                break;
-            case WEEKLY:
-                scheduledDate = this.nextExecutionDate.plusWeeks(1);
-                break;
-            case MONTHLY:
-                scheduledDate = this.nextExecutionDate.plusMonths(1);
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + this.frequency);
-        }
+        LocalDateTime scheduledDate = switch (this.frequency) {
+            case HOURLY -> this.nextExecutionDate.plusHours(1);
+            case DAILY -> this.nextExecutionDate.plusDays(1);
+            case WEEKLY -> this.nextExecutionDate.plusWeeks(1);
+            case MONTHLY -> this.nextExecutionDate.plusMonths(1);
+            default -> throw new IllegalStateException("Unexpected value: " + this.frequency);
+        };
         return new PeriodicScheduledCampaign(id, campaignId, campaignTitle, scheduledDate, frequency);
     }
 }

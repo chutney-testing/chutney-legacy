@@ -2,9 +2,9 @@ package com.chutneytesting.action.selenium;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
 
-import com.chutneytesting.action.spi.FinallyAction;
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
+import com.chutneytesting.action.spi.FinallyAction;
 import com.chutneytesting.action.spi.injectable.FinallyActionRegistry;
 import com.chutneytesting.action.spi.injectable.Input;
 import com.chutneytesting.action.spi.injectable.Logger;
@@ -40,19 +40,9 @@ public class SeleniumRemoteDriverInitAction implements Action {
     public ActionExecutionResult execute() {
         WebDriver webDriver;
         switch (Optional.ofNullable(browser).orElse("")) {
-            case "chrome": {
-                webDriver = createChromeRemoteWebDriver();
-                break;
-            }
-            case "internet explorer": {
-                webDriver = createInternetExplorerRemoteWebDriver();
-                break;
-            }
-            case "firefox":
-            default: {
-                webDriver = createFirefoxRemoteWebDriver();
-                break;
-            }
+            case "chrome" -> webDriver = createChromeRemoteWebDriver();
+            case "internet explorer" -> webDriver = createInternetExplorerRemoteWebDriver();
+            default -> webDriver = createFirefoxRemoteWebDriver();
         }
 
         if (webDriver != null) {

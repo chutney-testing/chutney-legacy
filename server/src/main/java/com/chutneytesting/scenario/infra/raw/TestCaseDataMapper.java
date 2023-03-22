@@ -27,12 +27,10 @@ public class TestCaseDataMapper {
     }
 
     public static GwtTestCase fromDto(TestCaseData testCaseData) {
-        switch (testCaseData.contentVersion) {
-            case "v2.1":
-                return fromV2_1(testCaseData);
-            default:
-                throw new RuntimeException("Cannot deserialize test case [" + testCaseData.id + "], unknown version [" + testCaseData.contentVersion + "]");
+        if (testCaseData.contentVersion.equals("v2.1")) {
+            return fromV2_1(testCaseData);
         }
+        throw new RuntimeException("Cannot deserialize test case [" + testCaseData.id + "], unknown version [" + testCaseData.contentVersion + "]");
     }
 
     private static GwtTestCase fromV2_1(TestCaseData dto) {

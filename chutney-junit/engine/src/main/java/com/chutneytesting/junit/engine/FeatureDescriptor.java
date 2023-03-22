@@ -5,7 +5,6 @@ import com.google.common.collect.Ordering;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
@@ -56,7 +55,7 @@ public class FeatureDescriptor extends AbstractTestDescriptor implements Node<Ch
             .reduce(StatusDto.SUCCESS, EXECUTION_STATUS_STATUS_ORDERING::min);
 
         if (reducedStatus.equals(StatusDto.NOT_EXECUTED)) {
-            List<StatusDto> notExecutedStatus = severalStatus.stream().filter(s -> !s.equals(StatusDto.NOT_EXECUTED)).collect(Collectors.toList());
+            List<StatusDto> notExecutedStatus = severalStatus.stream().filter(s -> !s.equals(StatusDto.NOT_EXECUTED)).toList();
             if (!notExecutedStatus.isEmpty()) {
                 return StatusDto.RUNNING;
             }

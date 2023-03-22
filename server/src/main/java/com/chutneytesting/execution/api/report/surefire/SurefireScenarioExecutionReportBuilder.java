@@ -15,7 +15,6 @@ import java.io.UncheckedIOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -103,6 +102,6 @@ public class SurefireScenarioExecutionReportBuilder {
     }
 
     private String toSurefireLabel(Collection<String> labels) {
-        return labels.stream().collect(Collectors.joining(", "));
+        return String.join(", ", labels);
     }
 }

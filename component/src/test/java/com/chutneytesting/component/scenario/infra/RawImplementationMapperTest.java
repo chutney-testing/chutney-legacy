@@ -16,21 +16,36 @@ public class RawImplementationMapperTest {
     @Test
     public void should_map_implementation_keeping_parameter_reference() {
         String paramRefString = "**param**";
-        String implementation = new StringBuilder()
-            .append("{")
-            .append("\"identifier\": \"action-id\"")
-            .append(",")
-            .append("\"target\": \"\"")
-            .append(",")
-            .append("\"hasTarget\": false")
-            .append(",")
-            .append("\"inputs\": [{\"name\": \"simpleInputName\", \"value\": \""+paramRefString+"\"}]")
-            .append(",")
-            .append("\"listInputs\": [{\"name\": \"listInputName\", \"values\": [\""+paramRefString+"\", \"anotherValue\"]}]")
-            .append(",")
-            .append("\"mapInputs\": [{\"name\": \"mapInputName\", \"values\": [{\"key\": \""+paramRefString+"\", \"value\": \""+paramRefString+"\"}]}]")
-            .append("}")
-            .toString();
+        String implementation = """
+            {
+                "identifier": "action-id",
+                "target": "",
+                "hasTarget": false,
+                "inputs": [
+                    {
+                        "name": "simpleInputName",
+                        "value": "**param**"
+                    }
+                 ],
+                "listInputs": [
+                    {
+                        "name": "listInputName",
+                        "values": ["**param**", "anotherValue"]
+                    }
+                ],
+                "mapInputs": [
+                    {
+                        "name": "mapInputName",
+                        "values": [
+                            {
+                                "key": "**param**",
+                                "value": "**param**"
+                            }
+                        ]
+                    }
+                ]
+            }
+            """;
 
         StepImplementation deserialize = sut.deserialize(implementation);
 

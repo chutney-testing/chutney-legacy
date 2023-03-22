@@ -52,9 +52,9 @@ public class JmsListenerAction implements Action {
             Optional<Message> matchingMessage = consumerCloseableResource.getResource().getMessage();
             if (matchingMessage.isPresent()) {
                 Message message = matchingMessage.get();
-                if (message instanceof TextMessage) {
-                    logger.info("Jms message received: " + ((TextMessage) message).getText());
-                    return ActionExecutionResult.ok(toOutputs((TextMessage) message));
+                if (message instanceof TextMessage textMessage) {
+                    logger.info("Jms message received: " + textMessage.getText());
+                    return ActionExecutionResult.ok(toOutputs(textMessage));
                 } else {
                     logger.error("JMS message type not handled: " + message.getClass().getSimpleName());
                 }

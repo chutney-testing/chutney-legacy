@@ -81,12 +81,9 @@ public class JsonCompareAction implements Action {
     }
 
     private boolean isEqual(Object read1, Object read2) {
-        switch (COMPARE_MODE.valueOf(mode)) {
-            case STRICT:
-                return read1.equals(read2);
-            case LENIENT:
-                return lenientEqual(read1, read2, null);
-        }
-        return false;
+        return switch (COMPARE_MODE.valueOf(mode)) {
+            case STRICT -> read1.equals(read2);
+            case LENIENT -> lenientEqual(read1, read2, null);
+        };
     }
 }

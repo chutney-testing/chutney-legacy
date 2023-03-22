@@ -93,7 +93,7 @@ public class SqlClient {
         }
 
         private static List<Column> createHeaders(ResultSetMetaData md, int columnCount) throws SQLException {
-            final List<Column> headers = new ArrayList<>(columnCount);
+            final var headers = new ArrayList<Column>(columnCount);
             int j = 0;
             for (int i = 1; i <= columnCount; i++) {
                 headers.add(new Column(md.getColumnLabel(i), j++));
@@ -102,7 +102,7 @@ public class SqlClient {
         }
 
         private static List<Row> createRows(ResultSet rs, List<Column> columns, int columnCount) throws SQLException {
-            final List<Row> rows = new ArrayList<>();
+            final var rows = new ArrayList<Row>();
             int j = 0;
             while (rs.next()) {
                 if (j++ > 100000) {

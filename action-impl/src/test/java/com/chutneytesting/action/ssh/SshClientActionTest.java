@@ -136,7 +136,7 @@ public class SshClientActionTest {
         softly.assertThat(errors.get(2)).isEqualTo("[Target url is not valid: null target] not applied because of exception java.lang.NullPointerException(null)");
         softly.assertThat(errors.get(3)).isEqualTo("[Target url has an undefined host: null target] not applied because of exception java.lang.NullPointerException(null)");
         softly.assertThat(errors.get(4)).isEqualTo("No commands provided (List)");
-        softly.assertThat(errors.get(5)).isEqualTo("[commands should not be empty] not applied because of exception java.lang.NullPointerException(null)");
+        softly.assertThat(errors.get(5)).isEqualTo("[commands should not be empty] not applied because of exception java.lang.NullPointerException(Cannot invoke \"java.util.List.isEmpty()\" because \"m\" is null)");
         softly.assertAll();
     }
 }

@@ -50,38 +50,24 @@ public class DateTimeFunctions {
     @SpelFunction
     public static DateTimeFormatter isoDateFormatter(String type) {
         if (type != null) {
-            switch (type.toUpperCase()) {
-                case "INSTANT":
-                    return DateTimeFormatter.ISO_INSTANT;
-                case "ZONED_DATE_TIME":
-                    return DateTimeFormatter.ISO_ZONED_DATE_TIME;
-                case "DATE_TIME":
-                    return DateTimeFormatter.ISO_DATE_TIME;
-                case "DATE":
-                    return DateTimeFormatter.ISO_DATE;
-                case "TIME":
-                    return DateTimeFormatter.ISO_TIME;
-                case "LOCAL_DATE_TIME":
-                    return DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-                case "LOCAL_DATE":
-                    return DateTimeFormatter.ISO_LOCAL_DATE;
-                case "LOCAL_TIME":
-                    return DateTimeFormatter.ISO_LOCAL_TIME;
-                case "OFFSET_DATE_TIME":
-                    return DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-                case "OFFSET_DATE":
-                    return DateTimeFormatter.ISO_OFFSET_DATE;
-                case "OFFSET_TIME":
-                    return DateTimeFormatter.ISO_OFFSET_TIME;
-                case "ORDINAL_DATE":
-                    return DateTimeFormatter.ISO_ORDINAL_DATE;
-                case "ISO_WEEK_DATE":
-                    return DateTimeFormatter.ISO_WEEK_DATE;
-                case "BASIC_DATE":
-                    return DateTimeFormatter.BASIC_ISO_DATE;
-                case "RFC_DATE_TIME":
-                    return DateTimeFormatter.RFC_1123_DATE_TIME;
-            }
+            return switch (type.toUpperCase()) {
+                case "INSTANT" -> DateTimeFormatter.ISO_INSTANT;
+                case "ZONED_DATE_TIME" -> DateTimeFormatter.ISO_ZONED_DATE_TIME;
+                case "DATE_TIME" -> DateTimeFormatter.ISO_DATE_TIME;
+                case "DATE" -> DateTimeFormatter.ISO_DATE;
+                case "TIME" -> DateTimeFormatter.ISO_TIME;
+                case "LOCAL_DATE_TIME" -> DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+                case "LOCAL_DATE" -> DateTimeFormatter.ISO_LOCAL_DATE;
+                case "LOCAL_TIME" -> DateTimeFormatter.ISO_LOCAL_TIME;
+                case "OFFSET_DATE_TIME" -> DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+                case "OFFSET_DATE" -> DateTimeFormatter.ISO_OFFSET_DATE;
+                case "OFFSET_TIME" -> DateTimeFormatter.ISO_OFFSET_TIME;
+                case "ORDINAL_DATE" -> DateTimeFormatter.ISO_ORDINAL_DATE;
+                case "ISO_WEEK_DATE" -> DateTimeFormatter.ISO_WEEK_DATE;
+                case "BASIC_DATE" -> DateTimeFormatter.BASIC_ISO_DATE;
+                case "RFC_DATE_TIME" -> DateTimeFormatter.RFC_1123_DATE_TIME;
+                default -> throw new IllegalArgumentException("Unknown date time formatter type [" + type + "]");
+            };
         }
         throw new IllegalArgumentException("Unknown date time formatter type [" + type + "]");
     }

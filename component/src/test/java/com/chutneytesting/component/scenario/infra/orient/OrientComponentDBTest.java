@@ -20,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.junit.jupiter.api.AfterAll;
@@ -133,7 +132,7 @@ public class OrientComponentDBTest {
 
         // Then
         ZipFile zipFile = new ZipFile(backup.toString());
-        List<String> entriesNames = zipFile.stream().map(ZipEntry::getName).collect(Collectors.toList());
+        List<String> entriesNames = zipFile.stream().map(ZipEntry::getName).toList();
         int dbchangelogCount = 0;
         int denoteCount = 0;
         int funcstepCount = 0;

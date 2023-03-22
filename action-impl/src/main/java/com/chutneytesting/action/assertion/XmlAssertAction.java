@@ -91,11 +91,11 @@ public class XmlAssertAction implements Action {
             return null;
         }
         final String evaluatedValueAsString;
-        if (evaluationResult instanceof Text) {
-            evaluatedValueAsString = ((Text) evaluationResult).getText();
-        } else if (evaluationResult instanceof Element) {
-            List<Content> contents = ((Element) evaluationResult).getContent((Filter<Content>) new ContentFilter(ContentFilter.COMMENT).negate());
-            List<Content> cdata = ((Element) evaluationResult).getContent(new ContentFilter(ContentFilter.CDATA));
+        if (evaluationResult instanceof Text text) {
+            evaluatedValueAsString = text.getText();
+        } else if (evaluationResult instanceof Element element) {
+            List<Content> contents = element.getContent((Filter<Content>) new ContentFilter(ContentFilter.COMMENT).negate());
+            List<Content> cdata = element.getContent(new ContentFilter(ContentFilter.CDATA));
             if (contents.size() == 1) {
                 evaluatedValueAsString = convertEvaluationResultToString(contents.get(0));
             } else if (cdata.size() == 1) {
@@ -105,8 +105,8 @@ public class XmlAssertAction implements Action {
             } else {
                 return "!!!MULTIPLE!";
             }
-        } else if (evaluationResult instanceof Attribute) {
-            evaluatedValueAsString = ((Attribute) evaluationResult).getValue();
+        } else if (evaluationResult instanceof Attribute attribute) {
+            evaluatedValueAsString = attribute.getValue();
         } else {
             evaluatedValueAsString = String.valueOf(evaluationResult);
         }

@@ -9,6 +9,7 @@ import com.chutneytesting.glacio.domain.parser.DebugParser;
 import com.chutneytesting.glacio.domain.parser.IParseExecutableStep;
 import com.chutneytesting.glacio.domain.parser.NoGlacioParser;
 import com.chutneytesting.glacio.domain.parser.SuccessParser;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -44,6 +45,6 @@ class ParserClasspathReaderTest {
 
     private List<IParseExecutableStep> getIParseExecutableSteps() {
         Map<Pair<Locale, String>, IParseExecutableStep> glacioParsers = createGlacioParsers("META-INF/extension/chutney.glacio.parsers");
-        return glacioParsers.values().stream().collect(Collectors.toList());
+        return new ArrayList<>(glacioParsers.values());
     }
 }

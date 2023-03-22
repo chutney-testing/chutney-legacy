@@ -20,8 +20,8 @@ public final class JsonUtils {
     public static String jsonStringify(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof String) {
-            return (String) obj;
+        } else if (obj instanceof String string) {
+            return string;
         } else {
             try {
                 return om.writeValueAsString(obj);

@@ -3,7 +3,6 @@ package com.chutneytesting.engine.domain.execution.report;
 import com.google.common.collect.Ordering;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public enum Status {
     SUCCESS, WARN, FAILURE, NOT_EXECUTED, STOPPED, PAUSED, RUNNING, EXECUTED;
@@ -17,7 +16,7 @@ public enum Status {
             .reduce(SUCCESS, EXECUTION_STATUS_STATUS_ORDERING::min);
 
         if(reducedStatus.equals(Status.NOT_EXECUTED)) {
-            List<Status> notExecutedStatus = severalStatus.stream().filter(s -> !s.equals(NOT_EXECUTED)).collect(Collectors.toList());
+            List<Status> notExecutedStatus = severalStatus.stream().filter(s -> !s.equals(NOT_EXECUTED)).toList();
             if(!notExecutedStatus.isEmpty()) {
                 return RUNNING;
             }

@@ -59,7 +59,7 @@ public class MongoFindAction implements Action {
                 .limit(limit)
                 .map(Document::toJson);
 
-            List<String> documentList = new ArrayList<>();
+            var documentList = new ArrayList<String>();
             documents.iterator().forEachRemaining(documentList::add);
             logger.info("Found " + documentList.size() + " document(s)");
             return ActionExecutionResult.ok(Collections.singletonMap("documents", documentList));

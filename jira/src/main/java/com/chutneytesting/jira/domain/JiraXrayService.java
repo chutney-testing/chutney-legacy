@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +102,7 @@ public class JiraXrayService {
         Map<String, String> errors = new HashMap<>();
         if (!currentStep.errors.isEmpty()) {
             errors.put(parentStep + " > " + currentStep.name,
-                currentStep.errors.stream().filter(s -> !s.startsWith("data:image/png")).collect(Collectors.toList()).toString());
+                currentStep.errors.stream().filter(s -> !s.startsWith("data:image/png")).toList().toString());
         }
         if (!currentStep.steps.isEmpty()) {
             currentStep.steps
@@ -120,7 +119,7 @@ public class JiraXrayService {
                     .stream()
                     .filter(s -> s.startsWith("data:image/png"))
                     .map(s -> new XrayEvidence(s.replace("data:image/png;base64,", ""), formatEvidenceFilename(parentStep, currentStep.name) + ".png", "image/png"))
-                    .collect(Collectors.toList())
+                    .toList()
             );
         }
         if (!currentStep.steps.isEmpty()) {

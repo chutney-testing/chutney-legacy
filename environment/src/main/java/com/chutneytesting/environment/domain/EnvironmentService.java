@@ -82,7 +82,7 @@ public class EnvironmentService {
         Set<Target> distinctTargets = new HashSet<>();
         List<Target> targetsList = listEnvironments().stream()
             .flatMap(environment -> environment.targets.stream())
-            .collect(Collectors.toList());
+            .toList();
         for (Target target : targetsList) {
             if (targetsNames.add(target.name)) {
                 distinctTargets.add(target);
@@ -124,6 +124,6 @@ public class EnvironmentService {
 
     private boolean envAlreadyExist(Environment environment) {
         return environmentRepository.listNames().stream().map(String::toUpperCase)
-            .collect(Collectors.toList()).contains(environment.name.toUpperCase());
+            .toList().contains(environment.name.toUpperCase());
     }
 }

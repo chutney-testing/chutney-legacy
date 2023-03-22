@@ -87,9 +87,9 @@ public class StepVertex {
                     .withExecutionParameters(subStep.executionParameters)
                     .build()
             )
-            .collect(toList());
+            .toList();
 
-        vertices.stream().forEach(v ->
+        vertices.forEach(v ->
             vertex.addEdge(v.vertex, GE_STEP_CLASS).setProperty(GE_STEP_CLASS_PROPERTY_PARAMETERS, v.executionParameters())
         );
     }

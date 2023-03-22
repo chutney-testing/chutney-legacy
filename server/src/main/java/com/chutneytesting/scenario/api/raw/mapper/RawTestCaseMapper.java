@@ -67,12 +67,12 @@ public class RawTestCaseMapper {
     }
 
     public static RawTestCaseDto toDto(TestCase testCase) {
-        if (testCase instanceof RawTestCase) {
-            return toDto((RawTestCase) testCase);
+        if (testCase instanceof RawTestCase rawTestCase) {
+            return toDto(rawTestCase);
         }
 
-        if (testCase instanceof GwtTestCase) {
-            return toDto((GwtTestCase) testCase);
+        if (testCase instanceof GwtTestCase gwtTestCase) {
+            return toDto(gwtTestCase);
         }
 
         throw new IllegalStateException("Bad format." +

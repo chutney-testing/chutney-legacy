@@ -17,8 +17,8 @@ public class WebDriverSerializer extends StdSerializer<WebDriver> {
     public void serialize(WebDriver value, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStartObject();
         gen.writeStringField("driver", value.toString());
-        if (value instanceof RemoteWebDriver) {
-            gen.writeStringField("capabilities", ((RemoteWebDriver) value).getCapabilities().asMap().toString());
+        if (value instanceof RemoteWebDriver driver) {
+            gen.writeStringField("capabilities", driver.getCapabilities().asMap().toString());
         }
         gen.writeEndObject();
     }

@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 
@@ -70,9 +69,9 @@ public class InputParameterResolver implements ParameterResolver {
         if (parameter.rawType().equals(String.class)) {
             if (isPrimitiveOrWrapper(inputClassType)) {
                 return inputValue.toString();
-            } else if (inputValue instanceof Map) {
+            } else if (inputValue instanceof Map map) {
                 // TODO ugly hack since it is related to parsing, it should be out of the engine
-                return new JSONObject((Map) inputValue).toString();
+                return new JSONObject(map).toString();
             }
         } else if (inputClassType.equals(String.class)) {
             Object inputResolution = valueOf(parameter.rawType(), (String) inputValue);
@@ -109,7 +108,7 @@ public class InputParameterResolver implements ParameterResolver {
                         String inputName = getValidParameter(Parameter.fromJavaParameter(p));
                         return inputs.get(inputName);
                     })
-                .collect(Collectors.toList());
+                .toList();
             try {
                 return Optional.of(constructor.newInstance(parameters.toArray()));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {

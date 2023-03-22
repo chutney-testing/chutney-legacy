@@ -19,8 +19,8 @@ public class IsNullAsserter implements PlaceholderAsserter {
             return true;
         }
 
-        if (actual instanceof Collection) {
-            return ((Collection<?>) actual).isEmpty();
+        if (actual instanceof Collection<?> collection) {
+            return collection.isEmpty();
         }
 
         return false;

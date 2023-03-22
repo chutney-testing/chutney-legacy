@@ -77,34 +77,33 @@ public class StepDataEvaluator {
     @SuppressWarnings("unchecked")
     private Object evaluateObject(final Object object, final EvaluationContext evaluationContext) throws EvaluationException {
         Object inputEvaluatedValue;
-        if (object instanceof String) {
-            String stringValue = (String) object;
+        if (object instanceof String stringValue) {
             if (hasOnlyOneSpel(stringValue)) {
                 inputEvaluatedValue = Strings.replaceExpression(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX, EVALUATION_STRING_ESCAPE);
             } else {
                 inputEvaluatedValue = Strings.replaceExpressions(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX, EVALUATION_STRING_ESCAPE);
             }
-        } else if (object instanceof Map) {
+        } else if (object instanceof Map map) {
             Map evaluatedMap = new LinkedHashMap();
-            ((Map) object).forEach(
+            map.forEach(
                 (key, value) -> {
                     Object keyValue = evaluateObject(key, evaluationContext);
                     Object valueValue = evaluateObject(value, evaluationContext);
                     evaluatedMap.put(keyValue, valueValue);
-                    if (keyValue instanceof String) {
-                        evaluationContext.setVariable((String) keyValue, valueValue);
+                    if (keyValue instanceof String stringKeyValue) {
+                        evaluationContext.setVariable(stringKeyValue, valueValue);
                     }
                 });
             inputEvaluatedValue = evaluatedMap;
-        } else if (object instanceof List) {
+        } else if (object instanceof List list) {
             List evaluatedList = new ArrayList<>();
-            ((List) object).forEach(
+            list.forEach(
                 obj -> evaluatedList.add(evaluateObject(obj, evaluationContext))
             );
             inputEvaluatedValue = evaluatedList;
-        } else if (object instanceof Set) {
+        } else if (object instanceof Set set) {
             Set evaluatedSet = new LinkedHashSet();
-            ((Set) object).forEach(
+            set.forEach(
                 obj -> evaluatedSet.add(evaluateObject(obj, evaluationContext))
             );
             inputEvaluatedValue = evaluatedSet;

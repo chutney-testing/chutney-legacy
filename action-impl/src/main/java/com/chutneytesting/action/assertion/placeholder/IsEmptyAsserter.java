@@ -19,9 +19,8 @@ public class IsEmptyAsserter implements PlaceholderAsserter {
 
     public boolean assertValue(Logger logger, Object actual) {
         logger.info("Verify " + actual + " is empty");
-        if (actual instanceof JSONArray) {
-            JSONArray actualArray = (JSONArray) actual;
-            return actualArray.stream().map(e -> assertValue(logger, e)).reduce((a, b) -> a && b).orElse(true);
+        if (actual instanceof JSONArray jsonArray) {
+            return jsonArray.stream().map(e -> assertValue(logger, e)).reduce((a, b) -> a && b).orElse(true);
         } else {
             return actual.toString().isEmpty();
         }
