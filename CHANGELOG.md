@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.7.1](https://github.com/chutney-testing/chutney/tree/1.7.1)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.7.0...1.7.1)
+
+## What's Changed
+### 🚀 Implemented enhancements:
+* Sort scenarios on campaign execution report [\#1022](https://github.com/chutney-testing/chutney/pull/1022)
+* Getting result by headers is non sensitive [\#1004](https://github.com/chutney-testing/chutney/pull/1004)
+### 🐛 Fixed bugs:
+* Fix some bug in UI [\#1017](https://github.com/chutney-testing/chutney/pull/1017)
+### 🔧 Technical enhancements:
+* Put env in context once for all steps [\#1016](https://github.com/chutney-testing/chutney/pull/1016)
+* Rename Action pause/resume/stop as Command [\#1015](https://github.com/chutney-testing/chutney/pull/1015)
+* Upgrade to java 17 [\#1019](https://github.com/chutney-testing/chutney/pull/1019)
+
+
 ## [1.7.0](https://github.com/chutney-testing/chutney/tree/1.7.0)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.6.0...1.7.0)
