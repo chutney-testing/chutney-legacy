@@ -24,7 +24,7 @@ public class RemoteStepExecutor implements StepExecutor {
 
             guardFromIllegalReport(remoteReport);
 
-            step.updateFrom(remoteReport.actionStatus, remoteReport.stepResults, remoteReport.scenarioContext, remoteReport.errors, remoteReport.information);
+            step.updateContextFrom(remoteReport);
 
             // TODO update ScenarioExecution with registered FinallyAction
 

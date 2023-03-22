@@ -48,7 +48,7 @@ public class DefaultStepExecutor implements StepExecutor {
                 List<String> errors = action.validateInputs();
                 if (errors.isEmpty()) {
                     executionResult = action.execute();
-                    step.updateFrom(executionResult.status, executionResult.outputs);
+                    step.updateContextFrom(executionResult);
                 } else {
                     step.failure(errors.toArray(new String[0]));
                 }

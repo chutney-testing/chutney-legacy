@@ -440,7 +440,7 @@ public class StepTest {
 
         @Override
         public void execute(ScenarioExecution scenarioExecution, Target target, Step step) {
-            step.updateFrom(executionResult.status, executionResult.outputs);
+            step.updateContextFrom(executionResult);
         }
     }
 }

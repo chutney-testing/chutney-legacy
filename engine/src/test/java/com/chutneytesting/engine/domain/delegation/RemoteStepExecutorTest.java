@@ -47,13 +47,7 @@ public class RemoteStepExecutorTest {
         remoteStepExecutor.execute(null, mock(TargetImpl.class), mockStep);
 
         // Then
-        verify(mockStep, times(1)).updateFrom(
-            fakeRemoteReport.actionStatus,
-            fakeRemoteReport.stepResults,
-            fakeRemoteReport.scenarioContext,
-            fakeRemoteReport.errors,
-            fakeRemoteReport.information
-        );
+        verify(mockStep, times(1)).updateContextFrom(fakeRemoteReport);
     }
 
     @Test
@@ -98,13 +92,7 @@ public class RemoteStepExecutorTest {
         remoteStepExecutor.execute(null, mock(TargetImpl.class), spyCurrentStep);
 
         // Then
-        verify(spyCurrentStep, times(1)).updateFrom(
-            fakeRemoteReport.actionStatus,
-            fakeRemoteReport.stepResults,
-            fakeRemoteReport.scenarioContext,
-            fakeRemoteReport.errors,
-            fakeRemoteReport.information
-        );
+        verify(spyCurrentStep, times(1)).updateContextFrom(fakeRemoteReport);
         verify(spyCurrentStep, times(1)).failure(
             Lists.newArrayList(fakeRemoteReport.errors).toArray(new String[fakeRemoteReport.errors.size()])
         );
