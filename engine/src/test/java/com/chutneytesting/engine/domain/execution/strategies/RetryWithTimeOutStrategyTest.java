@@ -76,7 +76,7 @@ public class RetryWithTimeOutStrategyTest {
         strategyUnderTest.execute(createScenarioExecution(null), step, null, null);
 
         // Then
-        verify(step, times(1)).execute(any(), any());
+        verify(step, times(1)).execute(any(), any(), any() );
     }
 
     @Test
@@ -107,7 +107,7 @@ public class RetryWithTimeOutStrategyTest {
         stopExecution(scenarioExecution);
         Status stepExecutedStatus = strategyUnderTest.execute(scenarioExecution, step, null, null);
 
-        verify(step, times(1)).execute(any(), any());
+        verify(step, times(1)).execute(any(), any(), any());
         assertThat(stepExecutedStatus).isEqualTo(Status.STOPPED);
     }
 
@@ -120,7 +120,7 @@ public class RetryWithTimeOutStrategyTest {
         when(step.strategy()).thenReturn(Optional.of(strategyDefinition));
         strategyUnderTest.execute(createScenarioExecution(null), step, null, null);
 
-        verify(step, times(4)).execute(any(), any());
+        verify(step, times(4)).execute(any(), any(), any());
     }
 
     @Test
@@ -133,7 +133,7 @@ public class RetryWithTimeOutStrategyTest {
         when(step.errors()).thenReturn(of("Error message"));
         strategyUnderTest.execute(createScenarioExecution(null), step, null, null);
 
-        verify(step, times(3)).execute(any(), any());
+        verify(step, times(3)).execute(any(), any(), any());
         verify(step).addErrorMessage(eq("Error(s) on last step execution:"));
         verify(step).addErrorMessage(eq("Error message"));
     }
@@ -170,7 +170,7 @@ public class RetryWithTimeOutStrategyTest {
 
         strategy.execute(createScenarioExecution(null), rootStep, null, strategies);
 
-        strategiesMock.forEach(strat -> verify(strat, times(1)).execute(any(), any(), any(), any()));
+        strategiesMock.forEach(strat -> verify(strat, times(1)).execute(any(), any(), any(), any(), any()));
     }
 
     @Test
@@ -206,9 +206,9 @@ public class RetryWithTimeOutStrategyTest {
 
         strategyUnderTest.execute(createScenarioExecution(null), rootStep, null, strategies);
 
-        verify(strategy1, times(10)).execute(any(), eq(step1), any(), eq(strategies));
-        verify(strategy2, times(7)).execute(any(), eq(step2), any(), eq(strategies));
-        verify(strategy3, times(7)).execute(any(), eq(step3), any(), eq(strategies));
+        verify(strategy1, times(10)).execute(any(), eq(step1), any(), any(), eq(strategies));
+        verify(strategy2, times(7)).execute(any(), eq(step2), any(), any(), eq(strategies));
+        verify(strategy3, times(7)).execute(any(), eq(step3), any(), any(), eq(strategies));
     }
 
     @ParameterizedTest
@@ -247,7 +247,7 @@ public class RetryWithTimeOutStrategyTest {
 
     private StepExecutionStrategy mockStrategy(Status... expectedStatus) {
         StepExecutionStrategy strategyMock = mock(StepExecutionStrategy.class);
-        OngoingStubbing<Status> stub = when(strategyMock.execute(any(), any(), any(), any()));
+        OngoingStubbing<Status> stub = when(strategyMock.execute(any(), any(), any(), any(), any()));
 
         for (Status st : expectedStatus) {
             stub = stub.thenReturn(st);
@@ -258,7 +258,7 @@ public class RetryWithTimeOutStrategyTest {
 
     private Step mockStep(Status... expectedStatus) {
         Step stepMock = mock(Step.class);
-        OngoingStubbing<Status> stub = when(stepMock.execute(any(), any()));
+        OngoingStubbing<Status> stub = when(stepMock.execute(any(), any(), any()));
 
         for (Status st : expectedStatus) {
             stub = stub.thenReturn(st);

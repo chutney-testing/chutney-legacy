@@ -8,4 +8,12 @@ public class StepStrategyDefinition {
         this.type = type;
         this.strategyProperties = strategyProperties;
     }
+
+    @Override
+    public String toString() {
+        return "StepStrategyDefinition{" +
+            "type='" + type + '\'' +
+            ", strategyProperties=" + strategyProperties +
+            '}';
+    }
 }

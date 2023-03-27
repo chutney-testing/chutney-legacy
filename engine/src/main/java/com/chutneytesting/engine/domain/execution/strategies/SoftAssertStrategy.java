@@ -26,16 +26,17 @@ public class SoftAssertStrategy implements StepExecutionStrategy {
     public Status execute(ScenarioExecution scenarioExecution,
                           Step step,
                           ScenarioContext scenarioContext,
+                          Map<String, Object> localContext,
                           StepExecutionStrategies strategies) {
 
         if (step.isParentStep()) {
-            return softenStatus(executeSubSteps(scenarioExecution, step, scenarioContext, strategies));
+            return softenStatus(executeSubSteps(scenarioExecution, step, scenarioContext, localContext, strategies));
         }
 
-        return softenStatus(step.execute(scenarioExecution, scenarioContext));
+        return softenStatus(step.execute(scenarioExecution, scenarioContext, localContext));
     }
 
-    private Status executeSubSteps(ScenarioExecution scenarioExecution, Step step, ScenarioContext scenarioContext, StepExecutionStrategies strategies) {
+    private Status executeSubSteps(ScenarioExecution scenarioExecution, Step step, ScenarioContext scenarioContext, Map<String, Object> localContext, StepExecutionStrategies strategies) {
         final Map<Step, List<Status>> subStepsStatuses = new HashMap<>();
         subStepsStatuses.putIfAbsent(step, new ArrayList<>());
         Iterator<Step> subStepsIterator = step.subSteps().iterator();
@@ -46,7 +47,7 @@ public class SoftAssertStrategy implements StepExecutionStrategy {
                 try {
                     currentRunningStep = subStepsIterator.next();
                     StepExecutionStrategy strategy = strategies.buildStrategyFrom(currentRunningStep);
-                    Status childStatus = strategy.execute(scenarioExecution, currentRunningStep, scenarioContext, strategies);
+                    Status childStatus = strategy.execute(scenarioExecution, currentRunningStep, scenarioContext, localContext, strategies);
                     subStepsStatuses.get(step).add(childStatus);
                 } catch (RuntimeException e) {
                     LOGGER.warn("Intercepted exception!", e);

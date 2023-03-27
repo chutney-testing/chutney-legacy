@@ -1,0 +1,29 @@
+{
+    "scenario": {
+        "name": "Test iterations",
+        "steps": [
+            {
+                "name": "<i> - Hello website on ${#env} with user ${#user}",
+                "type": "success",
+                "validations" : {
+                    "pouet_<i>_ok": "${#env == \"B\"}"
+                },
+                "strategy": {
+                    "type": "for",
+                    "parameters": {
+                        "dataset": [
+                            {
+                                "env": "A",
+                                "user": "Tata"
+                            },
+                            {
+                                "env": "B",
+                                "user": "Baba"
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}

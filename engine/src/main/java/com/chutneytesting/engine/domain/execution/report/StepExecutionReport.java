@@ -1,5 +1,6 @@
 package com.chutneytesting.engine.domain.execution.report;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -71,8 +72,8 @@ public class StepExecutionReport implements Status.HavingStatus {
         this.duration = duration;
         this.startDate = startDate;
         this.status = status;
-        this.information = information;
-        this.errors = errors;
+        this.information = evaluatedInputs != null ? information : emptyList();
+        this.errors = evaluatedInputs != null ? errors : emptyList();
         this.steps = steps;
         this.type = type;
         this.targetName = targetName;

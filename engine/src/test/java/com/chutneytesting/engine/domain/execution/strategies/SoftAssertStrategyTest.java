@@ -19,11 +19,11 @@ public class SoftAssertStrategyTest {
     public void should_run_all_substeps_regardless_of_failure_when_using_soft_assert_on_parent_step() {
         // Given
         Step failureStep = mock(Step.class);
-        when(failureStep.execute(any(), any())).thenReturn(Status.FAILURE);
+        when(failureStep.execute(any(), any(), any())).thenReturn(Status.FAILURE);
         Step failureStep2 = mock(Step.class);
-        when(failureStep2.execute(any(), any())).thenThrow(new RuntimeException());
+        when(failureStep2.execute(any(), any(), any())).thenThrow(new RuntimeException());
         Step successStep = mock(Step.class);
-        when(successStep.execute(any(), any())).thenReturn(Status.SUCCESS);
+        when(successStep.execute(any(), any(), any())).thenReturn(Status.SUCCESS);
 
         Step rootStep = mock(Step.class);
         when(rootStep.subSteps()).thenReturn(newArrayList(failureStep, failureStep2, successStep));
@@ -36,9 +36,9 @@ public class SoftAssertStrategyTest {
         Status actualStatus = sut.execute(null, rootStep, null, strategies);
 
         // Then
-        verify(failureStep).execute(any(), any());
-        verify(failureStep2).execute(any(), any());
-        verify(successStep).execute(any(), any());
+        verify(failureStep).execute(any(), any(), any());
+        verify(failureStep2).execute(any(), any(), any());
+        verify(successStep).execute(any(), any(), any());
         assertThat(actualStatus).isEqualTo(Status.WARN);
     }
 
@@ -64,8 +64,8 @@ public class SoftAssertStrategyTest {
         DefaultStepExecutionStrategy.instance.execute(null, rootStep, null, strategies);
 
         // Then
-        verify(failureStepWithSoftAssert).execute(any(), any());
-        verify(nextStep).execute(any(), any());
+        verify(failureStepWithSoftAssert).execute(any(), any(), any());
+        verify(nextStep).execute(any(), any(), any());
     }
 
 }

@@ -1,0 +1,36 @@
+{
+    "scenario": {
+        "name": "Test iterations",
+        "steps": [
+            {
+                "name": "<idx> - Hello website on ${#env} with user ${#user}",
+                "type": "complex",
+                "inputs": {
+                    "stringParam": "/${#env}/${#user}"
+                },
+                "outputs": {
+                    "pouet_<idx>": "${\"/\" + #env + \"/\" + #user + \"/<idx>\"}"
+                },
+                "validations" : {
+                    "pouet_<idx>_ok": "${#pouet_<idx> == \"/\" + #env + \"/\" + #user + \"/<idx>\"}"
+                },
+                "strategy": {
+                    "type": "for",
+                    "parameters": {
+                        "index": "idx",
+                        "dataset": [
+                            {
+                                "env": "A",
+                                "user": "Tata"
+                            },
+                            {
+                                "env": "B",
+                                "user": "Baba"
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}

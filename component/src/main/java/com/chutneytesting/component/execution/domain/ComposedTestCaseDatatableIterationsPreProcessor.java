@@ -9,10 +9,11 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.component.dataset.domain.DataSetRepository;
-import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
+import com.chutneytesting.engine.domain.execution.strategies.DataSetIterationsStrategy;
 import com.chutneytesting.scenario.domain.gwt.Strategy;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
+import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessor;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,10 +31,7 @@ import org.apache.commons.text.StringEscapeUtils;
 
 public class ComposedTestCaseDatatableIterationsPreProcessor implements TestCasePreProcessor<ExecutableComposedTestCase> {
 
-    /**
-     * Duplicate of DataSetIterationsStrategy.TYPE in engine domain
-     */
-    public final static String DATASET_ITERATIONS_STRATEGY_TYPE = "dataset-iterations-strategy";
+    public final static String DATASET_ITERATIONS_STRATEGY_TYPE = DataSetIterationsStrategy.TYPE;
 
     private final DataSetRepository dataSetRepository;
 

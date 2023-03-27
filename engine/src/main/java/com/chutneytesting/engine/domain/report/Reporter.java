@@ -108,7 +108,6 @@ public class Reporter {
 
     StepExecutionReport generateReport(Step step, Function<Step, Status> statusSupplier) {
         try {
-            Step.StepContextImpl stepContext = step.stepContext();
             return new StepExecutionReportBuilder()
                 .setName(step.definition().name)
                 .setEnvironment(step.definition().environment)
@@ -118,9 +117,9 @@ public class Reporter {
                 .setInformation(step.informations())
                 .setErrors(step.errors())
                 .setSteps(step.subSteps().stream().map(subStep -> generateReport(subStep, Step::status)).collect(Collectors.toList()))
-                .setEvaluatedInputs(stepContext.getEvaluatedInputs())
-                .setStepResults(stepContext.getStepOutputs())
-                .setScenarioContext(stepContext.getScenarioContext())
+                .setEvaluatedInputs(step.getEvaluatedInputs())
+                .setStepResults(step.getStepOutputs())
+                .setScenarioContext(step.getScenarioContext())
                 .setType(step.type())
                 .setTarget(step.target())
                 .setStrategy(guardNullStrategy(step.strategy()))

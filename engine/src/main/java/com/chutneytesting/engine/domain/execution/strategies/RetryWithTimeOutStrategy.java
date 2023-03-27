@@ -1,12 +1,13 @@
 package com.chutneytesting.engine.domain.execution.strategies;
 
+import com.chutneytesting.action.spi.time.Duration;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContext;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.Status;
-import com.chutneytesting.action.spi.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * time_unit : the duration unit. Valid values are:
  * - "min" or "m" for minutes
  * - "sec" or "s" for seconds
- * - "ms" for miliseconds
+ * - "ms" for milliseconds
  * empty values are interpreted as seconds
  * Example: timeOut: "5 min", or "300 sec", ...
  */
@@ -41,6 +42,7 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
     public Status execute(ScenarioExecution scenarioExecution,
                           Step step,
                           ScenarioContext scenarioContext,
+                          Map<String, Object> localContext,
                           StepExecutionStrategies strategies) throws IllegalStateException {
 
         if (step.strategy().isEmpty()) {
@@ -69,7 +71,7 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
             step.addInformation("Retry strategy definition : [timeOut " + timeOut + "] [delay " + retryDelay + "]");
             step.addInformation("Try number : " + (tries++));
 
-            st = executeAll(scenarioExecution, step, scenarioContext, strategies);
+            st = executeAll(scenarioExecution, step, scenarioContext, localContext, strategies);
             if (st == Status.FAILURE) {
                 try {
                     step.startWatch();
@@ -97,9 +99,12 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
         return st;
     }
 
-    private Status executeAll(ScenarioExecution scenarioExecution, Step step,
-                              ScenarioContext scenarioContext, StepExecutionStrategies strategies) {
-        Status st = DefaultStepExecutionStrategy.instance.execute(scenarioExecution, step, scenarioContext, strategies); // TODO - how do you cancel a try ? I call this a spam strategy, not a retry one !
+    private Status executeAll(ScenarioExecution scenarioExecution,
+                              Step step,
+                              ScenarioContext scenarioContext,
+                              Map<String, Object> localContext,
+                              StepExecutionStrategies strategies) {
+        Status st = DefaultStepExecutionStrategy.instance.execute(scenarioExecution, step, scenarioContext, localContext, strategies); // TODO - how do you cancel a try ? I call this a spam strategy, not a retry one !
         if (st == Status.FAILURE) {
             if (scenarioExecution.hasToStop()) {
                 step.stopExecution(scenarioExecution);
@@ -110,7 +115,7 @@ public class RetryWithTimeOutStrategy implements StepExecutionStrategy {
         return Status.SUCCESS;
     }
 
-    // convert duration strings in strategy parameters to milli seconds
+    // convert duration strings in strategy parameters to milliseconds
     private long toMilliSeconds(String duration) {
         double durationInMS = Duration.parse(duration).toMilliseconds();
         return Math.round(durationInMS);
