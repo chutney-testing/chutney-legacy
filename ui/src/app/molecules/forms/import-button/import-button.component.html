@@ -1,6 +1,6 @@
 <label class="btn {{btnSizeClass ? 'btn-' + btnSizeClass : ''}} btn-{{btnColor}}" for="file_browser_{{uuid}}">
-    <span class="bi bi-upload"></span>
-    <span *ngIf="label">{{ label| translate}}</span>
+    <span class="bi bi-upload me-1"></span>
+    <span *ngIf="label">{{ label | translate}}</span>
 </label>
 <input type="file" id="file_browser_{{uuid}}"
        class="d-none"

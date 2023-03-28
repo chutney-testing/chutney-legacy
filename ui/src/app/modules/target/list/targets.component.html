@@ -60,7 +60,7 @@
                                    [attr.aria-controls]="'#' + targetName + '-props'">
                                 </i>
                                 <div class="collapse" id="{{targetName}}-props">
-                                    <table class="table table-sm table-borderless mb-0">
+                                    <table class="table table-sm table-borderless mb-0 props">
                                         <tbody>
                                         <tr *ngFor="let entry of findTarget(targetName, env)?.properties">
                                             <td>
