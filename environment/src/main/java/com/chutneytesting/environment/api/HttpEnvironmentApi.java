@@ -134,16 +134,20 @@ public class HttpEnvironmentApi implements EnvironmentApi {
         return delegate.listTargetsNames();
     }
 
-    @Override
     @PreAuthorize("hasAuthority('ENVIRONMENT_ACCESS')")
     @GetMapping(path = TARGET_BASE_URI, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TargetDto> listTargets(TargetFilter filters) throws EnvironmentNotFoundException {
-        return delegate.listTargets(filters);
+    public List<TargetDto> listTargets() throws EnvironmentNotFoundException {
+        return delegate.listTargets(null);
+    }
+
+    @Override
+    public List<TargetDto> listTargets(TargetFilter filter) throws EnvironmentNotFoundException {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @PreAuthorize("hasAuthority('ENVIRONMENT_ACCESS')")
-    @GetMapping(ENVIRONMENT_BASE_URI +"/{environmentName}/targets/{targetName}")
+    @GetMapping(ENVIRONMENT_BASE_URI + "/{environmentName}/targets/{targetName}")
     public TargetDto getTarget(@PathVariable("environmentName") String environmentName, @PathVariable("targetName") String targetName) throws EnvironmentNotFoundException, TargetNotFoundException {
         return delegate.getTarget(environmentName, targetName);
     }

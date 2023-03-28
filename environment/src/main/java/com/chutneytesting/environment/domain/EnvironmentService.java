@@ -74,8 +74,8 @@ public class EnvironmentService {
 
     public List<Target> listTargets(TargetFilter filters) {
         Set<Target> targets;
-        if (filters != null && StringUtils.isNotBlank(filters.environment)) {
-            targets = environmentRepository.findByName(filters.environment).targets;
+        if (filters != null && StringUtils.isNotBlank(filters.environment())) {
+            targets = environmentRepository.findByName(filters.environment()).targets;
         } else {
             targets = listEnvironments()
                 .stream()
@@ -115,7 +115,7 @@ public class EnvironmentService {
     public void deleteTarget(String targetName) throws EnvironmentNotFoundException, TargetNotFoundException {
         environmentRepository.getEnvironments()
             .stream()
-            .filter(env -> env.targets.stream().map(target -> target.name).collect(Collectors.toList()).contains(targetName))
+            .filter(env -> env.targets.stream().map(target -> target.name).toList().contains(targetName))
             .forEach(env -> {
                 Environment newEnvironment = env.deleteTarget(targetName);
                 createOrUpdate(newEnvironment);
@@ -147,8 +147,8 @@ public class EnvironmentService {
         }
 
         boolean matchName = true;
-        if (StringUtils.isNotBlank(filters.name)) {
-            matchName = filters.name.equals(target.name);
+        if (StringUtils.isNotBlank(filters.name())) {
+            matchName = filters.name().equals(target.name);
         }
 
         return matchName;
