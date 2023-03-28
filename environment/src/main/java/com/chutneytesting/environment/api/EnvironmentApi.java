@@ -11,7 +11,6 @@ import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameExc
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
 import java.util.List;
 import java.util.Set;
-import org.springframework.web.multipart.MultipartFile;
 
 public interface EnvironmentApi {
     Set<EnvironmentDto> listEnvironments();
@@ -26,7 +25,7 @@ public interface EnvironmentApi {
 
     EnvironmentDto createEnvironment(EnvironmentDto environmentMetadataDto, boolean force) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException;
 
-    EnvironmentDto importEnvironment(MultipartFile file) throws UnsupportedOperationException;
+    EnvironmentDto importEnvironment(EnvironmentDto environmentDto);
 
     void updateEnvironment(String environmentName, EnvironmentDto environmentMetadataDto) throws InvalidEnvironmentNameException, EnvironmentNotFoundException;
 
@@ -40,7 +39,7 @@ public interface EnvironmentApi {
 
     void addTarget(TargetDto targetMetadataDto) throws EnvironmentNotFoundException, AlreadyExistingTargetException;
 
-    TargetDto importTarget(String environmentName, MultipartFile file);
+    TargetDto importTarget(String environmentName, TargetDto targetDto);
 
     void updateTarget(String targetName, TargetDto targetMetadataDto) throws EnvironmentNotFoundException, TargetNotFoundException;
 

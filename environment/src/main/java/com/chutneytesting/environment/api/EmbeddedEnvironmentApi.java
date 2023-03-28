@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import com.chutneytesting.environment.api.dto.TargetDto;
-import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.environment.domain.TargetFilter;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
@@ -13,26 +12,15 @@ import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentEx
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import java.io.IOException;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.web.multipart.MultipartFile;
 
 public class EmbeddedEnvironmentApi implements EnvironmentApi {
 
     private final EnvironmentService environmentService;
-
-    private final ObjectMapper objectMapper = new ObjectMapper()
-        .findAndRegisterModules()
-        .enable(SerializationFeature.INDENT_OUTPUT)
-        .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-
 
     public EmbeddedEnvironmentApi(EnvironmentService environmentService) {
         this.environmentService = environmentService;
@@ -62,14 +50,9 @@ public class EmbeddedEnvironmentApi implements EnvironmentApi {
     }
 
     @Override
-    public EnvironmentDto importEnvironment(MultipartFile file) throws UnsupportedOperationException {
-        try {
-            EnvironmentDto environmentDto = objectMapper.readValue(file.getBytes(), EnvironmentDto.class);
-            environmentService.createEnvironment(environmentDto.toEnvironment());
-            return environmentDto;
-        } catch (IOException e) {
-            throw new UnsupportedOperationException("Cannot deserialize file: " + file.getName(), e);
-        }
+    public EnvironmentDto importEnvironment(EnvironmentDto environmentDto) throws UnsupportedOperationException {
+        environmentService.createEnvironment(environmentDto.toEnvironment());
+        return environmentDto;
     }
 
     @Override
@@ -106,15 +89,9 @@ public class EmbeddedEnvironmentApi implements EnvironmentApi {
     }
 
     @Override
-    public TargetDto importTarget(String environmentName, MultipartFile file) {
-        try {
-            TargetDto targetDto = objectMapper.readValue(file.getBytes(), TargetDto.class);
-            environmentService.addTarget(targetDto.toTarget(environmentName));
-            return targetDto;
-        } catch (IOException e) {
-            throw new UnsupportedOperationException("Cannot deserialize file: " + file.getName(), e);
-        }
-
+    public TargetDto importTarget(String environmentName, TargetDto targetDto) {
+        environmentService.addTarget(targetDto.toTarget(environmentName));
+        return targetDto;
     }
 
     @Override

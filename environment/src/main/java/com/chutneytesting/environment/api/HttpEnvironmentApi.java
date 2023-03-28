@@ -9,6 +9,10 @@ import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentEx
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import org.springframework.http.MediaType;
@@ -31,6 +35,11 @@ public class HttpEnvironmentApi implements EnvironmentApi {
     private final String ENVIRONMENT_BASE_URI = "/api/v2/environments";
     private final String TARGET_BASE_URI = "/api/v2/targets";
     private final EnvironmentApi delegate;
+
+    private final ObjectMapper objectMapper = new ObjectMapper()
+        .findAndRegisterModules()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
     HttpEnvironmentApi(EnvironmentApi delegate) {
         this.delegate = delegate;
@@ -57,11 +66,21 @@ public class HttpEnvironmentApi implements EnvironmentApi {
         return delegate.createEnvironment(environmentDto, false);
     }
 
-    @Override
     @PreAuthorize("hasAuthority('ENVIRONMENT_ACCESS')")
     @PostMapping(value = ENVIRONMENT_BASE_URI, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public EnvironmentDto importEnvironment(@RequestParam("file") MultipartFile file) {
-        return delegate.importEnvironment(file);
+        try {
+            return importEnvironment(
+                objectMapper.readValue(file.getBytes(), EnvironmentDto.class)
+            );
+        } catch (IOException e) {
+            throw new UnsupportedOperationException("Cannot deserialize file: " + file.getName(), e);
+        }
+    }
+
+    @Override
+    public EnvironmentDto importEnvironment(EnvironmentDto environmentDto) {
+        return delegate.importEnvironment(environmentDto);
     }
 
     @Override
@@ -90,11 +109,22 @@ public class HttpEnvironmentApi implements EnvironmentApi {
         return delegate.getEnvironment(environmentName);
     }
 
-    @Override
     @PreAuthorize("hasAuthority('ENVIRONMENT_ACCESS')")
     @PostMapping(value = ENVIRONMENT_BASE_URI + "/{environmentName}/targets", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public TargetDto importTarget(@PathVariable("environmentName") String environmentName, @RequestParam("file") MultipartFile file) {
-        return delegate.importTarget(environmentName, file);
+        try {
+            return importTarget(
+                environmentName,
+                objectMapper.readValue(file.getBytes(), TargetDto.class)
+            );
+        } catch (IOException e) {
+            throw new UnsupportedOperationException("Cannot deserialize file: " + file.getName(), e);
+        }
+    }
+
+    @Override
+    public TargetDto importTarget(String environmentName, TargetDto targetDto) {
+        return delegate.importTarget(environmentName, targetDto);
     }
 
     @Override
