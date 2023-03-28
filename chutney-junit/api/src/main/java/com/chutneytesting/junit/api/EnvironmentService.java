@@ -9,5 +9,5 @@ public interface EnvironmentService {
 
     void deleteEnvironment(String environmentName);
 
-    void addTarget(String environmentName, TargetDto target);
+    void addTarget(TargetDto target);
 }
