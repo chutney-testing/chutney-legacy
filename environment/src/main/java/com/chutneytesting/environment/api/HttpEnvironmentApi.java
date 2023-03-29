@@ -136,13 +136,8 @@ public class HttpEnvironmentApi implements EnvironmentApi {
 
     @PreAuthorize("hasAuthority('ENVIRONMENT_ACCESS')")
     @GetMapping(path = TARGET_BASE_URI, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TargetDto> listTargets() throws EnvironmentNotFoundException {
-        return delegate.listTargets(null);
-    }
-
-    @Override
     public List<TargetDto> listTargets(TargetFilter filter) throws EnvironmentNotFoundException {
-        throw new UnsupportedOperationException();
+        return delegate.listTargets(filter);
     }
 
     @Override
