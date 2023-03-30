@@ -1,0 +1,11 @@
+.environment {
+    font-size: 0.7rem;
+    &.active {
+        background-color: var(--bs-info) !important;
+        color: var(--bs-white) !important;
+    }
+}
+
+.props {
+    table-layout: fixed;
+}

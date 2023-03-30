@@ -6,12 +6,12 @@ import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentEx
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,23 +72,27 @@ public class EnvironmentService {
         }
     }
 
-    public Set<Target> listTargets(String environmentName) throws EnvironmentNotFoundException {
-        Environment environment = environmentRepository.findByName(environmentName);
-        return new LinkedHashSet<>(environment.targets);
+    public List<Target> listTargets(TargetFilter filters) {
+        Set<Target> targets;
+        if (filters != null && StringUtils.isNotBlank(filters.environment())) {
+            targets = environmentRepository.findByName(filters.environment()).targets;
+        } else {
+            targets = listEnvironments()
+                .stream()
+                .flatMap(environment -> environment.targets.stream()).collect(Collectors.toSet());
+        }
+        return targets
+            .stream()
+            .filter(target -> match(target, filters))
+            .collect(Collectors.toList());
     }
 
-    public Set<Target> listTargets() {
-        Set<String> targetsNames = new HashSet<>();
-        Set<Target> distinctTargets = new HashSet<>();
-        List<Target> targetsList = listEnvironments().stream()
-            .flatMap(environment -> environment.targets.stream())
-            .toList();
-        for (Target target : targetsList) {
-            if (targetsNames.add(target.name)) {
-                distinctTargets.add(target);
-            }
-        }
-        return distinctTargets;
+
+    public Set<String> listTargetsNames() {
+        return listEnvironments().stream()
+            .flatMap(environment -> environment.targets.stream().map(target -> target.name))
+            .collect(Collectors.toSet());
+
     }
 
     public Target getTarget(String environmentName, String targetName) {
@@ -96,8 +100,8 @@ public class EnvironmentService {
         return environment.getTarget(targetName);
     }
 
-    public void addTarget(String environmentName, Target target) throws EnvironmentNotFoundException, AlreadyExistingTargetException {
-        Environment environment = environmentRepository.findByName(environmentName);
+    public void addTarget(Target target) throws EnvironmentNotFoundException, AlreadyExistingTargetException {
+        Environment environment = environmentRepository.findByName(target.environment);
         Environment newEnvironment = environment.addTarget(target);
         createOrUpdate(newEnvironment);
     }
@@ -108,8 +112,18 @@ public class EnvironmentService {
         createOrUpdate(newEnvironment);
     }
 
-    public void updateTarget(String environmentName, String previousTargetName, Target targetToUpdate) throws EnvironmentNotFoundException, TargetNotFoundException {
-        Environment environment = environmentRepository.findByName(environmentName);
+    public void deleteTarget(String targetName) throws EnvironmentNotFoundException, TargetNotFoundException {
+        environmentRepository.getEnvironments()
+            .stream()
+            .filter(env -> env.targets.stream().map(target -> target.name).toList().contains(targetName))
+            .forEach(env -> {
+                Environment newEnvironment = env.deleteTarget(targetName);
+                createOrUpdate(newEnvironment);
+            });
+    }
+
+    public void updateTarget(String previousTargetName, Target targetToUpdate) throws EnvironmentNotFoundException, TargetNotFoundException {
+        Environment environment = environmentRepository.findByName(targetToUpdate.environment);
         Environment newEnvironment = environment.updateTarget(previousTargetName, targetToUpdate);
         createOrUpdate(newEnvironment);
         logger.debug("Updated target " + previousTargetName + " as " + targetToUpdate.name);
@@ -125,5 +139,18 @@ public class EnvironmentService {
     private boolean envAlreadyExist(Environment environment) {
         return environmentRepository.listNames().stream().map(String::toUpperCase)
             .toList().contains(environment.name.toUpperCase());
+    }
+
+    private boolean match(Target target, TargetFilter filters) {
+        if (filters == null) {
+            return true;
+        }
+
+        boolean matchName = true;
+        if (StringUtils.isNotBlank(filters.name())) {
+            matchName = filters.name().equals(target.name);
+        }
+
+        return matchName;
     }
 }

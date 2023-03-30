@@ -92,7 +92,7 @@ public class ChutneyTest {
     }
 
     private void addChutneyLocalServer() {
-        environmentService.addTarget(TEST_ENV_NAME,
+        environmentService.addTarget(
             TargetDto.from(Target.builder()
                 .withName("CHUTNEY_LOCAL")
                 .withEnvironment(TEST_ENV_NAME)
@@ -102,7 +102,7 @@ public class ChutneyTest {
                 .build())
         );
 
-        environmentService.addTarget(TEST_ENV_NAME,
+        environmentService.addTarget(
             TargetDto.from(Target.builder()
                 .withName("CHUTNEY_LOCAL_NO_USER")
                 .withEnvironment(TEST_ENV_NAME)
@@ -126,7 +126,7 @@ public class ChutneyTest {
                 )
             )
             .build();
-        environmentService.addTarget(ChutneyTest.TEST_ENV_NAME, TargetDto.from(dbTarget));
+        environmentService.addTarget(TargetDto.from(dbTarget));
     }
 
     private void initEnvironment() {

@@ -10,7 +10,7 @@ import { FileSaverService } from 'ngx-filesaver';
 
 import * as JSZip from 'jszip';
 
-import { CampaignService, EnvironmentAdminService, JiraPluginService, LoginService, ScenarioService } from '@core/services';
+import { CampaignService, EnvironmentService, JiraPluginService, LoginService, ScenarioService } from '@core/services';
 import { Authorization, ScenarioIndex, TestCase } from '@model';
 import { EventManagerService } from '@shared';
 import { MenuItem } from '@shared/components/layout/menuItem';
@@ -39,7 +39,7 @@ export class CampaignExecutionMenuComponent implements OnInit {
         private router: Router,
         private campaignService: CampaignService,
         private scenarioService: ScenarioService,
-        private environmentAdminService: EnvironmentAdminService,
+        private environmentService: EnvironmentService,
         private fileSaverService: FileSaverService,
         private jiraLinkService: JiraPluginService,
         private loginService: LoginService,
@@ -68,7 +68,7 @@ export class CampaignExecutionMenuComponent implements OnInit {
 
     private environments$(): Observable<string[]> {
         if (this.loginService.hasAuthorization(Authorization.CAMPAIGN_EXECUTE)) {
-            return this.environmentAdminService.listEnvironmentsNames();
+            return this.environmentService.names();
         }
         return of([]);
     }

@@ -1,0 +1,92 @@
+<div class="row cursor-pointer" *ngIf="errorMessage" (click)="errorMessage = null">
+    <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
+</div>
+
+<div class="d-flex flex-row justify-content-between mb-2">
+    <div>
+        <button *ngFor="let env of environments" type="button"
+                class="btn btn-sm me-2 rounded btn-outline-info"
+                [ngClass]="{'btn-info text-white': environmentFilter?.name === env.name}"
+                (click)="filter(env)">{{ env.name }}</button>
+    </div>
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-primary me-3 rounded"
+                [routerLink]="['new']">{{ 'global.actions.add' | translate }}
+        </button>
+    </div>
+</div>
+
+
+<div>
+    <div class="d-flex flex-row  mb-2">
+        <input name="search" type="text" class="form-control w-25"
+               [placeholder]="'global.actions.search' | translate"
+               [(ngModel)]="targetFilter" (ngModelChange)="filter()"/>
+        <button class="btn btn-lg ms-2"
+        ngbTooltip="{{'admin.targets.actions.properties.show' | translate}}">
+            <i class="bi bi-eye-fill"
+               aria-expanded="false"
+               data-bs-toggle="collapse"
+               aria-controls=".collapse"
+               data-bs-target=".collapse">
+            </i>
+        </button>
+    </div>
+    <table class="table table-striped table-hover">
+        <tbody>
+        <tr *ngFor="let targetName of targetsNames">
+            <td class="align-middle w20">
+                <ngb-highlight [result]="targetName" [term]="targetFilter"></ngb-highlight>
+            </td>
+            <td class="small">
+                <ul ngbNav #nav="ngbNav" class="nav-pills" [activeId]="activeEnvironmentTab(targetName)"
+                    [destroyOnHide]="false">
+                    <li class="me-1" *ngFor="let env of environments" [ngbNavItem]="env.name"
+                        [disabled]="!exist(targetName, env)">
+                        <a ngbNavLink class="environment border p-1"
+                           [ngClass]="{
+                        'text-info border-info': exist(targetName, env),
+                        'text-warning border-warning': !exist(targetName, env)
+                        }"> <strong>{{env.name}}</strong></a>
+                        <ng-template ngbNavContent>
+                            <ngb-highlight [result]="findTarget(targetName, env)?.url"
+                                           [term]="targetFilter"></ngb-highlight>
+                            <div class="mt-1" *ngIf="findTarget(targetName, env)?.properties?.length">
+                                <strong>{{'admin.targets.properties.label' | translate}}:</strong>
+                                <i class="bi bi-eye-fill cursor-pointer ms-2"
+                                   aria-expanded="false"
+                                   data-bs-toggle="collapse"
+                                   [attr.data-bs-target]="'#' + targetName + '-props'"
+                                   [attr.aria-controls]="'#' + targetName + '-props'">
+                                </i>
+                                <div class="collapse" id="{{targetName}}-props">
+                                    <table class="table table-sm table-borderless mb-0 props">
+                                        <tbody>
+                                        <tr *ngFor="let entry of findTarget(targetName, env)?.properties">
+                                            <td>
+                                                <ngb-highlight [result]="entry.key"
+                                                               [term]="targetFilter"></ngb-highlight>
+                                            </td>
+                                            <td>
+                                                <ngb-highlight [result]="entry.value"
+                                                               [term]="targetFilter"></ngb-highlight>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </li>
+                </ul>
+                <div [ngbNavOutlet]="nav" class="mt-2"></div>
+            </td>
+            <td class="align-middle w1">
+                <button class="btn btn-outline-primary" [routerLink]="[targetName]">
+                    <i class="bi bi-pencil-fill"></i>
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

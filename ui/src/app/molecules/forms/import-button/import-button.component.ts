@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { v4 as uuidv4 } from 'uuid';
+import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'chutney-import-button',
@@ -9,37 +11,35 @@ export class ImportButtonComponent implements OnInit {
 
     @Input() acceptedTypes = '(text/plain)|(application/json)';
     @Output() submitEvent = new EventEmitter();
+    @Input() label: string = 'global.actions.import';
+    @Input() btnSizeClass: 'lg' | 'sm';
+    @Input() btnColor: 'primary' | 'success' | 'info' | 'warning' | 'danger' = 'success';
 
-    selectedFile: File;
+    uuid: string;
 
-    constructor() {}
+    fileControl = new FormControl('');
 
-    ngOnInit() {
-        document.getElementById('input-file-browser')
-            .addEventListener('change', (e) => this.handleFileSelection(e), false);
+    constructor() {
+        this.uuid = uuidv4();
     }
 
-    private handleFileSelection(e) {
+    ngOnInit() {
+
+    }
+
+    handleFileSelection(e) {
         e.stopPropagation();
         e.preventDefault();
 
-        let files = [];
-        if (e.dataTransfer != null) {
-            files = Array.from(e.dataTransfer.files);
-        } else if (e.target != null) {
-            files = Array.from(e.target.files);
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+            this.import(selectedFile);
         }
-
-        this.selectFile(files);
-        this.import();
+        this.fileControl.reset();
     }
 
-    private selectFile(files: Array<File>) {
-        this.selectedFile = files[0];
-    }
-
-    import() {
-        this.submitEvent.emit(this.selectedFile);
+    private import(selectedFile: File) {
+        this.submitEvent.emit(selectedFile);
     }
 
 }

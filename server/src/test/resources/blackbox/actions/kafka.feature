@@ -6,7 +6,7 @@ Feature: Kafka all Tasks test
         Given A target pointing to a non unknown service
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
-                With uri /api/v2/environment
+                With uri /api/v2/environments
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body
@@ -67,7 +67,7 @@ Feature: Kafka all Tasks test
         And an associated target test_kafka having url in system property spring.embedded.kafka.brokers
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
-                With uri /api/v2/environment
+                With uri /api/v2/environments
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body
@@ -141,7 +141,7 @@ Feature: Kafka all Tasks test
         And an associated target test_kafka having url in system property spring.embedded.kafka.brokers
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
-                With uri /api/v2/environment
+                With uri /api/v2/environments
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body

@@ -2,12 +2,14 @@ package com.chutneytesting.environment.api;
 
 import com.chutneytesting.environment.api.dto.EnvironmentDto;
 import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.environment.domain.TargetFilter;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
 import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentException;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
+import java.util.List;
 import java.util.Set;
 
 public interface EnvironmentApi {
@@ -15,29 +17,34 @@ public interface EnvironmentApi {
 
     Set<String> listEnvironmentsNames();
 
+    EnvironmentDto getEnvironment(String environmentName) throws EnvironmentNotFoundException;
+
     default EnvironmentDto createEnvironment(EnvironmentDto environmentMetadataDto) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
         return createEnvironment(environmentMetadataDto, false);
     }
 
     EnvironmentDto createEnvironment(EnvironmentDto environmentMetadataDto, boolean force) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException;
 
-    void deleteEnvironment(String environmentName) throws EnvironmentNotFoundException, CannotDeleteEnvironmentException;
+    EnvironmentDto importEnvironment(EnvironmentDto environmentDto);
 
     void updateEnvironment(String environmentName, EnvironmentDto environmentMetadataDto) throws InvalidEnvironmentNameException, EnvironmentNotFoundException;
 
-    Set<TargetDto> listTargets(String environmentName) throws EnvironmentNotFoundException;
+    void deleteEnvironment(String environmentName) throws EnvironmentNotFoundException, CannotDeleteEnvironmentException;
 
-    Set<TargetDto> listTargets() throws EnvironmentNotFoundException;
+    List<TargetDto> listTargets(TargetFilter filter) throws EnvironmentNotFoundException;
 
     Set<String> listTargetsNames() throws EnvironmentNotFoundException;
 
-    EnvironmentDto getEnvironment(String environmentName) throws EnvironmentNotFoundException;
-
     TargetDto getTarget(String environmentName, String targetName) throws EnvironmentNotFoundException, TargetNotFoundException;
 
-    void addTarget(String environmentName, TargetDto targetMetadataDto) throws EnvironmentNotFoundException, AlreadyExistingTargetException;
+    void addTarget(TargetDto targetMetadataDto) throws EnvironmentNotFoundException, AlreadyExistingTargetException;
+
+    TargetDto importTarget(String environmentName, TargetDto targetDto);
+
+    void updateTarget(String targetName, TargetDto targetMetadataDto) throws EnvironmentNotFoundException, TargetNotFoundException;
 
     void deleteTarget(String environmentName, String targetName) throws EnvironmentNotFoundException, TargetNotFoundException;
 
-    void updateTarget(String environmentName, String targetName, TargetDto targetMetadataDto) throws EnvironmentNotFoundException, TargetNotFoundException;
+    void deleteTarget(String targetName) throws EnvironmentNotFoundException, TargetNotFoundException;
+
 }

@@ -8,27 +8,35 @@ import { SharedModule } from '@shared/shared.module';
 import { AtomsModule } from '../../atoms/atoms.module';
 import { MoleculesModule } from '../../molecules/molecules.module';
 
-import { environmentAdminRoute } from './environment-admin.routes';
-import { EnvironmentAdminComponent } from './environment-admin.component';
-import { AddTargetDialogComponent } from './add-target-dialog/add-target-dialog.component';
 import {FileSaverModule} from 'ngx-filesaver';
+import { targetsRoutes } from '@modules/target/targets.routes';
+import { TargetsComponent } from '@modules/target/list/targets.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { TargetComponent } from './details/target.component';
+import { TargetsResolver } from '@modules/target/resolver/targets-resolver.service';
+import { CoreModule } from '@core/core.module';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 @NgModule({
     imports: [
         CommonModule,
-        RouterModule.forChild(environmentAdminRoute),
+        RouterModule.forChild(targetsRoutes),
         FormsModule,
         ReactiveFormsModule,
         SharedModule,
+        CoreModule,
         AtomsModule,
         MoleculesModule,
         TranslateModule,
         FileSaverModule,
+        NgbModule,
+        TooltipModule
     ],
     declarations: [
-        EnvironmentAdminComponent,
-        AddTargetDialogComponent
+        TargetsComponent,
+        TargetComponent
     ],
+    providers: [TargetsResolver]
 })
-export class EnvironmentAdminModule {
+export class TargetModule {
 }

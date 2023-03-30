@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import {
     ComponentTask
 } from '@model';
-import { EnvironmentAdminService } from '@core/services';
+import { EnvironmentService } from '@core/services';
 
 @Component({
     selector: 'chutney-toolbar-component',
@@ -25,12 +25,12 @@ export class ToolbarComponent implements OnInit{
     environments: Array<string>;
 
     constructor(
-        private environmentAdminService: EnvironmentAdminService,
+        private environmentService: EnvironmentService,
     ) {
     }
 
     ngOnInit(): void {
-        this.environmentAdminService.listEnvironmentsNames().subscribe(
+        this.environmentService.names().subscribe(
             (res) => this.environments = res
         );
     }

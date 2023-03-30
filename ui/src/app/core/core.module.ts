@@ -5,9 +5,10 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './components/login/login.component';
 import { CommonModule } from '@angular/common';
-import { OrganismsModule } from '../organisms/organisms.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { ParentComponent } from './components/parent/parent.component';
+import { EnvironmentsNamesResolver } from '@core/services/environments-names.resolver';
+import { EnvironmentsResolver } from '@core/services/environments.resolver';
 
 @NgModule({
     declarations: [
@@ -18,11 +19,11 @@ import { ParentComponent } from './components/parent/parent.component';
         CommonModule,
         FormsModule,
         HttpClientModule,
-        OrganismsModule,
         RouterModule,
         SharedModule,
         TranslateModule
     ],
+    providers: [EnvironmentsNamesResolver, EnvironmentsResolver]
 
 })
 export class CoreModule { }

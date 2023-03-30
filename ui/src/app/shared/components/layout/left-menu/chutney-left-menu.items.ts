@@ -41,8 +41,14 @@ export const allMenuItems: MenuItem [] = [
         label: 'Admin',
         children: [
             {
+                label: 'menu.principal.environments',
+                link: '/environments',
+                iconClass: 'fa fa-brands fa-envira',
+                authorizations: [Authorization.ENVIRONMENT_ACCESS]
+            },
+            {
                 label: 'menu.principal.targets',
-                link: '/environmentAdmin',
+                link: '/targets',
                 iconClass: 'fa fa-bullseye',
                 authorizations: [Authorization.ENVIRONMENT_ACCESS]
             },

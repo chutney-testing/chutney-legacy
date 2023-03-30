@@ -42,6 +42,7 @@ import { NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap'
 import { ChutneyMainHeaderComponent } from '@shared/components/layout/header/chutney-main-header.component';
 import { ChutneyLeftMenuComponent } from '@shared/components/layout/left-menu/chutney-left-menu.component';
 import { ChutneyRightMenuComponent } from '@shared/components/layout/right-menu/chutney-right-menu.component';
+import { DistinctPipe } from './pipes/distinct.pipe';
 
 @NgModule({
     imports: [
@@ -82,6 +83,7 @@ import { ChutneyRightMenuComponent } from '@shared/components/layout/right-menu/
         ChutneyMainHeaderComponent,
         ChutneyLeftMenuComponent,
         ChutneyRightMenuComponent,
+        DistinctPipe,
     ],
     exports: [
         ComponentCardComponent,
@@ -108,6 +110,7 @@ import { ChutneyRightMenuComponent } from '@shared/components/layout/right-menu/
         HasAuthorizationDirective,
         ChutneyEditorComponent,
         ChutneyRightMenuComponent,
+        DistinctPipe,
     ],
     providers: [
         {

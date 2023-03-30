@@ -12,7 +12,7 @@ Feature: SSH Task test
         And Target containing SSHD connection information with wrong password
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
-                With uri /api/v2/environment
+                With uri /api/v2/environments
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body
@@ -75,7 +75,7 @@ Feature: SSH Task test
         And Target containing SSHD connection information
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
-                With uri /api/v2/environment
+                With uri /api/v2/environments
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
                 With body

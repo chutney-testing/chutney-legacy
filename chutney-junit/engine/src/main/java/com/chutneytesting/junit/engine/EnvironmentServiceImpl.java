@@ -24,7 +24,7 @@ public class EnvironmentServiceImpl implements EnvironmentService {
     }
 
     @Override
-    public void addTarget(String environmentName, TargetDto target) {
-        delegate.addTarget(environmentName, target);
+    public void addTarget(TargetDto target) {
+        delegate.addTarget(target);
     }
 }
