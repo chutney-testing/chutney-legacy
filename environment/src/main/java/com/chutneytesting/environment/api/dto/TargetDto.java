@@ -17,27 +17,20 @@ public class TargetDto {
     public final Set<Entry> properties;
 
     public TargetDto() {
-        this.name = null;
-        this.url = null;
-        this.environment = null;
-        this.properties = null;
+        this(null,null,null,null);
     }
     public TargetDto(String name,
                      String url,
                      Set<Entry> properties) {
-        this.name = name.trim();
-        this.url = url.trim();
-        this.environment = null;
-        this.properties = nullToEmpty(properties);
+        this(name, url, null, properties);
     }
-
     public TargetDto(String name,
                      String url,
                      String environment,
                      Set<Entry> properties) {
-        this.name = name.trim();
-        this.url = url.trim();
-        this.environment = environment.trim();
+        this.name = trimIfNotNull(name);
+        this.url = trimIfNotNull(url);
+        this.environment = trimIfNotNull(environment);
         this.properties = nullToEmpty(properties);
     }
 
@@ -74,5 +67,9 @@ public class TargetDto {
 
     private <T> Set<T> nullToEmpty(Set<T> set) {
         return set == null ? emptySet() : set;
+    }
+
+    private String trimIfNotNull(String environment) {
+        return environment != null ? environment.trim() : null;
     }
 }
