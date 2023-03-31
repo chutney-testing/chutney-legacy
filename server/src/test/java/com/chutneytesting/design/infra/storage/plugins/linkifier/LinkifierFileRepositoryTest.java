@@ -20,7 +20,6 @@ public class LinkifierFileRepositoryTest {
     @BeforeAll
     public static void setUp(@TempDir Path temporaryFolder) {
         String tmpConfDir = temporaryFolder.toFile().getAbsolutePath();
-        System.setProperty("configuration-folder", tmpConfDir);
 
         sut = new LinkifierFileRepository(tmpConfDir);
         LINKIFIER_FILE = Paths.get(tmpConfDir + "/plugins/linkifiers.json");
@@ -31,12 +30,13 @@ public class LinkifierFileRepositoryTest {
         // Given
         Linkifier linkifier = new Linkifier("#pattern", "http://link/%s", "fake_id");
         String expected =
-            "{\n" +
-                "  \"fake_id\" : {\n" +
-                "    \"pattern\" : \"#pattern\",\n" +
-                "    \"link\" : \"http://link/%s\"\n" +
-                "  }\n" +
-                "}";
+            """
+                {
+                  "fake_id" : {
+                    "pattern" : "#pattern",
+                    "link" : "http://link/%s"
+                  }
+                }""";
 
         // When
         sut.add(linkifier);
@@ -51,25 +51,27 @@ public class LinkifierFileRepositoryTest {
     public void should_add_a_linkifier() {
         // Given
         FileUtils.writeContent(LINKIFIER_FILE,
-            "{\n" +
-                "  \"fake_id\" : {\n" +
-                "    \"pattern\" : \"#pattern\",\n" +
-                "    \"link\" : \"http://link/%s\"\n" +
-                "  }\n" +
-                "}"
+            """
+                {
+                  "fake_id" : {
+                    "pattern" : "#pattern",
+                    "link" : "http://link/%s"
+                  }
+                }"""
         );
         Linkifier linkifier = new Linkifier("#2", "link_2", "fake_id_2");
         String expected =
-            "{\n" +
-                "  \"fake_id\" : {\n" +
-                "    \"pattern\" : \"#pattern\",\n" +
-                "    \"link\" : \"http://link/%s\"\n" +
-                "  },\n" +
-                "  \"fake_id_2\" : {\n" +
-                "    \"pattern\" : \"#2\",\n" +
-                "    \"link\" : \"link_2\"\n" +
-                "  }\n" +
-                "}";
+            """
+                {
+                  "fake_id" : {
+                    "pattern" : "#pattern",
+                    "link" : "http://link/%s"
+                  },
+                  "fake_id_2" : {
+                    "pattern" : "#2",
+                    "link" : "link_2"
+                  }
+                }""";
 
         // When
         sut.add(linkifier);
@@ -84,12 +86,13 @@ public class LinkifierFileRepositoryTest {
     public void should_remove_a_linkifier() {
         // Given
         FileUtils.writeContent(LINKIFIER_FILE,
-            "{\n" +
-                "  \"fake_id\" : {\n" +
-                "    \"pattern\" : \"#pattern\",\n" +
-                "    \"link\" : \"http://link/%s\"\n" +
-                "  }\n" +
-                "}"
+            """
+                {
+                  "fake_id" : {
+                    "pattern" : "#pattern",
+                    "link" : "http://link/%s"
+                  }
+                }"""
         );
 
         // When
