@@ -21,6 +21,7 @@ import com.chutneytesting.tools.file.FileUtils;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import org.apache.groovy.util.Maps;
 import org.springframework.boot.SpringApplication;
@@ -52,11 +53,16 @@ public class ChutneyTest {
 
     @BeforeAll
     public void setUp() {
-        System.setProperty("port", String.valueOf(port));
-        System.setProperty("securePort", String.valueOf(securePort));
-        System.setProperty("chutney.db-server.port", String.valueOf(dbPort));
-
-        localChutney = SpringApplication.run(IntegrationTestConfiguration.class);
+        SpringApplication app = new SpringApplication(IntegrationTestConfiguration.class);
+        app.setDefaultProperties(
+            Map.of(
+                "port", port,
+                "securePort", securePort,
+                "chutney.db-server.port=", dbPort,
+                "spring.config.location", "classpath:blackbox/"
+            )
+        );
+        localChutney = app.run();
 
         initAuthorizations();
     }
