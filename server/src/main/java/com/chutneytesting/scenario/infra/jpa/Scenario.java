@@ -17,11 +17,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.Version;
 
 @Entity(name = "SCENARIO")
-public class ScenarioDao {
+public class Scenario {
 
     @Id
     @Column(name = "ID")
@@ -62,10 +61,10 @@ public class ScenarioDao {
     @Version
     private Integer version;
 
-    public ScenarioDao() {
+    public Scenario() {
     }
 
-    public ScenarioDao(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String contentVersion, String userId, Instant updateDate, Integer version) {
+    public Scenario(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String contentVersion, String userId, Instant updateDate, Integer version) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -84,8 +83,8 @@ public class ScenarioDao {
         return id;
     }
 
-    public static ScenarioDao fromTestCaseData(TestCaseData scenario) {
-        return new ScenarioDao(
+    public static Scenario fromTestCaseData(TestCaseData scenario) {
+        return new Scenario(
             Long.valueOf(scenario.id),
             scenario.title,
             scenario.description,

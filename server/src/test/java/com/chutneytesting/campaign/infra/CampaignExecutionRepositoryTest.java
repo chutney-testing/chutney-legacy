@@ -177,19 +177,22 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
     }
 
     private void insertCampaign(long campaignId) {
-        jdbcTemplate.execute("INSERT INTO CAMPAIGN VALUES (" + campaignId + ", 'campagne 1', 'description...', 'GLOBAL', false, false, '', '')");
+        namedParameterJdbcTemplate.getJdbcTemplate()
+            .execute("INSERT INTO CAMPAIGN VALUES (" + campaignId + ", 'campagne 1', 'description...', 'GLOBAL', false, false, '', '')");
     }
 
     private void insertScenario(String scenarioId, String scenarioName) {
-        jdbcTemplate.execute("INSERT INTO SCENARIO "
-            + "(ID, TITLE, DESCRIPTION, CONTENT, CONTENT_VERSION, CREATION_DATE, UPDATE_DATE, VERSION) VALUES "
-            + " (" + scenarioId + ", '" + scenarioName + "', 'lol', 'truc', 'v2.1', 0, 0, 1)");
+        namedParameterJdbcTemplate.getJdbcTemplate()
+            .execute("INSERT INTO SCENARIO "
+                + "(ID, TITLE, DESCRIPTION, CONTENT, CONTENT_VERSION, CREATION_DATE, UPDATE_DATE, VERSION) VALUES "
+                + " (" + scenarioId + ", '" + scenarioName + "', 'lol', 'truc', 'v2.1', 0, 0, 1)");
     }
 
     private void insertScenarioExec(String scenarioId, String execid, String status) {
-        jdbcTemplate.execute("INSERT INTO SCENARIO_EXECUTION_HISTORY"
-            + "(ID, SCENARIO_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION) VALUES "
-            + "(" + execid + ", " + scenarioId + ",0,0,'" + status + "','','','','fake', 'default', '#2:87', 5)");
+        namedParameterJdbcTemplate.getJdbcTemplate()
+            .execute("INSERT INTO SCENARIO_EXECUTION_HISTORY"
+                + "(ID, SCENARIO_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION) VALUES "
+                + "(" + execid + ", " + scenarioId + ",0,0,'" + status + "','','','','fake', 'default', '#2:87', 5)");
     }
 
     private ExecutionHistory.ExecutionSummary generateScenarioExecution(long scenarioExecutionId, ServerReportStatus status) {
