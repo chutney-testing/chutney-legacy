@@ -1,4 +1,4 @@
-package com.chutneytesting;
+package blackbox;
 
 import static java.util.Optional.ofNullable;
 import static org.hamcrest.core.AnyOf.anyOf;
@@ -13,6 +13,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.chutneytesting.ServerConfiguration;
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.tools.file.FileUtils;
 import java.io.File;
@@ -30,8 +31,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-@SpringBootTest
+@SpringBootTest(classes = {ServerConfiguration.class})
 @TestPropertySource(properties = "spring.datasource.url=jdbc:h2:mem:testdbsecu")
+@TestPropertySource(properties = "spring.config.location=classpath:blackbox/")
 public class SecuredControllerSpringBootIntegrationTest {
 
     @Autowired

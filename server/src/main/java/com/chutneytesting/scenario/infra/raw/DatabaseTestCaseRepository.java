@@ -1,6 +1,6 @@
 package com.chutneytesting.scenario.infra.raw;
 
-import static com.chutneytesting.scenario.infra.jpa.ScenarioDao.fromTestCaseData;
+import static com.chutneytesting.scenario.infra.jpa.Scenario.fromTestCaseData;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.Long.valueOf;
 import static java.util.Optional.empty;
@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.scenario.infra.jpa.ScenarioDao;
+import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
@@ -29,17 +29,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestCase> {
 
     private final NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate;
-    private final DatabaseTestCaseRepositoryDao jpa;
+    private final DatabaseTestCaseJpaRepository jpa;
 
     public DatabaseTestCaseRepository(NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate,
-                                      DatabaseTestCaseRepositoryDao jpa) {
+                                      DatabaseTestCaseJpaRepository jpa) {
 
         this.uiNamedParameterJdbcTemplate = uiNamedParameterJdbcTemplate;
         this.jpa = jpa;
     }
 
     @Override
-    //@Transactional(propagation = Propagation.NOT_SUPPORTED)
     public String save(GwtTestCase testCase) {
         TestCaseData testCaseData = TestCaseDataMapper.toDto(testCase);
         return doSave(testCaseData).toString();
@@ -51,8 +50,8 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
             return empty();
         }
         try {
-            Optional<ScenarioDao> scenarioDao = jpa.findById(valueOf(scenarioId));
-            return scenarioDao.map(ScenarioDao::toGwtTestCase);
+            Optional<Scenario> scenarioDao = jpa.findById(valueOf(scenarioId));
+            return scenarioDao.map(Scenario::toGwtTestCase);
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
         }
@@ -73,12 +72,12 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     @Override
     public Optional<TestCaseMetadata> findMetadataById(String testCaseId) {
-        return findById(testCaseId).map(t -> t.metadata());
+        return findById(testCaseId).map(GwtTestCase::metadata);
     }
 
     @Override
     public List<TestCaseMetadata> findAll() {
-        return jpa.findAll().stream().map(ScenarioDao::toTestCaseMetadata).collect(toList());
+        return jpa.findAll().stream().map(Scenario::toTestCaseMetadata).collect(toList());
     }
 
     @Override
@@ -109,9 +108,9 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     public List<TestCaseMetadata> search(String textFilter) {
         if (!textFilter.isEmpty()) {
             String[] words = escapeSql(textFilter).split("\\s");
-            Specification<ScenarioDao> scenarioDaoSpecification = buildLikeSpecificationOnContent(words);
-            List<ScenarioDao> all = jpa.findAll(scenarioDaoSpecification);
-            return all.stream().map(ScenarioDao::toTestCaseMetadata).collect(Collectors.toList());
+            Specification<Scenario> scenarioDaoSpecification = buildLikeSpecificationOnContent(words);
+            List<Scenario> all = jpa.findAll(scenarioDaoSpecification);
+            return all.stream().map(Scenario::toTestCaseMetadata).collect(Collectors.toList());
         } else {
             return findAll();
         }
@@ -124,10 +123,10 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         return str.replace("'", "''");
     }
 
-    private Specification<ScenarioDao> buildLikeSpecificationOnContent(String[] words) {
-        Specification<ScenarioDao> scenarioDaoSpecification = null;
+    private Specification<Scenario> buildLikeSpecificationOnContent(String[] words) {
+        Specification<Scenario> scenarioDaoSpecification = null;
         for (String word : words) {
-            Specification<ScenarioDao> wordSpecification = DatabaseTestCaseRepositoryDao.contentContains(word);
+            Specification<Scenario> wordSpecification = DatabaseTestCaseJpaRepository.contentContains(word);
             if (scenarioDaoSpecification == null) {
                 scenarioDaoSpecification = wordSpecification;
             } else {
