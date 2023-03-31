@@ -35,45 +35,46 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabaseTest {
 
-    private final ExecutionHistoryRepository executionHistoryRepository;
+    private ExecutionHistoryRepository sut;
     private CampaignRepository campaignRepository;
 
-    public DatabaseExecutionHistoryRepositoryTest() {
-        this.executionHistoryRepository = new DatabaseExecutionHistoryRepository(namedParameterJdbcTemplate);
-        initCampaignRepositories();
-
+    @BeforeEach
+    public void beforeEach() {
+        sut = new DatabaseExecutionHistoryRepository(namedParameterJdbcTemplate);
+        initCampaignRepository();
     }
 
     @Test
     public void repository_is_empty_at_startup() {
-        assertThat(executionHistoryRepository.getExecutions("1")).isEmpty();
+        assertThat(sut.getExecutions("1")).isEmpty();
     }
 
     @Test
     public void execution_summary_is_available_after_storing_sorted_newest_first() {
-        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec1", ""));
-        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
-        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.FAILURE, "exec3", ""));
+        sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec1", ""));
+        sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
+        sut.store("1", buildDetachedExecution(ServerReportStatus.FAILURE, "exec3", ""));
 
-        assertThat(executionHistoryRepository.getExecutions("1"))
+        assertThat(sut.getExecutions("1"))
             .extracting(summary -> summary.info().get()).containsExactly("exec3", "exec2", "exec1");
     }
 
     @Test
     public void last_execution_return_newest_first() {
-        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec1", ""));
-        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
-        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.FAILURE, "exec3", ""));
+        sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec1", ""));
+        sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
+        sut.store("1", buildDetachedExecution(ServerReportStatus.FAILURE, "exec3", ""));
 
-        executionHistoryRepository.store("2", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec6", ""));
-        executionHistoryRepository.store("2", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec5", ""));
-        executionHistoryRepository.store("2", buildDetachedExecution(ServerReportStatus.FAILURE, "exec4", ""));
+        sut.store("2", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec6", ""));
+        sut.store("2", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec5", ""));
+        sut.store("2", buildDetachedExecution(ServerReportStatus.FAILURE, "exec4", ""));
 
-        Map<String, ExecutionSummary> lastExecutions = executionHistoryRepository.getLastExecutions(List.of("1", "2"));
+        Map<String, ExecutionSummary> lastExecutions = sut.getLastExecutions(List.of("1", "2"));
         assertThat(lastExecutions).containsOnlyKeys("1", "2");
         assertThat(lastExecutions.get("1").info().get()).isEqualTo("exec3");
         assertThat(lastExecutions.get("2").info().get()).isEqualTo("exec4");
@@ -83,13 +84,13 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
     public void execution_summaries_retrieved_are_limit_to_5() {
         IntStream.range(0, 25).forEach(
             i -> {
-                executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec" + i, ""));
+                sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec" + i, ""));
                 // As order is based on executionTime, if they are stored at the exact same time, check on order may fail
                 awaitDuring(20, MILLISECONDS);
             }
         );
 
-        assertThat(executionHistoryRepository.getExecutions("1"))
+        assertThat(sut.getExecutions("1"))
             .extracting(summary -> summary.info().get())
             .containsExactly(
                 "exec24",
@@ -126,9 +127,9 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
             .environment("")
             .user("")
             .build();
-        IntStream.range(0, 23).forEach(i -> executionHistoryRepository.store("1", execution));
+        IntStream.range(0, 23).forEach(i -> sut.store("1", execution));
 
-        assertThat(executionHistoryRepository.getExecutions("2")).hasSize(0);
+        assertThat(sut.getExecutions("2")).hasSize(0);
 
         Map<String, Object> queryForMap = namedParameterJdbcTemplate.queryForMap(
             "SELECT count(*) as count FROM SCENARIO_EXECUTION_HISTORY WHERE SCENARIO_ID = 1"
@@ -141,32 +142,32 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
 
     @Test
     public void update_execution_alters_last_one() {
-        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.RUNNING, "exec", ""));
+        sut.store("1", buildDetachedExecution(ServerReportStatus.RUNNING, "exec", ""));
 
-        ExecutionSummary last = executionHistoryRepository.getExecutions("1").get(0);
+        ExecutionSummary last = sut.getExecutions("1").get(0);
         assertThat(last.status()).isEqualTo(ServerReportStatus.RUNNING);
         assertThat(last.info()).contains("exec");
 
-        executionHistoryRepository.update("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(last.executionId()));
+        sut.update("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(last.executionId()));
 
-        Execution updatedExecution = executionHistoryRepository.getExecution("1", last.executionId());
+        Execution updatedExecution = sut.getExecution("1", last.executionId());
         assertThat(updatedExecution.status()).isEqualTo(ServerReportStatus.SUCCESS);
         assertThat(updatedExecution.info()).contains("updated");
     }
 
     @Test
     public void update_preserve_other_executions_order() {
-        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.FAILURE, "exec1", ""));
-        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
-        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.RUNNING, "exec3", ""));
+        sut.store("1", buildDetachedExecution(ServerReportStatus.FAILURE, "exec1", ""));
+        sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
+        sut.store("1", buildDetachedExecution(ServerReportStatus.RUNNING, "exec3", ""));
 
-        ExecutionSummary last = executionHistoryRepository.getExecutions("1").get(0);
+        ExecutionSummary last = sut.getExecutions("1").get(0);
         assertThat(last.status()).isEqualTo(ServerReportStatus.RUNNING);
         assertThat(last.info()).contains("exec3");
 
-        executionHistoryRepository.update("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(last.executionId()));
+        sut.update("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(last.executionId()));
 
-        assertThat(executionHistoryRepository.getExecutions("1"))
+        assertThat(sut.getExecutions("1"))
             .extracting(summary -> summary.info().get())
             .containsExactly(
                 "updated",
@@ -177,43 +178,43 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
     @Test
     public void update_on_empty_history_throws() {
         assertThatExceptionOfType(ReportNotFoundException.class)
-            .isThrownBy(() -> executionHistoryRepository.update("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(1L)))
+            .isThrownBy(() -> sut.update("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(1L)))
             .withMessage("Unable to find report 1 of scenario 1");
     }
 
     @Test
     public void all_running_executions_are_set_to_KO_on_startup() {
         // Given running executions
-        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.RUNNING, "exec1", ""));
-        executionHistoryRepository.store("2", buildDetachedExecution(ServerReportStatus.RUNNING, "exec2", ""));
+        sut.store("1", buildDetachedExecution(ServerReportStatus.RUNNING, "exec1", ""));
+        sut.store("2", buildDetachedExecution(ServerReportStatus.RUNNING, "exec2", ""));
 
         // When
-        int nbOfAffectedExecutions = executionHistoryRepository.setAllRunningExecutionsToKO();
+        int nbOfAffectedExecutions = sut.setAllRunningExecutionsToKO();
 
         // Then, these executions are KO
         assertThat(nbOfAffectedExecutions).isEqualTo(2);
-        assertThat(executionHistoryRepository.getExecutions("1").get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
-        assertThat(executionHistoryRepository.getExecutions("2").get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
+        assertThat(sut.getExecutions("1").get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
+        assertThat(sut.getExecutions("2").get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
 
         // And there is no more running execution
-        assertThat(executionHistoryRepository.getExecutionsWithStatus(ServerReportStatus.RUNNING).size()).isEqualTo(0);
+        assertThat(sut.getExecutionsWithStatus(ServerReportStatus.RUNNING).size()).isEqualTo(0);
     }
 
     @Test
     public void getExecution_throws_when_not_found() {
         assertThatExceptionOfType(ReportNotFoundException.class)
-            .isThrownBy(() -> executionHistoryRepository.getExecution("-1", 42L))
+            .isThrownBy(() -> sut.getExecution("-1", 42L))
             .withMessage("Unable to find report 42 of scenario -1");
     }
 
     @Test
     public void getExecution_throws_when_exist_but_not_on_this_scenario() {
-        Execution executionCreated = executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.RUNNING, "exec1", ""));
+        Execution executionCreated = sut.store("1", buildDetachedExecution(ServerReportStatus.RUNNING, "exec1", ""));
 
-        assertThat(executionHistoryRepository.getExecution("1", executionCreated.executionId())).isNotNull();
+        assertThat(sut.getExecution("1", executionCreated.executionId())).isNotNull();
 
         assertThatExceptionOfType(ReportNotFoundException.class)
-            .isThrownBy(() -> executionHistoryRepository.getExecution("12345", executionCreated.executionId()))
+            .isThrownBy(() -> sut.getExecution("12345", executionCreated.executionId()))
             .withMessage("Unable to find report " + executionCreated.executionId() + " of scenario 12345");
     }
 
@@ -221,12 +222,12 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
     public void should_truncate_report_info_and_error_on_save_or_update() {
         final String tooLongString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.";
 
-        executionHistoryRepository.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, tooLongString, tooLongString));
+        sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, tooLongString, tooLongString));
 
-        assertThat(executionHistoryRepository.getExecutions("1").get(0).info().get())
+        assertThat(sut.getExecutions("1").get(0).info().get())
             .hasSize(512);
 
-        assertThat(executionHistoryRepository.getExecutions("1").get(0).error().get())
+        assertThat(sut.getExecutions("1").get(0).error().get())
             .hasSize(512);
     }
 
@@ -234,16 +235,16 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
     public void should_map_campaign_only_when_executing_from_campaign() {
         // Given
         String scenarioId = "1";
-        Execution exec1 = executionHistoryRepository.store(scenarioId, buildDetachedExecution(ServerReportStatus.FAILURE, "exec1", ""));
-        Execution exec2 = executionHistoryRepository.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
+        Execution exec1 = sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.FAILURE, "exec1", ""));
+        Execution exec2 = sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
 
         // scenario 1 was executed in campaign 1
         Long campaignId = saveNewCampaign();
         Long campaignExecutionId = 1L;
-        saveCampaignExecutionReport(campaignId, campaignExecutionId,scenarioId, exec1);
+        saveCampaignExecutionReport(campaignId, campaignExecutionId, scenarioId, exec1);
 
         // When
-        List<ExecutionSummary> executions = executionHistoryRepository.getExecutions(scenarioId);
+        List<ExecutionSummary> executions = sut.getExecutions(scenarioId);
 
         // Then
 
@@ -261,16 +262,16 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
     public void should_retrieve_scenario_execution_summary() {
         // Given
         String scenarioId = "1";
-        Execution exec1 = executionHistoryRepository.store(scenarioId, buildDetachedExecution(ServerReportStatus.FAILURE, "exec1", ""));
-        executionHistoryRepository.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
+        Execution exec1 = sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.FAILURE, "exec1", ""));
+        sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
 
         // scenario 1 was executed in campaign 1
         Long campaignId = saveNewCampaign();
         Long campaignExecutionId = 1L;
-        saveCampaignExecutionReport(campaignId, campaignExecutionId,scenarioId, exec1);
+        saveCampaignExecutionReport(campaignId, campaignExecutionId, scenarioId, exec1);
 
         // When
-        ExecutionSummary executionSummary = executionHistoryRepository.getExecutionSummary(exec1.executionId());
+        ExecutionSummary executionSummary = sut.getExecutionSummary(exec1.executionId());
 
         // Then
 
@@ -318,7 +319,7 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
             .build();
     }
 
-    private void initCampaignRepositories() {
+    private void initCampaignRepository() {
         TestCaseRepositoryAggregator testCaseRepositoryMock = mock(TestCaseRepositoryAggregator.class);
         CampaignExecutionReportMapper campaignExecutionReportMapper = new CampaignExecutionReportMapper(testCaseRepositoryMock);
         TestCase mockTestCase = mock(TestCase.class);

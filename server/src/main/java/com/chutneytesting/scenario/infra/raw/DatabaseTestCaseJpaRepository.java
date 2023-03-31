@@ -1,6 +1,6 @@
 package com.chutneytesting.scenario.infra.raw;
 
-import com.chutneytesting.scenario.infra.jpa.ScenarioDao;
+import com.chutneytesting.scenario.infra.jpa.Scenario;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.criteria.Expression;
@@ -11,13 +11,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-public interface DatabaseTestCaseRepositoryDao extends CrudRepository<ScenarioDao, Long>, JpaSpecificationExecutor<ScenarioDao> {
+public interface DatabaseTestCaseJpaRepository extends CrudRepository<Scenario, Long>, JpaSpecificationExecutor<Scenario> {
 
     @Query("SELECT s FROM SCENARIO s WHERE s.id = :id and s.activated = true")
-    Optional<ScenarioDao> findById(@Param("id") Long id);
+    Optional<Scenario> findById(@Param("id") Long id);
 
     @Query("SELECT s FROM SCENARIO s WHERE s.activated = true")
-    List<ScenarioDao> findAll();
+    List<Scenario> findAll();
 
     @Modifying
     @Query("UPDATE FROM SCENARIO s SET s.activated = false WHERE s.id = :id")
@@ -27,7 +27,7 @@ public interface DatabaseTestCaseRepositoryDao extends CrudRepository<ScenarioDa
     Optional<Integer> getLastVersion(@Param("id") Long id);
 
 
-    static Specification<ScenarioDao> contentContains(String searchWord) {
+    static Specification<Scenario> contentContains(String searchWord) {
         return (root, query, builder) -> {
             Expression<String> content = builder.lower(root.get("content"));
             return builder.like(content, "%" + searchWord.toLowerCase() + "%");

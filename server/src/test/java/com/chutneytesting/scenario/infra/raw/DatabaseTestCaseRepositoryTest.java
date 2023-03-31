@@ -32,11 +32,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-@SpringBootTest
+@EnableJpaRepositories(basePackages = "com.chutneytesting.scenario.infra",
+    includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = "^.*JpaRepository$")}
+)
+@ComponentScan(basePackages = {"com.chutneytesting.scenario.infra"})
 public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
     private static final GwtTestCase GWT_TEST_CASE = GwtTestCase.builder()
@@ -80,7 +85,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         String scenarioId1 = repository.save(GWT_TEST_CASE);
 
         // When redo liquibase
-        this.initializeLiquibase();
+        liquibaseUpdate();
 
         // Then
         String scenarioId2 = repository.save(GWT_TEST_CASE);
@@ -88,7 +93,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
 
         // When redo liquibase
-        this.initializeLiquibase();
+        liquibaseUpdate();
 
         // Then
         String scenarioId3 = repository.save(GWT_TEST_CASE);

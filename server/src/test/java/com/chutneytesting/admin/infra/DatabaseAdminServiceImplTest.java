@@ -12,18 +12,24 @@ import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import java.util.Collections;
 import java.util.Optional;
 import org.assertj.core.api.Condition;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 
 @ResourceLock("changelog")
 public class DatabaseAdminServiceImplTest extends AbstractLocalDatabaseTest {
 
-    private final DatabaseAdminService databaseAdminService = new DatabaseAdminServiceImpl(localDataSource);
+    private DatabaseAdminService sut;
+
+    @BeforeEach
+    public void beforeEach() {
+        sut = new DatabaseAdminServiceImpl(localDataSource);
+    }
 
     @Test
     public void should_set_error_when_execute_not_executable_query() {
         String statement = "not a statement";
-        SqlResult sqlResult = databaseAdminService.execute(statement);
+        SqlResult sqlResult = sut.execute(statement);
 
         assertThat(sqlResult.error).hasValueSatisfying(new Condition<>(
             e -> e.contains("Unable to execute statement"),
@@ -34,7 +40,7 @@ public class DatabaseAdminServiceImplTest extends AbstractLocalDatabaseTest {
 
     @Test
     public void should_set_update_count_when_execute_update_query() {
-        SqlResult sqlResult = databaseAdminService.execute("UPDATE SCENARIO SET TITLE = 'test' WHERE ID = 123456");
+        SqlResult sqlResult = sut.execute("UPDATE SCENARIO SET TITLE = 'test' WHERE ID = 123456");
 
         assertThat(sqlResult.error).isEmpty();
         assertThat(sqlResult.table).isEmpty();
@@ -47,7 +53,7 @@ public class DatabaseAdminServiceImplTest extends AbstractLocalDatabaseTest {
         String sql = selectFragment
             + String.join("", Collections.nCopies(25, "UNION ALL " + selectFragment));
 
-        SqlResult sqlResult = databaseAdminService.execute(sql);
+        SqlResult sqlResult = sut.execute(sql);
 
         assertThat(sqlResult.error).isEmpty();
         assertThat(sqlResult.updatedRows).isEmpty();
@@ -68,7 +74,7 @@ public class DatabaseAdminServiceImplTest extends AbstractLocalDatabaseTest {
             .build();
 
 
-        PaginatedDto<SqlResult> sqlResult = databaseAdminService.paginate(unvalidQuery);
+        PaginatedDto<SqlResult> sqlResult = sut.paginate(unvalidQuery);
 
         assertThat(sqlResult.data().get(0).error).hasValueSatisfying(new Condition<>(
             e -> e.contains("Unable to execute statement"),
@@ -79,7 +85,7 @@ public class DatabaseAdminServiceImplTest extends AbstractLocalDatabaseTest {
 
     @Test
     public void should_set_update_count_when_paginate_update_query() {
-        SqlResult sqlResult = databaseAdminService.execute("UPDATE SCENARIO SET TITLE = 'test' WHERE ID = 123456");
+        SqlResult sqlResult = sut.execute("UPDATE SCENARIO SET TITLE = 'test' WHERE ID = 123456");
 
         assertThat(sqlResult.error).isEmpty();
         assertThat(sqlResult.table).isEmpty();
