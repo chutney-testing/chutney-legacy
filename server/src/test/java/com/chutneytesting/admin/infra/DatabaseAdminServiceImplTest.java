@@ -15,8 +15,10 @@ import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
+import org.springframework.test.context.ActiveProfiles;
 
 @ResourceLock("changelog")
+@ActiveProfiles("test-infra-h2")
 public class DatabaseAdminServiceImplTest extends AbstractLocalDatabaseTest {
 
     private DatabaseAdminService sut;
