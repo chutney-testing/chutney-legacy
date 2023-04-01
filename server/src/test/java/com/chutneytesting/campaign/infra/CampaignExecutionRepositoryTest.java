@@ -25,7 +25,9 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test-infra-h2")
 public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
 
     private CampaignExecutionRepository sut;

@@ -37,7 +37,9 @@ import java.util.Map;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test-infra-h2")
 public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabaseTest {
 
     private ExecutionHistoryRepository sut;

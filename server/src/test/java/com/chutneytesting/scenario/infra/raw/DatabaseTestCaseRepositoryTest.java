@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -42,6 +43,7 @@ import org.springframework.transaction.support.TransactionTemplate;
     includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = "^.*JpaRepository$")}
 )
 @ComponentScan(basePackages = {"com.chutneytesting.scenario.infra"})
+@ActiveProfiles("test-infra-sqlite")
 public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
     private static final GwtTestCase GWT_TEST_CASE = GwtTestCase.builder()
