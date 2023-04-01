@@ -8,7 +8,6 @@ import com.chutneytesting.server.core.domain.admin.SqlResult;
 import com.chutneytesting.server.core.domain.tools.ImmutablePaginationRequestWrapperDto;
 import com.chutneytesting.server.core.domain.tools.PaginatedDto;
 import com.chutneytesting.server.core.domain.tools.PaginationRequestWrapperDto;
-import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import java.util.Collections;
 import java.util.Optional;
 import org.assertj.core.api.Condition;
@@ -16,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.test.context.ActiveProfiles;
+import util.AbstractLocalDatabaseTest;
 
 @ResourceLock("changelog")
 @ActiveProfiles("test-infra-h2")

@@ -1,4 +1,4 @@
-package com.chutneytesting.tools;
+package util;
 
 import java.util.concurrent.TimeUnit;
 

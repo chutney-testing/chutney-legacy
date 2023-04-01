@@ -1,6 +1,5 @@
 package com.chutneytesting.scenario.infra.raw;
 
-import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.lang.Long.valueOf;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -8,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Assertions.within;
+import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
@@ -19,7 +19,6 @@ import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl.TestCaseMetadataBuilder;
 import com.chutneytesting.server.core.domain.security.User;
-import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,8 +35,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import util.AbstractLocalDatabaseTest;
 
 @EnableJpaRepositories(basePackages = "com.chutneytesting.scenario.infra",
     includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = "^.*JpaRepository$")}
@@ -45,6 +44,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 @ComponentScan(basePackages = {"com.chutneytesting.scenario.infra"})
 @ActiveProfiles("test-infra-sqlite")
 public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
+    @Autowired
+    private EntityManager entityManager;
 
     private static final GwtTestCase GWT_TEST_CASE = GwtTestCase.builder()
         .withMetadata(TestCaseMetadataImpl.builder().build())
@@ -55,12 +56,6 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
 
     @Autowired
     private DatabaseTestCaseRepository repository;
-
-    @Autowired
-    private EntityManager entityManager;
-
-    @Autowired
-    private PlatformTransactionManager transactionManager;
 
     private TransactionTemplate transactionTemplate;
 

@@ -1,4 +1,4 @@
-package com.chutneytesting.tests;
+package util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @SpringJUnitConfig
 @ActiveProfiles("test-infra")
@@ -22,6 +23,8 @@ public abstract class AbstractLocalDatabaseTest {
     protected DataSource localDataSource;
     @Autowired
     protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    @Autowired
+    protected PlatformTransactionManager transactionManager;
     @Autowired
     private Liquibase liquibase;
 
