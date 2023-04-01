@@ -1,6 +1,6 @@
-package com.chutneytesting.tests;
+package util;
 
-import static com.chutneytesting.tests.AbstractLocalDatabaseTest.DB_CHANGELOG_DB_CHANGELOG_MASTER_XML;
+import static util.AbstractLocalDatabaseTest.DB_CHANGELOG_DB_CHANGELOG_MASTER_XML;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -19,6 +19,7 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
@@ -81,6 +83,35 @@ class TestInfraConfiguration {
         }
     }
 
+    @Configuration
+    @Profile("test-infra-pgsql")
+    static class PostgresConfiguration {
+
+        @Bean(initMethod = "start", destroyMethod = "stop")
+        public PostgreSQLContainer postgresDB() {
+            return new PostgreSQLContainer();
+        }
+
+        @Bean
+        public DataSourceProperties dataSourceProperties(PostgreSQLContainer postgresDB) {
+            DataSourceProperties dataSourceProperties = new DataSourceProperties();
+            dataSourceProperties.setUrl(postgresDB.getJdbcUrl());
+            dataSourceProperties.setUsername(postgresDB.getUsername());
+            dataSourceProperties.setPassword(postgresDB.getPassword());
+            return dataSourceProperties;
+        }
+
+        @Bean
+        public Properties jpaProperties() {
+            Properties jpaProperties = new Properties();
+            jpaProperties.putAll(Map.of(
+                "hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect",
+                "hibernate.show_sql", "true"
+            ));
+            return jpaProperties;
+        }
+    }
+
     @Bean
     public DataSource dataSource(DataSourceProperties dataSourceProperties) {
         HikariConfig hikariConfig = new HikariConfig();
@@ -122,10 +153,12 @@ class TestInfraConfiguration {
     }
 
     @Bean
-    public Liquibase liquibase(DataSource ds) throws SQLException, LiquibaseException {
-        Database liquidBaseDB = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(ds.getConnection()));
-        Liquibase liquibase = new Liquibase(DB_CHANGELOG_DB_CHANGELOG_MASTER_XML, new ClassLoaderResourceAccessor(), liquidBaseDB);
-        liquibase.update();
+    public Liquibase liquibase(DataSource ds, @Value("${chutney.test-infra.init-liquibase:true}") boolean liquibaseInit) throws SQLException, LiquibaseException {
+        Database liquibaseDB = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(ds.getConnection()));
+        Liquibase liquibase = new Liquibase(DB_CHANGELOG_DB_CHANGELOG_MASTER_XML, new ClassLoaderResourceAccessor(), liquibaseDB);
+        if (liquibaseInit) {
+            liquibase.update();
+        }
         return liquibase;
     }
 }

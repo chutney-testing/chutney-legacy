@@ -1,6 +1,5 @@
 package com.chutneytesting.execution.domain.campaign;
 
-import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -21,6 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;

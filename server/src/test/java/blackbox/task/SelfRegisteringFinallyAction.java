@@ -1,8 +1,8 @@
 package blackbox.action;
 
-import com.chutneytesting.action.spi.FinallyAction;
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
+import com.chutneytesting.action.spi.FinallyAction;
 import com.chutneytesting.action.spi.injectable.FinallyActionRegistry;
 
 /**
