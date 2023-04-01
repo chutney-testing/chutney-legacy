@@ -94,7 +94,7 @@
         <commonsio.version>2.11.0</commonsio.version>
         <glacio.version>0.0.1</glacio.version>
         <hjson.version>3.0.0</hjson.version>
-        <orientdb.version>3.2.12</orientdb.version> <!-- Divergence on dependencies istack-commons-runtime and asm-->
+        <orientdb.version>3.2.17</orientdb.version> <!-- Divergence on dependencies istack-commons-runtime and asm-->
         <jsr305.version>3.0.2</jsr305.version>
         <liquibase.version>4.18.0</liquibase.version>
 
