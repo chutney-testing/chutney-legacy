@@ -400,7 +400,7 @@
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>
-                <version>9.2</version>
+                <version>9.5</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
