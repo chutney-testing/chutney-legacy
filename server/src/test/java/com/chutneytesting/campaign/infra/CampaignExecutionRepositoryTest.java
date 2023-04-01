@@ -18,7 +18,6 @@ import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
-import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +25,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
+import util.AbstractLocalDatabaseTest;
 
 @ActiveProfiles("test-infra-h2")
 public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {

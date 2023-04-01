@@ -1,6 +1,5 @@
 package com.chutneytesting.execution.infra.storage;
 
-import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.of;
@@ -10,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.campaign.infra.CampaignExecutionReportMapper;
@@ -29,7 +29,6 @@ import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
-import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +37,7 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
+import util.AbstractLocalDatabaseTest;
 
 @ActiveProfiles("test-infra-h2")
 public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabaseTest {

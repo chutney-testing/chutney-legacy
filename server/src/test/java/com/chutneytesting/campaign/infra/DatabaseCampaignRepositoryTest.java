@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
-import com.chutneytesting.tests.AbstractLocalDatabaseTest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.test.context.ActiveProfiles;
+import util.AbstractLocalDatabaseTest;
 
 @ResourceLock("changelog")
 @ActiveProfiles("test-infra-h2")
