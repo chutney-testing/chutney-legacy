@@ -1,11 +1,10 @@
-package util;
+package util.infra;
 
 import java.util.HashMap;
 import java.util.Map;
 import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.exception.LiquibaseException;
-import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -28,8 +27,7 @@ public abstract class AbstractLocalDatabaseTest {
     @Autowired
     private Liquibase liquibase;
 
-    @AfterEach
-    public void tearDown() {
+    protected void clearTables() {
         JdbcTemplate jdbcTemplate = namedParameterJdbcTemplate.getJdbcTemplate();
         jdbcTemplate.execute("DELETE FROM CAMPAIGN_EXECUTION_HISTORY");
         jdbcTemplate.execute("DELETE FROM SCENARIO_EXECUTION_HISTORY");
@@ -40,7 +38,7 @@ public abstract class AbstractLocalDatabaseTest {
     }
 
     protected void liquibaseUpdate() throws LiquibaseException {
-        liquibase.update();
+        liquibase.update("!test");
     }
 
     protected final void createCampaignWithScenarioExecution(Long campaignId, String scenarioId, Long scenarioExecutionId, Long campaignExecutionId) {
