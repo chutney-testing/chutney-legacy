@@ -12,13 +12,15 @@ import java.util.Collections;
 import java.util.Optional;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
-import org.springframework.test.context.ActiveProfiles;
 import util.infra.AbstractLocalDatabaseTest;
+import util.infra.EnableH2TestInfra;
 
+@DisplayName("DatabaseAdminServiceImplTest")
 @ResourceLock("changelog")
-@ActiveProfiles("test-infra-h2")
+@EnableH2TestInfra
 public class DatabaseAdminServiceImplTest extends AbstractLocalDatabaseTest {
 
     private DatabaseAdminService sut;
