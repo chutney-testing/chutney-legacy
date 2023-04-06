@@ -16,7 +16,7 @@ class LiquibaseChangelogTest {
 
     @Nested
     @DisplayName("On a fresh new database")
-    class FirstCreation {
+    class FreshDB {
         @Nested
         @EnableH2TestInfra
         @TestPropertySource(properties = {"chutney.test-infra.init-liquibase=false"})
@@ -50,7 +50,7 @@ class LiquibaseChangelogTest {
 
     @Nested
     @DisplayName("On a database with data before sqlite compatible migration")
-    class WithDataToMigrate {
+    class DataToMigrateDB {
         @Nested
         @EnableH2TestInfra
         @TestPropertySource(properties = {"chutney.test-infra.init-context=test"})

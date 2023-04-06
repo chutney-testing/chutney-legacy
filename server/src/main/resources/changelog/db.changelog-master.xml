@@ -590,7 +590,18 @@
             <column name="UPDATE_DATE" valueComputed="CURRENT_TIMESTAMP(6)"/>
             <column name="USER_ID" value="user id ..."/>
             <column name="CONTENT_VERSION" value="v2.1"/>
-            <column name="CONTENT" value="{}"/>
+            <column name="CONTENT" value="{&quot;when&quot;:{}}"/>
+        </insert>
+        <insert tableName="CAMPAIGN">
+            <column name="ID" valueNumeric="1"/>
+            <column name="TITLE" value="i am a campaign title"/>
+            <column name="DESCRIPTION" value="i am a description"/>
+<!--            <column name="SCHEDULE_TIME" value=""/>-->
+            <column name="ENVIRONMENT" value="TEST_DATA_ENV"/>
+            <column name="PARALLEL_RUN" valueBoolean="true"/>
+            <column name="RETRY_AUTO" valueBoolean="true"/>
+<!--            <column name="DATASET_ID" value=""/>-->
+            <column name="TAGS" value="TAG1,TAG2"/>
         </insert>
     </changeSet>
 
