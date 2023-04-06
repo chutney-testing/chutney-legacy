@@ -13,11 +13,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.test.context.ActiveProfiles;
-import util.AbstractLocalDatabaseTest;
+import util.infra.AbstractLocalDatabaseTest;
 
 @ResourceLock("changelog")
 @ActiveProfiles("test-infra-h2")
@@ -32,6 +33,11 @@ public class DatabaseCampaignRepositoryTest extends AbstractLocalDatabaseTest {
         mockCampaignExecutionRepository = mock(CampaignExecutionRepository.class);
         campaignParameterRepository = new CampaignParameterRepository(namedParameterJdbcTemplate);
         sut = new DatabaseCampaignRepository(namedParameterJdbcTemplate, mockCampaignExecutionRepository, campaignParameterRepository);
+    }
+
+    @AfterEach
+    void afterEach() {
+        clearTables();
     }
 
     @Test

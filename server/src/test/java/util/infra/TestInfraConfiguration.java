@@ -1,6 +1,6 @@
-package util;
+package util.infra;
 
-import static util.AbstractLocalDatabaseTest.DB_CHANGELOG_DB_CHANGELOG_MASTER_XML;
+import static util.infra.AbstractLocalDatabaseTest.DB_CHANGELOG_DB_CHANGELOG_MASTER_XML;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -153,11 +153,15 @@ class TestInfraConfiguration {
     }
 
     @Bean
-    public Liquibase liquibase(DataSource ds, @Value("${chutney.test-infra.init-liquibase:true}") boolean liquibaseInit) throws SQLException, LiquibaseException {
+    public Liquibase liquibase(
+        DataSource ds,
+        @Value("${chutney.test-infra.init-liquibase:true}") boolean liquibaseInit,
+        @Value("${chutney.test-infra.init-context:!test}") String initContext
+    ) throws SQLException, LiquibaseException {
         Database liquibaseDB = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(ds.getConnection()));
         Liquibase liquibase = new Liquibase(DB_CHANGELOG_DB_CHANGELOG_MASTER_XML, new ClassLoaderResourceAccessor(), liquibaseDB);
         if (liquibaseInit) {
-            liquibase.update();
+            liquibase.update(initContext);
         }
         return liquibase;
     }

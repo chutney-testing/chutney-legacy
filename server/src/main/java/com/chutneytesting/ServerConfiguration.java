@@ -185,6 +185,7 @@ public class ServerConfiguration implements AsyncConfigurer {
     public SpringLiquibase liquibase(DataSource dataSource) {
         SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setChangeLog("classpath:changelog/db.changelog-master.xml");
+        liquibase.setContexts("!test");
         liquibase.setDataSource(dataSource);
         return liquibase;
     }
