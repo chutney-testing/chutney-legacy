@@ -22,10 +22,11 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
-import util.AbstractLocalDatabaseTest;
+import util.infra.AbstractLocalDatabaseTest;
 
 @ActiveProfiles("test-infra-h2")
 public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
@@ -45,6 +46,11 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
         when(mockTestCase.metadata()).thenReturn(mockTestCaseMetadata);
         when(testCaseRepositoryMock.findById(any())).thenReturn(of(mockTestCase));
         sut = new CampaignExecutionRepository(namedParameterJdbcTemplate, campaignExecutionReportMapper);
+    }
+
+    @AfterEach
+    void afterEach() {
+        clearTables();
     }
 
     @Test

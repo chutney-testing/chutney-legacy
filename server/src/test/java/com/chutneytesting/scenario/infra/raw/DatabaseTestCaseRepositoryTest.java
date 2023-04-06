@@ -1,5 +1,6 @@
 package com.chutneytesting.scenario.infra.raw;
 
+import static java.lang.Integer.parseInt;
 import static java.lang.Long.valueOf;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -31,21 +32,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.support.TransactionTemplate;
-import util.AbstractLocalDatabaseTest;
+import util.infra.AbstractLocalDatabaseTest;
+import util.infra.EnableJpaScenario;
 
-@EnableJpaRepositories(basePackages = "com.chutneytesting.scenario.infra",
-    includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = "^.*JpaRepository$")}
-)
-@ComponentScan(basePackages = {"com.chutneytesting.scenario.infra"})
+@EnableJpaScenario
 @ActiveProfiles("test-infra-sqlite")
 public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private DatabaseTestCaseRepository sut;
 
     private static final GwtTestCase GWT_TEST_CASE = GwtTestCase.builder()
         .withMetadata(TestCaseMetadataImpl.builder().build())
@@ -53,9 +52,6 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         .withScenario(
             GwtScenario.builder().withWhen(GwtStep.NONE).build()
         ).build();
-
-    @Autowired
-    private DatabaseTestCaseRepository repository;
 
     private TransactionTemplate transactionTemplate;
 
@@ -67,7 +63,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     @Test
     public void should_generate_id_when_scenario_is_persisted() {
         // When: a scenarioTemplate is saved
-        String scenarioID = repository.save(GWT_TEST_CASE);
+        String scenarioID = sut.save(GWT_TEST_CASE);
 
         // Then: a non blank id is generated
         assertThat(scenarioID).isNotBlank();
@@ -76,35 +72,35 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     @Test
     public void should_not_increase_sequence_at_restart() throws LiquibaseException {
         // Given
-        repository.save(GWT_TEST_CASE);
-        repository.save(GWT_TEST_CASE);
-        repository.save(GWT_TEST_CASE);
-        String scenarioId1 = repository.save(GWT_TEST_CASE);
+        sut.save(GWT_TEST_CASE);
+        sut.save(GWT_TEST_CASE);
+        sut.save(GWT_TEST_CASE);
+        String scenarioId1 = sut.save(GWT_TEST_CASE);
 
         // When redo liquibase
         liquibaseUpdate();
 
         // Then
-        String scenarioId2 = repository.save(GWT_TEST_CASE);
-        assertThat(Integer.valueOf(scenarioId2)).isEqualTo(Integer.valueOf(scenarioId1) + 1);
+        String scenarioId2 = sut.save(GWT_TEST_CASE);
+        assertThat(Integer.valueOf(scenarioId2)).isEqualTo(parseInt(scenarioId1) + 1);
 
 
         // When redo liquibase
         liquibaseUpdate();
 
         // Then
-        String scenarioId3 = repository.save(GWT_TEST_CASE);
-        assertThat(Integer.valueOf(scenarioId3)).isEqualTo(Integer.valueOf(scenarioId2) + 1);
+        String scenarioId3 = sut.save(GWT_TEST_CASE);
+        assertThat(Integer.valueOf(scenarioId3)).isEqualTo(parseInt(scenarioId2) + 1);
     }
 
     @Test
     public void should_find_scenario_by_id() {
         // Given: a scenarioTemplate in the repository
-        String scenarioID = repository.save(GWT_TEST_CASE);
+        String scenarioID = sut.save(GWT_TEST_CASE);
 
 
         // When: we look for that scenarioTemplate
-        Optional<GwtTestCase> optScena = repository.findById(scenarioID);
+        Optional<GwtTestCase> optScena = sut.findById(scenarioID);
 
         // Then: the scenarioTemplate is found
         assertThat(optScena).isPresent();
@@ -126,10 +122,10 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
             .withExecutionParameters(Collections.singletonMap("aKey", "aValue"))
             .build();
 
-        String scenarioID = repository.save(aTestCase);
+        String scenarioID = sut.save(aTestCase);
 
         // When: we look for that scenarioTemplate
-        Optional<GwtTestCase> optScena = repository.findById(scenarioID);
+        Optional<GwtTestCase> optScena = sut.findById(scenarioID);
 
         // Then: the scenarioTemplate is found
         assertThat(optScena).isPresent();
@@ -150,7 +146,7 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     @Test
     public void should_not_find_scenario_if_id_is_not_present() {
         // When: we look for a not existed scenarioTemplate
-        Optional<GwtTestCase> optScenario = repository.findById("0");
+        Optional<GwtTestCase> optScenario = sut.findById("0");
 
         // Then: the scenarioTemplate is not found
         assertThat(optScenario).isEmpty();
@@ -159,16 +155,16 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     @Test
     public void should_not_find_removed_standalone_scenario_but_still_exist_in_database() {
         // Given: a scenarioTemplate in the repository
-        String scenarioID = repository.save(GWT_TEST_CASE);
+        String scenarioID = sut.save(GWT_TEST_CASE);
 
         // When: the scenarioTemplate is removed
-        repository.removeById(scenarioID);
+        sut.removeById(scenarioID);
 
         // Then: the scenarioTemplate is not found in the repository
-        Optional<GwtTestCase> optScena = repository.findById(scenarioID);
+        Optional<GwtTestCase> optScena = sut.findById(scenarioID);
         assertThat(optScena).isEmpty();
 
-        List<Long> foundScenario = entityManager.createQuery("SELECT s.id FROM SCENARIO s WHERE s.id = :id")
+        List<Long> foundScenario = entityManager.createQuery("SELECT s.id FROM SCENARIO s WHERE s.id = :id", Long.class)
             .setParameter("id", valueOf(scenarioID))
             .getResultList();
 
@@ -178,14 +174,14 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     @Test
     public void should_not_find_removed_scenario_used_in_campaign() {
         // Given: a scenarioTemplate in the repository with campaign association and existing execution
-        String scenarioID = repository.save(GWT_TEST_CASE);
+        String scenarioID = sut.save(GWT_TEST_CASE);
         createCampaignWithScenarioExecution(1L, scenarioID, 1L, 1L);
 
         // When: the scenarioTemplate is removed
-        repository.removeById(scenarioID);
+        sut.removeById(scenarioID);
 
         // Then: the scenarioTemplate is not found in the repository
-        Optional<GwtTestCase> optScena = repository.findById(scenarioID);
+        Optional<GwtTestCase> optScena = sut.findById(scenarioID);
         assertThat(optScena).isEmpty();
     }
 
@@ -203,22 +199,22 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
                     .withTags(Collections.singletonList("T1"))
                     .build()
             );
-        String anotherScenarioId = repository.save(anotherScenario.build());
+        String anotherScenarioId = sut.save(anotherScenario.build());
         GwtTestCaseBuilder deletedScenario = GwtTestCase.builder().from(GWT_TEST_CASE)
             .withMetadata(
                 TestCaseMetadataImpl.builder()
-                    .withId(String.valueOf(Integer.valueOf(anotherScenarioId) + 1))
+                    .withId(String.valueOf(parseInt(anotherScenarioId) + 1))
                     .withDescription("Will be deleted")
                     .withTags(Collections.singletonList("T2"))
                     .build()
             );
-        String deletedScenarioId = repository.save(deletedScenario.build());
+        String deletedScenarioId = sut.save(deletedScenario.build());
 
         // When
-        repository.removeById(deletedScenarioId);
+        sut.removeById(deletedScenarioId);
 
         // Then
-        List<TestCaseMetadata> allIndexes = repository.findAll();
+        List<TestCaseMetadata> allIndexes = sut.findAll();
 
         assertThat(allIndexes).hasSize(1);
         assertThat(allIndexes.get(0).id()).isEqualTo(anotherScenarioId);
@@ -253,16 +249,16 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     @MethodSource("parametersForShould_update_scenario_fields")
     public void should_update_scenario_fields_but_creation_date(String testName, GwtTestCase modifiedTestCase) {
         // Given: an existing scenarioTemplate in the repository
-        final String scenarioId = repository.save(GWT_TEST_CASE);
+        final String scenarioId = sut.save(GWT_TEST_CASE);
         GwtTestCase modifiedTestCaseWithId = GwtTestCase.builder().from(modifiedTestCase).withMetadata(TestCaseMetadataBuilder.from(modifiedTestCase.metadata)
                 .withId(scenarioId).build())
             .build();
 
         // When: the scenarioTemplate is updated in the repository
-        repository.save(modifiedTestCaseWithId);
+        sut.save(modifiedTestCaseWithId);
 
         // Then: the modified scenarioTemplate is found in the repository
-        TestCase repositoryScenario = repository.findById(scenarioId).get();
+        TestCase repositoryScenario = sut.findById(scenarioId).orElseThrow();
 
         assertThat(repositoryScenario)
             .as(testName)
@@ -277,14 +273,14 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     @Test
     public void should_throw_exception_when_updating_wrong_scenario_version() {
         // Given
-        final String scenarioId = repository.save(GWT_TEST_CASE);
+        final String scenarioId = sut.save(GWT_TEST_CASE);
         final Integer newVersion = 4;
         GwtTestCase newTestCase = GwtTestCase.builder().from(GWT_TEST_CASE)
             .withMetadata(TestCaseMetadataImpl.builder().withId(scenarioId).withVersion(newVersion).build())
             .build();
 
         // When / Then
-        assertThatThrownBy(() -> repository.save(newTestCase))
+        assertThatThrownBy(() -> sut.save(newTestCase))
             .isInstanceOf(ScenarioNotFoundException.class)
             .hasMessageContainingAll(scenarioId, newVersion.toString());
     }
@@ -295,10 +291,10 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
         Instant creationDate = GWT_TEST_CASE.metadata().creationDate();
 
         // When
-        final String scenarioId = repository.save(GWT_TEST_CASE);
+        final String scenarioId = sut.save(GWT_TEST_CASE);
 
         // Then
-        TestCase repositoryScenario = repository.findById(scenarioId).get();
+        TestCase repositoryScenario = sut.findById(scenarioId).orElseThrow();
         assertThat(repositoryScenario.metadata().version()).isEqualTo(1);
         assertThat(repositoryScenario.metadata().updateDate().truncatedTo(MILLIS)).isEqualTo(creationDate.truncatedTo(MILLIS));
         Instant updateDate = repositoryScenario.metadata().updateDate();
@@ -314,10 +310,10 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
                     .build())
                 .build();
 
-            repository.save(newTestCase);
+            sut.save(newTestCase);
 
             // Then#
-            TestCase readScenario = repository.findById(scenarioId).get();
+            TestCase readScenario = sut.findById(scenarioId).orElseThrow();
             assertThat(readScenario.metadata().version()).isEqualTo(i + 1);
             assertThat(readScenario.metadata().updateDate()).isAfter(updateDate);
 
@@ -329,40 +325,40 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
     public void should_get_last_version_from_id() {
         // ----- Unknown testcase
         // When / Then
-        assertThat(repository.lastVersion("unknownId")).isNotNull();
+        assertThat(sut.lastVersion("unknownId")).isNotNull();
 
         // ----- Multiple updates
         // Given first save
-        final String scenarioId = repository.save(GWT_TEST_CASE);
+        final String scenarioId = sut.save(GWT_TEST_CASE);
 
         // When / Then
-        assertThat(repository.lastVersion(scenarioId).get()).isEqualTo(1);
+        assertThat(sut.lastVersion(scenarioId).orElseThrow()).isEqualTo(1);
 
         // Given first update
         GwtTestCase newTestCase = GwtTestCase.builder().from(GWT_TEST_CASE)
             .withMetadata(TestCaseMetadataImpl.builder().withId(scenarioId).withVersion(1).build())
             .build();
 
-        repository.save(newTestCase);
+        sut.save(newTestCase);
 
         // When / Then
-        assertThat(repository.lastVersion(scenarioId).get()).isEqualTo(2);
+        assertThat(sut.lastVersion(scenarioId).orElseThrow()).isEqualTo(2);
     }
 
     @Test
     public void should_not_persist_default_author() {
         // When
-        final String scenarioId = repository.save(GWT_TEST_CASE);
+        final String scenarioId = sut.save(GWT_TEST_CASE);
 
         //Then
-        List<String> foundScenario = entityManager.createQuery("SELECT s.userId FROM SCENARIO s WHERE s.id = :id")
+        List<String> foundScenario = entityManager.createQuery("SELECT s.userId FROM SCENARIO s WHERE s.id = :id", String.class)
             .setParameter("id", valueOf(scenarioId))
             .getResultList();
 
         assertThat(foundScenario).hasSize(1);
         assertThat(foundScenario.get(0)).isNull();
 
-        Optional<GwtTestCase> testCaseById = repository.findById(scenarioId);
+        Optional<GwtTestCase> testCaseById = sut.findById(scenarioId);
         assertThat(testCaseById).hasValueSatisfying(tc -> assertThat(tc.metadata().author()).isEqualTo(User.ANONYMOUS.id));
     }
 
@@ -378,16 +374,16 @@ public class DatabaseTestCaseRepositoryTest extends AbstractLocalDatabaseTest {
                     .withWhen(GwtStep.NONE).build()
             ).build();
         // Given
-        String scenarioID = repository.save(GWT_TEST_CASE);
+        String scenarioID = sut.save(GWT_TEST_CASE);
 
         // When
-        List<TestCaseMetadata> raw = repository.search("momos");
+        List<TestCaseMetadata> raw = sut.search("momos");
         // Then
         assertThat(raw).hasSize(1);
         assertThat(raw.get(0).id()).isEqualTo(scenarioID);
 
         // When
-        List<TestCaseMetadata> raw2 = repository.search("curry");
+        List<TestCaseMetadata> raw2 = sut.search("curry");
         // Then
         assertThat(raw2).hasSize(0);
     }

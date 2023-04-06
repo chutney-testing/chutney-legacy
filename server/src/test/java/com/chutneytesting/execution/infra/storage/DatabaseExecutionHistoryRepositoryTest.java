@@ -34,10 +34,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
-import util.AbstractLocalDatabaseTest;
+import util.infra.AbstractLocalDatabaseTest;
 
 @ActiveProfiles("test-infra-h2")
 public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabaseTest {
@@ -49,6 +50,11 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
     public void beforeEach() {
         sut = new DatabaseExecutionHistoryRepository(namedParameterJdbcTemplate);
         initCampaignRepository();
+    }
+
+    @AfterEach
+    void afterEach() {
+        clearTables();
     }
 
     @Test
