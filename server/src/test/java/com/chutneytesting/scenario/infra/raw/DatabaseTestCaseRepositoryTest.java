@@ -54,7 +54,7 @@ public class DatabaseTestCaseRepositoryTest {
 
     @Nested
     @EnablePostgreSQLTestInfra
-    class PostregSQL extends AllTests {
+    class PostreSQL extends AllTests {
     }
 
     @EnableJpaScenario
