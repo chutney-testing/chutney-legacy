@@ -15,13 +15,15 @@ import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
-import org.springframework.test.context.ActiveProfiles;
 import util.infra.AbstractLocalDatabaseTest;
+import util.infra.EnableH2TestInfra;
 
+@DisplayName("DatabaseCampaignRepositoryTest")
 @ResourceLock("changelog")
-@ActiveProfiles("test-infra-h2")
+@EnableH2TestInfra
 public class DatabaseCampaignRepositoryTest extends AbstractLocalDatabaseTest {
 
     private CampaignRepository sut;

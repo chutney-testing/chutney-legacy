@@ -24,11 +24,13 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ActiveProfiles;
 import util.infra.AbstractLocalDatabaseTest;
+import util.infra.EnableH2TestInfra;
 
-@ActiveProfiles("test-infra-h2")
+@DisplayName("CampaignExecutionRepositoryTest")
+@EnableH2TestInfra
 public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
 
     private CampaignExecutionRepository sut;
