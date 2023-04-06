@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import util.infra.AbstractLocalDatabaseTest;
+import util.infra.EnableH2TestInfra;
+import util.infra.EnablePostgreSQLTestInfra;
+import util.infra.EnableSQLiteTestInfra;
 
 @DisplayName("Liquibase changelog must be applied without error")
 class LiquibaseChangelogTest {
@@ -16,8 +18,7 @@ class LiquibaseChangelogTest {
     @DisplayName("On a fresh new database")
     class FirstCreation {
         @Nested
-        @DisplayName("H2")
-        @ActiveProfiles("test-infra-h2")
+        @EnableH2TestInfra
         @TestPropertySource(properties = {"chutney.test-infra.init-liquibase=false"})
         class H2 extends AbstractLocalDatabaseTest {
             @Test
@@ -27,8 +28,7 @@ class LiquibaseChangelogTest {
         }
 
         @Nested
-        @DisplayName("SQLite")
-        @ActiveProfiles("test-infra-sqlite")
+        @EnableSQLiteTestInfra
         @TestPropertySource(properties = {"chutney.test-infra.init-liquibase=false"})
         class SQLite extends AbstractLocalDatabaseTest {
             @Test
@@ -38,8 +38,7 @@ class LiquibaseChangelogTest {
         }
 
         @Nested
-        @DisplayName("Postgres")
-        @ActiveProfiles("test-infra-pgsql")
+        @EnablePostgreSQLTestInfra
         @TestPropertySource(properties = {"chutney.test-infra.init-liquibase=false"})
         class Postgres extends AbstractLocalDatabaseTest {
             @Test
@@ -53,8 +52,7 @@ class LiquibaseChangelogTest {
     @DisplayName("On a database with data before sqlite compatible migration")
     class WithDataToMigrate {
         @Nested
-        @DisplayName("H2")
-        @ActiveProfiles("test-infra-h2")
+        @EnableH2TestInfra
         @TestPropertySource(properties = {"chutney.test-infra.init-context=test"})
         class H2 extends AbstractLocalDatabaseTest {
             @Test
@@ -63,8 +61,7 @@ class LiquibaseChangelogTest {
         }
 
         @Nested
-        @DisplayName("Postgres")
-        @ActiveProfiles("test-infra-pgsql")
+        @EnablePostgreSQLTestInfra
         @TestPropertySource(properties = {"chutney.test-infra.init-context=test"})
         class Postgres extends AbstractLocalDatabaseTest {
             @Test
