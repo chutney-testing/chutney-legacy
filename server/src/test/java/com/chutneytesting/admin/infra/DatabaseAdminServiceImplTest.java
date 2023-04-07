@@ -16,11 +16,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import util.infra.AbstractLocalDatabaseTest;
-import util.infra.EnableH2TestInfra;
+import util.infra.EnableH2MemTestInfra;
 
 @DisplayName("DatabaseAdminServiceImplTest")
 @ResourceLock("changelog")
-@EnableH2TestInfra
+@EnableH2MemTestInfra
 public class DatabaseAdminServiceImplTest extends AbstractLocalDatabaseTest {
 
     private DatabaseAdminService sut;

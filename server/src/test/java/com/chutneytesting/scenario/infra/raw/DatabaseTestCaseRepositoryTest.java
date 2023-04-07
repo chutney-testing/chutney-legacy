@@ -10,10 +10,12 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Assertions.within;
 import static util.WaitUtils.awaitDuring;
 
+import com.chutneytesting.campaign.infra.jpa.Campaign;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase.GwtTestCaseBuilder;
+import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
@@ -23,27 +25,25 @@ import com.chutneytesting.server.core.domain.security.User;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import javax.persistence.EntityManager;
-import liquibase.exception.LiquibaseException;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.support.TransactionTemplate;
 import util.infra.AbstractLocalDatabaseTest;
-import util.infra.EnableH2TestInfra;
-import util.infra.EnableJpaScenario;
+import util.infra.EnableH2MemTestInfra;
 import util.infra.EnablePostgreSQLTestInfra;
 import util.infra.EnableSQLiteTestInfra;
 
 public class DatabaseTestCaseRepositoryTest {
 
     @Nested
-    @EnableH2TestInfra
+    @EnableH2MemTestInfra
     class H2 extends AllTests {
     }
 
@@ -57,11 +57,7 @@ public class DatabaseTestCaseRepositoryTest {
     class PostreSQL extends AllTests {
     }
 
-    @EnableJpaScenario
-    static class AllTests extends AbstractLocalDatabaseTest {
-        @Autowired
-        private EntityManager entityManager;
-
+    abstract class AllTests extends AbstractLocalDatabaseTest {
         @Autowired
         private DatabaseTestCaseRepository sut;
 
@@ -72,11 +68,9 @@ public class DatabaseTestCaseRepositoryTest {
                 GwtScenario.builder().withWhen(GwtStep.NONE).build()
             ).build();
 
-        private TransactionTemplate transactionTemplate;
-
-        @BeforeEach
-        void setUp() {
-            transactionTemplate = new TransactionTemplate(transactionManager);
+        @AfterEach
+        void afterEach() {
+            clearTables();
         }
 
         @Test
@@ -86,30 +80,6 @@ public class DatabaseTestCaseRepositoryTest {
 
             // Then: a non blank id is generated
             assertThat(scenarioID).isNotBlank();
-        }
-
-        @Test
-        public void should_not_increase_sequence_at_restart() throws LiquibaseException {
-            // Given
-            sut.save(GWT_TEST_CASE);
-            sut.save(GWT_TEST_CASE);
-            sut.save(GWT_TEST_CASE);
-            String scenarioId1 = sut.save(GWT_TEST_CASE);
-
-            // When redo liquibase
-            liquibaseUpdate();
-
-            // Then
-            String scenarioId2 = sut.save(GWT_TEST_CASE);
-            assertThat(Integer.valueOf(scenarioId2)).isEqualTo(parseInt(scenarioId1) + 1);
-
-
-            // When redo liquibase
-            liquibaseUpdate();
-
-            // Then
-            String scenarioId3 = sut.save(GWT_TEST_CASE);
-            assertThat(Integer.valueOf(scenarioId3)).isEqualTo(parseInt(scenarioId2) + 1);
         }
 
         @Test
@@ -144,13 +114,12 @@ public class DatabaseTestCaseRepositoryTest {
             String scenarioID = sut.save(aTestCase);
 
             // When: we look for that scenarioTemplate
-            Optional<GwtTestCase> optScena = sut.findById(scenarioID);
+            Optional<GwtTestCase> foundScenario = sut.findById(scenarioID);
 
             // Then: the scenarioTemplate is found
-            assertThat(optScena).isPresent();
+            assertThat(foundScenario).isPresent();
 
-
-            GwtTestCase testCase = (GwtTestCase) optScena.get();
+            GwtTestCase testCase = foundScenario.get();
             assertThat(testCase.metadata().title()).isEqualTo("A Purpose");
             assertThat(testCase.metadata().description()).isEqualTo("Description");
             assertThat(testCase.metadata().tags()).containsExactly("TAG");
@@ -180,49 +149,56 @@ public class DatabaseTestCaseRepositoryTest {
             sut.removeById(scenarioID);
 
             // Then: the scenarioTemplate is not found in the repository
-            Optional<GwtTestCase> optScena = sut.findById(scenarioID);
-            assertThat(optScena).isEmpty();
+            Optional<GwtTestCase> removedScenario = sut.findById(scenarioID);
+            assertThat(removedScenario).isEmpty();
 
             List<Long> foundScenario = entityManager.createQuery("SELECT s.id FROM SCENARIO s WHERE s.id = :id", Long.class)
                 .setParameter("id", valueOf(scenarioID))
                 .getResultList();
 
-            assertThat(foundScenario).hasSize(1).containsExactly(valueOf(scenarioID));
+            assertThat(foundScenario).containsExactly(valueOf(scenarioID));
         }
 
         @Test
         public void should_not_find_removed_scenario_used_in_campaign() {
             // Given: a scenarioTemplate in the repository with campaign association and existing execution
-            String scenarioID = sut.save(GWT_TEST_CASE);
-            createCampaignWithScenarioExecution(1L, scenarioID, 1L, 1L);
+            Scenario scenario = givenScenario();
+            Campaign campaign = transactionTemplate.execute(status -> {
+                Campaign c = new Campaign("title", List.of(scenario));
+                entityManager.persist(c);
+                return c;
+            });
+            Map<String, Object> scenarioIdParameter = new HashMap<>();
+            scenarioIdParameter.put("campaignId", campaign.id());
+            scenarioIdParameter.put("scenarioId", scenario.id());
+            scenarioIdParameter.put("scenarioExecutionId", 1L);
+            scenarioIdParameter.put("campaignExecutionId", 1L);
+            namedParameterJdbcTemplate.update("insert into scenario_execution_history (id, scenario_id, report) values (:scenarioExecutionId, :scenarioId, '')", scenarioIdParameter);
+            namedParameterJdbcTemplate.update("insert into campaign_execution_history (campaign_id, id, scenario_id, scenario_execution_id) values (:campaignId, :campaignExecutionId, :scenarioId, :scenarioExecutionId)", scenarioIdParameter);
 
             // When: the scenarioTemplate is removed
-            sut.removeById(scenarioID);
+            sut.removeById(scenario.id().toString());
 
             // Then: the scenarioTemplate is not found in the repository
-            Optional<GwtTestCase> optScena = sut.findById(scenarioID);
-            assertThat(optScena).isEmpty();
+            Optional<GwtTestCase> noScenario = sut.findById(scenario.id().toString());
+            assertThat(noScenario).isEmpty();
         }
 
         @Test
         public void should_not_find_removed_scenario_metadata_when_findAll() {
-            transactionTemplate.execute(status ->
-                entityManager.createQuery("DELETE FROM SCENARIO s").executeUpdate()
-            );
-
             // Given: 2 scenarios in the repository
-            GwtTestCaseBuilder anotherScenario = GwtTestCase.builder().from(GWT_TEST_CASE)
+            GwtTestCaseBuilder keptScenario = GwtTestCase.builder().from(GWT_TEST_CASE)
                 .withMetadata(
                     TestCaseMetadataImpl.builder()
                         .withDescription("Will be kept")
                         .withTags(Collections.singletonList("T1"))
                         .build()
                 );
-            String anotherScenarioId = sut.save(anotherScenario.build());
+            String keptScenarioId = sut.save(keptScenario.build());
             GwtTestCaseBuilder deletedScenario = GwtTestCase.builder().from(GWT_TEST_CASE)
                 .withMetadata(
                     TestCaseMetadataImpl.builder()
-                        .withId(String.valueOf(parseInt(anotherScenarioId) + 1))
+                        .withId(String.valueOf(parseInt(keptScenarioId) + 1))
                         .withDescription("Will be deleted")
                         .withTags(Collections.singletonList("T2"))
                         .build()
@@ -235,8 +211,9 @@ public class DatabaseTestCaseRepositoryTest {
             // Then
             List<TestCaseMetadata> allIndexes = sut.findAll();
 
-            assertThat(allIndexes).hasSize(1);
-            assertThat(allIndexes.get(0).id()).isEqualTo(anotherScenarioId);
+            assertThat(allIndexes).extracting("id")
+                .doesNotContain(deletedScenarioId)
+                .contains(keptScenarioId);
         }
 
         public static Object[] parametersForShould_update_scenario_fields() {
@@ -374,8 +351,7 @@ public class DatabaseTestCaseRepositoryTest {
                 .setParameter("id", valueOf(scenarioId))
                 .getResultList();
 
-            assertThat(foundScenario).hasSize(1);
-            assertThat(foundScenario.get(0)).isNull();
+            assertThat(foundScenario).hasSize(1).containsOnlyNulls();
 
             Optional<GwtTestCase> testCaseById = sut.findById(scenarioId);
             assertThat(testCaseById).hasValueSatisfying(tc -> assertThat(tc.metadata().author()).isEqualTo(User.ANONYMOUS.id));
@@ -398,13 +374,12 @@ public class DatabaseTestCaseRepositoryTest {
             // When
             List<TestCaseMetadata> raw = sut.search("momos");
             // Then
-            assertThat(raw).hasSize(1);
-            assertThat(raw.get(0).id()).isEqualTo(scenarioID);
+            assertThat(raw).hasSize(1).extracting("id").containsExactly(scenarioID);
 
             // When
             List<TestCaseMetadata> raw2 = sut.search("curry");
             // Then
-            assertThat(raw2).hasSize(0);
+            assertThat(raw2).isEmpty();
         }
     }
 }

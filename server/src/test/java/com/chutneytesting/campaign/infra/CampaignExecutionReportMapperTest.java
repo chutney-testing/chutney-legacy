@@ -8,12 +8,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import com.chutneytesting.tools.Try;
@@ -29,11 +29,11 @@ import org.mockito.stubbing.OngoingStubbing;
 public class CampaignExecutionReportMapperTest {
 
     private CampaignExecutionReportMapper sut;
-    private TestCaseRepositoryAggregator testCaseRepositoryMock;
+    private TestCaseRepository testCaseRepositoryMock;
 
     @BeforeEach
     public void setUp() {
-        testCaseRepositoryMock = mock(TestCaseRepositoryAggregator.class);
+        testCaseRepositoryMock = mock(TestCaseRepository.class);
         sut = new CampaignExecutionReportMapper(testCaseRepositoryMock);
     }
 

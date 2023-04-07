@@ -10,10 +10,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class TestCaseEditionsServiceTest {
     private TestCaseEditionsService sut;
 
     private final TestCaseEditions testCaseEditions = mock(TestCaseEditions.class);
-    private final TestCaseRepositoryAggregator testCaseRepository = mock(TestCaseRepositoryAggregator.class);
+    private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
 
     @BeforeEach
     public void before() {

@@ -1,22 +1,13 @@
 package com.chutneytesting.execution.infra.storage;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.singletonList;
-import static java.util.Optional.of;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.campaign.domain.CampaignRepository;
-import com.chutneytesting.campaign.infra.CampaignExecutionReportMapper;
-import com.chutneytesting.campaign.infra.CampaignExecutionRepository;
-import com.chutneytesting.campaign.infra.CampaignParameterRepository;
-import com.chutneytesting.campaign.infra.DatabaseCampaignRepository;
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.Execution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.ExecutionSummary;
@@ -24,8 +15,6 @@ import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryR
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundException;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
-import com.chutneytesting.server.core.domain.scenario.TestCase;
-import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
@@ -38,20 +27,21 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import util.infra.AbstractLocalDatabaseTest;
-import util.infra.EnableH2TestInfra;
+import util.infra.EnableH2MemTestInfra;
 
 @DisplayName("DatabaseExecutionHistoryRepositoryTest")
-@EnableH2TestInfra
+@EnableH2MemTestInfra
 public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabaseTest {
 
     private ExecutionHistoryRepository sut;
+    @Autowired
     private CampaignRepository campaignRepository;
 
     @BeforeEach
     public void beforeEach() {
         sut = new DatabaseExecutionHistoryRepository(namedParameterJdbcTemplate);
-        initCampaignRepository();
     }
 
     @AfterEach
@@ -310,7 +300,9 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
     }
 
     private Long saveNewCampaign() {
-        Campaign campaign = new Campaign(null, "test", "test campaign", newArrayList("1", "2"), null, "env", false, false, null, null);
+        Scenario s1 = givenScenario();
+        Scenario s2 = givenScenario();
+        Campaign campaign = new Campaign(null, "test", "test campaign", scenariosIds(s1, s2), null, "env", false, false, null, null);
         return campaignRepository.createOrUpdate(campaign).id;
     }
 
@@ -327,19 +319,5 @@ public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabas
             .datasetId("fake dataset id")
             .user("")
             .build();
-    }
-
-    private void initCampaignRepository() {
-        TestCaseRepositoryAggregator testCaseRepositoryMock = mock(TestCaseRepositoryAggregator.class);
-        CampaignExecutionReportMapper campaignExecutionReportMapper = new CampaignExecutionReportMapper(testCaseRepositoryMock);
-        TestCase mockTestCase = mock(TestCase.class);
-        TestCaseMetadata mockTestCaseMetadata = mock(TestCaseMetadata.class);
-        when(mockTestCaseMetadata.title()).thenReturn("scenario title");
-        when(mockTestCase.metadata()).thenReturn(mockTestCaseMetadata);
-        when(testCaseRepositoryMock.findById(any())).thenReturn(of(mockTestCase));
-        CampaignExecutionRepository campaignExecutionRepository = new CampaignExecutionRepository(namedParameterJdbcTemplate, campaignExecutionReportMapper);
-
-        CampaignParameterRepository campaignParameterRepository = new CampaignParameterRepository(namedParameterJdbcTemplate);
-        campaignRepository = new DatabaseCampaignRepository(namedParameterJdbcTemplate, campaignExecutionRepository, campaignParameterRepository);
     }
 }

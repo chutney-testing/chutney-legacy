@@ -1,5 +1,8 @@
 package com.chutneytesting.scenario.infra.jpa;
 
+import static java.lang.String.valueOf;
+
+import com.chutneytesting.campaign.infra.jpa.Campaign;
 import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.infra.raw.TagListMapper;
@@ -12,11 +15,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.Map;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Version;
 
 @Entity(name = "SCENARIO")
@@ -61,6 +66,9 @@ public class Scenario {
     @Version
     private Integer version;
 
+    @ManyToMany(mappedBy = "scenarios")
+    private Set<Campaign> campaigns;
+
     public Scenario() {
     }
 
@@ -79,8 +87,24 @@ public class Scenario {
         this.version = version;
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
+    }
+
+    public String title() {
+        return title;
+    }
+
+    public boolean activated() {
+        return activated;
+    }
+
+    public void deactivate() {
+        activated = false;
+    }
+
+    public Set<Campaign> campaigns() {
+        return campaigns;
     }
 
     public static Scenario fromTestCaseData(TestCaseData scenario) {
@@ -103,7 +127,7 @@ public class Scenario {
     public GwtTestCase toGwtTestCase() {
         return GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
-                .withId("" + id)
+                .withId(valueOf(id))
                 .withTitle(title)
                 .withDescription(description)
                 .withCreationDate(Instant.ofEpochMilli(creationDate))
@@ -119,7 +143,7 @@ public class Scenario {
 
     public TestCaseMetadata toTestCaseMetadata() {
         return TestCaseMetadataImpl.builder()
-            .withId("" + id)
+            .withId(valueOf(id))
             .withTitle(title)
             .withDescription(description)
             .withTags(TagListMapper.tagsStringToList(tags))

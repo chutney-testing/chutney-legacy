@@ -4,8 +4,7 @@ import static com.chutneytesting.scenario.infra.jpa.Scenario.fromTestCaseData;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.Long.valueOf;
 import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static java.util.stream.Collectors.toList;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
@@ -17,7 +16,6 @@ import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.google.common.collect.ImmutableMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -29,13 +27,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestCase> {
 
     private final NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate;
-    private final DatabaseTestCaseJpaRepository jpa;
+    private final DatabaseTestCaseJpaRepository scenarioJpaRepository;
 
     public DatabaseTestCaseRepository(NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate,
                                       DatabaseTestCaseJpaRepository jpa) {
 
         this.uiNamedParameterJdbcTemplate = uiNamedParameterJdbcTemplate;
-        this.jpa = jpa;
+        this.scenarioJpaRepository = jpa;
     }
 
     @Override
@@ -50,7 +48,8 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
             return empty();
         }
         try {
-            Optional<Scenario> scenarioDao = jpa.findById(valueOf(scenarioId));
+            Optional<Scenario> scenarioDao = scenarioJpaRepository.findByIdAndActivated(valueOf(scenarioId), true)
+                .filter(Scenario::activated);
             return scenarioDao.map(Scenario::toGwtTestCase);
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
@@ -59,15 +58,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     @Override
     public Optional<TestCase> findExecutableById(String id) {
-        if (checkIdInput(id)) {
-            return empty();
-        }
-        Optional<GwtTestCase> byId = findById(id);
-        if (byId.isPresent()) {
-            return of(byId.get());
-        } else {
-            return empty();
-        }
+        return findById(id).map(TestCase.class::cast);
     }
 
     @Override
@@ -77,7 +68,9 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     @Override
     public List<TestCaseMetadata> findAll() {
-        return jpa.findAll().stream().map(Scenario::toTestCaseMetadata).collect(toList());
+        return scenarioJpaRepository.findByActivatedTrue().stream()
+            .map(Scenario::toTestCaseMetadata)
+            .toList();
     }
 
     @Override
@@ -86,10 +79,14 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         if (checkIdInput(scenarioId)) {
             return;
         }
-        // TODO - Refactor - Use CampaignRepository up in callstack
-        uiNamedParameterJdbcTemplate.update("DELETE FROM CAMPAIGN_EXECUTION_HISTORY WHERE SCENARIO_ID = :id", buildIdParameterMap(scenarioId));
-        uiNamedParameterJdbcTemplate.update("DELETE FROM CAMPAIGN_SCENARIOS WHERE SCENARIO_ID = :id", buildIdParameterMap(scenarioId));
-        jpa.deactivateScenario(valueOf(scenarioId));
+        scenarioJpaRepository.findByIdAndActivated(Long.valueOf(scenarioId), true)
+            .ifPresent(scenarioJpa -> {
+                // TODO - Refactor - Use CampaignRepository up in callstack
+                uiNamedParameterJdbcTemplate.update("DELETE FROM CAMPAIGN_EXECUTION_HISTORY WHERE SCENARIO_ID = :id", buildIdParameterMap(scenarioId));
+                scenarioJpa.campaigns().clear();
+                scenarioJpa.deactivate();
+                scenarioJpaRepository.save(scenarioJpa);
+            });
     }
 
     @Override
@@ -98,7 +95,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
             return empty();
         }
         try {
-            return jpa.getLastVersion(valueOf(scenarioId));
+            return scenarioJpaRepository.getLastVersion(valueOf(scenarioId));
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
         }
@@ -109,8 +106,8 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         if (!textFilter.isEmpty()) {
             String[] words = escapeSql(textFilter).split("\\s");
             Specification<Scenario> scenarioDaoSpecification = buildLikeSpecificationOnContent(words);
-            List<Scenario> all = jpa.findAll(scenarioDaoSpecification);
-            return all.stream().map(Scenario::toTestCaseMetadata).collect(Collectors.toList());
+            List<Scenario> all = scenarioJpaRepository.findAll(scenarioDaoSpecification);
+            return all.stream().map(Scenario::toTestCaseMetadata).toList();
         } else {
             return findAll();
         }
@@ -127,18 +124,16 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         Specification<Scenario> scenarioDaoSpecification = null;
         for (String word : words) {
             Specification<Scenario> wordSpecification = DatabaseTestCaseJpaRepository.contentContains(word);
-            if (scenarioDaoSpecification == null) {
-                scenarioDaoSpecification = wordSpecification;
-            } else {
-                scenarioDaoSpecification = scenarioDaoSpecification.or(wordSpecification);
-            }
+            scenarioDaoSpecification = ofNullable(scenarioDaoSpecification)
+                .map(s -> s.or(wordSpecification))
+                .orElse(wordSpecification);
         }
         return scenarioDaoSpecification;
     }
 
     private Long doSave(TestCaseData scenario) {
         try {
-            return jpa.save(fromTestCaseData(scenario)).getId();
+            return scenarioJpaRepository.save(fromTestCaseData(scenario)).id();
         } catch (ObjectOptimisticLockingFailureException e) {
             throw new ScenarioNotFoundException(scenario.id, scenario.version);
         }

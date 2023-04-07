@@ -4,6 +4,7 @@ import static util.infra.AbstractLocalDatabaseTest.DB_CHANGELOG_DB_CHANGELOG_MAS
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,10 +20,14 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import org.h2.tools.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -32,19 +37,35 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.utility.DockerImageName;
+import util.SocketUtil;
 
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
+@EnableJpa
 @Profile("test-infra")
 class TestInfraConfiguration {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestInfraConfiguration.class);
 
     @Configuration
     @Profile("test-infra-h2")
     static class H2Configuration {
+        private static final Logger LOGGER = LoggerFactory.getLogger(H2Configuration.class);
+
         @Bean
-        public DataSourceProperties dataSourceProperties() {
+        public DataSourceProperties inMemoryDataSourceProperties() {
             DataSourceProperties dataSourceProperties = new DataSourceProperties();
             dataSourceProperties.setUrl("jdbc:h2:mem:test_" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");
+            return dataSourceProperties;
+        }
+
+        @Bean
+        @Profile("test-infra-h2-file")
+        @Primary
+        public DataSourceProperties fileDataSourceProperties(Server h2Server) {
+            DataSourceProperties dataSourceProperties = new DataSourceProperties();
+            dataSourceProperties.setUrl("jdbc:h2:tcp://localhost:" + h2Server.getPort() + "/./h2-chutney-171;SCHEMA=PUBLIC");
             return dataSourceProperties;
         }
 
@@ -57,6 +78,27 @@ class TestInfraConfiguration {
                 "hibernate.use-new-id-generator-mappings", "false"
             ));
             return jpaProperties;
+        }
+
+        @Bean(value = "dbServer", destroyMethod = "stop")
+        Server dbServer() throws SQLException {
+            int availablePort = SocketUtil.freePort();
+            Path tempDirectory = copyH2ToTempDir();
+            Server h2Server = Server.createTcpServer("-tcp", "-tcpPort", String.valueOf(availablePort), "-tcpAllowOthers", "-baseDir", tempDirectory.toString(), "-ifNotExists").start();
+            LOGGER.debug("Started H2 server " + h2Server.getURL());
+            return h2Server;
+        }
+
+        private Path copyH2ToTempDir() {
+            File h2BaseBlankFile = new File(TestInfraConfiguration.class.getResource("/test-infra/h2-chutney-171.mv.db.blank.bak").getPath());
+            Path tempDirectory;
+            try {
+                tempDirectory = Files.createTempDirectory("test-infra");
+                Files.copy(h2BaseBlankFile.toPath(), tempDirectory.resolve("h2-chutney-171.mv.db"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return tempDirectory;
         }
     }
 
@@ -89,7 +131,7 @@ class TestInfraConfiguration {
 
         @Bean(initMethod = "start", destroyMethod = "stop")
         public PostgreSQLContainer postgresDB() {
-            return new PostgreSQLContainer();
+            return new PostgreSQLContainer(DockerImageName.parse("postgres:10.23-bullseye"));
         }
 
         @Bean
@@ -114,6 +156,7 @@ class TestInfraConfiguration {
 
     @Bean
     public DataSource dataSource(DataSourceProperties dataSourceProperties) {
+        LOGGER.info("test configuration datasource : {}", dataSourceProperties.getUrl());
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setMaximumPoolSize(2);
         hikariConfig.setJdbcUrl(dataSourceProperties.getUrl());

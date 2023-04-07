@@ -6,10 +6,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EnableJpaRepositories(basePackages = "com.chutneytesting.scenario.infra",
+@EnableJpaRepositories(basePackages = {"com.chutneytesting.scenario.infra", "com.chutneytesting.campaign.infra"},
     includeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = "^.*JpaRepository$")}
 )
-@ComponentScan(basePackages = {"com.chutneytesting.scenario.infra"})
+@ComponentScan(basePackages = {"com.chutneytesting.campaign.infra", "com.chutneytesting.scenario.infra"})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EnableJpaScenario {
+public @interface EnableJpa {
 }

@@ -2,11 +2,11 @@ package com.chutneytesting.campaign.infra;
 
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import com.google.common.collect.Lists;
@@ -29,9 +29,9 @@ import org.springframework.stereotype.Component;
 public class CampaignExecutionReportMapper implements ResultSetExtractor<List<CampaignExecutionReport>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CampaignExecutionReportMapper.class);
 
-    private final TestCaseRepositoryAggregator repository;
+    private final TestCaseRepository repository;
 
-    public CampaignExecutionReportMapper(TestCaseRepositoryAggregator repository) {
+    public CampaignExecutionReportMapper(TestCaseRepository repository) {
         this.repository = repository;
     }
 

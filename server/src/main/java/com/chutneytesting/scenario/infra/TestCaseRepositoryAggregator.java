@@ -1,4 +1,4 @@
-package com.chutneytesting.scenario.domain;
+package com.chutneytesting.scenario.infra;
 
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;

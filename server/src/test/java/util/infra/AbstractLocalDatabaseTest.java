@@ -1,10 +1,15 @@
 package util.infra;
 
-import java.util.HashMap;
-import java.util.Map;
+import static java.time.Instant.now;
+
+import com.chutneytesting.scenario.infra.jpa.Scenario;
+import java.util.Arrays;
+import java.util.List;
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.exception.LiquibaseException;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -12,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @SpringJUnitConfig
 @ActiveProfiles("test-infra")
@@ -23,16 +29,24 @@ public abstract class AbstractLocalDatabaseTest {
     @Autowired
     protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     @Autowired
-    protected PlatformTransactionManager transactionManager;
+    protected EntityManager entityManager;
+    protected TransactionTemplate transactionTemplate = new TransactionTemplate();
+    @Autowired
+    private PlatformTransactionManager transactionManager;
     @Autowired
     private Liquibase liquibase;
+
+    @BeforeEach
+    void setTransactionTemplate() {
+        transactionTemplate.setTransactionManager(transactionManager);
+    }
 
     protected void clearTables() {
         JdbcTemplate jdbcTemplate = namedParameterJdbcTemplate.getJdbcTemplate();
         jdbcTemplate.execute("DELETE FROM CAMPAIGN_EXECUTION_HISTORY");
         jdbcTemplate.execute("DELETE FROM SCENARIO_EXECUTION_HISTORY");
         jdbcTemplate.execute("DELETE FROM CAMPAIGN_SCENARIOS");
-        jdbcTemplate.execute("DELETE FROM CAMPAIGN_PARAMETER");
+        jdbcTemplate.execute("DELETE FROM CAMPAIGN_PARAMETERS");
         jdbcTemplate.execute("DELETE FROM CAMPAIGN");
         jdbcTemplate.execute("DELETE FROM SCENARIO");
     }
@@ -41,16 +55,15 @@ public abstract class AbstractLocalDatabaseTest {
         liquibase.update("!test");
     }
 
-    protected final void createCampaignWithScenarioExecution(Long campaignId, String scenarioId, Long scenarioExecutionId, Long campaignExecutionId) {
-        Map<String, Object> scenarioIdParameter = new HashMap<>();
-        scenarioIdParameter.put("campaignId", campaignId);
-        scenarioIdParameter.put("scenarioId", scenarioId);
-        scenarioIdParameter.put("scenarioExecutionId", scenarioExecutionId);
-        scenarioIdParameter.put("campaignExecutionId", campaignExecutionId);
+    protected Scenario givenScenario() {
+        Scenario scenario = new Scenario(null, "", null, "", null, now(), null, true, "", null, now(), null);
+        return transactionTemplate.execute(ts -> {
+            entityManager.persist(scenario);
+            return scenario;
+        });
+    }
 
-        namedParameterJdbcTemplate.update("insert into scenario_execution_history (id, scenario_id, report) values (:scenarioExecutionId, :scenarioId, '')", scenarioIdParameter);
-        namedParameterJdbcTemplate.update("insert into campaign (id, title, description) values (:campaignId, 'test campaign', '')", scenarioIdParameter);
-        namedParameterJdbcTemplate.update("insert into campaign_scenarios (campaign_id, scenario_id) values (:campaignId, :scenarioId)", scenarioIdParameter);
-        namedParameterJdbcTemplate.update("insert into campaign_execution_history (campaign_id, id, scenario_id, scenario_execution_id) values (:campaignId, :campaignExecutionId, :scenarioId, :scenarioExecutionId)", scenarioIdParameter);
+    protected List<String> scenariosIds(Scenario... scenarios) {
+        return Arrays.stream(scenarios).map(Scenario::id).map(String::valueOf).toList();
     }
 }

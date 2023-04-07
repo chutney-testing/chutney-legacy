@@ -4,19 +4,19 @@ import static com.chutneytesting.design.domain.editionlock.TestCaseEdition.byEdi
 import static com.chutneytesting.design.domain.editionlock.TestCaseEdition.byId;
 import static java.time.Instant.now;
 
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import java.util.List;
 
 public class TestCaseEditionsService {
 
-    private final TestCaseEditions testCaseEditions;
-    private final TestCaseRepositoryAggregator testCaseRepository;
+  private final TestCaseEditions testCaseEditions;
+  private final TestCaseRepository testCaseRepository;
 
-    public TestCaseEditionsService(TestCaseEditions testCaseEditions, TestCaseRepositoryAggregator testCaseRepository) {
-        this.testCaseEditions = testCaseEditions;
-        this.testCaseRepository = testCaseRepository;
-    }
+  public TestCaseEditionsService(TestCaseEditions testCaseEditions, TestCaseRepository testCaseRepository) {
+    this.testCaseEditions = testCaseEditions;
+    this.testCaseRepository = testCaseRepository;
+  }
 
     public List<TestCaseEdition> getTestCaseEditions(String testCaseId) {
         return testCaseEditions.findBy(byId(testCaseId));
