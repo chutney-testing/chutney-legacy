@@ -1,41 +1,28 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet id="db_check_version" author="ICG">
         <preConditions onFail="HALT" onFailMessage="Database must be new or have been updated up to 2.0.0-4 version">
             <or>
                 <rowCount tableName="DATABASECHANGELOG" expectedRows="0"/>
                 <and>
-                    <changeSetExecuted id="20171227-1" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
-                    <changeSetExecuted id="20180511-1" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
-                    <changeSetExecuted id="20180515-1" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
-                    <changeSetExecuted id="20180523-1" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
-                    <changeSetExecuted id="20181119-1" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
-                    <changeSetExecuted id="20190307-1" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
-                    <changeSetExecuted id="20190327-1" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
-                    <changeSetExecuted id="20190401-1" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
-                    <changeSetExecuted id="20190517-1" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
-                    <changeSetExecuted id="20190624-1" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
-                    <changeSetExecuted id="20190627-1" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
-                    <changeSetExecuted id="20190627-2" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
-                    <changeSetExecuted id="20190627-3" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
-                    <changeSetExecuted id="20190627-4" author=""
-                                       changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20171227-1" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20180511-1" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20180515-1" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20180523-1" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20181119-1" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20190307-1" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20190327-1" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20190401-1" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20190517-1" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20190624-1" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20190627-1" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20190627-2" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20190627-3" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
+                    <changeSetExecuted id="20190627-4" author="" changeLogFile="classpath:changelog/db.changelog-master.xml"/>
                 </and>
             </or>
         </preConditions>
@@ -134,15 +121,21 @@
     <!-- If not doing that we have : current value of sequence SCENARIO_SEQ is not yet defined in this session-->
     <changeSet id="init_scenario_seq" author="ICG"  dbms="h2" runAlways="true">
         <validCheckSum>8:cedc00e540a2be8d95813f0b8269098e</validCheckSum>
+        <preConditions onFail="CONTINUE">
+            <sequenceExists sequenceName="SCENARIO_SEQ"/>
+        </preConditions>
         <comment>Init sequence in session</comment>
         <sql>select nextval('SCENARIO_SEQ')</sql>
     </changeSet>
     <changeSet id="20190719-003-h2" author="ICG" dbms="h2" runAlways="true">
         <preConditions onFail="CONTINUE">
-            <not>
-                <tableIsEmpty tableName="SCENARIO"/>
-                <sqlCheck expectedResult="0">select currval('SCENARIO_SEQ') - (select max(cast(ID as integer)) from SCENARIO)</sqlCheck>
-            </not>
+            <and>
+                <sequenceExists sequenceName="SCENARIO_SEQ"/>
+                <not>
+                    <tableIsEmpty tableName="SCENARIO"/>
+                    <sqlCheck expectedResult="0">select currval('SCENARIO_SEQ') - (select max(cast(ID as integer)) from SCENARIO)</sqlCheck>
+                </not>
+            </and>
         </preConditions>
         <comment>Update SCENARIO id sequence</comment>
         <sql>alter sequence SCENARIO_SEQ restart with (select max(cast(ID as integer))+1 from SCENARIO)</sql>
@@ -150,10 +143,13 @@
 
     <changeSet id="20190719-003-pg" author="ICG" dbms="postgresql" runAlways="true">
         <preConditions onFail="CONTINUE">
-            <not>
-                <tableIsEmpty tableName="SCENARIO"/>
-                <sqlCheck expectedResult="0">select (select last_value from SCENARIO_SEQ) - (select max(cast(ID as integer)) from SCENARIO)</sqlCheck>
-            </not>
+            <and>
+                <sequenceExists schemaName="fake_name" sequenceName="SCENARIO_SEQ"/>
+                <not>
+                    <tableIsEmpty tableName="SCENARIO"/>
+                    <sqlCheck expectedResult="0">select (select last_value from SCENARIO_SEQ) - (select max(cast(ID as integer)) from SCENARIO)</sqlCheck>
+                </not>
+            </and>
         </preConditions>
         <comment>Update SCENARIO id sequence</comment>
         <sql>select setval('SCENARIO_SEQ', max(cast(ID as integer))+1) from SCENARIO</sql>
@@ -184,15 +180,21 @@
     <!-- If not doing that we have : current value of sequence CAMPAIGN_SEQ is not yet defined in this session-->
     <changeSet id="init_campaign_seq" author="ICG" dbms="h2" runAlways="true">
         <validCheckSum>8:b2d47bad6bb04a1521a1c36f1f69ef31</validCheckSum>
+        <preConditions onFail="CONTINUE">
+            <sequenceExists sequenceName="CAMPAIGN_SEQ"/>
+        </preConditions>
         <comment>Init sequence in session</comment>
         <sql>select nextval('CAMPAIGN_SEQ')</sql>
     </changeSet>
     <changeSet id="20190719-005-h2" author="ICG" dbms="h2" runAlways="true">
         <preConditions onFail="CONTINUE">
-            <not>
-                <tableIsEmpty tableName="CAMPAIGN"/>
-                <sqlCheck expectedResult="0">select currval('CAMPAIGN_SEQ') - (select max(ID) from CAMPAIGN)</sqlCheck>
-            </not>
+            <and>
+                <sequenceExists sequenceName="CAMPAIGN_SEQ"/>
+                <not>
+                    <tableIsEmpty tableName="CAMPAIGN"/>
+                    <sqlCheck expectedResult="0">select currval('CAMPAIGN_SEQ') - (select max(ID) from CAMPAIGN)</sqlCheck>
+                </not>
+            </and>
         </preConditions>
         <comment>Update CAMPAIGN id sequence</comment>
         <sql>alter sequence CAMPAIGN_SEQ restart with (select max(ID)+1 from CAMPAIGN)</sql>
@@ -200,10 +202,13 @@
 
     <changeSet id="20190719-005-pg" author="ICG" dbms="postgresql" runAlways="true">
         <preConditions onFail="CONTINUE">
-            <not>
-                <tableIsEmpty tableName="CAMPAIGN"/>
-                <sqlCheck expectedResult="0">select (select last_value from CAMPAIGN_SEQ) - (select max(ID) from CAMPAIGN)</sqlCheck>
-            </not>
+            <and>
+                <sequenceExists schemaName="fake_name" sequenceName="CAMPAIGN_SEQ"/>
+                <not>
+                    <tableIsEmpty tableName="CAMPAIGN"/>
+                    <sqlCheck expectedResult="0">select (select last_value from CAMPAIGN_SEQ) - (select max(ID) from CAMPAIGN)</sqlCheck>
+                </not>
+            </and>
         </preConditions>
         <comment>Update CAMPAIGN id sequence</comment>
         <sql>select setval('CAMPAIGN_SEQ', max(ID)+1) from CAMPAIGN</sql>
@@ -348,7 +353,7 @@
         </preConditions>
         <comment>Create column index in CAMPAIGN_SCENARIOS</comment>
         <addColumn tableName="CAMPAIGN_SCENARIOS">
-            <column name="INDEX" type="INTEGER"/>
+            <column name="INDEX" type="INTEGER" ></column>
         </addColumn>
     </changeSet>
 
@@ -369,7 +374,7 @@
             <column name="PARAMETER" type="VARCHAR(300)">
                 <constraints nullable="false"/>
             </column>
-            <column name="VALUE" type="CLOB"/>
+            <column name="VALUE" type="CLOB"></column>
         </createTable>
         <createSequence sequenceName="CAMPAIGN_PARAMETER_SEQ" startValue="1" incrementBy="1"/>
     </changeSet>
@@ -382,7 +387,7 @@
         </preConditions>
         <comment>Create column ENVIRONMENT in CAMPAIGN</comment>
         <addColumn tableName="CAMPAIGN">
-            <column name="ENVIRONMENT" type="VARCHAR(64)" defaultValue="GLOBAL"/>
+            <column name="ENVIRONMENT" type="VARCHAR(64)" defaultValue="GLOBAL"></column>
         </addColumn>
     </changeSet>
 
@@ -394,7 +399,7 @@
         </preConditions>
         <comment>Create column PARTIAL_EXECUTION in CAMPAIGN_EXECUTION_HISTORY</comment>
         <addColumn tableName="CAMPAIGN_EXECUTION_HISTORY">
-            <column name="PARTIAL_EXECUTION" type="BOOLEAN" defaultValue="FALSE"/>
+            <column name="PARTIAL_EXECUTION"  type="BOOLEAN" defaultValue="FALSE" ></column>
         </addColumn>
     </changeSet>
     <changeSet id="20200124" author="ICG">
@@ -405,7 +410,7 @@
         </preConditions>
         <comment>Create column EXECUTION_ENVIRONMENT in CAMPAIGN_EXECUTION_HISTORY</comment>
         <addColumn tableName="CAMPAIGN_EXECUTION_HISTORY">
-            <column name="EXECUTION_ENVIRONMENT" type="VARCHAR(64)"/>
+            <column name="EXECUTION_ENVIRONMENT" type="VARCHAR(64)"></column>
         </addColumn>
     </changeSet>
 
@@ -417,7 +422,7 @@
         </preConditions>
         <comment>Create column PARALLEL_RUN in CAMPAIGN</comment>
         <addColumn tableName="CAMPAIGN">
-            <column name="PARALLEL_RUN" type="BOOLEAN" defaultValue="FALSE"/>
+            <column name="PARALLEL_RUN"  type="BOOLEAN" defaultValue="FALSE"></column>
         </addColumn>
     </changeSet>
     <changeSet id="20200203-2" author="ICG">
@@ -428,7 +433,7 @@
         </preConditions>
         <comment>Create column RETRY_AUTO in CAMPAIGN</comment>
         <addColumn tableName="CAMPAIGN">
-            <column name="RETRY_AUTO" type="BOOLEAN" defaultValue="FALSE"/>
+            <column name="RETRY_AUTO"  type="BOOLEAN" defaultValue="FALSE"></column>
         </addColumn>
     </changeSet>
     <changeSet id="20200313" author="ICG">
@@ -439,7 +444,7 @@
         </preConditions>
         <comment>Create column ENVIRONMENT in SCENARIO_EXECUTION_HISTORY</comment>
         <addColumn tableName="SCENARIO_EXECUTION_HISTORY">
-            <column name="ENVIRONMENT" type="VARCHAR(20)" defaultValue=""/>
+            <column name="ENVIRONMENT"  type="VARCHAR(20)" defaultValue=""></column>
         </addColumn>
     </changeSet>
     <changeSet id="20200605" author="ICG">
@@ -450,7 +455,7 @@
         </preConditions>
         <comment>Create column USER_ID in CAMPAIGN_EXECUTION_HISTORY</comment>
         <addColumn tableName="CAMPAIGN_EXECUTION_HISTORY">
-            <column name="USER_ID" type="VARCHAR(64)" defaultValue=""/>
+            <column name="USER_ID"  type="VARCHAR(64)" defaultValue=""></column>
         </addColumn>
     </changeSet>
     <changeSet id="20200605-01" author="ICG">
@@ -461,7 +466,7 @@
         </preConditions>
         <comment>Create column USER_ID in SCENARIO_EXECUTION_HISTORY</comment>
         <addColumn tableName="SCENARIO_EXECUTION_HISTORY">
-            <column name="USER_ID" type="VARCHAR(64)" defaultValue=""/>
+            <column name="USER_ID"  type="VARCHAR(64)" defaultValue=""></column>
         </addColumn>
     </changeSet>
     <changeSet id="20200615" author="ICG">
@@ -472,7 +477,7 @@
         </preConditions>
         <comment>Create column DATASET_ID in CAMPAIGN</comment>
         <addColumn tableName="CAMPAIGN">
-            <column name="DATASET_ID" type="VARCHAR(20)"/>
+            <column name="DATASET_ID"  type="VARCHAR(20)"></column>
         </addColumn>
     </changeSet>
     <changeSet id="20200722_dataset" author="ICG">
@@ -484,8 +489,8 @@
         </preConditions>
         <comment>Create columns DATASET_ID and DATASET_VERSION in SCENARIO_EXECUTION_HISTORY</comment>
         <addColumn tableName="SCENARIO_EXECUTION_HISTORY">
-            <column name="DATASET_ID" type="VARCHAR(20)"/>
-            <column name="DATASET_VERSION" type="INTEGER"/>
+            <column name="DATASET_ID" type="VARCHAR(20)"></column>
+            <column name="DATASET_VERSION" type="INTEGER"></column>
         </addColumn>
     </changeSet>
     <changeSet id="20200724_dataset" author="ICG">
@@ -497,8 +502,8 @@
         </preConditions>
         <comment>Create columns DATASET_ID and DATASET_VERSION in CAMPAIGN_EXECUTION_HISTORY</comment>
         <addColumn tableName="CAMPAIGN_EXECUTION_HISTORY">
-            <column name="DATASET_ID" type="VARCHAR(20)"/>
-            <column name="DATASET_VERSION" type="INTEGER"/>
+            <column name="DATASET_ID" type="VARCHAR(20)"></column>
+            <column name="DATASET_VERSION" type="INTEGER"></column>
         </addColumn>
     </changeSet>
     <changeSet id="20201026_scenario_version_rename" author="ICG">
@@ -523,8 +528,8 @@
         </preConditions>
         <comment>Create columns USER_ID, UPDATE_DATE and VERSION in SCENARIO</comment>
         <addColumn tableName="SCENARIO">
-            <column name="USER_ID" type="VARCHAR(64)"/>
-            <column name="UPDATE_DATE" type="TIMESTAMP(6)"/>
+            <column name="USER_ID" type="VARCHAR(64)"></column>
+            <column name="UPDATE_DATE" type="TIMESTAMP(6)"></column>
             <column name="VERSION" type="INTEGER" defaultValue="1">
                 <constraints nullable="false"/>
             </column>
@@ -570,14 +575,14 @@
             <columnExists columnName="SCHEDULE_TIME" tableName="CAMPAIGN"/>
         </preConditions>
         <comment>Remove SCHEDULE_TIME column</comment>
-        <dropColumn tableName="CAMPAIGN" columnName="SCHEDULE_TIME"/>
+        <dropColumn tableName="CAMPAIGN" columnName="SCHEDULE_TIME"></dropColumn>
     </changeSet>
     <changeSet id="20220607-change-campaign-parameter-value-column" author="ICG">
         <preConditions onFail="MARK_RAN">
             <columnExists columnName="VALUE" tableName="CAMPAIGN_PARAMETER"/>
         </preConditions>
         <comment>Rename VALUE column</comment>
-        <renameColumn tableName="CAMPAIGN_PARAMETER" oldColumnName="VALUE" newColumnName="PARAMETER_VALUE"/>
+        <renameColumn tableName="CAMPAIGN_PARAMETER" oldColumnName="VALUE" newColumnName="PARAMETER_VALUE"></renameColumn>
     </changeSet>
 
     <changeSet id="test_data" author="ICG" context="test">
@@ -591,23 +596,59 @@
             <column name="USER_ID" value="user id ..."/>
             <column name="CONTENT_VERSION" value="v2.1"/>
             <column name="CONTENT" value="{&quot;when&quot;:{}}"/>
+            <column name="VERSION" valueNumeric="10"/>
+        </insert>
+        <insert tableName="SCENARIO">
+            <column name="ID" valueNumeric="2"/>
+            <column name="TITLE" value="i am a scenario title"/>
+            <column name="DESCRIPTION" value="i am a description"/>
+            <column name="CREATION_DATE" valueComputed="CURRENT_TIMESTAMP(6)"/>
+            <column name="UPDATE_DATE" valueComputed="CURRENT_TIMESTAMP(6)"/>
+            <column name="CONTENT_VERSION" value="v2.1"/>
+            <column name="CONTENT" value=""/>
         </insert>
         <insert tableName="CAMPAIGN">
             <column name="ID" valueNumeric="1"/>
             <column name="TITLE" value="i am a campaign title"/>
             <column name="DESCRIPTION" value="i am a description"/>
-<!--            <column name="SCHEDULE_TIME" value=""/>-->
             <column name="ENVIRONMENT" value="TEST_DATA_ENV"/>
             <column name="PARALLEL_RUN" valueBoolean="true"/>
             <column name="RETRY_AUTO" valueBoolean="true"/>
-<!--            <column name="DATASET_ID" value=""/>-->
+            <column name="DATASET_ID" value="#14:600"/>
             <column name="TAGS" value="TAG1,TAG2"/>
+        </insert>
+        <insert tableName="CAMPAIGN_SCENARIOS">
+            <column name="CAMPAIGN_ID" valueNumeric="1"/>
+            <column name="SCENARIO_ID" value="1"/>
+            <column name="INDEX" valueNumeric="1"/>
+        </insert>
+        <insert tableName="CAMPAIGN_SCENARIOS">
+            <column name="CAMPAIGN_ID" valueNumeric="1"/>
+            <column name="SCENARIO_ID" value="16-666"/>
+            <column name="INDEX" valueNumeric="2"/>
+        </insert>
+        <insert tableName="CAMPAIGN_SCENARIOS">
+            <column name="CAMPAIGN_ID" valueNumeric="1"/>
+            <column name="SCENARIO_ID" value="2"/>
+            <column name="INDEX" valueNumeric="3"/>
+        </insert>
+        <insert tableName="CAMPAIGN_PARAMETER">
+            <column name="ID" valueNumeric="1"/>
+            <column name="CAMPAIGN_ID" valueNumeric="1"/>
+            <column name="PARAMETER" value="a parameter"/>
+            <column name="PARAMETER_VALUE" value="a value"/>
+        </insert>
+        <insert tableName="CAMPAIGN_PARAMETER">
+            <column name="ID" valueNumeric="2"/>
+            <column name="CAMPAIGN_ID" valueNumeric="1"/>
+            <column name="PARAMETER" value="another parameter"/>
+            <column name="PARAMETER_VALUE" value="another value"/>
         </insert>
     </changeSet>
 
     <changeSet id="Migration-table-scenario" author="ICG">
         <comment>Migrate Scenario table</comment>
-        <renameTable oldTableName="SCENARIO" newTableName="SCENARIO_OLD"/>
+        <renameTable oldTableName="SCENARIO" newTableName="SCENARIO_OLD"></renameTable>
         <createTable tableName="SCENARIO">
             <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -653,5 +694,144 @@
         <sql>
             SELECT SETVAL('scenario_id_seq', (SELECT MAX(id) FROM SCENARIO))
         </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-drop-sequence" dbms="h2,postgresql" author="ICG">
+        <comment>Drop Scenario id sequence</comment>
+        <dropSequence sequenceName="SCENARIO_SEQ"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-drop" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Scenario table</comment>
+        <dropTable tableName="SCENARIO_OLD"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-drop-fk" dbms="h2,postgresql" author="ICG">
+        <comment>Drop campaign foreign keys (sqlite convergence)</comment>
+        <dropForeignKeyConstraint baseTableName="CAMPAIGN_SCENARIOS" constraintName="FK_CS_CAMPAIGN_ID"/>
+        <dropForeignKeyConstraint baseTableName="CAMPAIGN_PARAMETER" constraintName="FK_CD_CAMPAIGN_ID"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign" author="ICG">
+        <comment>Migrate table CAMPAIGN (sqlite convergence)</comment>
+        <renameTable oldTableName="CAMPAIGN" newTableName="CAMPAIGN_OLD"/>
+        <createTable tableName="CAMPAIGN">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="GLOBAL" name="ENVIRONMENT" type="VARCHAR(64)"/>
+            <column defaultValueBoolean="false" name="PARALLEL_RUN" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="RETRY_AUTO" type="BOOLEAN"/>
+            <column name="DATASET_ID" type="VARCHAR(20)"/>
+            <column name="TAGS" type="VARCHAR(300)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-data" dbms="h2,postgresql" author="ICG">
+        <sql>
+            INSERT INTO CAMPAIGN ( ID, TITLE, DESCRIPTION, ENVIRONMENT, PARALLEL_RUN, RETRY_AUTO, DATASET_ID, TAGS )
+            SELECT  ID, TITLE, DESCRIPTION, ENVIRONMENT, PARALLEL_RUN, RETRY_AUTO, DATASET_ID, TAGS
+            FROM CAMPAIGN_OLD
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-init-id" dbms="h2" author="ICG">
+        <sql>
+            ALTER TABLE CAMPAIGN ALTER COLUMN ID RESTART WITH (SELECT MAX(ID)+1 FROM CAMPAIGN)
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-init-id" dbms="postgresql" author="ICG">
+        <sql>
+            SELECT SETVAL('campaign_id_seq', (SELECT MAX(ID) FROM CAMPAIGN))
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-drop-sequence" dbms="h2,postgresql" author="ICG">
+        <comment>Migrate Scenario table</comment>
+        <dropSequence sequenceName="CAMPAIGN_SEQ"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-drop" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Campaign table</comment>
+        <dropTable tableName="CAMPAIGN_OLD"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-scenarios" author="ICG">
+        <comment>Migrate table CAMPAIGN_SCENARIOS (sqlite convergence)</comment>
+        <renameTable oldTableName="CAMPAIGN_SCENARIOS" newTableName="CAMPAIGN_SCENARIOS_OLD"/>
+        <createTable tableName="CAMPAIGN_SCENARIOS">
+            <column name="CAMPAIGN_ID" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SCENARIO_ID" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RANK" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-scenarios-data" dbms="h2,postgresql" author="ICG">
+        <sql>
+            INSERT INTO CAMPAIGN_SCENARIOS ( CAMPAIGN_ID, SCENARIO_ID, RANK )
+            SELECT CAMPAIGN_ID, CAST(SCENARIO_ID AS INTEGER), INDEX
+            FROM CAMPAIGN_SCENARIOS_OLD
+            WHERE SCENARIO_ID NOT LIKE '%-%'
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-parameters" author="ICG">
+        <comment>Migrate table CAMPAIGN_PARAMETER (sqlite convergence)</comment>
+        <renameTable oldTableName="CAMPAIGN_PARAMETER" newTableName="CAMPAIGN_PARAMETER_OLD"/>
+        <createTable tableName="CAMPAIGN_PARAMETERS">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="CAMPAIGN_ID" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARAMETER" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARAMETER_VALUE" type="LONGVARCHAR"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-parameters-data" dbms="h2,postgresql" author="ICG">
+        <sql>
+            INSERT INTO CAMPAIGN_PARAMETERS ( ID, CAMPAIGN_ID, PARAMETER, PARAMETER_VALUE )
+            SELECT  ID, CAMPAIGN_ID, PARAMETER, PARAMETER_VALUE
+            FROM CAMPAIGN_PARAMETER_OLD
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-parameters-init-id" dbms="h2" author="ICG">
+        <sql>
+            ALTER TABLE CAMPAIGN_PARAMETERS ALTER COLUMN ID RESTART WITH (SELECT MAX(ID)+1 FROM CAMPAIGN_PARAMETERS)
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-parameters-init-id" dbms="postgresql" author="ICG">
+        <sql>
+            SELECT SETVAL('campaign_parameters_id_seq', (SELECT MAX(ID) FROM CAMPAIGN_PARAMETERS))
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-parameters-drop-sequence" dbms="h2,postgresql" author="ICG">
+        <comment>Migrate Scenario table</comment>
+        <dropSequence sequenceName="CAMPAIGN_PARAMETER_SEQ"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-parameters-drop" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Campaign table</comment>
+        <dropTable tableName="CAMPAIGN_PARAMETER_OLD"/>
     </changeSet>
 </databaseChangeLog>

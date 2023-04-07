@@ -26,7 +26,6 @@ import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.jira.api.ReportForJira;
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
@@ -39,6 +38,7 @@ import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus
 import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -72,7 +72,7 @@ public class CampaignExecutionEngineTest {
     private final CampaignRepository campaignRepository = mock(CampaignRepository.class);
     private final ScenarioExecutionEngine scenarioExecutionEngine = mock(ScenarioExecutionEngine.class);
     private final ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
-    private final TestCaseRepositoryAggregator testCaseRepository = mock(TestCaseRepositoryAggregator.class);
+    private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
     private final DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
     private final JiraXrayEmbeddedApi jiraXrayPlugin = mock(JiraXrayEmbeddedApi.class);
     private final ChutneyMetrics metrics = mock(ChutneyMetrics.class);

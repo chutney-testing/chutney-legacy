@@ -9,7 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.scenario.infra.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
@@ -27,10 +27,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import util.infra.AbstractLocalDatabaseTest;
-import util.infra.EnableH2TestInfra;
+import util.infra.EnableH2MemTestInfra;
 
 @DisplayName("CampaignExecutionRepositoryTest")
-@EnableH2TestInfra
+@EnableH2MemTestInfra
 public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
 
     private CampaignExecutionRepository sut;

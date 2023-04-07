@@ -8,7 +8,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
