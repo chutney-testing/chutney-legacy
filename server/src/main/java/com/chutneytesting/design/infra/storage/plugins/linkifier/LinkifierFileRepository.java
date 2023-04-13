@@ -79,7 +79,7 @@ public class LinkifierFileRepository implements Linkifiers {
                 linkifiers.putAll(objectMapper.readValue(bytes, new TypeReference<HashMap<String, LinkifierDto>>() {}));
             }
         } catch (IOException e) {
-            throw new UnsupportedOperationException("Cannot read configuration file: " + filePath, e);
+            throw new UncheckedIOException("Cannot read configuration file: " + filePath, e);
         }
 
         return linkifiers;
@@ -91,7 +91,7 @@ public class LinkifierFileRepository implements Linkifiers {
             try {
                 Files.write(filePath, bytes);
             } catch (IOException e) {
-                throw new UnsupportedOperationException("Cannot write in configuration directory: " + storeFolderPath, e);
+                throw new UncheckedIOException("Cannot write in configuration directory: " + storeFolderPath, e);
             }
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot serialize " + linkifiers, e);

@@ -36,7 +36,7 @@ public class StepDefinition implements StepDefinitionSpi {
 
     public final Map<String, Object> validations;
 
-    public final String environment;
+    public final String environment; // TODO - remove from here and pass as engine argument instead
 
     /**
      * Target on which to execute the current step.

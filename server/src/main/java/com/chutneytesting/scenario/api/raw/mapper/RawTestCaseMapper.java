@@ -52,6 +52,7 @@ public class RawTestCaseMapper {
                 .withAuthor(dto.author())
                 .withUpdateDate(dto.updateDate())
                 .withVersion(dto.version())
+                .withDefaultDataset(dto.defaultDataset().orElse(null))
                 .build())
             .withScenario(gwtScenario)
             .withExecutionParameters(KeyValue.toMap(dto.parameters()))
@@ -91,6 +92,7 @@ public class RawTestCaseMapper {
             .author(testCase.metadata.author)
             .updateDate(testCase.metadata.updateDate)
             .version(testCase.metadata.version)
+            .defaultDataset(testCase.metadata.defaultDataset)
             .build();
     }
 
@@ -106,6 +108,7 @@ public class RawTestCaseMapper {
             .author(testCase.metadata.author)
             .updateDate(testCase.metadata.updateDate)
             .version(testCase.metadata.version)
+            .defaultDataset(testCase.metadata.defaultDataset)
             .build();
     }
 

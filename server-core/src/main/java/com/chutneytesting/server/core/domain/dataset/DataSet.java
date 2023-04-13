@@ -8,6 +8,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -15,6 +16,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 public class DataSet {
+
+    public static Comparator<DataSet> datasetComparator = Comparator.comparing(DataSet::getName, String.CASE_INSENSITIVE_ORDER);
 
     public final String id;
     public final String name;
@@ -32,6 +35,10 @@ public class DataSet {
         this.tags = tags;
         this.constants = constants;
         this.datatable = datatable;
+    }
+
+    private String getName() {
+        return name;
     }
 
     @Override
@@ -88,18 +95,22 @@ public class DataSet {
 
         public DataSet build() {
             if (!Objects.isNull(id) && id.isEmpty()) {
-                throw new IllegalArgumentException("DataSet id cannot be empty");
+                throw new IllegalArgumentException("Dataset id cannot be empty");
             }
 
             return new DataSet(
-                ofNullable(id).orElse(DEFAULT_ID),
-                ofNullable(name).orElse(""),
+                ofNullable(id).orElse(DEFAULT_ID), // TODO - after component deprecation : remove default id and use the name with '_'
+                prettify(ofNullable(name).orElse("")),  // TODO - after component deprecation : throw if name is empty, but provide a Dataset.NoDataset null object
                 ofNullable(description).orElse(""),
                 ofNullable(creationDate).orElseGet(() -> Instant.now().truncatedTo(MILLIS)),
-                (ofNullable(tags).orElse(emptyList())).stream().map(String::toUpperCase).map(String::trim).collect(toList()),
+                (ofNullable(tags).orElse(emptyList())).stream().map(String::toUpperCase).map(String::strip).collect(toList()),
                 cleanConstants(ofNullable(constants).orElse(emptyMap())),
                 cleanDatatable(ofNullable(datatable).orElse(emptyList()))
             );
+        }
+
+        private String prettify(String name) {
+            return name.strip().replaceAll(" +", " ");
         }
 
         public DataSetBuilder withId(String id) {
@@ -159,12 +170,12 @@ public class DataSet {
             // Remove empty keys and empty lines
             return datatable.stream()
                 .map(this::cleanConstants)
-                .filter(this::hasValuesNotBlank)
+                .filter(this::linesWithAtLeastOneNonBlankValue)
                 .map(m -> m.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue().trim())))
                 .collect(toList());
         }
 
-        private boolean hasValuesNotBlank(Map<String, String> map) {
+        private boolean linesWithAtLeastOneNonBlankValue(Map<String, String> map) {
             return map.values().stream().anyMatch(StringUtils::isNotBlank);
         }
     }

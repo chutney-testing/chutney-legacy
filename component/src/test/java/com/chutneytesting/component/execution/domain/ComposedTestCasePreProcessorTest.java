@@ -11,10 +11,10 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.component.dataset.domain.DataSetRepository;
+import com.chutneytesting.component.dataset.infra.OrientDataSetRepository;
+import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
-import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.server.core.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.tests.OrientDatabaseHelperTest;
@@ -32,14 +32,14 @@ public class ComposedTestCasePreProcessorTest {
     private final String userId = "exec user";
 
     private GlobalvarRepository globalvarRepository;
-    private DataSetRepository dataSetRepository;
+    private OrientDataSetRepository dataSetRepository;
 
     private ComposedTestCasePreProcessor sut;
 
     @BeforeEach
     public void setUp() {
         globalvarRepository = mock(GlobalvarRepository.class);
-        dataSetRepository = mock(DataSetRepository.class);
+        dataSetRepository = mock(OrientDataSetRepository.class);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class ComposedTestCasePreProcessorTest {
 
         // When
         final ExecutableComposedTestCase executableComposedTestCaseProcessed = sut.apply(
-            new ExecutionRequest(ExecutableComposedTestCase, environment, userId)
+            new ExecutionRequest(ExecutableComposedTestCase, environment, userId, DataSet.builder().build())
         );
 
         // Then
@@ -203,7 +203,7 @@ public class ComposedTestCasePreProcessorTest {
             TestCaseMetadataImpl.builder()
                 .withTitle("testcase title for dataset constant ref **testcase title param**")
                 .withDescription("testcase description for global var ref **global.key**")
-                .withDatasetId(dataSetId)
+                .withDefaultDataset(dataSetId)
                 .build(),
             ExecutableComposedScenario.builder()
                 .withComposedSteps(
@@ -259,7 +259,7 @@ public class ComposedTestCasePreProcessorTest {
 
         // When
         ExecutableComposedTestCase processedTestCase = sut.apply(
-            new ExecutionRequest(testCase, "env", userId)
+            new ExecutionRequest(testCase, "env", userId, DataSet.builder().build())
         );
 
         // Then

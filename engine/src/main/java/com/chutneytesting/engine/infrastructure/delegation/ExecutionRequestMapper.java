@@ -6,14 +6,15 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepStrategyD
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
+import com.chutneytesting.engine.domain.execution.engine.Dataset;
 import java.util.List;
 import java.util.stream.Collectors;
 
 class ExecutionRequestMapper {
 
-    static ExecutionRequestDto from(StepDefinition stepDefinition) {
+    static ExecutionRequestDto from(StepDefinition stepDefinition, Dataset dataset) {
         final StepDefinitionRequestDto stepDefinitionRequestDto = getStepDefinitionRequestFromStepDef(stepDefinition);
-        return new ExecutionRequestDto(stepDefinitionRequestDto, stepDefinition.environment);
+        return new ExecutionRequestDto(stepDefinitionRequestDto, stepDefinition.environment, DatasetMapper.toDto(dataset));
     }
 
     private static StepDefinitionRequestDto getStepDefinitionRequestFromStepDef(StepDefinition definition) {

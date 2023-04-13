@@ -4,10 +4,10 @@ import static com.chutneytesting.component.dataset.api.DataSetMapper.fromDto;
 import static com.chutneytesting.component.dataset.api.DataSetMapper.toDto;
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.component.dataset.infra.OrientDataSetRepository;
 import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.server.core.domain.dataset.DataSetNotFoundException;
-import com.chutneytesting.component.dataset.domain.DataSetRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,16 +25,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(DataSetController.BASE_URL)
+@RequestMapping(ComponentDataSetController.BASE_URL)
 @CrossOrigin(origins = "*")
-public class DataSetController {
+public class ComponentDataSetController {
 
     public static final String BASE_URL = "/api/v1/datasets";
 
-    private final DataSetRepository dataSetRepository;
+    private final OrientDataSetRepository dataSetRepository;
     private final DataSetHistoryRepository dataSetHistoryRepository;
 
-    public DataSetController(DataSetRepository dataSetRepository, DataSetHistoryRepository dataSetHistoryRepository) {
+    public ComponentDataSetController(OrientDataSetRepository dataSetRepository, DataSetHistoryRepository dataSetHistoryRepository) {
         this.dataSetRepository = dataSetRepository;
         this.dataSetHistoryRepository = dataSetHistoryRepository;
     }

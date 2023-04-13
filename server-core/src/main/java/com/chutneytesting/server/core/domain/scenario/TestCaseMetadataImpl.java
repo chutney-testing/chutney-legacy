@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,18 +17,18 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
     public final String description;
     public final List<String> tags;
     public final Instant creationDate;
-    public final Optional<String> datasetId;
+    public final String defaultDataset;
     public final Instant updateDate;
     public final String author;
     public final Integer version;
 
-    private TestCaseMetadataImpl(String id, String title, String description, List<String> tags, Instant creationDate, String datasetId, Instant updateDate, String author, Integer version) {
+    private TestCaseMetadataImpl(String id, String title, String description, List<String> tags, Instant creationDate, String defaultDataset, Instant updateDate, String author, Integer version) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.tags = tags;
         this.creationDate = creationDate;
-        this.datasetId = ofNullable(datasetId);
+        this.defaultDataset = defaultDataset;
         this.updateDate = updateDate;
         this.author = author;
         this.version = version;
@@ -42,8 +41,8 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
     }
 
     @Override
-    public Optional<String> datasetId() {
-        return datasetId;
+    public String defaultDataset() {
+        return defaultDataset;
     }
 
     @Override
@@ -83,7 +82,7 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
 
     @Override
     public String toString() {
-        return "GwtTestCaseMetadata{" +
+        return "TestCaseMetadata{" +
             "id=" + id +
             ", title='" + title + '\'' +
             ", description='" + description + '\'' +
@@ -125,7 +124,7 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
         private String description;
         private List<String> tags;
         private Instant creationDate;
-        private String datasetId;
+        private String defaultDataset;
         private Instant updateDate;
         private String author;
         private Integer version;
@@ -141,7 +140,7 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
                 ofNullable(description).orElse(""),
                 ofNullable(tags).stream().flatMap(Collection::stream).filter(StringUtils::isNotBlank).map(String::toUpperCase).map(String::trim).collect(Collectors.toList()),
                 creationDate,
-                datasetId,
+                ofNullable(defaultDataset).orElse(""),
                 ofNullable(updateDate).orElse(creationDate),
                 ofNullable(author).orElseGet(() -> User.ANONYMOUS.id),
                 ofNullable(version).orElse(1));
@@ -152,8 +151,8 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
             return this;
         }
 
-        public TestCaseMetadataBuilder withDatasetId(String datasetId) {
-            this.datasetId = datasetId;
+        public TestCaseMetadataBuilder withDefaultDataset(String defaultDataset) {
+            this.defaultDataset = defaultDataset;
             return this;
         }
 
@@ -199,7 +198,7 @@ public final class TestCaseMetadataImpl implements TestCaseMetadata {
                 .withDescription(testCaseMetadata.description())
                 .withCreationDate(testCaseMetadata.creationDate())
                 .withTags(testCaseMetadata.tags())
-                .withDatasetId(testCaseMetadata.datasetId().orElse(null))
+                .withDefaultDataset(testCaseMetadata.defaultDataset())
                 .withUpdateDate(testCaseMetadata.updateDate())
                 .withAuthor(testCaseMetadata.author())
                 .withVersion(testCaseMetadata.version());

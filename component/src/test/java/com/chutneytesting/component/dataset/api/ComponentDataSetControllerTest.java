@@ -12,9 +12,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.chutneytesting.component.ComponentRestExceptionHandler;
+import com.chutneytesting.component.dataset.infra.OrientDataSetRepository;
 import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
-import com.chutneytesting.component.dataset.domain.DataSetRepository;
 import com.chutneytesting.server.core.domain.tools.ui.ImmutableKeyValue;
 import com.chutneytesting.server.core.domain.tools.ui.KeyValue;
 import com.chutneytesting.tests.OrientDatabaseHelperTest;
@@ -39,16 +39,16 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class DataSetControllerTest {
+public class ComponentDataSetControllerTest {
 
-    private final DataSetRepository dataSetRepository = mock(DataSetRepository.class);
+    private final OrientDataSetRepository dataSetRepository = mock(OrientDataSetRepository.class);
     private final DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
     private MockMvc mockMvc;
     private final ObjectMapper om = OrientDatabaseHelperTest.objectMapper();
 
     @BeforeEach
     public void setUp() {
-        DataSetController sut = new DataSetController(dataSetRepository, dataSetHistoryRepository);
+        ComponentDataSetController sut = new ComponentDataSetController(dataSetRepository, dataSetHistoryRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut)
             .setControllerAdvice(new ComponentRestExceptionHandler())
             .build();
@@ -94,7 +94,7 @@ public class DataSetControllerTest {
 
         // When
         List<DataSetDto> dtos = new ArrayList<>();
-        mockMvc.perform(MockMvcRequestBuilders.get(DataSetController.BASE_URL))
+        mockMvc.perform(MockMvcRequestBuilders.get(ComponentDataSetController.BASE_URL))
             .andDo(result -> dtos.addAll(om.readValue(result.getResponse().getContentAsString(), new TypeReference<List<DataSetDto>>() {
             })))
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -113,7 +113,7 @@ public class DataSetControllerTest {
 
         // When
         MvcResult mvcResult = mockMvc.perform(
-            MockMvcRequestBuilders.post(DataSetController.BASE_URL)
+            MockMvcRequestBuilders.post(ComponentDataSetController.BASE_URL)
                 .contentType(APPLICATION_JSON_VALUE)
                 .content(om.writeValueAsString(dataSetDto)))
             .andExpect(MockMvcResultMatchers.status().isOk())
@@ -134,7 +134,7 @@ public class DataSetControllerTest {
 
         // When
         MvcResult mvcResult = mockMvc.perform(
-            MockMvcRequestBuilders.put(DataSetController.BASE_URL)
+            MockMvcRequestBuilders.put(ComponentDataSetController.BASE_URL)
                 .contentType(APPLICATION_JSON_VALUE)
                 .content(om.writeValueAsString(dataSet.getRight())))
             .andExpect(MockMvcResultMatchers.status().isOk())
@@ -152,7 +152,7 @@ public class DataSetControllerTest {
 
         // When
         MvcResult mvcResult = mockMvc.perform(
-            MockMvcRequestBuilders.delete(DataSetController.BASE_URL + "/" + id))
+            MockMvcRequestBuilders.delete(ComponentDataSetController.BASE_URL + "/" + id))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andReturn();
 
@@ -174,7 +174,7 @@ public class DataSetControllerTest {
 
         // When
         MvcResult mvcResult = mockMvc.perform(
-            MockMvcRequestBuilders.get(DataSetController.BASE_URL + "/" + id))
+            MockMvcRequestBuilders.get(ComponentDataSetController.BASE_URL + "/" + id))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andReturn();
 
@@ -191,7 +191,7 @@ public class DataSetControllerTest {
 
         // When
         MvcResult mvcResult = mockMvc.perform(
-            MockMvcRequestBuilders.get(DataSetController.BASE_URL + "/" + id + "/versions/last"))
+            MockMvcRequestBuilders.get(ComponentDataSetController.BASE_URL + "/" + id + "/versions/last"))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andReturn();
 
@@ -215,7 +215,7 @@ public class DataSetControllerTest {
 
         // When
         MvcResult mvcResult = mockMvc.perform(
-            MockMvcRequestBuilders.get(DataSetController.BASE_URL + "/" + id + "/versions"))
+            MockMvcRequestBuilders.get(ComponentDataSetController.BASE_URL + "/" + id + "/versions"))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andReturn();
 
@@ -229,7 +229,7 @@ public class DataSetControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-        DataSetController.BASE_URL + "/%s/%s", DataSetController.BASE_URL + "/%s/versions/%s"
+        ComponentDataSetController.BASE_URL + "/%s/%s", ComponentDataSetController.BASE_URL + "/%s/versions/%s"
     })
     public void should_find_dataset_version(String urlTemplate) throws Exception {
         // Given

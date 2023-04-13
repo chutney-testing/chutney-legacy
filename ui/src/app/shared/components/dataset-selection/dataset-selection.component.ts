@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DataSetService } from '@core/services';
 import { Dataset } from '@model';
+import { FeatureService } from '@core/feature/feature.service';
+import { FeatureName } from '@core/feature/feature.model';
 
 
 @Component({
@@ -15,8 +17,7 @@ export class DatasetSelectionComponent implements OnInit {
 
     datasets: Array<Dataset>;
 
-    constructor(private datasetService: DataSetService) {
-    }
+    constructor(private datasetService: DataSetService) {}
 
     ngOnInit(): void {
         this.datasetService.findAll().subscribe((res: Array<Dataset>) => {
@@ -27,4 +28,5 @@ export class DatasetSelectionComponent implements OnInit {
     changingValue(event: any) {
         this.selectionEvent.emit(event.target.value);
     }
+
 }

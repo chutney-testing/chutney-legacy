@@ -18,7 +18,7 @@ public interface ScenarioJpaRepository extends CrudRepository<Scenario, Long>, J
     Optional<Scenario> findByIdAndActivated(Long id, Boolean activated);
 
     @Query("""
-        SELECT new com.chutneytesting.scenario.infra.jpa.Scenario(s.id, s.title, s.description, s.tags, s.creationDate, s.dataset, s.activated, s.userId, s.updateDate, s.version)
+        SELECT new com.chutneytesting.scenario.infra.jpa.Scenario(s.id, s.title, s.description, s.tags, s.creationDate, s.dataset, s.activated, s.userId, s.updateDate, s.version, s.defaultDataset)
         FROM SCENARIO s
         WHERE s.id = :id
           AND s.activated = :activated
@@ -26,7 +26,7 @@ public interface ScenarioJpaRepository extends CrudRepository<Scenario, Long>, J
     Optional<Scenario> findMetaDataByIdAndActivated(@Param("id") Long id, @Param("activated") Boolean activated);
 
     @Query("""
-        SELECT new com.chutneytesting.scenario.infra.jpa.Scenario(s.id, s.title, s.description, s.tags, s.creationDate, s.dataset, s.activated, s.userId, s.updateDate, s.version)
+        SELECT new com.chutneytesting.scenario.infra.jpa.Scenario(s.id, s.title, s.description, s.tags, s.creationDate, s.dataset, s.activated, s.userId, s.updateDate, s.version, s.defaultDataset)
         FROM SCENARIO s
         WHERE s.activated = true
         """)

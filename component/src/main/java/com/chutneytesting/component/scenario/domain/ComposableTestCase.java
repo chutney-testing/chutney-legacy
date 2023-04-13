@@ -59,7 +59,7 @@ public class ComposableTestCase implements TestCase {
         return new ComposableTestCase(
             id,
             TestCaseMetadataImpl.TestCaseMetadataBuilder.from(metadata)
-                .withDatasetId(dataSetId)
+                .withDefaultDataset(dataSetId)
                 .build(),
             composableScenario,
             executionParameters

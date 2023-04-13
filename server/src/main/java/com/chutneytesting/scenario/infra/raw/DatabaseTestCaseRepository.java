@@ -135,7 +135,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
             CriteriaBuilder builder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Scenario> query = builder.createQuery(Scenario.class);
             Root<Scenario> root = query.from(Scenario.class);
-            query.select(builder.construct(Scenario.class, root.get("id"), root.get("title"), root.get("description"), root.get("tags"), root.get("creationDate"), root.get("dataset"), root.get("activated"), root.get("userId"), root.get("updateDate"), root.get("version")));
+            query.select(builder.construct(Scenario.class, root.get("id"), root.get("title"), root.get("description"), root.get("tags"), root.get("creationDate"), root.get("dataset"), root.get("activated"), root.get("userId"), root.get("updateDate"), root.get("version"), root.get("defaultDataset")));
             query = query.where(scenarioDaoSpecification.toPredicate(root, query, builder));
 
             return entityManager.createQuery(query).getResultList().stream().map(Scenario::toTestCaseMetadata).toList();

@@ -71,7 +71,7 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
         } catch (NoSuchFileException nsfe) {
             throw new GlobalVarNotFoundException(fileName);
         } catch (IOException e) {
-            throw new UnsupportedOperationException("Cannot read " + filePath.toUri().toString(), e);
+            throw new UncheckedIOException("Cannot read " + filePath.toUri(), e);
         }
     }
 
@@ -82,7 +82,7 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
         try {
             Files.write(filePath, hjsonContent.getBytes());
         } catch (IOException e) {
-            throw new UnsupportedOperationException("Cannot save " + filePath.toUri().toString(), e);
+            throw new UncheckedIOException("Cannot save " + filePath.toUri(), e);
         }
     }
 
@@ -104,7 +104,7 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
         } catch (NoSuchFileException nsfe) {
             throw new GlobalVarNotFoundException(fileName);
         } catch (IOException e) {
-            throw new UnsupportedOperationException("Cannot delete " + filePath.toUri().toString(), e);
+            throw new UncheckedIOException("Cannot delete " + filePath.toUri().toString(), e);
         }
     }
 
@@ -117,7 +117,7 @@ public class FileGlobalVarRepository implements GlobalvarRepository {
             try {
                 addKeys("", objectMapper.readTree(JsonValue.readHjson(content).toString()), map);
             } catch (IOException e) {
-                throw new UnsupportedOperationException("Cannot deserialize global variable file: " + path, e);
+                throw new UncheckedIOException("Cannot deserialize global variable file: " + path, e);
             }
         });
 

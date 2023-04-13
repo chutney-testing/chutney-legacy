@@ -7,6 +7,7 @@ import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
@@ -29,7 +30,7 @@ public class DefaultExecutionRequestMapperTest {
         RawTestCase testCase = RawTestCase.builder()
             .withScenario(Files.contentOf(new File(DefaultExecutionRequestMapperTest.class.getResource("/raw_scenarios/scenario.json").getPath()), StandardCharsets.UTF_8))
             .build();
-        ExecutionRequest request = new ExecutionRequest(testCase, "", "");
+        ExecutionRequest request = new ExecutionRequest(testCase, "", "", DataSet.builder().build());
 
         // When
         ExecutionRequestDto executionRequestDto = sut.toDto(request);

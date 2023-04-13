@@ -17,6 +17,7 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
@@ -112,7 +113,7 @@ public class ComponentExecutionRequestMapperTest {
             .thenReturn(new TargetDto(expectedTargetId, "", null));
 
         // When
-        ExecutionRequest request = new ExecutionRequest(testCase, "", "");
+        ExecutionRequest request = new ExecutionRequest(testCase, "", "", DataSet.builder().build());
         final ExecutionRequestDto executionRequestDto = sut.toDto(request);
 
         // Then

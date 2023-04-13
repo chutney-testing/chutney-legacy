@@ -1,5 +1,7 @@
 package com.chutneytesting.component.scenario.api;
 
+import static java.util.Optional.ofNullable;
+
 import com.chutneytesting.component.scenario.api.dto.ComposableStepDto;
 import com.chutneytesting.component.scenario.api.dto.ComposableTestCaseDto;
 import com.chutneytesting.component.scenario.api.dto.ImmutableComposableScenarioDto;
@@ -39,7 +41,7 @@ public class ComposableTestCaseMapper {
                     .build()
             )
             .tags(composableTestCase.metadata.tags())
-            .datasetId(composableTestCase.metadata.datasetId().orElse(""))
+            .datasetId(ofNullable(composableTestCase.metadata.defaultDataset()).orElse(""))
             .author(composableTestCase.metadata.author())
             .updateDate(composableTestCase.metadata.updateDate())
             .version(composableTestCase.metadata.version())
@@ -52,7 +54,7 @@ public class ComposableTestCaseMapper {
             .withDescription(composableTestCaseDto.description().orElse(""))
             .withCreationDate(composableTestCaseDto.creationDate())
             .withTags(composableTestCaseDto.tags())
-            .withDatasetId(composableTestCaseDto.datasetId().orElse(""))
+            .withDefaultDataset(composableTestCaseDto.datasetId().orElse(""))
             .withAuthor(composableTestCaseDto.author())
             .withUpdateDate(composableTestCaseDto.updateDate())
             .withVersion(composableTestCaseDto.version())

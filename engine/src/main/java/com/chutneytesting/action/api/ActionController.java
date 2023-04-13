@@ -25,13 +25,13 @@ public class ActionController {
         this.embeddedActionEngine = embeddedActionEngine;
     }
 
-    @PreAuthorize("hasAuthority('COMPONENT_READ')")
+    @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ActionDto> allActions() {
         return embeddedActionEngine.getAllActions();
     }
 
-    @PreAuthorize("hasAuthority('COMPONENT_READ')")
+    @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/{actionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ActionDto byActionId(@PathVariable String actionId) {
         return embeddedActionEngine.getAction(actionId).orElseThrow(ActionNotFoundException::new);

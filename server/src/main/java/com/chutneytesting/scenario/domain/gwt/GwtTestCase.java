@@ -14,7 +14,7 @@ public class GwtTestCase implements TestCase {
 
     public final TestCaseMetadataImpl metadata;
     public final GwtScenario scenario;
-    public final Map<String, String> executionParameters;
+    public final Map<String, String> executionParameters; /* used only for replacing non dynamic **parameters** */
 
     private GwtTestCase(TestCaseMetadataImpl metadata, GwtScenario scenario, Map<String, String> executionParameters) {
         this.metadata = metadata;

@@ -9,9 +9,9 @@ import static com.chutneytesting.component.scenario.infra.orient.OrientUtils.loa
 import static com.chutneytesting.component.scenario.infra.orient.OrientUtils.rollback;
 
 import com.chutneytesting.component.ComposableIdUtils;
+import com.chutneytesting.dataset.domain.DataSetRepository;
 import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.dataset.DataSetNotFoundException;
-import com.chutneytesting.component.dataset.domain.DataSetRepository;
 import com.chutneytesting.component.scenario.infra.orient.OrientComponentDB;
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.ODatabasePool;
@@ -24,8 +24,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+@Primary
 @Repository
 public class OrientDataSetRepository implements DataSetRepository {
 

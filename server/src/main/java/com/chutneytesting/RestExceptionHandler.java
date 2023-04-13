@@ -10,6 +10,7 @@ import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
 import com.chutneytesting.execution.domain.campaign.CampaignAlreadyRunningException;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
 import com.chutneytesting.security.domain.CurrentUserNotFoundException;
+import com.chutneytesting.server.core.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.server.core.domain.execution.FailedExecutionAttempt;
 import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
 import com.chutneytesting.server.core.domain.execution.ScenarioNotRunningException;
@@ -71,6 +72,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         CampaignExecutionNotFoundException.class,
         CampaignNotFoundException.class,
         CurrentUserNotFoundException.class,
+        DataSetNotFoundException.class,
         EnvironmentNotFoundException.class,
         GlobalVarNotFoundException.class,
         ReportNotFoundException.class,

@@ -11,6 +11,8 @@ import { CanDeactivatePage } from '@core/guards';
 import { DataSetService } from '@core/services';
 import { ValidationService } from '../../../../molecules/validation/validation.service';
 import { Dataset, KeyValue } from '@model';
+import { FeatureService } from '@core/feature/feature.service';
+import { FeatureName } from '@core/feature/feature.model';
 
 @Component({
     selector: 'chutney-dataset-edition',
@@ -28,6 +30,7 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
     private modificationsSaved = false;
     message;
     private savedMessage: string;
+    componentsActive = false;
 
     @ViewChild('dataSetName') dataSetName: ElementRef;
 
@@ -37,11 +40,13 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
                 private validationService: ValidationService,
                 private translate: TranslateService,
                 private formBuilder: FormBuilder,
-                private location: Location) {
+                private location: Location,
+                private featureService: FeatureService) {
         super();
     }
 
     ngOnInit(): void {
+        this.componentsActive = this.featureService.active(FeatureName.COMPONENT);
 
         this.datasetForm = this.formBuilder.group({
             name: ['', Validators.required],
@@ -85,7 +90,7 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
 
     private setCurrentDataSet(res) {
         this.dataset = res;
-        this.previousDataSet = this.dataset;
+        this.previousDataSet = res;
         this.datasetForm.controls['name'].patchValue(this.dataset.name);
         this.datasetForm.controls['description'].patchValue(this.dataset.description);
         this.datasetForm.controls['tags'].patchValue(this.dataset.tags.join(', '));
@@ -99,7 +104,7 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
 
     save() {
         const dataset = this.createDataset();
-        this.dataSetService.save(dataset)
+        this.dataSetService.save(dataset, this.previousDataSet.id)
             .subscribe( (res) => {
                 this.setCurrentDataSet(res);
                 this.location.replaceState('/dataset/' + this.dataset.id + '/edition');

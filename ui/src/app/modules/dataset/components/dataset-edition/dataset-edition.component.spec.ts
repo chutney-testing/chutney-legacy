@@ -16,11 +16,16 @@ import { DatasetListComponent } from '@modules/dataset/components/dataset-list/d
 import { FormsKeyValueComponent } from '@modules/dataset/components/dataset-edition/forms-key-value/forms-key-value.component';
 import { FormsDataGridComponent } from '@modules/dataset/components/dataset-edition/forms-data-grid/forms-data-grid.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FeatureService } from '@core/feature/feature.service';
 
 describe('DatasetEditionComponent', () => {
 
     const dataSetService = jasmine.createSpyObj('DataSetService', ['findAll']);
     dataSetService.findAll.and.returnValue(of([]));
+
+    const featureService = jasmine.createSpyObj('FeatureService', ['active']);
+    featureService.active.and.returnValue(false);
+
     beforeEach(waitForAsync(() => {
         TestBed.resetTestingModule();
         TestBed.configureTestingModule({
@@ -42,7 +47,8 @@ describe('DatasetEditionComponent', () => {
                 FormsDataGridComponent
             ],
             providers: [
-                {provide: DataSetService, useValue: dataSetService}
+                {provide: DataSetService, useValue: dataSetService},
+                {provide: FeatureService, useValue: featureService}
             ]
         }).compileComponents();
     }));

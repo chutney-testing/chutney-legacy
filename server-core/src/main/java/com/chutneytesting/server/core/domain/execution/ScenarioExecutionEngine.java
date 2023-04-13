@@ -30,12 +30,12 @@ public class ScenarioExecutionEngine {
      * @param executionRequest The request execution.
      * @return an execution Report.
      */
-    public ScenarioExecutionReport execute(ExecutionRequest executionRequest, Optional<Pair<String, Integer>> executionDataset) throws ScenarioNotFoundException, ScenarioNotParsableException {
-        return executionEngineAsync.followExecution(executionRequest.testCase.id(), executionEngineAsync.execute(executionRequest, executionDataset)).blockingLast();
+    public ScenarioExecutionReport execute(ExecutionRequest executionRequest) throws ScenarioNotFoundException, ScenarioNotParsableException {
+        return executionEngineAsync.followExecution(executionRequest.testCase.id(), executionEngineAsync.execute(executionRequest)).blockingLast();
     }
 
     public ScenarioExecutionReport simpleSyncExecution(ExecutionRequest executionRequest) {
-        ExecutionRequest processedExecutionRequest = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.userId);
+        ExecutionRequest processedExecutionRequest = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.userId, executionRequest.dataset);
 
         StepExecutionReportCore finalStepReport = executionEngine.execute(processedExecutionRequest);
         return new ScenarioExecutionReport(0L, processedExecutionRequest.testCase.metadata().title(), executionRequest.environment, executionRequest.userId, finalStepReport);

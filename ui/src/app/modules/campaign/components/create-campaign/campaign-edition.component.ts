@@ -58,7 +58,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     jiraUrl = '';
     jiraScenarios: JiraScenario[] = [];
     jiraScenariosToExclude: Array<ScenarioIndex> = [];
-    componentsActive =false;
+    componentsActive = false;
 
     constructor(
         private campaignService: CampaignService,
@@ -192,7 +192,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         const allTagsInScenario: string[] = distinct(flatMap(this.scenarios, (sc) => sc.tags)).sort();
 
         allTagsInScenario.forEach((currentValue, index) => {
-            this.itemList.push( {'id': index, 'itemName': currentValue});
+            this.itemList.push({'id': index, 'itemName': currentValue});
         });
     }
 
@@ -241,7 +241,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
 
     getJiraLastExecutionStatus(id: string) {
         const jiraScenario = this.jiraScenarios.filter(s => s.chutneyId === id);
-        if  (jiraScenario.length > 0) {
+        if (jiraScenario.length > 0) {
             return jiraScenario[0].executionStatus;
         } else {
             return '';
@@ -270,7 +270,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                         let index = 0;
                         this.jiraScenarios.forEach((currentValue) => {
                             if (isNotEmpty(currentValue.executionStatus)) {
-                                this.jiraItemList.push( {'id': index, 'itemName': currentValue.executionStatus});
+                                this.jiraItemList.push({'id': index, 'itemName': currentValue.executionStatus});
                                 index++;
                             }
                         });
@@ -286,7 +286,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         }
     }
 
-    clearJiraScenarios(){
+    clearJiraScenarios() {
         this.jiraScenarios = [];
         this.jiraScenariosToExclude = [];
         this.campaignForm.controls['onlyLinkedScenarios'].setValue(false);
@@ -390,7 +390,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                     });
             }
         }
-        if(addedParams.size > 0) {
+        if (addedParams.size > 0) {
             this.hasParam = true;
         }
     }
