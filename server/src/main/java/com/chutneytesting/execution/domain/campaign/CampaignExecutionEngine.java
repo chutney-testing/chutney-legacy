@@ -1,12 +1,15 @@
 package com.chutneytesting.execution.domain.campaign;
 
 import static java.util.Collections.singleton;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
+import com.chutneytesting.dataset.domain.DataSetRepository;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.FailedExecutionAttempt;
@@ -54,9 +57,10 @@ public class CampaignExecutionEngine {
     private final ScenarioExecutionEngine scenarioExecutionEngine;
     private final ExecutionHistoryRepository executionHistoryRepository;
     private final TestCaseRepositoryAggregator testCaseRepository;
-    private final DataSetHistoryRepository dataSetHistoryRepository;
+    private final Optional<DataSetHistoryRepository> dataSetHistoryRepository;
     private final JiraXrayEmbeddedApi jiraXrayEmbeddedApi;
     private final ChutneyMetrics metrics;
+    private final DataSetRepository datasetRepository;
 
     private final Map<Long, CampaignExecutionReport> currentCampaignExecutions = new ConcurrentHashMap<>();
     private final Map<Long, Boolean> currentCampaignExecutionsStopRequests = new ConcurrentHashMap<>();
@@ -70,15 +74,16 @@ public class CampaignExecutionEngine {
                                    JiraXrayEmbeddedApi jiraXrayEmbeddedApi,
                                    ChutneyMetrics metrics,
                                    ExecutorService executorService,
-                                   ObjectMapper objectMapper) {
+                                   DataSetRepository datasetRepository, ObjectMapper objectMapper) {
         this.campaignRepository = campaignRepository;
         this.scenarioExecutionEngine = scenarioExecutionEngine;
         this.executionHistoryRepository = executionHistoryRepository;
         this.testCaseRepository = testCaseRepository;
-        this.dataSetHistoryRepository = dataSetHistoryRepository.orElse(null);
+        this.dataSetHistoryRepository = dataSetHistoryRepository;
         this.jiraXrayEmbeddedApi = jiraXrayEmbeddedApi;
         this.metrics = metrics;
         this.executor = executorService;
+        this.datasetRepository = datasetRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -99,14 +104,14 @@ public class CampaignExecutionEngine {
     }
 
     public CampaignExecutionReport executeById(Long campaignId, String environment, String userId) {
-        return Optional.ofNullable(campaignRepository.findById(campaignId))
+        return ofNullable(campaignRepository.findById(campaignId))
             .map(campaign -> selectExecutionEnvironment(campaign, environment))
             .map(campaign -> executeCampaign(campaign, userId))
             .orElseThrow(() -> new CampaignNotFoundException(campaignId));
     }
 
     public Optional<CampaignExecutionReport> currentExecution(Long campaignId) {
-        return Optional.ofNullable(campaignId)
+        return ofNullable(campaignId)
             .map(id -> currentCampaignExecutions.get(campaignId));
     }
 
@@ -116,7 +121,7 @@ public class CampaignExecutionEngine {
 
     public void stopExecution(Long executionId) {
         LOGGER.trace("Stop requested for " + executionId);
-        Optional.ofNullable(currentCampaignExecutionsStopRequests.computeIfPresent(executionId, (aLong, aBoolean) -> Boolean.TRUE))
+        ofNullable(currentCampaignExecutionsStopRequests.computeIfPresent(executionId, (aLong, aBoolean) -> Boolean.TRUE))
             .orElseThrow(() -> new CampaignExecutionNotFoundException(executionId));
     }
 
@@ -130,7 +135,7 @@ public class CampaignExecutionEngine {
             !failedIds.isEmpty(),
             campaign.executionEnvironment(),
             isNotBlank(campaign.externalDatasetId) ? campaign.externalDatasetId : null,
-            isNotBlank(campaign.externalDatasetId) ? dataSetHistoryRepository.lastVersion(campaign.externalDatasetId) : null,
+            isNotBlank(campaign.externalDatasetId) && dataSetHistoryRepository.isPresent() ? dataSetHistoryRepository.get().lastVersion(campaign.externalDatasetId) : null,
             userId
         );
 
@@ -205,7 +210,7 @@ public class CampaignExecutionEngine {
                     scenarioExecutionReport = executeScenario(campaign, testCase, campaignExecutionReport.userId);
                 }
                 // Add scenario report to campaign's one
-                Optional.ofNullable(scenarioExecutionReport)
+                ofNullable(scenarioExecutionReport)
                     .ifPresent(serc -> {
                         campaignExecutionReport.endScenarioExecution(serc);
                         // update xray test
@@ -222,7 +227,7 @@ public class CampaignExecutionEngine {
         try {
             LOGGER.trace("Execute scenario {} for campaign {}", testCase.id(), campaign.id);
             ExecutionRequest executionRequest = buildExecutionRequest(campaign, testCase, userId);
-            ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(executionRequest, Optional.empty()); // todo
+            ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(executionRequest);
             executionId = scenarioExecutionReport.executionId;
             scenarioName = scenarioExecutionReport.scenarioName;
         } catch (FailedExecutionAttempt e) {
@@ -250,16 +255,20 @@ public class CampaignExecutionEngine {
 
     private ExecutionRequest executionWithDatasetIdOverrideByCampaign(Campaign campaign, TestCase testCase, String userId) {
         return new ExecutionRequest(
-            testCase.withDataSetId(campaign.externalDatasetId),
+            testCase.withDataSetId(campaign.externalDatasetId), // TODO - change after component deprecation
             campaign.executionEnvironment(),
-            userId
+            userId,
+            datasetRepository.findById(campaign.externalDatasetId)
         );
     }
 
     private ExecutionRequest executionWithCombinedParametersFromCampaignAndTestCase(Campaign campaign, TestCase testCase, String userId) {
         Map<String, String> executionParameters = new HashMap<>(testCase.executionParameters());
         executionParameters.putAll(campaign.executionParameters);
-        return new ExecutionRequest(testCase.usingExecutionParameters(executionParameters), campaign.executionEnvironment(), userId);
+        DataSet dataset = ofNullable(campaign.externalDatasetId)
+            .map(datasetRepository::findById)
+            .orElseGet(() -> datasetRepository.findById(testCase.metadata().defaultDataset()));
+        return new ExecutionRequest(testCase.usingExecutionParameters(executionParameters), campaign.executionEnvironment(), userId, dataset);
     }
 
     private CampaignExecutionReport executeCampaign(Campaign campaign, String userId) {
@@ -274,7 +283,7 @@ public class CampaignExecutionEngine {
     }
 
     private Campaign selectExecutionEnvironment(Campaign campaign, String environment) {
-        Optional.ofNullable(environment).ifPresent(campaign::executionEnvironment);
+        ofNullable(environment).ifPresent(campaign::executionEnvironment);
         return campaign;
     }
 }

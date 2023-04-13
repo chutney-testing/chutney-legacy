@@ -32,6 +32,8 @@ public interface RawTestCaseDto {
 
     List<String> tags();
 
+    Optional<String> defaultDataset();
+
     @Value.Default()
     default Instant creationDate() {
         return now();

@@ -4,6 +4,8 @@ import { newInstance } from '@shared/tools';
 import { distinct, flatMap } from '@shared/tools/array-utils';
 import { DataSetService } from '@core/services';
 import { Dataset, Authorization } from '@model';
+import { FeatureName } from '@core/feature/feature.model';
+import { FeatureService } from '@core/feature/feature.service';
 
 @Component({
     selector: 'chutney-dataset-list',
@@ -26,8 +28,7 @@ export class DatasetListComponent implements OnInit {
 
     constructor(
         private dataSetService: DataSetService
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
         this.dataSetService.findAll().subscribe(
@@ -83,4 +84,5 @@ export class DatasetListComponent implements OnInit {
     onItemDeSelectAll() {
         this.selectedTags = newInstance([]);
     }
+
 }

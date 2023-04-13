@@ -23,6 +23,7 @@ public class TestCaseDataMapper {
             .withAuthor(testCase.metadata.author)
             .withUpdateDate(testCase.metadata.updateDate)
             .withVersion(testCase.metadata.version)
+            .withDefaultDataset(testCase.metadata.defaultDataset)
             .build();
     }
 

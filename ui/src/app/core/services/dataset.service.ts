@@ -4,6 +4,8 @@ import { map } from 'rxjs/operators';
 import { environment } from '@env/environment';
 import { Dataset, KeyValue } from '@model';
 import { HttpClient } from '@angular/common/http';
+import { FeatureName } from '@core/feature/feature.model';
+import { FeatureService } from '@core/feature/feature.service';
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +14,8 @@ export class DataSetService {
 
     private resourceUrl = '/api/v1/datasets';
 
-    constructor(private httpClient: HttpClient) { }
+    constructor(private httpClient: HttpClient) {
+    }
 
     findAll(): Observable<Array<Dataset>> {
         return this.httpClient.get<Array<Dataset>>(environment.backend + this.resourceUrl)
@@ -33,15 +36,16 @@ export class DataSetService {
     }
 
     findById(id: string): Observable<Dataset> {
+
         return this.httpClient.get<Dataset>(environment.backend + this.resourceUrl + '/' + id)
             .pipe(
                 map(dto => this.fromDto(dto))
             );
     }
 
-    save(dataset: Dataset): Observable<Dataset> {
+    save(dataset: Dataset, oldId?: string): Observable<Dataset> {
         if (dataset.id && dataset.id.length > 0) {
-            return this.httpClient.put<Dataset>(environment.backend + this.resourceUrl, dataset)
+            return this.httpClient.put<Dataset>(environment.backend + this.resourceUrl, dataset, {params: {oldId: oldId}})
                 .pipe(
                     map(dto => this.fromDto(dto))
                 );
@@ -68,4 +72,5 @@ export class DataSetService {
             dto.version,
             dto.id);
     }
+
 }

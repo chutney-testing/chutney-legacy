@@ -56,7 +56,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
     }
 
     @Override
-    public Long execute(StepDefinition stepDefinition, ScenarioExecution execution) {
+    public Long execute(StepDefinition stepDefinition, Dataset dataset, ScenarioExecution execution) {
 
         AtomicReference<Step> rootStep = new AtomicReference<>(Step.nonExecutable(stepDefinition));
         reporter.createPublisher(execution.executionId, rootStep.get());
@@ -65,6 +65,8 @@ public class DefaultExecutionEngine implements ExecutionEngine {
 
             final ScenarioContext scenarioContext = new ScenarioContextImpl();
             scenarioContext.put("environment", stepDefinition.environment);
+            scenarioContext.put("dataset", dataset.datatable);
+            scenarioContext.putAll(dataset.constants);
 
             try {
                 try {

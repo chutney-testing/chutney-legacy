@@ -80,7 +80,7 @@ public class ComposableTestCaseMapperTest {
                 .withDescription("Default description")
                 .withCreationDate(Instant.MIN)
                 .withTags(Arrays.asList("tag1", "tag2"))
-                .withDatasetId("66-7")
+                .withDefaultDataset("66-7")
                 .withAuthor("author")
                 .withUpdateDate(Instant.MIN)
                 .withVersion(666)

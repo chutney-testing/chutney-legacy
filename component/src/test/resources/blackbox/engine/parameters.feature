@@ -4,7 +4,7 @@ Feature: Replace scenario parameters with data set or global var values
 
     Background:
         Given global variables defined in global_var
-            Do http-post Post scenario to Chutney instance
+            Do http-post Post global variable to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/ui/globalvar/v1/global_var
                 With headers
@@ -19,7 +19,7 @@ Feature: Replace scenario parameters with data set or global var values
 
     Scenario: Execute composable testcase with global vars
         Given A context-put composable action component wrapper
-            Do http-post Post scenario to Chutney instance
+            Do http-post Post component to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/steps/v1
                 With headers
@@ -53,7 +53,7 @@ Feature: Replace scenario parameters with data set or global var values
                 Take contextPutWrapperComponentId ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
         And A assert-equals composable action component wrapper
-            Do http-post Post scenario to Chutney instance
+            Do http-post Post component to Chutney instance
                 On CHUTNEY_LOCAL
                 With uri /api/steps/v1
                 With headers

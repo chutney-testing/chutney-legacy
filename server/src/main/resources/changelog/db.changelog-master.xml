@@ -616,4 +616,16 @@
             SELECT SETVAL('scenario_id_seq', (SELECT MAX(id) FROM SCENARIO))
         </sql>
     </changeSet>
+    <changeSet id="20230417_scenario_default_dataset" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="SCENARIO" columnName="DEFAULT_DATASET"/>
+            </not>
+        </preConditions>
+        <comment>Create columns DEFAULT_DATASET in SCENARIO</comment>
+        <addColumn tableName="SCENARIO">
+            <column name="DEFAULT_DATASET" type="VARCHAR(50)"></column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

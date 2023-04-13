@@ -19,7 +19,8 @@ export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
         public author?: string,
         public tags: Array<string> = [],
         public executions?: Array<Execution>,
-        public computedParameters?: Array<KeyValue>
+        public computedParameters?: Array<KeyValue>,
+        public defaultDataset?: string
     ) {
     }
 
@@ -45,7 +46,8 @@ export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
             null,
             cloneAsPossible(this.tags),
             null,
-            cloneAsPossible(this.computedParameters)
+            cloneAsPossible(this.computedParameters),
+            null
         );
     }
 
@@ -76,7 +78,8 @@ export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
             raw.author,
             raw.tags,
             raw.executions,
-            raw.computedParameters
+            raw.computedParameters,
+            raw.defaultDataset
         );
     }
 
@@ -93,7 +96,8 @@ export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
             testCase.author,
             [],
             null,
-            testCase.computedParameters
+            testCase.computedParameters,
+            ''
         );
     }
 }

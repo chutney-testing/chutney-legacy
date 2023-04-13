@@ -69,10 +69,6 @@ public class SecuredControllerSpringBootIntegrationTest {
             {GET, "/api/v1/backups/id/download", "ADMIN_ACCESS", null, OK},
             {GET, "/api/v1/backups/backupables", "ADMIN_ACCESS", null, OK},
 
-            // TODO move to Component module
-            {POST, "/api/v1/admin/database/execute/orient", "ADMIN_ACCESS", "select 1", NOT_FOUND},
-            {POST, "/api/v1/admin/database/paginate/orient", "ADMIN_ACCESS", "{\"pageNumber\":1,\"elementPerPage\":1,\"wrappedRequest\":\"\"}", NOT_FOUND},
-
             {POST, "/api/v1/admin/database/execute/jdbc", "ADMIN_ACCESS", "select 1", OK},
             {POST, "/api/v1/admin/database/paginate/jdbc", "ADMIN_ACCESS", "{\"pageNumber\":1,\"elementPerPage\":1,\"wrappedRequest\":\"\"}", OK},
             {POST, "/api/v1/agentnetwork/configuration", "ADMIN_ACCESS", "{}", OK},
@@ -89,19 +85,6 @@ public class SecuredControllerSpringBootIntegrationTest {
             {GET, "/api/ui/campaign/v1/scheduling", "CAMPAIGN_READ", null, OK},
             {POST, "/api/ui/campaign/v1/scheduling", "CAMPAIGN_WRITE", "{}", OK},
             {DELETE, "/api/ui/campaign/v1/scheduling/666", "CAMPAIGN_WRITE", null, OK},
-
-            // TODO move to Component module
-            {GET, "/api/v1/datasets", "DATASET_READ", null, NOT_FOUND},
-            {GET, "/api/v1/datasets", "SCENARIO_WRITE", null, NOT_FOUND},
-            {GET, "/api/v1/datasets", "CAMPAIGN_WRITE", null, NOT_FOUND},
-            {POST, "/api/v1/datasets", "DATASET_WRITE", "{\"name\":\"secu1\"} ", NOT_FOUND},
-            {PUT, "/api/v1/datasets", "DATASET_WRITE", "{\"name\":\"secu2\"} ", NOT_FOUND},
-            {DELETE, "/api/v1/datasets/dataSetId", "DATASET_WRITE", null, NOT_FOUND},
-            {GET, "/api/v1/datasets/dataSetId", "DATASET_READ", null, NOT_FOUND},
-            {GET, "/api/v1/datasets/dataSetId/versions/last", "DATASET_READ", null, NOT_FOUND},
-            {GET, "/api/v1/datasets/dataSetId/versions", "DATASET_READ", null, NOT_FOUND},
-            {GET, "/api/v1/datasets/dataSetId/versions/666", "DATASET_READ", null, NOT_FOUND},
-            {GET, "/api/v1/datasets/dataSetId/666", "DATASET_READ", null, NOT_FOUND},
 
 
             {GET, "/api/v1/editions/testcases/testcaseId", "SCENARIO_READ", null, OK},
@@ -129,19 +112,6 @@ public class SecuredControllerSpringBootIntegrationTest {
             {POST, "/api/v1/ui/plugins/linkifier/", "ADMIN_ACCESS", "{\"pattern\":\"\",\"link\":\"\",\"id\":\"\"}", OK},
             {DELETE, "/api/v1/ui/plugins/linkifier/id", "ADMIN_ACCESS", null, OK},
 
-            // TODO move to Component module
-            {POST, "/api/scenario/component-edition", "SCENARIO_WRITE", "{\"title\":\"\",\"scenario\":{}}", NOT_FOUND},
-            {GET, "/api/scenario/component-edition/testCaseId", "SCENARIO_READ", null, NOT_FOUND},
-            {DELETE, "/api/scenario/component-edition/testCaseId", "SCENARIO_WRITE", null, NOT_FOUND},
-            {GET, "/api/scenario/component-edition/testCaseId/executable", "SCENARIO_READ", null, NOT_FOUND},
-            {GET, "/api/scenario/component-edition/testCaseId/executable/parameters", "CAMPAIGN_WRITE", null, NOT_FOUND},
-            {POST, "/api/steps/v1", "COMPONENT_WRITE", "{\"name\":\"\"}", NOT_FOUND},
-            {DELETE, "/api/steps/v1/stepId", "COMPONENT_WRITE", null, NOT_FOUND},
-            {GET, "/api/steps/v1/all", "COMPONENT_READ", null, NOT_FOUND},
-            {GET, "/api/steps/v1/all", "SCENARIO_WRITE", null, NOT_FOUND},
-            {GET, "/api/steps/v1/stepId/parents", "COMPONENT_READ", null, NOT_FOUND},
-            {GET, "/api/steps/v1/stepId", "COMPONENT_READ", null, NOT_FOUND},
-
             {GET, "/api/scenario/v2/1", "SCENARIO_READ", null, NOT_FOUND},
             {GET, "/api/scenario/v2/testCaseId/metadata", "SCENARIO_READ", null, NOT_FOUND},
             {GET, "/api/scenario/v2", "SCENARIO_READ", null, OK},
@@ -163,7 +133,6 @@ public class SecuredControllerSpringBootIntegrationTest {
             {GET, "/api/ui/scenario/scenarioId/execution/666/v1", "SCENARIO_READ", null, NOT_FOUND},
             {GET, "/api/ui/scenario/execution/666/summary/v1", "SCENARIO_READ", null, NOT_FOUND},
             {POST, "/api/ui/scenario/execution/v1/scenarioId/env", "SCENARIO_EXECUTE", null, NOT_FOUND},
-            {POST, "/api/ui/componentstep/execution/v1/componentId/env", "COMPONENT_WRITE", null, NOT_FOUND},
             {POST, "/api/idea/scenario/execution/env", "SCENARIO_EXECUTE", "{\"content\":\"{\\\"when\\\":{}}\",\"params\":{}} ", OK},
             {POST, "/api/ui/scenario/executionasync/v1/scenarioId/env", "SCENARIO_EXECUTE", "[]", NOT_FOUND},
             {GET, "/api/ui/scenario/executionasync/v1/scenarioId/execution/666", "SCENARIO_READ", null, NOT_FOUND},
@@ -173,8 +142,8 @@ public class SecuredControllerSpringBootIntegrationTest {
             {POST, "/api/v1/authorizations", "ADMIN_ACCESS", "{}", OK},
             {GET, "/api/v1/authorizations", "ADMIN_ACCESS", null, OK},
             {POST, "/api/scenario/execution/v1", "SCENARIO_EXECUTE", "{\"scenario\":{}}", OK},
-            {GET, "/api/action/v1", "COMPONENT_READ", null, OK},
-            {GET, "/api/action/v1/actionId", "COMPONENT_READ", null, NOT_FOUND},
+            {GET, "/api/action/v1", "SCENARIO_READ", null, OK},
+            {GET, "/api/action/v1/actionId", "SCENARIO_READ", null, NOT_FOUND},
             {GET, "/api/v2/environments", "ENVIRONMENT_ACCESS", null, OK},
             {GET, "/api/v2/environments/names", "SCENARIO_EXECUTE", null, OK},
             {GET, "/api/v2/environments/names", "CAMPAIGN_WRITE", null, OK},

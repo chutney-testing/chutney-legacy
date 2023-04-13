@@ -8,6 +8,7 @@ import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.component.scenario.api.dto.ComposableTestCaseDto;
 import com.chutneytesting.component.scenario.domain.ComposableTestCase;
 import com.chutneytesting.component.scenario.infra.OrientComposableTestCaseRepository;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessors;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
@@ -78,7 +79,7 @@ public class ComponentEditionController {
     public ComposableTestCaseDto getExecutableTestCase(@PathVariable("testCaseId") String testCaseId) {
         Optional<TestCase> testCase = composableTestCaseRepository.findExecutableById(testCaseId);
         if (testCase.isPresent()) {
-            ExecutableComposedTestCase result = testCasePreProcessors.apply(new ExecutionRequest(testCase.get(), "env", "userId"));
+            ExecutableComposedTestCase result = testCasePreProcessors.apply(new ExecutionRequest(testCase.get(), "env", "userId", DataSet.builder().build()));
             return ExecutableComposableTestCaseMapper.toDto(result);
         } else {
             throw new ScenarioNotFoundException(testCaseId);

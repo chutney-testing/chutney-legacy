@@ -4,6 +4,7 @@ import static com.chutneytesting.action.sql.SqlAction.CONFIGURABLE_NB_LOGGED_ROW
 
 import com.chutneytesting.action.api.EmbeddedActionEngine;
 import com.chutneytesting.campaign.domain.CampaignRepository;
+import com.chutneytesting.dataset.domain.DataSetRepository;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
 import com.chutneytesting.engine.api.execution.TestEngine;
@@ -233,6 +234,7 @@ public class ServerConfiguration implements AsyncConfigurer {
                                                     JiraXrayEmbeddedApi jiraXrayEmbeddedApi,
                                                     ChutneyMetrics metrics,
                                                     @Qualifier("campaignExecutor") TaskExecutor campaignExecutor,
+                                                    DataSetRepository datasetRepository,
                                                     ObjectMapper objectMapper) {
         return new CampaignExecutionEngine(
             campaignRepository,
@@ -243,6 +245,7 @@ public class ServerConfiguration implements AsyncConfigurer {
             jiraXrayEmbeddedApi,
             metrics,
             new ExecutorServiceAdapter(campaignExecutor),
+            datasetRepository,
             objectMapper
         );
     }

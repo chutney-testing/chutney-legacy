@@ -1,6 +1,8 @@
 package com.chutneytesting.engine.infrastructure.delegation;
 
 import static com.chutneytesting.engine.api.execution.HttpTestEngine.EXECUTION_URL;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
@@ -10,11 +12,13 @@ import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
 import com.chutneytesting.engine.domain.delegation.DelegationClient;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
+import com.chutneytesting.engine.domain.execution.engine.Dataset;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.collect.Lists;
+import java.util.Collections;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -54,7 +58,8 @@ public class HttpClient implements DelegationClient {
         if (connectionChecker.canConnectTo(delegate)) {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<ExecutionRequestDto> request = new HttpEntity<>(ExecutionRequestMapper.from(stepDefinition), headers);
+            Dataset dataset = new Dataset(emptyMap(), emptyList()); // TODO - check if it still works
+            HttpEntity<ExecutionRequestDto> request = new HttpEntity<>(ExecutionRequestMapper.from(stepDefinition, dataset), headers);
             StepExecutionReportDto reportDto = restTemplate.postForObject("https://" + delegate.host() + ":" + delegate.port() + EXECUTION_URL, request, StepExecutionReportDto.class);
             return StepExecutionReportMapper.fromDto(reportDto);
         } else {

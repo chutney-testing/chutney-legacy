@@ -17,7 +17,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.Version;
 
 @Entity(name = "SCENARIO")
@@ -62,10 +61,13 @@ public class ScenarioDao {
     @Version
     private Integer version;
 
+    @Column(name = "DEFAULT_DATASET")
+    private String defaultDataset;
+
     public ScenarioDao() {
     }
 
-    public ScenarioDao(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String contentVersion, String userId, Instant updateDate, Integer version) {
+    public ScenarioDao(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String contentVersion, String userId, Instant updateDate, Integer version, String defaultDataset) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -78,6 +80,7 @@ public class ScenarioDao {
         this.userId = userId;
         this.updateDate = updateDate.toEpochMilli();
         this.version = version;
+        this.defaultDataset = defaultDataset;
     }
 
     public Long getId() {
@@ -97,7 +100,8 @@ public class ScenarioDao {
             scenario.contentVersion,
             User.isAnonymous(scenario.author) ? null : scenario.author,
             scenario.updateDate,
-            scenario.version
+            scenario.version,
+            scenario.defaultDataset
         );
     }
 
@@ -112,6 +116,7 @@ public class ScenarioDao {
                 .withAuthor(userId)
                 .withUpdateDate(Instant.ofEpochMilli(updateDate))
                 .withVersion(version)
+                .withDefaultDataset(defaultDataset)
                 .build())
             .withScenario(new GwtScenarioMapper().deserialize(title, description, content))
             .withExecutionParameters(transformParametersMap(dataset))
@@ -128,6 +133,7 @@ public class ScenarioDao {
             .withAuthor(userId)
             .withUpdateDate(Instant.ofEpochMilli(updateDate))
             .withVersion(version)
+            .withDefaultDataset(defaultDataset)
             .build();
     }
 

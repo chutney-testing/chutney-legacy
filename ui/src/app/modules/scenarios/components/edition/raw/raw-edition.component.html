@@ -50,6 +50,13 @@
                            placeholder="ex. LK-42"/>
                 </div>
             </div>
+            <div class="col-2">
+                <span class="fw-bold me-5">{{'menu.principal.dataset' | translate}}</span>
+                <chutney-dataset-selection
+                    [selectedDatasetId]="testCase.defaultDataset"
+                    (selectionEvent)="selectDataset($event)">
+                </chutney-dataset-selection>
+            </div>
             <div class="col-8">
                 <div *ngIf="saveErrorMessage" class="alert alert-danger text-center text-white cursor-default" (click)="this.saveErrorMessage = null">
                     <strong>{{ saveErrorMessage }}</strong>

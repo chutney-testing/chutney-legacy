@@ -27,11 +27,12 @@ public class TestCaseData {
     public final Instant updateDate;
     public final String author;
     public final Integer version;
+    public final String defaultDataset;
 
     public final Map<String, String> executionParameters;
     public final String rawScenario;
 
-    private TestCaseData(String contentVersion, String testCaseId, String title, String description, Instant creationDate, List<String> tags, Map<String, String> executionParameters, String rawScenario, Instant updateDate, String author, Integer version) {
+    private TestCaseData(String contentVersion, String testCaseId, String title, String description, Instant creationDate, List<String> tags, Map<String, String> executionParameters, String rawScenario, Instant updateDate, String author, Integer version, String defaultDataset) {
         this.contentVersion = contentVersion;
         this.id = testCaseId;
         this.title = title;
@@ -43,6 +44,7 @@ public class TestCaseData {
         this.updateDate = updateDate;
         this.author = author;
         this.version = version;
+        this.defaultDataset = defaultDataset;
     }
 
     @Override
@@ -95,6 +97,7 @@ public class TestCaseData {
         private Instant updateDate;
         private String author;
         private Integer version;
+        private String defaultDataset;
 
         public TestCaseData build() {
             return new TestCaseData(
@@ -108,8 +111,8 @@ public class TestCaseData {
                 ofNullable(rawScenario).orElse(""),
                 ofNullable(updateDate).orElse(creationDate),
                 ofNullable(author).orElseGet(() -> User.ANONYMOUS.id),
-                ofNullable(version).orElse(1)
-            );
+                ofNullable(version).orElse(1),
+                ofNullable(defaultDataset).orElse(""));
         }
 
         public TestCaseDataBuilder withContentVersion(String contentVersion) {
@@ -167,6 +170,11 @@ public class TestCaseData {
             return this;
         }
 
+        public TestCaseDataBuilder withDefaultDataset(String dataset) {
+            this.defaultDataset = dataset;
+            return this;
+        }
+
         public static TestCaseDataBuilder from(TestCaseData testCaseData) {
             return builder()
                 .withId(testCaseData.id)
@@ -179,7 +187,8 @@ public class TestCaseData {
                 .withExecutionParameters(testCaseData.executionParameters)
                 .withAuthor(testCaseData.author)
                 .withUpdateDate(testCaseData.updateDate)
-                .withVersion(testCaseData.version);
+                .withVersion(testCaseData.version)
+                .withDefaultDataset(testCaseData.defaultDataset);
         }
     }
 }

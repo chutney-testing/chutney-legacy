@@ -7,6 +7,7 @@
     <h6 [innerHTML]="scenario.description | linkify"></h6>
     <div class="mb-2">
         <chutney-scenario-campaigns [idScenario]="scenario.id"></chutney-scenario-campaigns>
+        <span>Default dataset : {{scenario.defaultDataset}}</span>
     </div>
 
     <ul ngbNav #nav="ngbNav" [activeId]="getActiveTab()" (navChange)="onTabChange($event)" class="nav-tabs">

@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.campaign.domain.CampaignRepository;
+import com.chutneytesting.component.dataset.infra.OrientDataSetRepository;
 import com.chutneytesting.component.execution.domain.ExecutableComposedScenario;
 import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
@@ -53,6 +54,7 @@ public class CampaignExecutionEngineTest {
     private final DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
     private final JiraXrayEmbeddedApi jiraXrayPlugin = mock(JiraXrayEmbeddedApi.class);
     private final ChutneyMetrics metrics = mock(ChutneyMetrics.class);
+    private final OrientDataSetRepository datasetRepository = mock(OrientDataSetRepository.class);
     private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
     @BeforeAll
@@ -67,7 +69,7 @@ public class CampaignExecutionEngineTest {
     @Test
     public void should_override_scenario_dataset_with_campaign_dataset_before_execution() {
         // Given
-        CampaignExecutionEngine sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, Optional.of(dataSetHistoryRepository), jiraXrayPlugin, metrics, executorService, objectMapper);
+        CampaignExecutionEngine sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, Optional.of(dataSetHistoryRepository), jiraXrayPlugin, metrics, executorService, datasetRepository, objectMapper);
         TestCase composedTestCase = createExecutableComposedTestCase();
 
         Map<String, String> campaignDataSet = Maps.of(
@@ -78,7 +80,7 @@ public class CampaignExecutionEngineTest {
 
         when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
         when(testCaseRepository.findExecutableById(composedTestCase.id())).thenReturn(of(composedTestCase));
-        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class), any())).thenReturn(mock(ScenarioExecutionReport.class));
+        when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
         when(executionHistoryRepository.getExecution(any(), any())).thenReturn(executionWithId(42L));
 
         // When
@@ -86,11 +88,11 @@ public class CampaignExecutionEngineTest {
 
         // Then
         ArgumentCaptor<ExecutionRequest> argumentCaptor = ArgumentCaptor.forClass(ExecutionRequest.class);
-        verify(scenarioExecutionEngine, times(1)).execute(argumentCaptor.capture(), any());
+        verify(scenarioExecutionEngine, times(1)).execute(argumentCaptor.capture());
         List<ExecutionRequest> executionRequests = argumentCaptor.getAllValues();
         assertThat(executionRequests).hasSize(1);
-        assertThat(((ExecutableComposedTestCase) executionRequests.get(0).testCase).metadata.datasetId())
-            .hasValue(campaign.externalDatasetId);
+        assertThat(((ExecutableComposedTestCase) executionRequests.get(0).testCase).metadata.defaultDataset())
+            .isEqualTo(campaign.externalDatasetId);
     }
 
     private final static Random campaignIdGenerator = new Random();
@@ -115,7 +117,7 @@ public class CampaignExecutionEngineTest {
     private ExecutableComposedTestCase createExecutableComposedTestCase() {
         return new ExecutableComposedTestCase(
             TestCaseMetadataImpl.builder()
-                .withDatasetId("composableDataSetId")
+                .withDefaultDataset("composableDataSetId")
                 .build(),
             ExecutableComposedScenario.builder().build()
         );

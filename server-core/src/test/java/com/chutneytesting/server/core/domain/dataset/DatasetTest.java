@@ -1,19 +1,26 @@
-package com.chutneytesting.component.dataset.domain;
+package com.chutneytesting.server.core.domain.dataset;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-import com.chutneytesting.server.core.domain.dataset.DataSet;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
-public class DataSetTest {
+public class DatasetTest {
+
+    @Test
+    void should_strip_whitespaces_in_name() {
+        String expectedName = "name with spaces";
+        DataSet actual = DataSet.builder().withName("   name   with   spaces  ").build();
+        assertThat(actual.name).isEqualTo(expectedName);
+    }
 
     @Test
     public void should_not_have_empty_id() {
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> DataSet.builder().withId("").build());
+            .isThrownBy(() -> DataSet.builder().withId("").build())
+            .withMessage("Dataset id cannot be empty");
     }
 
     @Test
@@ -50,7 +57,7 @@ public class DataSetTest {
     }
 
     @Test
-    public void should_remove_space_in_extremity_of_keys_and_values() {
+    public void should_strip_whitespaces_in_keys_and_values() {
         Map<String, String> expectedMap = Map.of("key1", "value", "key2", "value");
         DataSet dataSet = DataSet.builder()
             .withConstants(

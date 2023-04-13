@@ -1,10 +1,14 @@
 package com.chutneytesting.execution.api;
 
+import static java.util.Objects.requireNonNull;
+
+import com.chutneytesting.dataset.domain.DataSetRepository;
 import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
 import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.security.infra.SpringUserService;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngine;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngineAsync;
@@ -48,6 +52,7 @@ public class ScenarioExecutionUiController {
     private final ObjectMapper objectMapper;
     private final ObjectMapper reportObjectMapper;
     private final SpringUserService userService;
+    private final DataSetRepository datasetRepository;
 
     ScenarioExecutionUiController(
         ScenarioExecutionEngine executionEngine,
@@ -55,14 +60,15 @@ public class ScenarioExecutionUiController {
         TestCaseRepository testCaseRepository,
         ObjectMapper objectMapper,
         @Qualifier("reportObjectMapper") ObjectMapper reportObjectMapper,
-        SpringUserService userService
-    ) {
+        SpringUserService userService,
+        DataSetRepository datasetRepository) {
         this.executionEngine = executionEngine;
         this.executionEngineAsync = executionEngineAsync;
         this.testCaseRepository = testCaseRepository;
         this.objectMapper = objectMapper;
         this.reportObjectMapper = reportObjectMapper;
         this.userService = userService;
+        this.datasetRepository = datasetRepository;
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
@@ -83,7 +89,7 @@ public class ScenarioExecutionUiController {
             .build();
 
         ScenarioExecutionReport report = executionEngine.simpleSyncExecution(
-            new ExecutionRequest(testCase, env, userId)
+            new ExecutionRequest(testCase, env, userId, DataSet.builder().build())
         );
 
         return objectMapper.writeValueAsString(report);
@@ -96,7 +102,8 @@ public class ScenarioExecutionUiController {
         TestCase testCase = testCaseRepository.findExecutableById(scenarioId).orElseThrow(() -> new ScenarioNotFoundException(scenarioId));
         Map<String, String> executionParameters = KeyValue.toMap(executionParametersKV);
         String userId = userService.currentUser().getId();
-        return executionEngineAsync.execute(new ExecutionRequest(testCase, env, executionParameters, userId)).toString();
+        DataSet dataset = datasetRepository.findById(testCase.metadata().defaultDataset());
+        return executionEngineAsync.execute(new ExecutionRequest(requireNonNull(testCase.usingExecutionParameters(requireNonNull(executionParameters))), env, userId, dataset)).toString();
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
@@ -105,7 +112,8 @@ public class ScenarioExecutionUiController {
         LOGGER.debug("executeScenario for scenarioId='{}'", scenarioId);
         TestCase testCase = testCaseRepository.findExecutableById(scenarioId).orElseThrow(() -> new ScenarioNotFoundException(scenarioId));
         String userId = userService.currentUserId();
-        ScenarioExecutionReport report = executionEngine.simpleSyncExecution(new ExecutionRequest(testCase, env, userId));
+        DataSet dataset = datasetRepository.findById(testCase.metadata().defaultDataset());
+        ScenarioExecutionReport report = executionEngine.simpleSyncExecution(new ExecutionRequest(testCase, env, userId, dataset));
         return reportObjectMapper.writeValueAsString(report);
     }
 

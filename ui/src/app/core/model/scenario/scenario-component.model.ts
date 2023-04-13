@@ -4,6 +4,8 @@ import { ComponentTask, KeyValue } from '../component-task.model';
 
 export class ScenarioComponent implements Equals<ScenarioComponent>, Clonable<ScenarioComponent> {
 
+    public defaultDataset: string;
+
     constructor(
         public id?: string,
         public title: string = 'Title',
@@ -18,6 +20,7 @@ export class ScenarioComponent implements Equals<ScenarioComponent>, Clonable<Sc
         public tags: Array<string> = [],
         public datasetId: string = null
     ) {
+        this.defaultDataset = this.datasetId
     }
 
     public equals(obj: ScenarioComponent): boolean {

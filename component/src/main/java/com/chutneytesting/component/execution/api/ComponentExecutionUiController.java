@@ -5,6 +5,7 @@ import com.chutneytesting.component.execution.domain.ExecutableComposedStep;
 import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
 import com.chutneytesting.component.execution.domain.ExecutableStepRepository;
 import com.chutneytesting.component.scenario.infra.OrientComposableTestCaseRepository;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngine;
 import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
@@ -69,7 +70,7 @@ public class ComponentExecutionUiController {
         Optional<TestCase> executableByTestCase = testCaseRepository.findExecutableById(scenarioId);
         if (executableByTestCase.isPresent()) {
             String userId = userService.currentUserId();
-            ScenarioExecutionReport report = executionEngine.simpleSyncExecution(new ExecutionRequest(executableByTestCase.get(), env, userId));
+            ScenarioExecutionReport report = executionEngine.simpleSyncExecution(new ExecutionRequest(executableByTestCase.get(), env, userId, DataSet.builder().build()));
             return reportObjectMapper.writeValueAsString(report);
         } else {
             throw new ScenarioNotFoundException(scenarioId);
@@ -87,7 +88,7 @@ public class ComponentExecutionUiController {
                 .build());
 
         return executionEngine.simpleSyncExecution(
-            new ExecutionRequest(testCase, environment, userId)
+            new ExecutionRequest(testCase, environment, userId, DataSet.builder().build())
         );
     }
 

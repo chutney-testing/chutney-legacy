@@ -11,6 +11,7 @@ import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.component.execution.domain.ExecutableComposedStep;
 import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
+import com.chutneytesting.engine.api.execution.DatasetDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
@@ -47,7 +48,9 @@ public class ComponentExecutionRequestMapper implements ExecutionRequestMapper {
     public ExecutionRequestDto toDto(ExecutionRequest executionRequest) {
         if (executionRequest.testCase.id().contains("-")) {
             final StepDefinitionRequestDto stepDefinitionRequestDto = convertToStepDef(executionRequest);
-            return new ExecutionRequestDto(stepDefinitionRequestDto, executionRequest.environment);
+            return new ExecutionRequestDto(stepDefinitionRequestDto, executionRequest.environment,
+                new DatasetDto(executionRequest.dataset.constants, executionRequest.dataset.datatable)
+            );
         } else {
             return this.defaultExecutionRequestMapper.toDto(executionRequest);
         }

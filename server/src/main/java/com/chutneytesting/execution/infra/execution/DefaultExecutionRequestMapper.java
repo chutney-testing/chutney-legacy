@@ -46,7 +46,7 @@ public class DefaultExecutionRequestMapper implements ExecutionRequestMapper {
     @Override
     public ExecutionRequestDto toDto(ExecutionRequest executionRequest) {
         final StepDefinitionRequestDto stepDefinitionRequestDto = convertToStepDef(executionRequest);
-        return new ExecutionRequestDto(stepDefinitionRequestDto, executionRequest.environment);
+        return new ExecutionRequestDto(stepDefinitionRequestDto, executionRequest.environment, DatasetMapper.toDto(executionRequest.dataset));
     }
 
     private StepDefinitionRequestDto convertToStepDef(ExecutionRequest executionRequest) { // TODO - shameless green - might be refactored later

@@ -4,9 +4,11 @@ import com.chutneytesting.engine.domain.execution.ExecutionEngine;
 import com.chutneytesting.engine.domain.execution.ExecutionManager;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
+import com.chutneytesting.engine.domain.execution.engine.Dataset;
 import com.chutneytesting.engine.domain.report.Reporter;
 import com.chutneytesting.action.spi.injectable.ActionsConfiguration;
 import io.reactivex.Observable;
+import java.util.Optional;
 
 public final class EmbeddedTestEngine implements TestEngine {
 
@@ -31,7 +33,10 @@ public final class EmbeddedTestEngine implements TestEngine {
     @Override
     public Long executeAsync(ExecutionRequestDto request) {
         StepDefinition stepDefinition = StepDefinitionMapper.toStepDefinition(request.scenario.definition, request.environment);
-        return engine.execute(stepDefinition, ScenarioExecution.createScenarioExecution(actionsConfiguration));
+        Dataset dataset = Optional.ofNullable(request.dataset)
+            .map(d -> new Dataset(d.constants, d.datatable))
+            .orElseGet(Dataset::new);
+        return engine.execute(stepDefinition, dataset, ScenarioExecution.createScenarioExecution(actionsConfiguration));
     }
 
     @Override
