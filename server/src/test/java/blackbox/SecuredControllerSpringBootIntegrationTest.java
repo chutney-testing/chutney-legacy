@@ -1,8 +1,6 @@
 package blackbox;
 
 import static java.util.Optional.ofNullable;
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.PATCH;
@@ -84,7 +82,7 @@ public class SecuredControllerSpringBootIntegrationTest {
             {PUT, "/api/ui/campaign/v1", "CAMPAIGN_WRITE", "{\"title\":\"secu\",\"scenarioIds\":[],\"tags\":[]}", OK},
             {DELETE, "/api/ui/campaign/v1/666", "CAMPAIGN_WRITE", null, OK},
             {GET, "/api/ui/campaign/v1/666", "CAMPAIGN_READ", null, NOT_FOUND},
-            {GET, "/api/ui/campaign/v1/666/scenarios", "CAMPAIGN_READ", null, OK},
+            {GET, "/api/ui/campaign/v1/666/scenarios", "CAMPAIGN_READ", null, NOT_FOUND},
             {GET, "/api/ui/campaign/v1", "CAMPAIGN_READ", null, OK},
             {GET, "/api/ui/campaign/v1/lastexecutions/20", "CAMPAIGN_READ", null, OK},
             {GET, "/api/ui/campaign/v1/scenario/scenarioId", "SCENARIO_READ", null, OK},
