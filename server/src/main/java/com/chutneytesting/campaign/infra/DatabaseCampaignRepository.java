@@ -3,6 +3,7 @@ package com.chutneytesting.campaign.infra;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.Long.parseLong;
 import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
@@ -40,14 +41,17 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     public Campaign createOrUpdate(Campaign campaign) {
         List<Scenario> scenarios = campaign.scenarioIds.stream().map(Long::valueOf)
             .map(scenarioJpaRepository::findById)
+            .filter(Optional::isPresent)
             .flatMap(Optional::stream)
             .toList();
-        if (campaign.scenarioIds.size() != scenarios.size()) {
-            throw new RuntimeException("Some scenarios don't exist");
-        }
 
-        com.chutneytesting.campaign.infra.jpa.Campaign campaignJpa = campaignJpaRepository.save(com.chutneytesting.campaign.infra.jpa.Campaign.fromDomain(campaign, scenarios));
+        com.chutneytesting.campaign.infra.jpa.Campaign campaignJpa =
+            campaignJpaRepository.save(com.chutneytesting.campaign.infra.jpa.Campaign.fromDomain(campaign, scenarios, lastCampaignVersion(campaign.id)));
         return campaignJpa.toDomain();
+    }
+
+    private Integer lastCampaignVersion(Long id) {
+        return ofNullable(id).flatMap(campaignJpaRepository::findById).map(com.chutneytesting.campaign.infra.jpa.Campaign::version).orElse(null);
     }
 
     @Override

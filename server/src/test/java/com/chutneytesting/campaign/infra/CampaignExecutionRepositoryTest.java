@@ -188,14 +188,14 @@ public class CampaignExecutionRepositoryTest extends AbstractLocalDatabaseTest {
 
     private void insertCampaign(long campaignId) {
         namedParameterJdbcTemplate.getJdbcTemplate()
-            .execute("INSERT INTO CAMPAIGN VALUES (" + campaignId + ", 'campagne 1', 'description...', 'GLOBAL', false, false, '', '')");
+            .execute("INSERT INTO CAMPAIGN VALUES (" + campaignId + ", 'campagne 1', 'description...', 'GLOBAL', false, false, '', '', 1)");
     }
 
     private void insertScenario(String scenarioId, String scenarioName) {
         namedParameterJdbcTemplate.getJdbcTemplate()
             .execute("INSERT INTO SCENARIO "
-                + "(ID, TITLE, DESCRIPTION, CONTENT, CONTENT_VERSION, CREATION_DATE, UPDATE_DATE, VERSION) VALUES "
-                + " (" + scenarioId + ", '" + scenarioName + "', 'lol', 'truc', 'v2.1', 0, 0, 1)");
+                + "(ID, TITLE, DESCRIPTION, CONTENT, CREATION_DATE, UPDATE_DATE, VERSION) VALUES "
+                + " (" + scenarioId + ", '" + scenarioName + "', 'lol', 'truc', 0, 0, 1)");
     }
 
     private void insertScenarioExec(String scenarioId, String execid, String status) {

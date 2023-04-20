@@ -56,7 +56,7 @@ public abstract class AbstractLocalDatabaseTest {
     }
 
     protected Scenario givenScenario() {
-        Scenario scenario = new Scenario(null, "", null, "", null, now(), null, true, "", null, now(), null);
+        Scenario scenario = new Scenario(null, "", null, "", null, now(), null, true, null, now(), null);
         return transactionTemplate.execute(ts -> {
             entityManager.persist(scenario);
             return scenario;
