@@ -67,6 +67,7 @@ public class CampaignScheduler {
     synchronized private Stream<Long> scheduledCampaignIdsToExecute() {
         try {
             return periodicScheduledCampaignRepository.getALl().stream()
+                .filter(sc -> sc.nextExecutionDate != null)
                 .filter(sc -> sc.nextExecutionDate.isBefore(LocalDateTime.now(clock)))
                 .peek(this::prepareScheduledCampaignForNextExecution)
                 .map(sc -> sc.campaignId);
