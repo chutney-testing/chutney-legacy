@@ -3,10 +3,10 @@ package com.chutneytesting.scenario.infra.jpa;
 import static java.lang.String.valueOf;
 
 import com.chutneytesting.campaign.infra.jpa.Campaign;
+import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
 import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.infra.raw.TagListMapper;
-import com.chutneytesting.scenario.infra.raw.TestCaseData;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.security.User;
@@ -26,6 +26,8 @@ import javax.persistence.Version;
 
 @Entity(name = "SCENARIO")
 public class Scenario {
+
+    private static final GwtScenarioMarshaller marshaller = new GwtScenarioMapper();
 
     @Id
     @Column(name = "ID")
@@ -53,9 +55,6 @@ public class Scenario {
     @Column(name = "ACTIVATED")
     private Boolean activated;
 
-    @Column(name = "CONTENT_VERSION")
-    private String contentVersion;
-
     @Column(name = "USER_ID")
     private String userId;
 
@@ -72,7 +71,7 @@ public class Scenario {
     public Scenario() {
     }
 
-    public Scenario(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String contentVersion, String userId, Instant updateDate, Integer version) {
+    public Scenario(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String userId, Instant updateDate, Integer version) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -81,7 +80,6 @@ public class Scenario {
         this.creationDate = creationDate.toEpochMilli();
         this.dataset = dataset;
         this.activated = activated;
-        this.contentVersion = contentVersion;
         this.userId = userId;
         this.updateDate = updateDate.toEpochMilli();
         this.version = version;
@@ -107,20 +105,19 @@ public class Scenario {
         return campaigns;
     }
 
-    public static Scenario fromTestCaseData(TestCaseData scenario) {
+    public static Scenario fromGwtTestCase(GwtTestCase testCase) {
         return new Scenario(
-            Long.valueOf(scenario.id),
-            scenario.title,
-            scenario.description,
-            scenario.rawScenario,
-            TagListMapper.tagsListToString(scenario.tags),
-            scenario.creationDate,
-            transformParametersToJson(scenario.executionParameters),
+            Long.valueOf(testCase.id()),
+            testCase.metadata().title(),
+            testCase.metadata().description(),
+            marshaller.serialize(testCase.scenario),
+            TagListMapper.tagsListToString(testCase.metadata().tags()),
+            testCase.metadata().creationDate(),
+            transformParametersToJson(testCase.executionParameters()),
             true,
-            scenario.contentVersion,
-            User.isAnonymous(scenario.author) ? null : scenario.author,
-            scenario.updateDate,
-            scenario.version
+            User.isAnonymous(testCase.metadata().author()) ? null : testCase.metadata().author(),
+            testCase.metadata().updateDate(),
+            testCase.metadata().version()
         );
     }
 

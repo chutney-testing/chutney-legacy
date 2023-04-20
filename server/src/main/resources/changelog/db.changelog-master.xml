@@ -646,7 +646,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="Migration-table-scenario" author="ICG">
+    <changeSet id="Migration-table-scenario" dbms="h2,postgresql" author="ICG">
         <comment>Migrate Scenario table</comment>
         <renameTable oldTableName="SCENARIO" newTableName="SCENARIO_OLD"></renameTable>
         <createTable tableName="SCENARIO">
@@ -696,6 +696,36 @@
         </sql>
     </changeSet>
 
+    <changeSet id="Create-table-scenario" dbms="sqlite" author="ICG">
+        <comment>Create Scenario table</comment>
+        <renameTable oldTableName="SCENARIO" newTableName="SCENARIO_OLD"></renameTable>
+        <createTable tableName="SCENARIO">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(300)"/>
+            <column name="CONTENT" type="LONGVARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAGS" type="VARCHAR(300)"/>
+            <column name="CREATION_DATE" type="NUMBER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATASET" type="LONGVARCHAR"/>
+            <column defaultValueBoolean="true" name="ACTIVATED" type="BOOLEAN"/>
+            <column name="USER_ID" type="VARCHAR(64)"/>
+            <column name="UPDATE_DATE" type="NUMBER">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
     <changeSet id="migrate-sqlite-table-scenario-drop-sequence" dbms="h2,postgresql" author="ICG">
         <comment>Drop Scenario id sequence</comment>
         <dropSequence sequenceName="SCENARIO_SEQ"/>
@@ -704,6 +734,11 @@
     <changeSet id="migrate-sqlite-table-scenario-drop" dbms="h2,postgresql" author="ICG">
         <comment>Drop old Scenario table</comment>
         <dropTable tableName="SCENARIO_OLD"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-drop-content_version" dbms="h2,postgresql" author="ICG">
+        <comment>Drop Scenario CONTENT_VERSION column</comment>
+        <dropColumn tableName="SCENARIO" columnName="CONTENT_VERSION"/>
     </changeSet>
 
     <changeSet id="migrate-sqlite-table-campaign-drop-fk" dbms="h2,postgresql" author="ICG">
@@ -730,6 +765,9 @@
             <column defaultValueBoolean="false" name="RETRY_AUTO" type="BOOLEAN"/>
             <column name="DATASET_ID" type="VARCHAR(20)"/>
             <column name="TAGS" type="VARCHAR(300)"/>
+            <column defaultValueNumeric="1" name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 

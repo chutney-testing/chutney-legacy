@@ -12,14 +12,18 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.logging.Level;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import liquibase.Liquibase;
+import liquibase.Scope;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
-import liquibase.exception.LiquibaseException;
+import liquibase.logging.core.AbstractLogService;
+import liquibase.logging.core.AbstractLogger;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import liquibase.ui.LoggerUIService;
 import org.h2.tools.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -198,14 +202,40 @@ class TestInfraConfiguration {
     @Bean
     public Liquibase liquibase(
         DataSource ds,
-        @Value("${chutney.test-infra.init-liquibase:true}") boolean liquibaseInit,
-        @Value("${chutney.test-infra.init-context:!test}") String initContext
-    ) throws SQLException, LiquibaseException {
+        @Value("${chutney.test-infra.liquibase.run:true}") boolean liquibaseInit,
+        @Value("${chutney.test-infra.liquibase.context:!test}") String initContext,
+        @Value("${chutney.test-infra.liquibase.log.service:false}") boolean logService,
+        @Value("${chutney.test-infra.liquibase.log.ui:true}") boolean logUi
+    ) throws Exception {
         Database liquibaseDB = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(ds.getConnection()));
         Liquibase liquibase = new Liquibase(DB_CHANGELOG_DB_CHANGELOG_MASTER_XML, new ClassLoaderResourceAccessor(), liquibaseDB);
+        if (!logService) {
+            Scope.enter(Map.of(Scope.Attr.logService.name(), new NoLiquibaseLogService()));
+        }
+        if (!logUi) {
+            Scope.enter(Map.of(Scope.Attr.ui.name(), new LoggerUIService()));
+        }
         if (liquibaseInit) {
             liquibase.update(initContext);
         }
         return liquibase;
+    }
+
+    private static class NoLiquibaseLogService extends AbstractLogService {
+
+        @Override
+        public int getPriority() {
+            return 0;
+        }
+
+        @Override
+        public liquibase.logging.Logger getLog(Class clazz) {
+            return new AbstractLogger() {
+                @Override
+                public void log(Level level, String message, Throwable e) {
+
+                }
+            };
+        }
     }
 }

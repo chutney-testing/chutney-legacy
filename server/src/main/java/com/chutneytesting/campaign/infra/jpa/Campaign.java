@@ -1,12 +1,14 @@
 package com.chutneytesting.campaign.infra.jpa;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.scenario.infra.raw.TagListMapper;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,6 +21,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
+import javax.persistence.Version;
 
 @Entity(name = "CAMPAIGN")
 public class Campaign implements Serializable {
@@ -49,6 +52,10 @@ public class Campaign implements Serializable {
     @Column(name = "TAGS")
     private String tags;
 
+    @Column(name = "VERSION")
+    @Version
+    private Integer version;
+
     @ManyToMany
     @JoinTable(
         name = "CAMPAIGN_SCENARIOS",
@@ -65,14 +72,14 @@ public class Campaign implements Serializable {
     }
 
     public Campaign(String title) {
-        this(null, title, "", null, false, false, null, null, null, null);
+        this(null, title, "", null, false, false, null, null, null, null, null);
     }
 
     public Campaign(String title, List<Scenario> scenarios) {
-        this(null, title, "", null, false, false, null, null, scenarios, null);
+        this(null, title, "", null, false, false, null, null, null, scenarios, null);
     }
 
-    public Campaign(Long id, String title, String description, String environment, boolean parallelRun, boolean retryAuto, String datasetId, List<String> tags, List<Scenario> scenarios, Set<CampaignParameter> parameters) {
+    public Campaign(Long id, String title, String description, String environment, boolean parallelRun, boolean retryAuto, String datasetId, List<String> tags, Integer version, List<Scenario> scenarios, Set<CampaignParameter> parameters) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -81,14 +88,12 @@ public class Campaign implements Serializable {
         this.retryAuto = retryAuto;
         this.datasetId = datasetId;
         this.tags = TagListMapper.tagsListToString(tags);
+        this.version = ofNullable(version).orElse(1);
         this.scenarios = scenarios;
-        Optional.ofNullable(parameters).ifPresent(params -> {
-            params.forEach(param -> param.forCampaign(this));
-        });
-        this.parameters = parameters;
+        fromCampaignParameters(parameters);
     }
 
-    public static Campaign fromDomain(com.chutneytesting.server.core.domain.scenario.campaign.Campaign campaign, List<Scenario> scenarios) {
+    public static Campaign fromDomain(com.chutneytesting.server.core.domain.scenario.campaign.Campaign campaign, List<Scenario> scenarios, Integer version) {
         return new Campaign(
             campaign.id,
             campaign.title,
@@ -98,9 +103,19 @@ public class Campaign implements Serializable {
             campaign.retryAuto,
             campaign.externalDatasetId,
             campaign.tags,
-            scenarios,
+            version,
+            new ArrayList<>(scenarios),
             CampaignParameter.fromDomain(campaign)
         );
+    }
+
+    private void fromCampaignParameters(Set<CampaignParameter> campaignParameters) {
+        initParameters();
+        if (campaignParameters != null && !campaignParameters.isEmpty()) {
+            this.parameters.clear();
+            this.parameters.addAll(campaignParameters);
+            attachParameters();
+        }
     }
 
     public com.chutneytesting.server.core.domain.scenario.campaign.Campaign toDomain() {
@@ -128,5 +143,19 @@ public class Campaign implements Serializable {
 
     public Set<CampaignParameter> parameters() {
         return parameters;
+    }
+
+    public Integer version() {
+        return version;
+    }
+
+    private void initParameters() {
+        if (this.parameters == null) {
+            this.parameters = new HashSet<>();
+        }
+    }
+
+    private void attachParameters() {
+        ofNullable(parameters).ifPresent(params -> params.forEach(param -> param.forCampaign(this)));
     }
 }

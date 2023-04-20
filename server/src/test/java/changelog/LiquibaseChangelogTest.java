@@ -23,13 +23,13 @@ class LiquibaseChangelogTest {
 
     @Nested
     @DisplayName("On a fresh new database")
-    @TestPropertySource(properties = {"chutney.test-infra.init-liquibase=false"})
+    @TestPropertySource(properties = {"chutney.test-infra.liquibase.run=false"})
     class FreshDB {
         @Nested
         @EnableH2MemTestInfra
         class H2 extends AbstractLocalDatabaseTest {
             @RepeatedTest(2)
-            @DisplayName("Must be applied two times without error")
+            @DisplayName("Must be applied without error")
             void init_without_error() {
                 assertDoesNotThrow(this::liquibaseUpdate);
             }
@@ -63,7 +63,7 @@ class LiquibaseChangelogTest {
         @Nested
         @EnableSQLiteTestInfra
         class SQLite extends AbstractLocalDatabaseTest {
-            @Test
+            @RepeatedTest(2)
             @DisplayName("Must be applied without error")
             void init_without_error() {
                 assertDoesNotThrow(this::liquibaseUpdate);
@@ -73,7 +73,7 @@ class LiquibaseChangelogTest {
         @Nested
         @EnablePostgreSQLTestInfra
         class Postgres extends AbstractLocalDatabaseTest {
-            @Test
+            @RepeatedTest(2)
             @DisplayName("Must be applied without error")
             void init_without_error() {
                 assertDoesNotThrow(this::liquibaseUpdate);
@@ -83,7 +83,7 @@ class LiquibaseChangelogTest {
 
     @Nested
     @DisplayName("On a database with data before sqlite compatibility migration")
-    @TestPropertySource(properties = {"chutney.test-infra.init-context=test"})
+    @TestPropertySource(properties = {"chutney.test-infra.liquibase.context=test"})
     class DataToMigrateDB {
         @Nested
         @EnableH2MemTestInfra
@@ -116,7 +116,7 @@ class LiquibaseChangelogTest {
                     Set<CampaignParameter> parameters = Set.of(
                         new CampaignParameter("param1", "val1")
                     );
-                    Campaign c = new Campaign(null, "title", "", null, false, false, null, null, null, parameters);
+                    Campaign c = new Campaign(null, "title", "", null, false, false, null, null, null, null, parameters);
                     entityManager.persist(c);
                     return c;
                 });

@@ -1,6 +1,5 @@
 package com.chutneytesting.scenario.infra.raw;
 
-import static com.chutneytesting.scenario.infra.jpa.Scenario.fromTestCaseData;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.Long.valueOf;
 import static java.util.Optional.empty;
@@ -38,8 +37,11 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     @Override
     public String save(GwtTestCase testCase) {
-        TestCaseData testCaseData = TestCaseDataMapper.toDto(testCase);
-        return doSave(testCaseData).toString();
+        try {
+            return scenarioJpaRepository.save(Scenario.fromGwtTestCase(testCase)).id().toString();
+        } catch (ObjectOptimisticLockingFailureException e) {
+            throw new ScenarioNotFoundException(testCase.id(), testCase.metadata().version());
+        }
     }
 
     @Override
@@ -47,13 +49,9 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         if (checkIdInput(scenarioId)) {
             return empty();
         }
-        try {
-            Optional<Scenario> scenarioDao = scenarioJpaRepository.findByIdAndActivated(valueOf(scenarioId), true)
-                .filter(Scenario::activated);
-            return scenarioDao.map(Scenario::toGwtTestCase);
-        } catch (IncorrectResultSizeDataAccessException e) {
-            return empty();
-        }
+        Optional<Scenario> scenarioDao = scenarioJpaRepository.findByIdAndActivated(valueOf(scenarioId), true)
+            .filter(Scenario::activated);
+        return scenarioDao.map(Scenario::toGwtTestCase);
     }
 
     @Override
@@ -79,7 +77,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         if (checkIdInput(scenarioId)) {
             return;
         }
-        scenarioJpaRepository.findByIdAndActivated(Long.valueOf(scenarioId), true)
+        scenarioJpaRepository.findByIdAndActivated(valueOf(scenarioId), true)
             .ifPresent(scenarioJpa -> {
                 // TODO - Refactor - Use CampaignRepository up in callstack
                 uiNamedParameterJdbcTemplate.update("DELETE FROM CAMPAIGN_EXECUTION_HISTORY WHERE SCENARIO_ID = :id", buildIdParameterMap(scenarioId));
@@ -129,14 +127,6 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
                 .orElse(wordSpecification);
         }
         return scenarioDaoSpecification;
-    }
-
-    private Long doSave(TestCaseData scenario) {
-        try {
-            return scenarioJpaRepository.save(fromTestCaseData(scenario)).id();
-        } catch (ObjectOptimisticLockingFailureException e) {
-            throw new ScenarioNotFoundException(scenario.id, scenario.version);
-        }
     }
 
     private ImmutableMap<String, Object> buildIdParameterMap(String scenarioId) {
