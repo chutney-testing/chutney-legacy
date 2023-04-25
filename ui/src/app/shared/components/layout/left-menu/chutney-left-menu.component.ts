@@ -3,6 +3,7 @@ import { LoginService } from '@core/services';
 import { LayoutOptions } from '@core/layout/layout-options.service';
 import { MenuItem } from '@shared/components/layout/menuItem';
 import { allMenuItems } from '@shared/components/layout/left-menu/chutney-left-menu.items';
+import { FeatureService } from '@core/feature/feature.service';
 
 @Component({
     selector: 'chutney-chutney-left-menu',
@@ -15,7 +16,8 @@ export class ChutneyLeftMenuComponent implements OnInit {
     private innerWidth: number;
 
     constructor(public layoutOptions: LayoutOptions,
-                private loginService: LoginService) {
+                private loginService: LoginService,
+                private featureService: FeatureService) {
     }
 
     ngOnInit(): void {
@@ -33,7 +35,7 @@ export class ChutneyLeftMenuComponent implements OnInit {
     }
 
     canViewMenuItem(item: MenuItem): boolean {
-        return this.loginService.hasAuthorization(item.authorizations);
+        return this.loginService.hasAuthorization(item.authorizations) && this.featureService.active(item.feature);
     }
 
     toggleSidebar() {

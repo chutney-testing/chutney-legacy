@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 
 import {
@@ -12,8 +12,10 @@ import {
     sortByAndOrder
 } from '@shared/tools/array-utils';
 import { StateService } from '@shared/state/state.service';
-import { ScenarioService, JiraPluginService, JiraPluginConfigurationService } from '@core/services';
-import { ScenarioIndex, ScenarioType, SelectableTags, Authorization, TestCase } from '@model';
+import { JiraPluginConfigurationService, JiraPluginService, ScenarioService } from '@core/services';
+import { Authorization, ScenarioIndex, ScenarioType, SelectableTags, TestCase } from '@model';
+import { FeatureService } from '@core/feature/feature.service';
+import { FeatureName } from '@core/feature/feature.model';
 
 @Component({
     selector: 'chutney-scenarios',
@@ -23,6 +25,7 @@ import { ScenarioIndex, ScenarioType, SelectableTags, Authorization, TestCase } 
 export class ScenariosComponent implements OnInit, OnDestroy {
 
     SCENARIO_TYPES = [ScenarioType.FORM, ScenarioType.COMPOSED];
+    componentsActive = false;
     urlParams: Subscription;
 
     scenarios: Array<ScenarioIndex> = [];
@@ -55,10 +58,12 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         private jiraPluginConfigurationService: JiraPluginConfigurationService,
         private stateService: StateService,
         private readonly route: ActivatedRoute,
+        private featureService: FeatureService
     ) {
     }
 
     ngOnInit() {
+        this.componentsActive = this.featureService.active(FeatureName.COMPONENT);
         this.initJiraPlugin();
         this.searchSub$.pipe(
             debounceTime(400)

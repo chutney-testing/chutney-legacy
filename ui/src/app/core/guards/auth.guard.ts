@@ -10,6 +10,7 @@ import { Authorization } from '@model';
 @Injectable({
   providedIn: 'root'
 })
+// TODO Separate authentication and authorization
 export class AuthGuard implements CanActivate {
 
   private unauthorizedMessage: string = '';

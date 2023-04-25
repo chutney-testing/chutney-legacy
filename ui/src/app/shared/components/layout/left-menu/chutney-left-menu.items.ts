@@ -1,5 +1,6 @@
 import { Authorization } from '@model';
 import { MenuItem } from '@shared/components/layout/menuItem';
+import { FeatureName } from '@core/feature/feature.model';
 
 export const allMenuItems: MenuItem [] = [
     {
@@ -27,13 +28,15 @@ export const allMenuItems: MenuItem [] = [
                 label: 'menu.principal.component',
                 link: '/component',
                 iconClass: 'fa fa-cubes',
-                authorizations: [Authorization.COMPONENT_READ,Authorization.COMPONENT_WRITE]
+                authorizations: [Authorization.COMPONENT_READ,Authorization.COMPONENT_WRITE],
+                feature: FeatureName.COMPONENT
             },
             {
                 label: 'menu.principal.dataset',
                 link: '/dataset',
                 iconClass: 'fa fa-table',
-                authorizations: [Authorization.DATASET_READ,Authorization.DATASET_WRITE]
+                authorizations: [Authorization.DATASET_READ,Authorization.DATASET_WRITE],
+                feature: FeatureName.COMPONENT
             },
         ],
     },

@@ -11,6 +11,8 @@ import {
 import {
     ScenarioExecutionMenuComponent
 } from '@modules/scenarios/components/execution/sub/right-side-bar/scenario-execution-menu.component';
+import { FeaturesGuard } from '@core/guards/features.guard';
+import { FeatureName } from '@core/feature/feature.model';
 
 export const scenarioRoute: Routes = [
 
@@ -47,8 +49,11 @@ export const scenarioRoute: Routes = [
         path: ':id/component-edition',
         component: ComponentEditionComponent,
         canDeactivate: [CanDeactivateGuard],
-        canActivate: [AuthGuard],
-        data: {'authorizations': [Authorization.SCENARIO_WRITE]}
+        canActivate: [AuthGuard, FeaturesGuard],
+        data: {
+            'authorizations': [Authorization.SCENARIO_WRITE],
+            'feature': FeatureName.COMPONENT
+        }
     },
     {
         path: ':id/execute/:env',
@@ -68,7 +73,7 @@ export const scenarioRoute: Routes = [
         path: 'component-edition',
         component: ComponentEditionComponent,
         canDeactivate: [CanDeactivateGuard],
-        canActivate: [AuthGuard],
-        data: {'authorizations': [Authorization.SCENARIO_WRITE]}
+        canActivate: [AuthGuard, FeaturesGuard],
+        data: {'authorizations': [Authorization.SCENARIO_WRITE], 'feature': FeatureName.COMPONENT}
     }
 ];

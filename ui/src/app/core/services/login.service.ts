@@ -64,6 +64,8 @@ export class LoginService {
     if (this.isAuthenticated()) {
         const user: User = this.user$.getValue();
         this.router.navigateByUrl(nextUrl ? nextUrl : this.defaultForwardUrl(user));
+    } else {
+        this.router.navigateByUrl('/login');
     }
   }
 
@@ -73,7 +75,7 @@ export class LoginService {
         delay(500)
     ).subscribe(
         () => {
-            this.router.navigateByUrl('/');
+            this.router.navigateByUrl('/login');
         }
     );
   }

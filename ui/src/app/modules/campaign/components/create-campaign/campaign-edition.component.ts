@@ -4,23 +4,20 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { DragulaService } from 'ng2-dragula';
 
-import {
-    Campaign, JiraScenario,
-    KeyValue,
-    ScenarioIndex,
-    TestCase
-} from '@model';
+import { Campaign, JiraScenario, KeyValue, ScenarioIndex, TestCase } from '@model';
 import {
     CampaignService,
     ComponentService,
     EnvironmentService,
-    ScenarioService,
+    JiraPluginConfigurationService,
     JiraPluginService,
-    JiraPluginConfigurationService
+    ScenarioService
 } from '@core/services';
 import { distinct, flatMap, newInstance } from '@shared/tools/array-utils';
 import { isNotEmpty } from '@shared';
 import { TranslateService } from '@ngx-translate/core';
+import { FeatureService } from '@core/feature/feature.service';
+import { FeatureName } from '@core/feature/feature.model';
 
 @Component({
     selector: 'chutney-campaign-edition',
@@ -61,6 +58,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     jiraUrl = '';
     jiraScenarios: JiraScenario[] = [];
     jiraScenariosToExclude: Array<ScenarioIndex> = [];
+    componentsActive =false;
 
     constructor(
         private campaignService: CampaignService,
@@ -74,6 +72,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         private dragulaService: DragulaService,
         private environmentService: EnvironmentService,
         private translate: TranslateService,
+        private featureService: FeatureService,
     ) {
         this.campaignForm = this.formBuilder.group({
             title: ['', Validators.required],
@@ -91,6 +90,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.componentsActive = this.featureService.active(FeatureName.COMPONENT);
         this.initMultiSelectSettings();
         this.submitted = false;
         this.loadEnvironment();
