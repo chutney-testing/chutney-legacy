@@ -32,7 +32,7 @@ public interface CampaignRepository {
 
     List<Campaign> findCampaignsByScenarioId(String scenarioId);
 
-    Long newCampaignExecution();
+    Long newCampaignExecution(Long campaignId);
 
     CampaignExecutionReport findByExecutionId(Long campaignExecutionId);
 }

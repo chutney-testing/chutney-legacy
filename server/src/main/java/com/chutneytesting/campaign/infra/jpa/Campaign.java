@@ -137,6 +137,10 @@ public class Campaign implements Serializable {
         return id;
     }
 
+    public String title() {
+        return title;
+    }
+
     public List<Scenario> scenarios() {
         return scenarios;
     }
@@ -147,6 +151,10 @@ public class Campaign implements Serializable {
 
     public Integer version() {
         return version;
+    }
+
+    public void removeScenario(Scenario scenario) {
+        scenarios.remove(scenario);
     }
 
     private void initParameters() {

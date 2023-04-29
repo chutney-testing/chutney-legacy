@@ -6,318 +6,294 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static util.WaitUtils.awaitDuring;
 
-import com.chutneytesting.campaign.domain.CampaignRepository;
+import com.chutneytesting.campaign.infra.CampaignExecutionRepository;
+import com.chutneytesting.campaign.infra.jpa.Campaign;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.Execution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.ExecutionSummary;
-import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundException;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
-import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.IntStream;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import util.infra.AbstractLocalDatabaseTest;
 import util.infra.EnableH2MemTestInfra;
+import util.infra.EnablePostgreSQLTestInfra;
+import util.infra.EnableSQLiteTestInfra;
 
-@DisplayName("DatabaseExecutionHistoryRepositoryTest")
-@EnableH2MemTestInfra
-public class DatabaseExecutionHistoryRepositoryTest extends AbstractLocalDatabaseTest {
+public class DatabaseExecutionHistoryRepositoryTest {
 
-    private ExecutionHistoryRepository sut;
-    @Autowired
-    private CampaignRepository campaignRepository;
-
-    @BeforeEach
-    public void beforeEach() {
-        sut = new DatabaseExecutionHistoryRepository(namedParameterJdbcTemplate);
+    @Nested
+    @EnableH2MemTestInfra
+    class H2 extends AllTests {
     }
 
-    @AfterEach
-    void afterEach() {
-        clearTables();
+    @Nested
+    @EnableSQLiteTestInfra
+    class SQLite extends AllTests {
     }
 
-    @Test
-    public void repository_is_empty_at_startup() {
-        assertThat(sut.getExecutions("1")).isEmpty();
+    @Nested
+    @EnablePostgreSQLTestInfra
+    class PostreSQL extends AllTests {
     }
 
-    @Test
-    public void execution_summary_is_available_after_storing_sorted_newest_first() {
-        sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec1", ""));
-        sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
-        sut.store("1", buildDetachedExecution(ServerReportStatus.FAILURE, "exec3", ""));
+    abstract class AllTests extends AbstractLocalDatabaseTest {
+        @Autowired
+        private DatabaseExecutionHistoryRepository sut;
+        @Autowired
+        private CampaignExecutionRepository campaignExecutionRepository;
 
-        assertThat(sut.getExecutions("1"))
-            .extracting(summary -> summary.info().get()).containsExactly("exec3", "exec2", "exec1");
-    }
+        @Test
+        public void execution_summary_is_available_after_storing_sorted_newest_first() {
+            String scenarioId = givenScenario().id().toString();
+            sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec1", ""));
+            sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
+            sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.FAILURE, "exec3", ""));
 
-    @Test
-    public void last_execution_return_newest_first() {
-        sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec1", ""));
-        sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
-        sut.store("1", buildDetachedExecution(ServerReportStatus.FAILURE, "exec3", ""));
+            assertThat(sut.getExecutions(scenarioId))
+                .extracting(summary -> summary.info().get()).containsExactly("exec3", "exec2", "exec1");
+        }
 
-        sut.store("2", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec6", ""));
-        sut.store("2", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec5", ""));
-        sut.store("2", buildDetachedExecution(ServerReportStatus.FAILURE, "exec4", ""));
+        @Test
+        public void last_execution_return_newest_first() {
+            String scenarioIdOne = givenScenario().id().toString();
+            sut.store(scenarioIdOne, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec1", ""));
+            sut.store(scenarioIdOne, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
+            sut.store(scenarioIdOne, buildDetachedExecution(ServerReportStatus.FAILURE, "exec3", ""));
 
-        Map<String, ExecutionSummary> lastExecutions = sut.getLastExecutions(List.of("1", "2"));
-        assertThat(lastExecutions).containsOnlyKeys("1", "2");
-        assertThat(lastExecutions.get("1").info().get()).isEqualTo("exec3");
-        assertThat(lastExecutions.get("2").info().get()).isEqualTo("exec4");
-    }
+            String scenarioIdTwo = givenScenario().id().toString();
+            sut.store(scenarioIdTwo, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec6", ""));
+            sut.store(scenarioIdTwo, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec5", ""));
+            sut.store(scenarioIdTwo, buildDetachedExecution(ServerReportStatus.FAILURE, "exec4", ""));
 
-    @Test
-    public void execution_summaries_retrieved_are_limit_to_5() {
-        IntStream.range(0, 25).forEach(
-            i -> {
-                sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec" + i, ""));
-                // As order is based on executionTime, if they are stored at the exact same time, check on order may fail
-                awaitDuring(20, MILLISECONDS);
-            }
-        );
+            Map<String, ExecutionSummary> lastExecutions = sut.getLastExecutions(List.of(scenarioIdOne, scenarioIdTwo));
+            assertThat(lastExecutions).containsOnlyKeys(scenarioIdOne, scenarioIdTwo);
+            assertThat(lastExecutions.get(scenarioIdOne).info()).hasValue("exec3");
+            assertThat(lastExecutions.get(scenarioIdTwo).info()).hasValue("exec4");
+        }
 
-        assertThat(sut.getExecutions("1"))
-            .extracting(summary -> summary.info().get())
-            .containsExactly(
-                "exec24",
-                "exec23",
-                "exec22",
-                "exec21",
-                "exec20",
-                "exec19",
-                "exec18",
-                "exec17",
-                "exec16",
-                "exec15",
-                "exec14",
-                "exec13",
-                "exec12",
-                "exec11",
-                "exec10",
-                "exec9",
-                "exec8",
-                "exec7",
-                "exec6",
-                "exec5"
+        @Test
+        public void execution_summaries_retrieved_are_limit_to_20() {
+            String scenarioId = givenScenario().id().toString();
+            List<String> expectedInfos = new ArrayList<>(20);
+            List<String> finalExpectedInfos = expectedInfos;
+            IntStream.range(0, 25).forEach(
+                i -> {
+                    String info = "exec" + i;
+                    sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, info, ""));
+                    finalExpectedInfos.add(info);
+                    // As order is based on executionTime, if they are stored at the exact same time, check on order may fail
+                    awaitDuring(20, MILLISECONDS);
+                }
             );
-    }
 
-    @Test
-    public void storage_keeps_all_items() {
-        DetachedExecution execution = ImmutableExecutionHistory.DetachedExecution.builder()
-            .duration(0L)
-            .time(LocalDateTime.now())
-            .status(ServerReportStatus.SUCCESS)
-            .report("toto")
-            .testCaseTitle("Fake title")
-            .environment("")
-            .user("")
-            .build();
-        IntStream.range(0, 23).forEach(i -> sut.store("1", execution));
+            Collections.reverse(expectedInfos);
+            expectedInfos = expectedInfos.stream().limit(20).toList();
 
-        assertThat(sut.getExecutions("2")).hasSize(0);
+            assertThat(sut.getExecutions(scenarioId))
+                .extracting(ExecutionHistory.ExecutionProperties::info)
+                .map(Optional::get)
+                .containsExactlyElementsOf(expectedInfos);
+        }
 
-        Map<String, Object> queryForMap = namedParameterJdbcTemplate.queryForMap(
-            "SELECT count(*) as count FROM SCENARIO_EXECUTION_HISTORY WHERE SCENARIO_ID = 1"
-            , new HashMap<>());
+        @Test
+        public void storage_keeps_all_items() {
+            String scenarioId = givenScenario().id().toString();
+            DetachedExecution execution = buildDetachedExecution(ServerReportStatus.SUCCESS, "", "");
+            IntStream.range(0, 23).forEach(i -> sut.store(scenarioId, execution));
 
-        assertThat(queryForMap.get("count"))
-            .as("All 23 reports of test scenario")
-            .isEqualTo(23L);
-    }
+            assertThat(sut.getExecutions("-1")).hasSize(0);
 
-    @Test
-    public void update_execution_alters_last_one() {
-        sut.store("1", buildDetachedExecution(ServerReportStatus.RUNNING, "exec", ""));
+            Number executionsCount = (Number) entityManager.createNativeQuery(
+                "SELECT count(*) as count FROM SCENARIO_EXECUTIONS WHERE SCENARIO_ID = " + scenarioId).getSingleResult();
 
-        ExecutionSummary last = sut.getExecutions("1").get(0);
-        assertThat(last.status()).isEqualTo(ServerReportStatus.RUNNING);
-        assertThat(last.info()).contains("exec");
+            assertThat(executionsCount.intValue())
+                .as("All 23 reports of test scenario")
+                .isEqualTo(23);
+        }
 
-        sut.update("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(last.executionId()));
+        @Test
+        public void update_execution_alters_last_one() {
+            String scenarioId = givenScenario().id().toString();
+            sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.RUNNING, "exec", ""));
 
-        Execution updatedExecution = sut.getExecution("1", last.executionId());
-        assertThat(updatedExecution.status()).isEqualTo(ServerReportStatus.SUCCESS);
-        assertThat(updatedExecution.info()).contains("updated");
-    }
+            ExecutionSummary last = sut.getExecutions(scenarioId).get(0);
+            assertThat(last.status()).isEqualTo(ServerReportStatus.RUNNING);
+            assertThat(last.info()).hasValue("exec");
 
-    @Test
-    public void update_preserve_other_executions_order() {
-        sut.store("1", buildDetachedExecution(ServerReportStatus.FAILURE, "exec1", ""));
-        sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
-        sut.store("1", buildDetachedExecution(ServerReportStatus.RUNNING, "exec3", ""));
+            sut.update(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(last.executionId()));
 
-        ExecutionSummary last = sut.getExecutions("1").get(0);
-        assertThat(last.status()).isEqualTo(ServerReportStatus.RUNNING);
-        assertThat(last.info()).contains("exec3");
+            Execution updatedExecution = sut.getExecution(scenarioId, last.executionId());
+            assertThat(updatedExecution.status()).isEqualTo(ServerReportStatus.SUCCESS);
+            assertThat(updatedExecution.info()).hasValue("updated");
+        }
 
-        sut.update("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(last.executionId()));
+        @Test
+        public void update_preserve_other_executions_order() {
+            String scenarioId = givenScenario().id().toString();
+            sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.FAILURE, "exec1", ""));
+            sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
+            sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.RUNNING, "exec3", ""));
 
-        assertThat(sut.getExecutions("1"))
-            .extracting(summary -> summary.info().get())
-            .containsExactly(
-                "updated",
-                "exec2",
-                "exec1");
-    }
+            ExecutionSummary last = sut.getExecutions(scenarioId).get(0);
+            assertThat(last.status()).isEqualTo(ServerReportStatus.RUNNING);
+            assertThat(last.info()).contains("exec3");
 
-    @Test
-    public void update_on_empty_history_throws() {
-        assertThatExceptionOfType(ReportNotFoundException.class)
-            .isThrownBy(() -> sut.update("1", buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(1L)))
-            .withMessage("Unable to find report 1 of scenario 1");
-    }
+            sut.update(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(last.executionId()));
 
-    @Test
-    public void all_running_executions_are_set_to_KO_on_startup() {
-        // Given running executions
-        sut.store("1", buildDetachedExecution(ServerReportStatus.RUNNING, "exec1", ""));
-        sut.store("2", buildDetachedExecution(ServerReportStatus.RUNNING, "exec2", ""));
+            assertThat(
+                sut.getExecutions(scenarioId).stream()
+                    .map(ExecutionHistory.ExecutionProperties::info)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+            ).containsExactly("updated", "exec2", "exec1");
+        }
 
-        // When
-        int nbOfAffectedExecutions = sut.setAllRunningExecutionsToKO();
+        @Test
+        public void update_on_empty_history_throws() {
+            String scenarioId = givenScenario().id().toString();
+            long unknownExecutionId = -1L;
+            assertThatExceptionOfType(ReportNotFoundException.class)
+                .isThrownBy(() -> sut.update(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(unknownExecutionId)))
+                .withMessage("Unable to find report " + unknownExecutionId + " of scenario " + scenarioId);
+        }
 
-        // Then, these executions are KO
-        assertThat(nbOfAffectedExecutions).isEqualTo(2);
-        assertThat(sut.getExecutions("1").get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
-        assertThat(sut.getExecutions("2").get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
+        @Test
+        public void all_running_executions_are_set_to_KO_on_startup() {
+            // Given running executions
+            clearTables();
+            String scenarioIdOne = givenScenario().id().toString();
+            String scenarioIdTwo = givenScenario().id().toString();
+            sut.store(scenarioIdOne, buildDetachedExecution(ServerReportStatus.RUNNING, "exec1", ""));
+            sut.store(scenarioIdTwo, buildDetachedExecution(ServerReportStatus.RUNNING, "exec2", ""));
 
-        // And there is no more running execution
-        assertThat(sut.getExecutionsWithStatus(ServerReportStatus.RUNNING).size()).isEqualTo(0);
-    }
+            // When
+            int nbOfAffectedExecutions = sut.setAllRunningExecutionsToKO();
 
-    @Test
-    public void getExecution_throws_when_not_found() {
-        assertThatExceptionOfType(ReportNotFoundException.class)
-            .isThrownBy(() -> sut.getExecution("-1", 42L))
-            .withMessage("Unable to find report 42 of scenario -1");
-    }
+            // Then, these executions are KO
+            assertThat(nbOfAffectedExecutions).isEqualTo(2);
+            assertThat(sut.getExecutions(scenarioIdOne).get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
+            assertThat(sut.getExecutions(scenarioIdTwo).get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
 
-    @Test
-    public void getExecution_throws_when_exist_but_not_on_this_scenario() {
-        Execution executionCreated = sut.store("1", buildDetachedExecution(ServerReportStatus.RUNNING, "exec1", ""));
+            // And there is no more running execution
+            assertThat(sut.getExecutionsWithStatus(ServerReportStatus.RUNNING).size()).isEqualTo(0);
+        }
 
-        assertThat(sut.getExecution("1", executionCreated.executionId())).isNotNull();
+        @Test
+        public void getExecution_throws_when_not_found() {
+            assertThatExceptionOfType(ReportNotFoundException.class)
+                .isThrownBy(() -> sut.getExecution("-1", 42L))
+                .withMessage("Unable to find report 42 of scenario -1");
+        }
 
-        assertThatExceptionOfType(ReportNotFoundException.class)
-            .isThrownBy(() -> sut.getExecution("12345", executionCreated.executionId()))
-            .withMessage("Unable to find report " + executionCreated.executionId() + " of scenario 12345");
-    }
+        @Test
+        public void getExecution_throws_when_exist_but_not_on_this_scenario() {
+            String scenarioId = givenScenario().id().toString();
+            Execution executionCreated = sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.RUNNING, "exec1", ""));
 
-    @Test
-    public void should_truncate_report_info_and_error_on_save_or_update() {
-        final String tooLongString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.";
+            assertThat(sut.getExecution(scenarioId, executionCreated.executionId())).isNotNull();
 
-        sut.store("1", buildDetachedExecution(ServerReportStatus.SUCCESS, tooLongString, tooLongString));
+            assertThatExceptionOfType(ReportNotFoundException.class)
+                .isThrownBy(() -> sut.getExecution("-1", executionCreated.executionId()))
+                .withMessage("Unable to find report " + executionCreated.executionId() + " of scenario -1");
+        }
 
-        assertThat(sut.getExecutions("1").get(0).info().get())
-            .hasSize(512);
+        @Test
+        public void should_truncate_report_info_and_error_on_save_or_update() {
+            String scenarioId = givenScenario().id().toString();
+            final String tooLongString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.";
 
-        assertThat(sut.getExecutions("1").get(0).error().get())
-            .hasSize(512);
-    }
+            sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, tooLongString, tooLongString));
 
-    @Test
-    public void should_map_campaign_only_when_executing_from_campaign() {
-        // Given
-        String scenarioId = "1";
-        Execution exec1 = sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.FAILURE, "exec1", ""));
-        Execution exec2 = sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
+            assertThat(sut.getExecutions(scenarioId).get(0).info())
+                .hasValueSatisfying(v -> assertThat(v).hasSize(512));
 
-        // scenario 1 was executed in campaign 1
-        Long campaignId = saveNewCampaign();
-        Long campaignExecutionId = 1L;
-        saveCampaignExecutionReport(campaignId, campaignExecutionId, scenarioId, exec1);
+            assertThat(sut.getExecutions(scenarioId).get(0).error())
+                .hasValueSatisfying(v -> assertThat(v).hasSize(512));
+        }
 
-        // When
-        List<ExecutionSummary> executions = sut.getExecutions(scenarioId);
+        @Test
+        public void should_map_campaign_only_when_executing_from_campaign() {
+            // Given
+            Scenario scenario = givenScenario();
+            Campaign campaign = givenCampaign(scenario);
 
-        // Then
+            ScenarioExecution scenarioExecutionOne = givenScenarioExecution(scenario.id(), ServerReportStatus.FAILURE);
+            ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.id().toString(), scenario.title(), scenarioExecutionOne.toDomain());
+            ScenarioExecution scenarioExecutionTwo = givenScenarioExecution(scenario.id(), ServerReportStatus.SUCCESS);
 
-        assertThat(executions).hasSize(2);
-        assertThat(executions.get(0).executionId()).isEqualTo(exec2.executionId());
-        assertThat(executions.get(0).campaignReport()).isEmpty();
-        assertThat(executions.get(1).executionId()).isEqualTo(exec1.executionId());
-        assertThat(executions.get(1).campaignReport()).hasValueSatisfying(report -> {
-            assertThat(report.campaignId).isEqualTo(campaignId);
-            assertThat(report.executionId).isEqualTo(campaignExecutionId);
-        });
-    }
+            Long campaignExecutionId = campaignExecutionRepository.generateCampaignExecutionId(campaign.id());
+            CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
+            campaignExecutionRepository.saveCampaignReport(campaign.id(), campaignExecutionReport);
 
-    @Test
-    public void should_retrieve_scenario_execution_summary() {
-        // Given
-        String scenarioId = "1";
-        Execution exec1 = sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.FAILURE, "exec1", ""));
-        sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
+            // When
+            List<ExecutionSummary> executions = sut.getExecutions(scenario.id().toString());
 
-        // scenario 1 was executed in campaign 1
-        Long campaignId = saveNewCampaign();
-        Long campaignExecutionId = 1L;
-        saveCampaignExecutionReport(campaignId, campaignExecutionId, scenarioId, exec1);
+            // Then
+            assertThat(executions).hasSize(2);
+            assertThat(executions.get(0).executionId()).isEqualTo(scenarioExecutionTwo.id());
+            assertThat(executions.get(0).campaignReport()).isEmpty();
+            assertThat(executions.get(1).executionId()).isEqualTo(scenarioExecutionOne.id());
+            assertThat(executions.get(1).campaignReport()).hasValueSatisfying(report -> {
+                assertThat(report.campaignId).isEqualTo(campaign.id());
+                assertThat(report.executionId).isEqualTo(campaignExecutionId);
+            });
+        }
 
-        // When
-        ExecutionSummary executionSummary = sut.getExecutionSummary(exec1.executionId());
+        @Test
+        public void should_retrieve_scenario_execution_summary() {
+            // Given
+            Scenario scenario = givenScenario();
+            Campaign campaign = givenCampaign(scenario);
 
-        // Then
+            ScenarioExecution scenarioExecutionOne = givenScenarioExecution(scenario.id(), ServerReportStatus.FAILURE);
+            ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.id().toString(), scenario.title(), scenarioExecutionOne.toDomain());
+            givenScenarioExecution(scenario.id(), ServerReportStatus.SUCCESS);
 
+            Long campaignExecutionId = campaignExecutionRepository.generateCampaignExecutionId(campaign.id());
+            CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
+            campaignExecutionRepository.saveCampaignReport(campaign.id(), campaignExecutionReport);
 
-        assertThat(executionSummary.executionId()).isEqualTo(exec1.executionId());
-        assertThat(executionSummary.campaignReport()).isPresent();
-        assertThat(executionSummary.campaignReport().get().campaignId).isEqualTo(campaignId);
-        assertThat(executionSummary.campaignReport().get().executionId).isEqualTo(campaignExecutionId);
-    }
+            // When
+            ExecutionSummary executionSummary = sut.getExecutionSummary(scenarioExecutionOne.id());
 
-    private void saveCampaignExecutionReport(Long campaignId, Long campaignExecutionId, String scenarioId, Execution exec1) {
-        ExecutionSummary execution = ImmutableExecutionHistory.ExecutionSummary.builder().executionId(exec1.executionId())
-            .duration(3L)
-            .time(LocalDateTime.now())
-            .status(exec1.status())
-            .testCaseTitle("fake")
-            .environment("default")
-            .datasetId("#2:87")
-            .datasetVersion(5)
-            .user("user")
-            .build();
-        ScenarioExecutionReportCampaign scenarioExecutionReport = new ScenarioExecutionReportCampaign(scenarioId, "scenario 1", execution);
-        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaignId, singletonList(scenarioExecutionReport), "title", false, "env", "#2:87", 5, "user");
+            // Then
+            assertThat(executionSummary.executionId()).isEqualTo(scenarioExecutionOne.id());
+            assertThat(executionSummary.campaignReport()).isPresent();
+            assertThat(executionSummary.campaignReport()).hasValueSatisfying(cr -> {
+                assertThat(cr.campaignId).isEqualTo(campaign.id());
+                assertThat(cr.executionId).isEqualTo(campaignExecutionId);
+            });
+        }
 
-        campaignRepository.saveReport(campaignId, campaignExecutionReport);
-    }
-
-    private Long saveNewCampaign() {
-        Scenario s1 = givenScenario();
-        Scenario s2 = givenScenario();
-        Campaign campaign = new Campaign(null, "test", "test campaign", scenariosIds(s1, s2), null, "env", false, false, null, null);
-        return campaignRepository.createOrUpdate(campaign).id;
-    }
-
-    private DetachedExecution buildDetachedExecution(ServerReportStatus status, String info, String error) {
-        return ImmutableExecutionHistory.DetachedExecution.builder()
-            .time(LocalDateTime.now())
-            .duration(12L)
-            .status(status)
-            .info(info)
-            .error(error)
-            .report("report content")
-            .testCaseTitle("Fake title")
-            .environment("")
-            .datasetId("fake dataset id")
-            .user("")
-            .build();
+        private DetachedExecution buildDetachedExecution(ServerReportStatus status, String info, String error) {
+            return ImmutableExecutionHistory.DetachedExecution.builder()
+                .time(LocalDateTime.now())
+                .duration(12L)
+                .status(status)
+                .info(info)
+                .error(error)
+                //.report("report content")
+                .report("report content")
+                .testCaseTitle("Fake title")
+                .environment("")
+                .datasetId("fake dataset id")
+                .user("")
+                .build();
+        }
     }
 }

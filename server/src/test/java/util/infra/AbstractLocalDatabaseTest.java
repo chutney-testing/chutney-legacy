@@ -2,7 +2,11 @@ package util.infra;
 
 import static java.time.Instant.now;
 
+import com.chutneytesting.campaign.infra.jpa.Campaign;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
+import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -43,8 +47,8 @@ public abstract class AbstractLocalDatabaseTest {
 
     protected void clearTables() {
         JdbcTemplate jdbcTemplate = namedParameterJdbcTemplate.getJdbcTemplate();
-        jdbcTemplate.execute("DELETE FROM CAMPAIGN_EXECUTION_HISTORY");
-        jdbcTemplate.execute("DELETE FROM SCENARIO_EXECUTION_HISTORY");
+        jdbcTemplate.execute("DELETE FROM CAMPAIGN_EXECUTIONS");
+        jdbcTemplate.execute("DELETE FROM SCENARIO_EXECUTIONS");
         jdbcTemplate.execute("DELETE FROM CAMPAIGN_SCENARIOS");
         jdbcTemplate.execute("DELETE FROM CAMPAIGN_PARAMETERS");
         jdbcTemplate.execute("DELETE FROM CAMPAIGN");
@@ -60,6 +64,23 @@ public abstract class AbstractLocalDatabaseTest {
         return transactionTemplate.execute(ts -> {
             entityManager.persist(scenario);
             return scenario;
+        });
+    }
+
+    protected Campaign givenCampaign(Scenario... scenarios) {
+        Campaign campaign = new Campaign("", new ArrayList<>());
+        return transactionTemplate.execute(ts -> {
+            campaign.scenarios().addAll(Arrays.asList(scenarios));
+            entityManager.persist(campaign);
+            return campaign;
+        });
+    }
+
+    protected ScenarioExecution givenScenarioExecution(Long scenarioId, ServerReportStatus status) {
+        ScenarioExecution execution = new ScenarioExecution(null, scenarioId, null, now().toEpochMilli(), 0L, status, null, null, "", "", "", null, null, null);
+        return transactionTemplate.execute(ts -> {
+            entityManager.persist(execution);
+            return execution;
         });
     }
 

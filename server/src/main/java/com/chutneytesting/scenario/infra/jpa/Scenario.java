@@ -99,6 +99,7 @@ public class Scenario {
 
     public void deactivate() {
         activated = false;
+        campaigns.forEach(c -> c.removeScenario(this));
     }
 
     public Set<Campaign> campaigns() {

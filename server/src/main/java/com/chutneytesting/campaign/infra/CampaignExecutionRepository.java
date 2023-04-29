@@ -1,128 +1,85 @@
 package com.chutneytesting.campaign.infra;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
-
+import com.chutneytesting.campaign.domain.CampaignNotFoundException;
+import com.chutneytesting.campaign.infra.jpa.Campaign;
+import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
+import com.chutneytesting.execution.infra.storage.DatabaseExecutionJpaRepository;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
-import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import org.springframework.jdbc.core.SingleColumnRowMapper;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import java.util.stream.Collectors;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public
-class CampaignExecutionRepository {
+public class CampaignExecutionRepository {
 
-    private final CampaignExecutionReportMapper campaignExecutionReportMapper;
-    private final NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate;
-    private static final int LIMIT_BLOC_SIZE = 20;
+    private final CampaignExecutionJpaRepository campaignExecutionJpaRepository;
+    private final CampaignJpaRepository campaignJpaRepository;
+    private final DatabaseExecutionJpaRepository scenarioExecutionJpaRepository;
 
-    public CampaignExecutionRepository(NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate, CampaignExecutionReportMapper repository) {
-        this.uiNamedParameterJdbcTemplate = uiNamedParameterJdbcTemplate;
-        this.campaignExecutionReportMapper = repository;
+    public CampaignExecutionRepository(
+        CampaignExecutionJpaRepository campaignExecutionJpaRepository,
+        CampaignJpaRepository campaignJpaRepository,
+        DatabaseExecutionJpaRepository scenarioExecutionJpaRepository
+    ) {
+        this.campaignExecutionJpaRepository = campaignExecutionJpaRepository;
+        this.campaignJpaRepository = campaignJpaRepository;
+        this.scenarioExecutionJpaRepository = scenarioExecutionJpaRepository;
     }
 
-    private static final String QUERY_FIND_CAMPAIGN_EXECUTION_HISTORY =
-        "SELECT C.CAMPAIGN_ID, C.ID, C.SCENARIO_ID, C.SCENARIO_EXECUTION_ID, C.PARTIAL_EXECUTION, C.EXECUTION_ENVIRONMENT, C.DATASET_ID as EXECUTION_DATASET_ID, C.DATASET_VERSION as EXECUTION_DATASET_VERSION, C.USER_ID, "
-            + "SEH.TEST_CASE_TITLE, SEH.EXECUTION_TIME, SEH.DURATION, SEH.STATUS, SEH.INFORMATION, SEH.ERROR, SEH.ENVIRONMENT, SEH.DATASET_ID, SEH.DATASET_VERSION, CA.TITLE as CAMPAIGN_TITLE "
-            + "FROM CAMPAIGN_EXECUTION_HISTORY C "
-            + "LEFT OUTER JOIN SCENARIO_EXECUTION_HISTORY SEH ON SEH.ID = C.SCENARIO_EXECUTION_ID "
-            + "INNER JOIN CAMPAIGN CA ON CA.ID = C.CAMPAIGN_ID "
-            + "WHERE C.CAMPAIGN_ID = :idCampaign "
-            + "AND C.ID IN ("
-            + "SELECT DISTINCT CC.ID as ID "
-            + "FROM CAMPAIGN_EXECUTION_HISTORY CC "
-            + "WHERE CC.CAMPAIGN_ID = :idCampaign "
-            + "ORDER BY 1 DESC "
-            + "FETCH FIRST " + LIMIT_BLOC_SIZE + " ROWS ONLY"
-            + ") "
-            + "ORDER BY C.ID DESC, SEH.ID DESC";
-
-    List<CampaignExecutionReport> findExecutionHistory(Long campaignId) {
-        return uiNamedParameterJdbcTemplate.query(QUERY_FIND_CAMPAIGN_EXECUTION_HISTORY,
-            ImmutableMap.of("idCampaign", campaignId),
-            campaignExecutionReportMapper);
+    @Transactional(readOnly = true)
+    public List<CampaignExecutionReport> findExecutionHistory(Long campaignId) {
+        Campaign campaign = campaignJpaRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
+        return campaignExecutionJpaRepository.findFirst20ByCampaignIdOrderByIdDesc(campaignId).stream()
+            .map(campaignExecution -> campaignExecution.toDomain(campaign))
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    void saveCampaignReport(Long campaignId, CampaignExecutionReport report) {
-        report.scenarioExecutionReports().forEach(
-            scenarioExecutionReport -> saveScenarioExecutionReport(campaignId, report.executionId, report.partialExecution, scenarioExecutionReport, report.executionEnvironment, report.dataSetId.orElse(null), report.dataSetVersion.orElse(null), report.userId)
+    @Transactional
+    public void saveCampaignReport(Long campaignId, CampaignExecutionReport report) {
+        CampaignExecution execution = campaignExecutionJpaRepository.findById(report.executionId).orElseThrow(
+            () -> new CampaignExecutionNotFoundException(report.executionId)
+        );
+        Iterable<ScenarioExecution> scenarioExecutions =
+            scenarioExecutionJpaRepository.findAllById(report.scenarioExecutionReports().stream()
+                .map(serc -> serc.execution.executionId())
+                .toList());
+        execution.updateFromDomain(report, scenarioExecutions);
+        campaignExecutionJpaRepository.save(execution);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CampaignExecutionReport> findLastExecutions(Long numberOfExecution) {
+        return campaignExecutionJpaRepository.findAll(
+                null,
+                PageRequest.of(0, numberOfExecution.intValue(), Sort.by(Sort.Direction.DESC, "id"))).stream()
+            .map(campaignExecution -> campaignExecution.toDomain(campaignJpaRepository.findById(campaignExecution.campaignId()).get()))
+            .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public CampaignExecutionReport getCampaignExecutionReportsById(Long campaignExecId) {
+        return campaignExecutionJpaRepository.findById(campaignExecId)
+            .map(campaignExecution -> campaignExecution.toDomain(campaignJpaRepository.findById(campaignExecution.campaignId()).get()))
+            .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignExecId));
+    }
+
+    @Transactional
+    public void clearAllExecutionHistory(Long campaignId) {
+        campaignExecutionJpaRepository.deleteAllById(
+            campaignExecutionJpaRepository.findAllByCampaignId(campaignId).stream().map(CampaignExecution::id).toList()
         );
     }
 
-    private static final String QUERY_FIND_LAST_EXECUTION_HISTORY = "select distinct C.ID " +
-        "from CAMPAIGN_EXECUTION_HISTORY C " +
-        "order by C.ID desc " +
-        "LIMIT :numberexec";
-
-    private static final String QUERY_FIND_EXECUTION_BY_EXEC_ID = "SELECT C.CAMPAIGN_ID, C.ID, C.SCENARIO_ID, C.SCENARIO_EXECUTION_ID, C.PARTIAL_EXECUTION, C.EXECUTION_ENVIRONMENT, C.DATASET_ID as EXECUTION_DATASET_ID, C.DATASET_VERSION as EXECUTION_DATASET_VERSION, C.USER_ID, SEH.TEST_CASE_TITLE, " +
-        "SEH.EXECUTION_TIME, SEH.DURATION, SEH.STATUS, SEH.INFORMATION, SEH.ERROR, SEH.ENVIRONMENT, SEH.DATASET_ID, SEH.DATASET_VERSION, CA.TITLE as CAMPAIGN_TITLE " +
-        "FROM CAMPAIGN_EXECUTION_HISTORY C " +
-        "INNER JOIN SCENARIO_EXECUTION_HISTORY SEH ON SEH.ID = C.SCENARIO_EXECUTION_ID " +
-        "INNER JOIN CAMPAIGN CA ON CA.ID = C.CAMPAIGN_ID " +
-        "WHERE C.ID in (:idCampaignExecution) " +
-        "ORDER BY C.ID DESC";
-
-    List<CampaignExecutionReport> findLastExecutions(Long numberOfExecution) {
-        List<Long> campaignExecIds = uiNamedParameterJdbcTemplate.query(QUERY_FIND_LAST_EXECUTION_HISTORY.replace(":numberexec", numberOfExecution.toString()),
-            emptyMap(),
-            new SingleColumnRowMapper<>());
-
-        if (campaignExecIds.isEmpty()) {
-            return emptyList();
-        }
-
-        return getCampaignExecutionReportsById(campaignExecIds);
-    }
-
-    CampaignExecutionReport getCampaignExecutionReportsById(Long campaignExecId) {
-        List<CampaignExecutionReport> campaignExecutionReportsById = getCampaignExecutionReportsById(singletonList(campaignExecId));
-        if (campaignExecutionReportsById.isEmpty()) {
-            throw new CampaignExecutionNotFoundException(campaignExecId);
-        }
-        return campaignExecutionReportsById.get(0);
-    }
-
-    private List<CampaignExecutionReport> getCampaignExecutionReportsById(List<Long> campaignExecIds) {
-        return uiNamedParameterJdbcTemplate.query(QUERY_FIND_EXECUTION_BY_EXEC_ID,
-            ImmutableMap.of("idCampaignExecution", campaignExecIds),
-            campaignExecutionReportMapper);
-    }
-
-    private static final String QUERY_DELETE_ALL_CAMPAIGN_EXECUTION_HISTORY =
-        "DELETE FROM CAMPAIGN_EXECUTION_HISTORY "
-            + "WHERE CAMPAIGN_ID = :idCampaign";
-
-    void clearAllExecutionHistory(Long campaignId) {
-        uiNamedParameterJdbcTemplate.update(QUERY_DELETE_ALL_CAMPAIGN_EXECUTION_HISTORY,
-            ImmutableMap.of("idCampaign", campaignId));
-    }
-
-    private static final String QUERY_SAVE_CAMPAIGN_EXECUTION_HISTORY =
-        "INSERT INTO CAMPAIGN_EXECUTION_HISTORY(CAMPAIGN_ID, ID, SCENARIO_ID, SCENARIO_EXECUTION_ID, PARTIAL_EXECUTION, EXECUTION_ENVIRONMENT, DATASET_ID, DATASET_VERSION, USER_ID) "
-            + "VALUES (:idCampaign, :idCampaignExecution, :idScenario, :idScenarioExecution, :partialExecution, :executionEnvironment, :dataSetId, :dataSetVersion, :user)";
-
-    private int saveScenarioExecutionReport(Long campaignId, Long campaignExecutionId, boolean partialExecution, ScenarioExecutionReportCampaign scenarioExecutionReport, String executionEnvironment, String dataSetId, Integer dataSetVersion, String userId) {
-        HashMap<String, Object> parameters = Maps.newHashMap();
-        parameters.put("idCampaign", campaignId);
-        parameters.put("idCampaignExecution", campaignExecutionId);
-        parameters.put("idScenario", scenarioExecutionReport.scenarioId);
-        parameters.put("idScenarioExecution", scenarioExecutionReport.execution.executionId());
-        parameters.put("partialExecution", partialExecution);
-        parameters.put("executionEnvironment", executionEnvironment);
-        parameters.put("dataSetId", dataSetId);
-        parameters.put("dataSetVersion", dataSetVersion);
-        parameters.put("user", userId);
-        return uiNamedParameterJdbcTemplate.update(QUERY_SAVE_CAMPAIGN_EXECUTION_HISTORY, parameters);
-    }
-
-    Long generateCampaignExecutionId() {
-        return uiNamedParameterJdbcTemplate.queryForObject("SELECT nextval('CAMPAIGN_EXECUTION_SEQ')", emptyMap(), Long.class);
+    @Transactional
+    public Long generateCampaignExecutionId(Long campaignId) {
+        CampaignExecution newExecution = new CampaignExecution(campaignId);
+        campaignExecutionJpaRepository.save(newExecution);
+        return newExecution.id();
     }
 }

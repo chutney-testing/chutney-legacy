@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.chutneytesting.campaign.infra.jpa.Campaign;
+import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
 import com.chutneytesting.campaign.infra.jpa.CampaignParameter;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
@@ -120,8 +122,30 @@ class LiquibaseChangelogTest {
                     entityManager.persist(c);
                     return c;
                 });
-                assertThat(campaign.id()).isEqualTo(2);
+                assertThat(campaign.id()).isEqualTo(3);
                 assertThat(campaign.parameters()).hasSize(1).extracting("id").containsExactly(3L);
+            }
+
+            @Test
+            @DisplayName("Set scenario executions sequence correctly")
+            void set_scenario_executions_sequence_value_after_migration() {
+                ScenarioExecution execution = transactionTemplate.execute(status -> {
+                    ScenarioExecution e = new ScenarioExecution(null, 1L, null, null, null, null, null, null, null, null, null, null, null, null);
+                    entityManager.persist(e);
+                    return e;
+                });
+                assertThat(execution.id()).isEqualTo(5);
+            }
+
+            @Test
+            @DisplayName("Set campaign executions sequence correctly")
+            void set_campaign_executions_sequence_value_after_migration() {
+                CampaignExecution execution = transactionTemplate.execute(status -> {
+                    CampaignExecution e = new CampaignExecution(null, 2L, null, null, null, null, null, null, null);
+                    entityManager.persist(e);
+                    return e;
+                });
+                assertThat(execution.id()).isEqualTo(2);
             }
         }
     }

@@ -1,10 +1,12 @@
 spring:
   jpa:
+    open-in-view: false
+    show_sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
     properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-        show_sql: true
-        use-new-id-generator-mappings: false
-        ddl-auto: none
+      hibernate.dialect: org.hibernate.dialect.H2Dialect
+      hibernate.id.new_generator_mappings: false
   datasource:
     url: jdbc:h2:mem:testdb

@@ -6,18 +6,18 @@ import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
+import com.chutneytesting.execution.infra.storage.DatabaseExecutionJpaRepository;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
-import com.google.common.collect.ImmutableMap;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +25,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestCase> {
 
-    private final NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate;
     private final DatabaseTestCaseJpaRepository scenarioJpaRepository;
+    private final DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository;
 
-    public DatabaseTestCaseRepository(NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate,
-                                      DatabaseTestCaseJpaRepository jpa) {
-
-        this.uiNamedParameterJdbcTemplate = uiNamedParameterJdbcTemplate;
+    public DatabaseTestCaseRepository(
+        DatabaseTestCaseJpaRepository jpa,
+        DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository
+    ) {
         this.scenarioJpaRepository = jpa;
+        this.scenarioExecutionsJpaRepository = scenarioExecutionsJpaRepository;
     }
 
     @Override
@@ -79,9 +80,11 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         }
         scenarioJpaRepository.findByIdAndActivated(valueOf(scenarioId), true)
             .ifPresent(scenarioJpa -> {
-                // TODO - Refactor - Use CampaignRepository up in callstack
-                uiNamedParameterJdbcTemplate.update("DELETE FROM CAMPAIGN_EXECUTION_HISTORY WHERE SCENARIO_ID = :id", buildIdParameterMap(scenarioId));
-                scenarioJpa.campaigns().clear();
+                List<ScenarioExecution> allExecutions = scenarioExecutionsJpaRepository.findAllByScenarioId(valueOf(scenarioId));
+                allExecutions.forEach(e -> {
+                    e.forCampaignExecution(null);
+                    scenarioExecutionsJpaRepository.save(e);
+                });
                 scenarioJpa.deactivate();
                 scenarioJpaRepository.save(scenarioJpa);
             });
@@ -127,10 +130,6 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
                 .orElse(wordSpecification);
         }
         return scenarioDaoSpecification;
-    }
-
-    private ImmutableMap<String, Object> buildIdParameterMap(String scenarioId) {
-        return ImmutableMap.<String, Object>builder().put("id", scenarioId).build();
     }
 
     private boolean checkIdInput(String scenarioId) {

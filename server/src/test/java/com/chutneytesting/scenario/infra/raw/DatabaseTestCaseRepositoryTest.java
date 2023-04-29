@@ -10,12 +10,15 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Assertions.within;
 import static util.WaitUtils.awaitDuring;
 
+import com.chutneytesting.campaign.infra.CampaignExecutionRepository;
 import com.chutneytesting.campaign.infra.jpa.Campaign;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase.GwtTestCaseBuilder;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
+import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
@@ -25,9 +28,7 @@ import com.chutneytesting.server.core.domain.security.User;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
@@ -60,6 +61,8 @@ public class DatabaseTestCaseRepositoryTest {
     abstract class AllTests extends AbstractLocalDatabaseTest {
         @Autowired
         private DatabaseTestCaseRepository sut;
+        @Autowired
+        private CampaignExecutionRepository campaignExecutionRepository;
 
         private static final GwtTestCase GWT_TEST_CASE = GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder().build())
@@ -163,18 +166,9 @@ public class DatabaseTestCaseRepositoryTest {
         public void should_not_find_removed_scenario_used_in_campaign() {
             // Given: a scenarioTemplate in the repository with campaign association and existing execution
             Scenario scenario = givenScenario();
-            Campaign campaign = transactionTemplate.execute(status -> {
-                Campaign c = new Campaign("title", List.of(scenario));
-                entityManager.persist(c);
-                return c;
-            });
-            Map<String, Object> scenarioIdParameter = new HashMap<>();
-            scenarioIdParameter.put("campaignId", campaign.id());
-            scenarioIdParameter.put("scenarioId", scenario.id());
-            scenarioIdParameter.put("scenarioExecutionId", 1L);
-            scenarioIdParameter.put("campaignExecutionId", 1L);
-            namedParameterJdbcTemplate.update("insert into scenario_execution_history (id, scenario_id, report) values (:scenarioExecutionId, :scenarioId, '')", scenarioIdParameter);
-            namedParameterJdbcTemplate.update("insert into campaign_execution_history (campaign_id, id, scenario_id, scenario_execution_id) values (:campaignId, :campaignExecutionId, :scenarioId, :scenarioExecutionId)", scenarioIdParameter);
+            Campaign campaign = givenCampaign(scenario);
+
+            ScenarioExecution scenarioExecution = givenScenarioExecution(scenario.id(), ServerReportStatus.NOT_EXECUTED);
 
             // When: the scenarioTemplate is removed
             sut.removeById(scenario.id().toString());
@@ -182,6 +176,14 @@ public class DatabaseTestCaseRepositoryTest {
             // Then: the scenarioTemplate is not found in the repository
             Optional<GwtTestCase> noScenario = sut.findById(scenario.id().toString());
             assertThat(noScenario).isEmpty();
+
+            Number executionsCount = (Number) entityManager.createNativeQuery(
+                "SELECT count(*) as count FROM SCENARIO_EXECUTIONS WHERE SCENARIO_ID = " + scenario.id()).getSingleResult();
+            assertThat(executionsCount.intValue()).isOne();
+
+            Number campaignAssociationCount = (Number) entityManager.createNativeQuery(
+                "SELECT count(*) as count FROM CAMPAIGN_SCENARIOS WHERE SCENARIO_ID = " + scenario.id()).getSingleResult();
+            assertThat(campaignAssociationCount.intValue()).isZero();
         }
 
         @Test

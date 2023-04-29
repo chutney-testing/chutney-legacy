@@ -282,7 +282,7 @@ public class CampaignExecutionEngineTest {
         verify(campaignRepository).findById(campaign.id);
         verify(campaignRepository).findByName(campaign.title);
 
-        verify(campaignRepository, times(2)).newCampaignExecution();
+        verify(campaignRepository, times(2)).newCampaignExecution(campaign.id);
     }
 
     @Test

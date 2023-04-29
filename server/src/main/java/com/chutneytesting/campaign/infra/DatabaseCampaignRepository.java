@@ -15,8 +15,8 @@ import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
-import javax.transaction.Transactional;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Campaign persistence management.
@@ -72,7 +72,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public Campaign findById(Long campaignId) throws CampaignNotFoundException {
         return campaignJpaRepository.findById(campaignId)
             .map(com.chutneytesting.campaign.infra.jpa.Campaign::toDomain)
@@ -80,7 +80,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<Campaign> findByName(String campaignName) {
         return campaignJpaRepository.findAll((root, query, criteriaBuilder) ->
                 criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), campaignName.toLowerCase()))
@@ -102,11 +102,12 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     }
 
     @Override
-    public Long newCampaignExecution() {
-        return campaignExecutionRepository.generateCampaignExecutionId();
+    public Long newCampaignExecution(Long campaignId) {
+        return campaignExecutionRepository.generateCampaignExecutionId(campaignId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Campaign> findAll() {
         return StreamSupport.stream(campaignJpaRepository.findAll().spliterator(), false)
             .map(com.chutneytesting.campaign.infra.jpa.Campaign::toDomain)
@@ -119,7 +120,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<Campaign> findCampaignsByScenarioId(String scenarioId) {
         if (isNullOrEmpty(scenarioId) || !isNumeric(scenarioId)) {
             return emptyList();

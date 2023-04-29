@@ -122,7 +122,7 @@ public class CampaignExecutionEngine {
 
     public CampaignExecutionReport executeScenarioInCampaign(List<String> failedIds, Campaign campaign, String userId) {
         verifyNotAlreadyRunning(campaign);
-        Long executionId = campaignRepository.newCampaignExecution();
+        Long executionId = campaignRepository.newCampaignExecution(campaign.id);
 
         CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(
             executionId,
