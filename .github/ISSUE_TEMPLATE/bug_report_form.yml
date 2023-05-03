@@ -7,10 +7,10 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report!
-        
-        🙌 Please, make sure your bug report is unique 🦄 ! 
+
+        🙌 Please, make sure your bug report is unique 🦄 !
         Did you search issues labeled with Bug ? If you find anything relevant to you, up-vote 👍 or add a comment 💬 !
-        
+
         For more information, please visit our [contribute section](https://github.com/chutney-testing/chutney/blob/master/CONTRIBUTING.md)
   - type: textarea
     id: what-happened
@@ -24,7 +24,7 @@ body:
     id: steps-to-reproduce
     attributes:
       label: Steps to reproduce
-      description: How one can reproduce the issue ?
+      description: How can we reproduce the issue ?
       placeholder: This is very important - Use GIFs to record behavior if applicable
     validations:
       required: true
@@ -45,20 +45,17 @@ body:
       render: shell
     validations:
       required: false
-  - type: dropdown
+  - type: input
     id: version
     attributes:
       label: Version
-      description: What version of our software are you running?
-      options:
-        - 1.4.9 (Default)
-        - 1.4.10 (Edge)
+      description: What version of our software are you running ?
     validations:
-      required: true
+      required: false
   - type: dropdown
     id: browsers
     attributes:
-      label: What browsers are you seeing the problem on?
+      label: What browsers are you seeing the problem on ?
       multiple: true
       options:
         - Firefox
@@ -68,10 +65,10 @@ body:
   - type: dropdown
     id: os
     attributes:
-      label: What OS did you use?
+      label: What OS did you use ?
       multiple: true
       options:
         - Mac OS
         - Windows
         - Linux
-      
+
