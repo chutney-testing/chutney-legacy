@@ -1,15 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { Sqlresult, sqlResultFromObject } from '@model';
 import { PaginationInstance } from 'ngx-pagination';
 import { DatabaseAdminService } from '@core/services';
+import { FeatureService } from '@core/feature/feature.service';
+import { FeatureName } from '@core/feature/feature.model';
 
 @Component({
     selector: 'chutney-database-admin',
     templateUrl: './database-admin.component.html',
     styleUrls: ['./database-admin.component.scss']
 })
-export class DatabaseAdminComponent {
+export class DatabaseAdminComponent implements OnInit {
 
     itemsPerPage: number = 5;
     database: string = 'jdbc';
@@ -23,10 +25,14 @@ export class DatabaseAdminComponent {
         currentPage: 1,
         itemsPerPage: this.itemsPerPage
     };
+    componentsActive = false;
 
-    constructor(
-        private databaseAdminService: DatabaseAdminService
-    ) {
+    constructor(private databaseAdminService: DatabaseAdminService,
+                private featureService: FeatureService) {
+    }
+
+    ngOnInit(): void {
+       this.componentsActive = this.featureService.active(FeatureName.COMPONENT);
     }
 
     execute() {

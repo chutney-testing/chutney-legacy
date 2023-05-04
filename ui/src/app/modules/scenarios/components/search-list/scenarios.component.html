@@ -6,7 +6,7 @@
                 (click)="createNewScenario(false)">
             <span class="fa fa-pencil-alt fa-2x"></span>
         </button>
-        <button type="button" class="btn btn-xs" title="{{ 'scenarios.search.create.component' | translate }}"
+        <button *ngIf="componentsActive" type="button" class="btn btn-xs" title="{{ 'scenarios.search.create.component' | translate }}"
                 (click)="createNewScenario(true)">
             <span class="fa fa-cubes fa-2x"></span>
         </button>
@@ -41,14 +41,16 @@
     <div class="row my-2">
 
         <div class="col-2">
-            <button *ngFor="let scenarioType of SCENARIO_TYPES; let i=index"
-                  class="btn align-self-center"
-                  [ngClass]="{'btn-primary' : scenarioTypeFilter.isSelected(scenarioType),
+            <ng-container *ngIf="componentsActive">
+                <button *ngFor="let scenarioType of SCENARIO_TYPES; let i=index"
+                        class="btn align-self-center"
+                        [ngClass]="{'btn-primary' : scenarioTypeFilter.isSelected(scenarioType),
                               'me-2': i < SCENARIO_TYPES.length - 1
                               }"
-                  (click)="toggleScenarioTypeFilter(scenarioType)">
-                <i class="fa " [ngClass]="scenarioType === SCENARIO_TYPES[0] ? 'fa-pencil-alt' : 'fa-cubes'"></i>
-            </button>
+                        (click)="toggleScenarioTypeFilter(scenarioType)">
+                    <i class="fa " [ngClass]="scenarioType === SCENARIO_TYPES[0] ? 'fa-pencil-alt' : 'fa-cubes'"></i>
+                </button>
+            </ng-container>
         </div>
 
         <div class="col-4">
@@ -74,7 +76,7 @@
                     <span *ngIf="orderBy == 'id' && reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'id' && !reverseOrder" class="fa fa-caret-up"></span>
                 </th>
-                <th scope="col" class="w1">&nbsp;</th>
+                <th scope="col" class="w1" *ngIf="componentsActive">&nbsp;</th>
                 <th class="filter w3" scope="col" (click)="sortBy('status')">{{ 'scenarios.list.header.status'  | translate  }}
                     <span *ngIf="orderBy == 'status' && reverseOrder" class="fa fa-caret-down"></span>
                     <span *ngIf="orderBy == 'status' && !reverseOrder" class="fa fa-caret-up"></span>
@@ -113,7 +115,7 @@
                     <span>{{scenario.id}}</span>
                 </td>
 
-                <td class="text-center">
+                <td class="text-center" *ngIf="componentsActive">
                     <span class="fa" [ngClass]="scenario.isComposed ? 'fa-cubes' : 'fa-pencil-alt'"></span>
                 </td>
 

@@ -14,12 +14,12 @@ import { DragulaModule } from 'ng2-dragula';
 // Internal common
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { DefaultMissingTranslationHandler, HttpLoaderFactory } from './app.translate.factory';
 import { SharedModule } from '@shared/shared.module';
 import { CoreModule } from '@core/core.module';
 import { ModalModule, BsModalService  } from 'ngx-bootstrap/modal';
 import { ThemeService } from '@core/theme/theme.service';
-import { initializeThemeFactory } from './app.theme.factory';
+import { DefaultMissingTranslationHandler, HttpLoaderFactory } from '@core/initializer/app.translate.factory';
+import { themeInitializer } from '@core/initializer/theme.initializer';
 
 @NgModule({
   declarations: [
@@ -57,10 +57,11 @@ import { initializeThemeFactory } from './app.theme.factory';
   providers: [BsModalService,
       {
           provide: APP_INITIALIZER,
-          useFactory: initializeThemeFactory,
+          useFactory: themeInitializer,
           deps: [ThemeService],
           multi: true
-      }],
+      }
+  ],
   bootstrap: [AppComponent]
 })
 export class ChutneyAppModule { }

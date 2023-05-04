@@ -193,6 +193,7 @@ public class SecuredControllerSpringBootIntegrationTest {
             {DELETE, "/api/v2/environments/envName/targets/targetName", "ENVIRONMENT_ACCESS", null, NOT_FOUND},
             // Must be at the end because the network configuration is in wrong staten, why ??
             {POST, "/api/v1/agentnetwork/wrapup", "ADMIN_ACCESS", "{\"agentsGraph\":{\"agents\":[]},\"networkConfiguration\":{\"creationDate\":\"2021-09-06T10:08:36.569227Z\",\"agentNetworkConfiguration\":[],\"environmentsConfiguration\":[]}}", OK},
+            {GET, "/api/v2/features", null, null, OK},
         };
     }
 

@@ -13,15 +13,9 @@ export class ParentComponent implements OnInit, OnDestroy {
     private linkifierSubscription: Subscription;
 
     constructor(public layoutOptions: LayoutOptions,
-                private linkifierService: LinkifierService,
-                private loginService: LoginService) {
-        this.linkifierSubscription = this.loginService.getUser().subscribe(
-            user => {
-                if (this.loginService.isAuthenticated()) {
-                    this.linkifierService.loadLinkifiers().subscribe(); // needed to fetch linkifiers into sessionStorage
-                }
-            }
-        );
+                private linkifierService: LinkifierService) {
+        this.linkifierSubscription = this.linkifierService.loadLinkifiers().subscribe();
+
     }
 
     ngOnInit(): void {
