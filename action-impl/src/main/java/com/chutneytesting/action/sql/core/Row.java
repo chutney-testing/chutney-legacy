@@ -2,12 +2,14 @@ package com.chutneytesting.action.sql.core;
 
 import static java.util.stream.Collectors.toMap;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class Row {
+    @JsonProperty
     final List<Cell> cells;
 
     public Row(List<Cell> values) {
