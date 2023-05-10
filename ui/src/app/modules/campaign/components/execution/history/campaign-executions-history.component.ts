@@ -77,7 +77,7 @@ export class CampaignExecutionsHistoryComponent implements OnInit, OnDestroy {
     private refreshOpenTabs(): void {
         for(var i=0; i<this.tabs.length; i++) {
             if (this.tabs[i].isRunning()) {
-                this.tabs[i] = this.campaignReports.find(cr => cr.report.executionId == this.tabs[i].report.executionId)
+                this.tabs[i].refresh(this.campaignReports.find((cr) => cr.report.executionId === this.tabs[i].report.executionId));
             }
         }
     }
