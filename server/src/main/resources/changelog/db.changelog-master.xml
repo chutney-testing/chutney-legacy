@@ -712,6 +712,14 @@
         <dropForeignKeyConstraint baseTableName="CAMPAIGN_PARAMETER" constraintName="FK_CD_CAMPAIGN_ID"/>
     </changeSet>
 
+    <changeSet id="migrate-sqlite-table-campaign-drop-fk-ceh" dbms="h2,postgresql" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="CAMPAIGN_EXECUTION_HISTORY" foreignKeyName="FK_CEH_CAMPAIGN_ID"/>
+        </preConditions>
+        <comment>Drop campaign foreign keys specifics (sqlite convergence)</comment>
+        <dropForeignKeyConstraint baseTableName="CAMPAIGN_EXECUTION_HISTORY" constraintName="FK_CEH_CAMPAIGN_ID"/>
+    </changeSet>
+
     <changeSet id="migrate-sqlite-table-campaign" author="ICG">
         <comment>Migrate table CAMPAIGN (sqlite convergence)</comment>
         <renameTable oldTableName="CAMPAIGN" newTableName="CAMPAIGN_OLD"/>
