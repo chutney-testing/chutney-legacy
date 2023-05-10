@@ -39,12 +39,18 @@ management:
 spring:
   liquibase:
     change-log: classpath:/changelog/db.changelog-master.xml
+  jpa:
+    open-in-view: false
+    show_sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
   profiles:
     active:
       - undertow-https-redirect
       - ldap
       - mem-auth
-      - db-h2
+      - db-sqlite
 
 chutney:
   configuration-folder: .chutney/conf
