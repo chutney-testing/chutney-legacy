@@ -1,6 +1,7 @@
 package com.chutneytesting.scenario.infra.jpa;
 
 import static java.lang.String.valueOf;
+import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.campaign.infra.jpa.Campaign;
 import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
@@ -40,7 +41,7 @@ public class Scenario {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "CONTENT", columnDefinition = "TEXT")
+    @Column(name = "CONTENT")
     private String content;
 
     @Column(name = "TAGS")
@@ -49,7 +50,7 @@ public class Scenario {
     @Column(name = "CREATION_DATE", updatable = false)
     private Long creationDate;
 
-    @Column(name = "DATASET", columnDefinition = "TEXT")
+    @Column(name = "DATASET")
     private String dataset;
 
     @Column(name = "ACTIVATED")
@@ -69,6 +70,19 @@ public class Scenario {
     private Set<Campaign> campaigns;
 
     public Scenario() {
+    }
+
+    public Scenario(Long id, String title, String description, String tags, Long creationDate, String dataset, Boolean activated, String userId, Long updateDate, Integer version) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.tags = tags;
+        this.creationDate = creationDate;
+        this.dataset = dataset;
+        this.activated = activated;
+        this.userId = userId;
+        this.updateDate = updateDate;
+        this.version = version;
     }
 
     public Scenario(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String userId, Instant updateDate, Integer version) {
@@ -111,7 +125,7 @@ public class Scenario {
             Long.valueOf(testCase.id()),
             testCase.metadata().title(),
             testCase.metadata().description(),
-            marshaller.serialize(testCase.scenario),
+            ofNullable(testCase.scenario).map(marshaller::serialize).orElse(null),
             TagListMapper.tagsListToString(testCase.metadata().tags()),
             testCase.metadata().creationDate(),
             transformParametersToJson(testCase.executionParameters()),
@@ -134,7 +148,7 @@ public class Scenario {
                 .withUpdateDate(Instant.ofEpochMilli(updateDate))
                 .withVersion(version)
                 .build())
-            .withScenario(new GwtScenarioMapper().deserialize(title, description, content))
+            .withScenario(ofNullable(content).map(c -> new GwtScenarioMapper().deserialize(title, description, c)).orElse(null))
             .withExecutionParameters(transformParametersMap(dataset))
             .build();
     }

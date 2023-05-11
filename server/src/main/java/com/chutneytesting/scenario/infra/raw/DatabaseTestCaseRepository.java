@@ -16,6 +16,10 @@ import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -27,13 +31,16 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     private final DatabaseTestCaseJpaRepository scenarioJpaRepository;
     private final DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository;
+    private final EntityManager entityManager;
 
     public DatabaseTestCaseRepository(
         DatabaseTestCaseJpaRepository jpa,
-        DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository
+        DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository,
+        EntityManager entityManager
     ) {
         this.scenarioJpaRepository = jpa;
         this.scenarioExecutionsJpaRepository = scenarioExecutionsJpaRepository;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -62,12 +69,15 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     @Override
     public Optional<TestCaseMetadata> findMetadataById(String testCaseId) {
-        return findById(testCaseId).map(GwtTestCase::metadata);
+        if (checkIdInput(testCaseId)) {
+            return empty();
+        }
+        return scenarioJpaRepository.findMetaDataByIdAndActivated(valueOf(testCaseId), true).map(Scenario::toTestCaseMetadata);
     }
 
     @Override
     public List<TestCaseMetadata> findAll() {
-        return scenarioJpaRepository.findByActivatedTrue().stream()
+        return scenarioJpaRepository.findMetaDataByActivatedTrue().stream()
             .map(Scenario::toTestCaseMetadata)
             .toList();
     }
@@ -107,8 +117,14 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         if (!textFilter.isEmpty()) {
             String[] words = escapeSql(textFilter).split("\\s");
             Specification<Scenario> scenarioDaoSpecification = buildLikeSpecificationOnContent(words);
-            List<Scenario> all = scenarioJpaRepository.findAll(scenarioDaoSpecification);
-            return all.stream().map(Scenario::toTestCaseMetadata).toList();
+
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Scenario> query = builder.createQuery(Scenario.class);
+            Root<Scenario> root = query.from(Scenario.class);
+            query.select(builder.construct(Scenario.class, root.get("id"), root.get("title"), root.get("description"), root.get("tags"), root.get("creationDate"), root.get("dataset"), root.get("activated"), root.get("userId"), root.get("updateDate"), root.get("version")));
+            query = query.where(scenarioDaoSpecification.toPredicate(root, query, builder));
+
+            return entityManager.createQuery(query).getResultList().stream().map(Scenario::toTestCaseMetadata).toList();
         } else {
             return findAll();
         }

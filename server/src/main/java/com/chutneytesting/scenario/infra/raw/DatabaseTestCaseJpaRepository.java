@@ -17,7 +17,20 @@ public interface DatabaseTestCaseJpaRepository extends CrudRepository<Scenario, 
 
     Optional<Scenario> findByIdAndActivated(Long id, Boolean activated);
 
-    List<Scenario> findByActivatedTrue();
+    @Query("""
+        SELECT new com.chutneytesting.scenario.infra.jpa.Scenario(s.id, s.title, s.description, s.tags, s.creationDate, s.dataset, s.activated, s.userId, s.updateDate, s.version)
+        FROM SCENARIO s
+        WHERE s.id = :id
+          AND s.activated = :activated
+        """)
+    Optional<Scenario> findMetaDataByIdAndActivated(@Param("id") Long id, @Param("activated") Boolean activated);
+
+    @Query("""
+        SELECT new com.chutneytesting.scenario.infra.jpa.Scenario(s.id, s.title, s.description, s.tags, s.creationDate, s.dataset, s.activated, s.userId, s.updateDate, s.version)
+        FROM SCENARIO s
+        WHERE s.activated = true
+        """)
+    List<Scenario> findMetaDataByActivatedTrue();
 
     static Specification<Scenario> contentContains(String searchWord) {
         return (root, query, builder) -> {
