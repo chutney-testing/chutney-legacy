@@ -2,6 +2,7 @@ package com.chutneytesting.action.sql.core;
 
 import static java.util.stream.Collectors.toList;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 
 public class Rows {
 
+    @JsonProperty
     private final List<Row> rows;
 
     public Rows(List<Row> rows) {
