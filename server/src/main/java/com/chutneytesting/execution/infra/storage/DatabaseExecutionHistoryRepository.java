@@ -21,33 +21,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import javax.persistence.EntityManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
 
     private final DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository;
     private final ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository;
     private final DatabaseTestCaseJpaRepository databaseTestCaseJpaRepository;
     private final CampaignJpaRepository campaignJpaRepository;
-    private final EntityManager entityManager;
 
     DatabaseExecutionHistoryRepository(
         DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository,
         ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository,
         DatabaseTestCaseJpaRepository databaseTestCaseJpaRepository,
-        CampaignJpaRepository campaignJpaRepository,
-        EntityManager entityManager) {
+        CampaignJpaRepository campaignJpaRepository) {
         this.scenarioExecutionsJpaRepository = scenarioExecutionsJpaRepository;
         this.scenarioExecutionReportJpaRepository = scenarioExecutionReportJpaRepository;
         this.databaseTestCaseJpaRepository = databaseTestCaseJpaRepository;
         this.campaignJpaRepository = campaignJpaRepository;
-        this.entityManager = entityManager;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<String, ExecutionSummary> getLastExecutions(List<String> scenarioIds) {
         List<Long> scenarioIdL = scenarioIds.stream().filter(id -> !invalidScenarioId(id)).map(Long::valueOf).toList();
         Iterable<ScenarioExecution> lastExecutions = scenarioExecutionsJpaRepository.findAllById(
@@ -59,6 +57,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ExecutionSummary> getExecutions(String scenarioId) {
         if (invalidScenarioId(scenarioId)) {
             return emptyList();
@@ -70,6 +69,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ExecutionSummary getExecutionSummary(Long executionId) {
         return scenarioExecutionsJpaRepository.findById(executionId)
             .map(this::scenarioExecutionToExecutionSummary)
@@ -86,7 +86,6 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     @Override
-    @Transactional
     public Execution store(String scenarioId, DetachedExecution detachedExecution) throws IllegalStateException {
         if(invalidScenarioId(scenarioId)) {
             throw new IllegalStateException("Scenario id is not a number");
@@ -99,7 +98,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     // TODO remove scenarioId params
     public Execution getExecution(String scenarioId, Long reportId) throws ReportNotFoundException {
         if (invalidScenarioId(scenarioId) || !databaseTestCaseJpaRepository.existsById(Long.valueOf(scenarioId)) || !scenarioExecutionsJpaRepository.existsById(reportId)) {
@@ -112,7 +111,6 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     @Override
-    @Transactional
     public void update(String scenarioId, Execution updatedExecution) throws ReportNotFoundException {
         if (!scenarioExecutionsJpaRepository.existsById(updatedExecution.executionId())) {
             throw new ReportNotFoundException(scenarioId, updatedExecution.executionId());
@@ -150,6 +148,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ExecutionSummary> getExecutionsWithStatus(ServerReportStatus status) {
         return scenarioExecutionsJpaRepository.findByStatus(status).stream().map(ScenarioExecution::toDomain).toList();
     }

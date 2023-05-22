@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
+@Transactional
 public class CampaignExecutionRepository {
 
     private final CampaignExecutionJpaRepository campaignExecutionJpaRepository;
@@ -40,7 +41,6 @@ public class CampaignExecutionRepository {
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    @Transactional
     public void saveCampaignReport(Long campaignId, CampaignExecutionReport report) {
         CampaignExecution execution = campaignExecutionJpaRepository.findById(report.executionId).orElseThrow(
             () -> new CampaignExecutionNotFoundException(report.executionId)
@@ -69,14 +69,12 @@ public class CampaignExecutionRepository {
             .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignExecId));
     }
 
-    @Transactional
     public void clearAllExecutionHistory(Long campaignId) {
         campaignExecutionJpaRepository.deleteAllById(
             campaignExecutionJpaRepository.findAllByCampaignId(campaignId).stream().map(CampaignExecution::id).toList()
         );
     }
 
-    @Transactional
     public Long generateCampaignExecutionId(Long campaignId) {
         CampaignExecution newExecution = new CampaignExecution(campaignId);
         campaignExecutionJpaRepository.save(newExecution);

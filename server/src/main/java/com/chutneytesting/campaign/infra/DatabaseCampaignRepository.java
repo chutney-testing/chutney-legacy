@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Campaign persistence management.
  */
 @Repository
+@Transactional
 public class DatabaseCampaignRepository implements CampaignRepository {
 
     private final CampaignJpaRepository campaignJpaRepository;
@@ -37,7 +38,6 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     }
 
     @Override
-    @Transactional
     public Campaign createOrUpdate(Campaign campaign) {
         List<Scenario> scenarios = campaign.scenarioIds.stream().map(Long::valueOf)
             .map(scenarioJpaRepository::findById)
@@ -55,13 +55,11 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     }
 
     @Override
-    @Transactional
     public void saveReport(Long campaignId, CampaignExecutionReport report) {
         campaignExecutionRepository.saveCampaignReport(campaignId, report);
     }
 
     @Override
-    @Transactional
     public boolean removeById(Long id) {
         if (campaignJpaRepository.existsById(id)) {
             campaignExecutionRepository.clearAllExecutionHistory(id);
@@ -90,14 +88,20 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CampaignExecutionReport> findLastExecutions(Long numberOfExecution) {
         return campaignExecutionRepository.findLastExecutions(numberOfExecution);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<String> findScenariosIds(Long campaignId) {
         return campaignJpaRepository.findById(campaignId)
-            .map(c -> c.scenarios().stream().map(String::valueOf).toList())
+            .map(c -> c.scenarios().stream()
+                .map(Scenario::id)
+                .map(String::valueOf)
+                .toList()
+            )
             .orElseThrow(() -> new CampaignNotFoundException(campaignId));
     }
 
@@ -115,6 +119,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CampaignExecutionReport> findExecutionsById(Long campaignId) {
         return campaignExecutionRepository.findExecutionHistory(campaignId);
     }
@@ -134,6 +139,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CampaignExecutionReport findByExecutionId(Long campaignExecutionId) {
         return campaignExecutionRepository.getCampaignExecutionReportsById(campaignExecutionId);
     }
