@@ -130,11 +130,11 @@ class LiquibaseChangelogTest {
             @DisplayName("Set scenario executions sequence correctly")
             void set_scenario_executions_sequence_value_after_migration() {
                 ScenarioExecution execution = transactionTemplate.execute(status -> {
-                    ScenarioExecution e = new ScenarioExecution(null, 1L, null, null, null, null, null, null, null, null, null, null, null, null);
+                    ScenarioExecution e = new ScenarioExecution(null, "1", null, null, null, null, null, null, null, null, null, null, null, null);
                     entityManager.persist(e);
                     return e;
                 });
-                assertThat(execution.id()).isEqualTo(5);
+                assertThat(execution.id()).isEqualTo(6);
             }
 
             @Test

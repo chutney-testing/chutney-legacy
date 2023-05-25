@@ -3,7 +3,6 @@ package com.chutneytesting.scenario.infra.jpa;
 import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.campaign.infra.jpa.Campaign;
 import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
 import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
@@ -16,13 +15,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.Map;
-import java.util.Set;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Version;
 
 @Entity(name = "SCENARIO")
@@ -42,6 +41,7 @@ public class Scenario {
     private String description;
 
     @Column(name = "CONTENT")
+    @Basic(fetch = FetchType.LAZY)
     private String content;
 
     @Column(name = "TAGS")
@@ -65,9 +65,6 @@ public class Scenario {
     @Column(name = "VERSION")
     @Version
     private Integer version;
-
-    @ManyToMany(mappedBy = "scenarios")
-    private Set<Campaign> campaigns;
 
     public Scenario() {
     }
@@ -113,11 +110,6 @@ public class Scenario {
 
     public void deactivate() {
         activated = false;
-        campaigns.forEach(c -> c.removeScenario(this));
-    }
-
-    public Set<Campaign> campaigns() {
-        return campaigns;
     }
 
     public static Scenario fromGwtTestCase(GwtTestCase testCase) {

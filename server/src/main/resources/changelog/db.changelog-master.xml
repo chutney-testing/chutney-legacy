@@ -778,10 +778,13 @@
         <comment>Migrate table CAMPAIGN_SCENARIOS (sqlite convergence)</comment>
         <renameTable oldTableName="CAMPAIGN_SCENARIOS" newTableName="CAMPAIGN_SCENARIOS_OLD"/>
         <createTable tableName="CAMPAIGN_SCENARIOS">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
             <column name="CAMPAIGN_ID" type="INTEGER">
                 <constraints nullable="false"/>
             </column>
-            <column name="SCENARIO_ID" type="INTEGER">
+            <column name="SCENARIO_ID" type="VARCHAR(12)">
                 <constraints nullable="false"/>
             </column>
             <column name="RANK" type="INTEGER">
@@ -793,9 +796,8 @@
     <changeSet id="migrate-sqlite-table-campaign-scenarios-data" dbms="h2,postgresql" author="ICG">
         <sql>
             INSERT INTO CAMPAIGN_SCENARIOS ( CAMPAIGN_ID, SCENARIO_ID, RANK )
-            SELECT CAMPAIGN_ID, CAST(SCENARIO_ID AS INTEGER), INDEX
+            SELECT CAMPAIGN_ID, SCENARIO_ID, INDEX
             FROM CAMPAIGN_SCENARIOS_OLD
-            WHERE SCENARIO_ID NOT LIKE '%-%'
         </sql>
     </changeSet>
 
@@ -857,7 +859,7 @@
             <column name="ID" type="INTEGER" autoIncrement="true">
                 <constraints nullable="false" unique="true" primaryKey="true"/>
             </column>
-            <column name="SCENARIO_ID" type="INTEGER">
+            <column name="SCENARIO_ID" type="VARCHAR(12)">
                 <constraints nullable="false"/>
             </column>
             <column name="CAMPAIGN_EXECUTION_ID" type="INTEGER"/>
@@ -891,7 +893,7 @@
     <changeSet id="migrate-sqlite-table-scenario-executions-data" dbms="h2,postgresql" author="ICG">
         <sql>
             INSERT INTO SCENARIO_EXECUTIONS ( ID, SCENARIO_ID, CAMPAIGN_EXECUTION_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, SCENARIO_TITLE, ENVIRONMENT, USER_ID, DATASET_ID, DATASET_VERSION )
-            SELECT  ID, CAST(SCENARIO_ID AS INTEGER), (SELECT ID FROM CAMPAIGN_EXECUTION_HISTORY where SCENARIO_EXECUTION_ID = ID), EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT, USER_ID, DATASET_ID, DATASET_VERSION
+            SELECT  ID, SCENARIO_ID, (SELECT ID FROM CAMPAIGN_EXECUTION_HISTORY where SCENARIO_EXECUTION_ID = ID), EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT, USER_ID, DATASET_ID, DATASET_VERSION
             FROM SCENARIO_EXECUTION_HISTORY
         </sql>
     </changeSet>

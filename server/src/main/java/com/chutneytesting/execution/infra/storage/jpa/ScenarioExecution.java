@@ -30,7 +30,7 @@ public class ScenarioExecution {
     private Long id;
 
     @Column(name = "SCENARIO_ID")
-    private Long scenarioId;
+    private String scenarioId;
 
     @ManyToOne
     @JoinColumn(name = "CAMPAIGN_EXECUTION_ID")
@@ -74,7 +74,7 @@ public class ScenarioExecution {
     public ScenarioExecution() {
     }
 
-    public ScenarioExecution(Long id, Long scenarioId, CampaignExecution campaignExecution, Long executionTime, Long duration, ServerReportStatus status, String information, String error, String scenarioTitle, String environment, String userId, String datasetId, Integer datasetVersion, Integer version) {
+    public ScenarioExecution(Long id, String scenarioId, CampaignExecution campaignExecution, Long executionTime, Long duration, ServerReportStatus status, String information, String error, String scenarioTitle, String environment, String userId, String datasetId, Integer datasetVersion, Integer version) {
         this.id = id;
         this.scenarioId = scenarioId;
         this.campaignExecution = campaignExecution;
@@ -95,7 +95,7 @@ public class ScenarioExecution {
         return id;
     }
 
-    public Long scenarioId() {
+    public String scenarioId() {
         return scenarioId;
     }
 
@@ -105,6 +105,10 @@ public class ScenarioExecution {
 
     public void forCampaignExecution(CampaignExecution campaignExecution) {
         this.campaignExecution = campaignExecution;
+    }
+
+    public void clearCampaignExecution() {
+        this.campaignExecution = null;
     }
 
     public Integer version() {
@@ -158,7 +162,7 @@ public class ScenarioExecution {
     public static ScenarioExecution fromDomain(String scenarioId, Long id, Integer version, ExecutionHistory.ExecutionProperties execution) {
         return new ScenarioExecution(
             id,
-            ofNullable(scenarioId).map(Long::valueOf).orElse(null),
+            scenarioId,
             null,
             execution.time().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
             execution.duration(),

@@ -3,7 +3,6 @@ package com.chutneytesting.campaign.api;
 import static com.chutneytesting.campaign.api.dto.CampaignMapper.fromDto;
 import static com.chutneytesting.campaign.api.dto.CampaignMapper.toDto;
 import static com.chutneytesting.campaign.api.dto.CampaignMapper.toDtoWithoutReport;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.chutneytesting.campaign.api.dto.CampaignDto;
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportDto;
@@ -73,9 +72,6 @@ public class CampaignController {
     public CampaignDto getCampaignById(@PathVariable("campaignId") Long campaignId) {
         Campaign campaign = campaignRepository.findById(campaignId);
         List<CampaignExecutionReport> reports = campaignRepository.findExecutionsById(campaignId);
-        if (!isEmpty(reports)) {
-            reports.sort(CampaignExecutionReport.executionIdComparator().reversed());
-        }
         campaignExecutionEngine.currentExecution(campaignId)
             .ifPresent(report -> addCurrentExecution(reports, report));
         return toDto(campaign, reports);

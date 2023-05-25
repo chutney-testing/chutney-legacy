@@ -6,6 +6,8 @@ import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
+import com.chutneytesting.campaign.infra.CampaignScenarioJpaRepository;
+import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
 import com.chutneytesting.execution.infra.storage.DatabaseExecutionJpaRepository;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
@@ -30,17 +32,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestCase> {
 
-    private final DatabaseTestCaseJpaRepository scenarioJpaRepository;
+    private final ScenarioJpaRepository scenarioJpaRepository;
     private final DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository;
+    private final CampaignScenarioJpaRepository campaignScenarioJpaRepository;
     private final EntityManager entityManager;
 
     public DatabaseTestCaseRepository(
-        DatabaseTestCaseJpaRepository jpa,
+        ScenarioJpaRepository jpa,
         DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository,
-        EntityManager entityManager
+        CampaignScenarioJpaRepository campaignScenarioJpaRepository, EntityManager entityManager
     ) {
         this.scenarioJpaRepository = jpa;
         this.scenarioExecutionsJpaRepository = scenarioExecutionsJpaRepository;
+        this.campaignScenarioJpaRepository = campaignScenarioJpaRepository;
         this.entityManager = entityManager;
     }
 
@@ -94,11 +98,15 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         }
         scenarioJpaRepository.findByIdAndActivated(valueOf(scenarioId), true)
             .ifPresent(scenarioJpa -> {
-                List<ScenarioExecution> allExecutions = scenarioExecutionsJpaRepository.findAllByScenarioId(valueOf(scenarioId));
+                List<ScenarioExecution> allExecutions = scenarioExecutionsJpaRepository.findAllByScenarioId(scenarioId);
                 allExecutions.forEach(e -> {
                     e.forCampaignExecution(null);
                     scenarioExecutionsJpaRepository.save(e);
                 });
+
+                List<CampaignScenario> allCampaignScenarios = campaignScenarioJpaRepository.findAllByScenarioId(scenarioId);
+                campaignScenarioJpaRepository.deleteAll(allCampaignScenarios);
+
                 scenarioJpa.deactivate();
                 scenarioJpaRepository.save(scenarioJpa);
             });
@@ -111,7 +119,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
             return empty();
         }
         try {
-            return scenarioJpaRepository.getLastVersion(valueOf(scenarioId));
+            return scenarioJpaRepository.lastVersion(valueOf(scenarioId));
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
         }
@@ -146,7 +154,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     private Specification<Scenario> buildLikeSpecificationOnContent(String[] words) {
         Specification<Scenario> scenarioDaoSpecification = null;
         for (String word : words) {
-            Specification<Scenario> wordSpecification = DatabaseTestCaseJpaRepository.contentContains(word);
+            Specification<Scenario> wordSpecification = ScenarioJpaRepository.contentContains(word);
             scenarioDaoSpecification = ofNullable(scenarioDaoSpecification)
                 .map(s -> s.or(wordSpecification))
                 .orElse(wordSpecification);

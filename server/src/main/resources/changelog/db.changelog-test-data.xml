@@ -77,7 +77,7 @@
     <changeSet id="test-data-scenarios-executions" author="ICG">
         <insert tableName="SCENARIO_EXECUTION_HISTORY">
             <column name="ID" valueNumeric="1"/>
-            <column name="SCENARIO_ID" valueNumeric="1"/>
+            <column name="SCENARIO_ID" value="1"/>
             <column name="EXECUTION_TIME" valueNumeric="1682434424128"/>
             <column name="DURATION" valueNumeric="10"/>
             <column name="STATUS" value="SUCCESS"/>
@@ -93,7 +93,7 @@
         </insert>
         <insert tableName="SCENARIO_EXECUTION_HISTORY">
             <column name="ID" valueNumeric="2"/>
-            <column name="SCENARIO_ID" valueNumeric="2"/>
+            <column name="SCENARIO_ID" value="2"/>
             <column name="EXECUTION_TIME" valueNumeric="1682434424128"/>
             <column name="DURATION" valueNumeric="10"/>
             <column name="STATUS" value="SUCCESS"/>
@@ -107,7 +107,7 @@
         </insert>
         <insert tableName="SCENARIO_EXECUTION_HISTORY">
             <column name="ID" valueNumeric="3"/>
-            <column name="SCENARIO_ID" valueNumeric="1"/>
+            <column name="SCENARIO_ID" value="1"/>
             <column name="EXECUTION_TIME" valueNumeric="1682434424128"/>
             <column name="DURATION" valueNumeric="10"/>
             <column name="STATUS" value="SUCCESS"/>
@@ -123,15 +123,31 @@
         </insert>
         <insert tableName="SCENARIO_EXECUTION_HISTORY">
             <column name="ID" valueNumeric="4"/>
-            <column name="SCENARIO_ID" valueNumeric="2"/>
+            <column name="SCENARIO_ID" value="2"/>
             <column name="EXECUTION_TIME" valueNumeric="1682434424128"/>
             <column name="DURATION" valueNumeric="10"/>
             <column name="STATUS" value="FAILURE"/>
             <column name="INFORMATION" value=""/>
+            <column name="ERROR" value="an error occurred"/>
+            <column name="REPORT"
+                    value="{&quot;executionId&quot;: &quot;1&quot;, &quot;scenarioName&quot;: &quot;i am a scenario title (possibly old)&quot;, &quot;environment&quot;: &quot;DEFAULT&quot;, &quot;user&quot;: &quot;executor-id&quot;, &quot;contextVariables&quot;: {}, &quot;report&quot;: {&quot;name&quot;: &quot;Empty scenario&quot;, &quot;duration&quot;: &quot;10&quot;, &quot;startDate&quot;: &quot;2023-04-25T14:53:44.128121800Z&quot;, &quot;status&quot;: &quot;FAILURE&quot;, &quot;information&quot;: [], &quot;errors&quot;: [], &quot;steps&quot;: [{&quot;name&quot;: &quot;&quot;, &quot;duration&quot;: &quot;0&quot;, &quot;startDate&quot;: &quot;2023-04-25T14:53:44.128121800Z&quot;, &quot;status&quot;: &quot;FAILURE&quot;, &quot;information&quot;: [], &quot;errors&quot;: [], &quot;steps&quot;: [], &quot;type&quot;: &quot;&quot;, &quot;targetName&quot;: &quot;&quot;, &quot;targetUrl&quot;: &quot;&quot;, &quot;strategy&quot;: &quot;sequential&quot;, &quot;evaluatedInputs&quot;: {}, &quot;stepOutputs&quot;: {}}], &quot;type&quot;: &quot;&quot;, &quot;targetName&quot;: &quot;&quot;, &quot;targetUrl&quot;: &quot;&quot;, &quot;strategy&quot;: &quot;sequential&quot;, &quot;evaluatedInputs&quot;: {}, &quot;stepOutputs&quot;: {}}}"/>
+            <column name="TEST_CASE_TITLE" value="i am a scenario title (possibly old)"/>
+            <column name="ENVIRONMENT" value="DEFAULT"/>
+            <column name="USER_ID" value="executor-id"/>
+            <column name="DATASET_ID" value="#14:600"/>
+            <column name="DATASET_VERSION" valueNumeric="3"/>
+        </insert>
+        <insert tableName="SCENARIO_EXECUTION_HISTORY">
+            <column name="ID" valueNumeric="5"/>
+            <column name="SCENARIO_ID" value="16-21"/>
+            <column name="EXECUTION_TIME" valueNumeric="1682434427128"/>
+            <column name="DURATION" valueNumeric="10"/>
+            <column name="STATUS" value="SUCCESS"/>
+            <column name="INFORMATION" value=""/>
             <column name="ERROR" value=""/>
             <column name="REPORT"
                     value="{&quot;executionId&quot;: &quot;1&quot;, &quot;scenarioName&quot;: &quot;i am a scenario title (possibly old)&quot;, &quot;environment&quot;: &quot;DEFAULT&quot;, &quot;user&quot;: &quot;executor-id&quot;, &quot;contextVariables&quot;: {}, &quot;report&quot;: {&quot;name&quot;: &quot;Empty scenario&quot;, &quot;duration&quot;: &quot;10&quot;, &quot;startDate&quot;: &quot;2023-04-25T14:53:44.128121800Z&quot;, &quot;status&quot;: &quot;SUCCESS&quot;, &quot;information&quot;: [], &quot;errors&quot;: [], &quot;steps&quot;: [{&quot;name&quot;: &quot;&quot;, &quot;duration&quot;: &quot;0&quot;, &quot;startDate&quot;: &quot;2023-04-25T14:53:44.128121800Z&quot;, &quot;status&quot;: &quot;SUCCESS&quot;, &quot;information&quot;: [], &quot;errors&quot;: [], &quot;steps&quot;: [], &quot;type&quot;: &quot;&quot;, &quot;targetName&quot;: &quot;&quot;, &quot;targetUrl&quot;: &quot;&quot;, &quot;strategy&quot;: &quot;sequential&quot;, &quot;evaluatedInputs&quot;: {}, &quot;stepOutputs&quot;: {}}], &quot;type&quot;: &quot;&quot;, &quot;targetName&quot;: &quot;&quot;, &quot;targetUrl&quot;: &quot;&quot;, &quot;strategy&quot;: &quot;sequential&quot;, &quot;evaluatedInputs&quot;: {}, &quot;stepOutputs&quot;: {}}}"/>
-            <column name="TEST_CASE_TITLE" value="i am a scenario title (possibly old)"/>
+            <column name="TEST_CASE_TITLE" value="i am a component scenario title (possibly old)"/>
             <column name="ENVIRONMENT" value="DEFAULT"/>
             <column name="USER_ID" value="executor-id"/>
             <column name="DATASET_ID" value="#14:600"/>

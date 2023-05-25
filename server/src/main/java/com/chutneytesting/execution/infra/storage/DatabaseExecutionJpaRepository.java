@@ -13,10 +13,10 @@ public interface DatabaseExecutionJpaRepository extends CrudRepository<ScenarioE
 
     List<ScenarioExecution> findByStatus(ServerReportStatus status);
 
-    List<ScenarioExecution> findFirst20ByScenarioIdOrderByIdDesc(Long scenarioId);
+    List<ScenarioExecution> findFirst20ByScenarioIdOrderByIdDesc(String scenarioId);
 
     @Query("select max(se.id), se.scenarioId from SCENARIO_EXECUTIONS se where se.scenarioId in :scenarioIds group by se.scenarioId")
-    List<Tuple> findLastExecutionsByScenarioId(@Param("scenarioIds") List<Long> scenarioIds);
+    List<Tuple> findLastExecutionsByScenarioId(@Param("scenarioIds") List<String> scenarioIds);
 
-    List<ScenarioExecution> findAllByScenarioId(Long scenarioId);
+    List<ScenarioExecution> findAllByScenarioId(String scenarioId);
 }

@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static util.WaitUtils.awaitDuring;
 
-import com.chutneytesting.campaign.infra.CampaignExecutionRepository;
+import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
 import com.chutneytesting.campaign.infra.jpa.Campaign;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
@@ -55,11 +55,11 @@ public class DatabaseExecutionHistoryRepositoryTest {
         @Autowired
         private DatabaseExecutionHistoryRepository sut;
         @Autowired
-        private CampaignExecutionRepository campaignExecutionRepository;
+        private CampaignExecutionDBRepository campaignExecutionDBRepository;
 
         @Test
         public void execution_summary_is_available_after_storing_sorted_newest_first() {
-            String scenarioId = givenScenario().id().toString();
+            String scenarioId = givenScenarioId(true);
             sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec1", ""));
             sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
             sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.FAILURE, "exec3", ""));
@@ -70,12 +70,12 @@ public class DatabaseExecutionHistoryRepositoryTest {
 
         @Test
         public void last_execution_return_newest_first() {
-            String scenarioIdOne = givenScenario().id().toString();
+            String scenarioIdOne = givenScenarioId();
             sut.store(scenarioIdOne, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec1", ""));
             sut.store(scenarioIdOne, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
             sut.store(scenarioIdOne, buildDetachedExecution(ServerReportStatus.FAILURE, "exec3", ""));
 
-            String scenarioIdTwo = givenScenario().id().toString();
+            String scenarioIdTwo = givenScenarioId(true);
             sut.store(scenarioIdTwo, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec6", ""));
             sut.store(scenarioIdTwo, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec5", ""));
             sut.store(scenarioIdTwo, buildDetachedExecution(ServerReportStatus.FAILURE, "exec4", ""));
@@ -88,7 +88,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
 
         @Test
         public void execution_summaries_retrieved_are_limit_to_20() {
-            String scenarioId = givenScenario().id().toString();
+            String scenarioId = givenScenarioId();
             List<String> expectedInfos = new ArrayList<>(20);
             List<String> finalExpectedInfos = expectedInfos;
             IntStream.range(0, 25).forEach(
@@ -112,14 +112,14 @@ public class DatabaseExecutionHistoryRepositoryTest {
 
         @Test
         public void storage_keeps_all_items() {
-            String scenarioId = givenScenario().id().toString();
+            String scenarioId = givenScenarioId();
             DetachedExecution execution = buildDetachedExecution(ServerReportStatus.SUCCESS, "", "");
             IntStream.range(0, 23).forEach(i -> sut.store(scenarioId, execution));
 
             assertThat(sut.getExecutions("-1")).hasSize(0);
 
             Number executionsCount = (Number) entityManager.createNativeQuery(
-                "SELECT count(*) as count FROM SCENARIO_EXECUTIONS WHERE SCENARIO_ID = " + scenarioId).getSingleResult();
+                "SELECT count(*) as count FROM SCENARIO_EXECUTIONS WHERE SCENARIO_ID = '" + scenarioId + "'").getSingleResult();
 
             assertThat(executionsCount.intValue())
                 .as("All 23 reports of test scenario")
@@ -144,7 +144,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
 
         @Test
         public void update_preserve_other_executions_order() {
-            String scenarioId = givenScenario().id().toString();
+            String scenarioId = givenScenarioId();
             sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.FAILURE, "exec1", ""));
             sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "exec2", ""));
             sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.RUNNING, "exec3", ""));
@@ -165,7 +165,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
 
         @Test
         public void update_on_empty_history_throws() {
-            String scenarioId = givenScenario().id().toString();
+            String scenarioId = givenScenarioId();
             long unknownExecutionId = -1L;
             assertThatExceptionOfType(ReportNotFoundException.class)
                 .isThrownBy(() -> sut.update(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(unknownExecutionId)))
@@ -176,8 +176,8 @@ public class DatabaseExecutionHistoryRepositoryTest {
         public void all_running_executions_are_set_to_KO_on_startup() {
             // Given running executions
             clearTables();
-            String scenarioIdOne = givenScenario().id().toString();
-            String scenarioIdTwo = givenScenario().id().toString();
+            String scenarioIdOne = givenScenarioId(true);
+            String scenarioIdTwo = givenScenarioId();
             sut.store(scenarioIdOne, buildDetachedExecution(ServerReportStatus.RUNNING, "exec1", ""));
             sut.store(scenarioIdTwo, buildDetachedExecution(ServerReportStatus.RUNNING, "exec2", ""));
 
@@ -214,7 +214,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
 
         @Test
         public void should_truncate_report_info_and_error_on_save_or_update() {
-            String scenarioId = givenScenario().id().toString();
+            String scenarioId = givenScenarioId(true);
             final String tooLongString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.";
 
             sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.SUCCESS, tooLongString, tooLongString));
@@ -236,9 +236,9 @@ public class DatabaseExecutionHistoryRepositoryTest {
             ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.id().toString(), scenario.title(), scenarioExecutionOne.toDomain());
             ScenarioExecution scenarioExecutionTwo = givenScenarioExecution(scenario.id(), ServerReportStatus.SUCCESS);
 
-            Long campaignExecutionId = campaignExecutionRepository.generateCampaignExecutionId(campaign.id());
+            Long campaignExecutionId = campaignExecutionDBRepository.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
-            campaignExecutionRepository.saveCampaignReport(campaign.id(), campaignExecutionReport);
+            campaignExecutionDBRepository.saveCampaignReport(campaign.id(), campaignExecutionReport);
 
             // When
             List<ExecutionSummary> executions = sut.getExecutions(scenario.id().toString());
@@ -264,9 +264,9 @@ public class DatabaseExecutionHistoryRepositoryTest {
             ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.id().toString(), scenario.title(), scenarioExecutionOne.toDomain());
             givenScenarioExecution(scenario.id(), ServerReportStatus.SUCCESS);
 
-            Long campaignExecutionId = campaignExecutionRepository.generateCampaignExecutionId(campaign.id());
+            Long campaignExecutionId = campaignExecutionDBRepository.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
-            campaignExecutionRepository.saveCampaignReport(campaign.id(), campaignExecutionReport);
+            campaignExecutionDBRepository.saveCampaignReport(campaign.id(), campaignExecutionReport);
 
             // When
             ExecutionSummary executionSummary = sut.getExecutionSummary(scenarioExecutionOne.id());

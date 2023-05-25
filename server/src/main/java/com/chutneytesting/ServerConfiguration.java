@@ -3,6 +3,7 @@ package com.chutneytesting;
 import static com.chutneytesting.action.sql.SqlAction.CONFIGURABLE_NB_LOGGED_ROW;
 
 import com.chutneytesting.action.api.EmbeddedActionEngine;
+import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
@@ -227,6 +228,7 @@ public class ServerConfiguration implements AsyncConfigurer {
 
     @Bean
     CampaignExecutionEngine campaignExecutionEngine(CampaignRepository campaignRepository,
+                                                    CampaignExecutionRepository campaignExecutionRepository,
                                                     ScenarioExecutionEngine scenarioExecutionEngine,
                                                     ExecutionHistoryRepository executionHistoryRepository,
                                                     TestCaseRepositoryAggregator testCaseRepository,
@@ -237,6 +239,7 @@ public class ServerConfiguration implements AsyncConfigurer {
                                                     ObjectMapper objectMapper) {
         return new CampaignExecutionEngine(
             campaignRepository,
+            campaignExecutionRepository,
             scenarioExecutionEngine,
             executionHistoryRepository,
             testCaseRepository,

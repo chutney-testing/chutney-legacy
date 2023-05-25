@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static util.WaitUtils.awaitDuring;
 
+import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
@@ -42,7 +43,6 @@ import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +60,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.stubbing.Answer;
 import org.springframework.core.task.support.ExecutorServiceAdapter;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 
 public class CampaignExecutionEngineTest {
@@ -70,6 +69,7 @@ public class CampaignExecutionEngineTest {
     private CampaignExecutionEngine sut;
 
     private final CampaignRepository campaignRepository = mock(CampaignRepository.class);
+    private final CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
     private final ScenarioExecutionEngine scenarioExecutionEngine = mock(ScenarioExecutionEngine.class);
     private final ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
     private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
@@ -95,7 +95,7 @@ public class CampaignExecutionEngineTest {
 
     @BeforeEach
     public void setUp() {
-        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, Optional.of(dataSetHistoryRepository), jiraXrayPlugin, metrics, executorService, objectMapper);
+        sut = new CampaignExecutionEngine(campaignRepository, campaignExecutionRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, Optional.of(dataSetHistoryRepository), jiraXrayPlugin, metrics, executorService, objectMapper);
         firstTestCase = createGwtTestCase("1");
         secondTestCase = createGwtTestCase("2");
         when(testCaseRepository.findExecutableById(firstTestCase.id())).thenReturn(of(firstTestCase));
@@ -255,11 +255,8 @@ public class CampaignExecutionEngineTest {
     public void should_throw_when_campaign_already_running() {
         Campaign campaign = createCampaign(1L);
 
-        Field currentCampaignExecutionsField = ReflectionUtils.findField(CampaignExecutionEngine.class, "currentCampaignExecutions");
-        currentCampaignExecutionsField.setAccessible(true);
-        Map<Long, CampaignExecutionReport> field = (Map<Long, CampaignExecutionReport>) ReflectionUtils.getField(currentCampaignExecutionsField, sut);
         CampaignExecutionReport mockReport = new CampaignExecutionReport(1L, "", false, "", null, null, "");
-        field.put(1L, mockReport);
+        when(campaignExecutionRepository.currentExecution(1L)).thenReturn(Optional.of(mockReport));
 
         // When
         assertThatThrownBy(() -> sut.executeScenarioInCampaign(null, campaign, "user"))
@@ -319,13 +316,10 @@ public class CampaignExecutionEngineTest {
 
     @Test
     public void should_retrieve_current_campaign_executions() {
-        Field currentCampaignExecutionsField = ReflectionUtils.findField(CampaignExecutionEngine.class, "currentCampaignExecutions");
-        currentCampaignExecutionsField.setAccessible(true);
-        Map<Long, CampaignExecutionReport> field = (Map<Long, CampaignExecutionReport>) ReflectionUtils.getField(currentCampaignExecutionsField, sut);
         CampaignExecutionReport report = new CampaignExecutionReport(1L, 33L, emptyList(), "", false, "", null, null, "");
         CampaignExecutionReport report2 = new CampaignExecutionReport(2L, 42L, emptyList(), "", false, "", null, null, "");
-        field.put(1L, report);
-        field.put(2L, report2);
+        when(campaignExecutionRepository.currentExecution(1L)).thenReturn(Optional.of(report));
+        when(campaignExecutionRepository.currentExecution(2L)).thenReturn(Optional.of(report2));
 
         Optional<CampaignExecutionReport> campaignExecutionReport = sut.currentExecution(1L);
 

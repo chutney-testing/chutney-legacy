@@ -3,12 +3,14 @@ package util.infra;
 import static java.time.Instant.now;
 
 import com.chutneytesting.campaign.infra.jpa.Campaign;
+import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import liquibase.Liquibase;
@@ -27,6 +29,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 @ActiveProfiles("test-infra")
 @ContextConfiguration(classes = TestInfraConfiguration.class)
 public abstract class AbstractLocalDatabaseTest {
+
+    private Random rand = new Random();
     protected static final String DB_CHANGELOG_DB_CHANGELOG_MASTER_XML = "changelog/db.changelog-master.xml";
     @Autowired
     protected DataSource localDataSource;
@@ -60,24 +64,39 @@ public abstract class AbstractLocalDatabaseTest {
     }
 
     protected Scenario givenScenario() {
-        Scenario scenario = new Scenario(null, "", null, "", null, now(), null, true, null, now(), null);
+        Scenario scenario = new Scenario(null, "", null, "{\"when\":{}}", null, now(), null, true, null, now(), null);
         return transactionTemplate.execute(ts -> {
             entityManager.persist(scenario);
             return scenario;
         });
     }
 
+    protected String givenScenarioId() {
+        return givenScenarioId(false);
+    }
+
+    protected String givenScenarioId(boolean componentId) {
+        int clusterId = rand.nextInt(100);
+        int objectId = rand.nextInt(100);
+        return componentId ? clusterId + "-" + objectId : String.valueOf(objectId);
+    }
+
     protected Campaign givenCampaign(Scenario... scenarios) {
-        Campaign campaign = new Campaign("", new ArrayList<>());
+        ArrayList<CampaignScenario> campaignScenarios = new ArrayList<>();
+        Campaign campaign = new Campaign("", campaignScenarios);
         return transactionTemplate.execute(ts -> {
-            campaign.scenarios().addAll(Arrays.asList(scenarios));
+            for (int i = 0; i < scenarios.length; i++) {
+                Scenario scenario = scenarios[i];
+                campaignScenarios.add(new CampaignScenario(campaign, scenario.id().toString(), i));
+            }
+            campaign.campaignScenarios().addAll(campaignScenarios);
             entityManager.persist(campaign);
             return campaign;
         });
     }
 
     protected ScenarioExecution givenScenarioExecution(Long scenarioId, ServerReportStatus status) {
-        ScenarioExecution execution = new ScenarioExecution(null, scenarioId, null, now().toEpochMilli(), 0L, status, null, null, "", "", "", null, null, null);
+        ScenarioExecution execution = new ScenarioExecution(null, scenarioId.toString(), null, now().toEpochMilli(), 0L, status, null, null, "", "", "", null, null, null);
         return transactionTemplate.execute(ts -> {
             entityManager.persist(execution);
             return execution;

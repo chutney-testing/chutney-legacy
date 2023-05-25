@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Assertions.within;
 import static util.WaitUtils.awaitDuring;
 
-import com.chutneytesting.campaign.infra.CampaignExecutionRepository;
+import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
 import com.chutneytesting.campaign.infra.jpa.Campaign;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
@@ -62,7 +62,7 @@ public class DatabaseTestCaseRepositoryTest {
         @Autowired
         private DatabaseTestCaseRepository sut;
         @Autowired
-        private CampaignExecutionRepository campaignExecutionRepository;
+        private CampaignExecutionDBRepository campaignExecutionDBRepository;
 
         private static final GwtTestCase GWT_TEST_CASE = GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder().build())
@@ -178,11 +178,11 @@ public class DatabaseTestCaseRepositoryTest {
             assertThat(noScenario).isEmpty();
 
             Number executionsCount = (Number) entityManager.createNativeQuery(
-                "SELECT count(*) as count FROM SCENARIO_EXECUTIONS WHERE SCENARIO_ID = " + scenario.id()).getSingleResult();
+                "SELECT count(*) as count FROM SCENARIO_EXECUTIONS WHERE SCENARIO_ID = '" + scenario.id() + "'").getSingleResult();
             assertThat(executionsCount.intValue()).isOne();
 
             Number campaignAssociationCount = (Number) entityManager.createNativeQuery(
-                "SELECT count(*) as count FROM CAMPAIGN_SCENARIOS WHERE SCENARIO_ID = " + scenario.id()).getSingleResult();
+                "SELECT count(*) as count FROM CAMPAIGN_SCENARIOS WHERE SCENARIO_ID = '" + scenario.id() + "'").getSingleResult();
             assertThat(campaignAssociationCount.intValue()).isZero();
         }
 

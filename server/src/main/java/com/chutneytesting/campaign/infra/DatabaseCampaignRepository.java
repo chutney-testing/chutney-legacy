@@ -1,19 +1,15 @@
 package com.chutneytesting.campaign.infra;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.lang.Long.parseLong;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
-import com.chutneytesting.scenario.infra.jpa.Scenario;
-import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseJpaRepository;
+import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,27 +22,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class DatabaseCampaignRepository implements CampaignRepository {
 
     private final CampaignJpaRepository campaignJpaRepository;
-    private final DatabaseTestCaseJpaRepository scenarioJpaRepository;
-    private final CampaignExecutionRepository campaignExecutionRepository;
+    private final CampaignScenarioJpaRepository campaignScenarioJpaRepository;
+    private final CampaignExecutionDBRepository campaignExecutionRepository;
 
     public DatabaseCampaignRepository(CampaignJpaRepository campaignJpaRepository,
-                                      DatabaseTestCaseJpaRepository scenarioJpaRepository,
-                                      CampaignExecutionRepository campaignExecutionRepository) {
+                                      CampaignScenarioJpaRepository campaignScenarioJpaRepository,
+                                      CampaignExecutionDBRepository campaignExecutionRepository) {
         this.campaignJpaRepository = campaignJpaRepository;
-        this.scenarioJpaRepository = scenarioJpaRepository;
+        this.campaignScenarioJpaRepository = campaignScenarioJpaRepository;
         this.campaignExecutionRepository = campaignExecutionRepository;
     }
 
     @Override
     public Campaign createOrUpdate(Campaign campaign) {
-        List<Scenario> scenarios = campaign.scenarioIds.stream().map(Long::valueOf)
-            .map(scenarioJpaRepository::findById)
-            .filter(Optional::isPresent)
-            .flatMap(Optional::stream)
-            .toList();
-
         com.chutneytesting.campaign.infra.jpa.Campaign campaignJpa =
-            campaignJpaRepository.save(com.chutneytesting.campaign.infra.jpa.Campaign.fromDomain(campaign, scenarios, lastCampaignVersion(campaign.id)));
+            campaignJpaRepository.save(com.chutneytesting.campaign.infra.jpa.Campaign.fromDomain(campaign, lastCampaignVersion(campaign.id)));
         return campaignJpa.toDomain();
     }
 
@@ -97,9 +87,8 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     @Transactional(readOnly = true)
     public List<String> findScenariosIds(Long campaignId) {
         return campaignJpaRepository.findById(campaignId)
-            .map(c -> c.scenarios().stream()
-                .map(Scenario::id)
-                .map(String::valueOf)
+            .map(c -> c.campaignScenarios().stream()
+                .map(CampaignScenario::scenarioId)
                 .toList()
             )
             .orElseThrow(() -> new CampaignNotFoundException(campaignId));
@@ -127,13 +116,12 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     @Override
     @Transactional(readOnly = true)
     public List<Campaign> findCampaignsByScenarioId(String scenarioId) {
-        if (isNullOrEmpty(scenarioId) || !isNumeric(scenarioId)) {
+        if (isNullOrEmpty(scenarioId)) {
             return emptyList();
         }
 
-        long scenarioIdL = parseLong(scenarioId);
-        return scenarioJpaRepository.findById(scenarioIdL).stream()
-            .flatMap(s -> s.campaigns().stream())
+        return campaignScenarioJpaRepository.findAllByScenarioId(scenarioId).stream()
+            .map(CampaignScenario::campaign)
             .map(com.chutneytesting.campaign.infra.jpa.Campaign::toDomain)
             .toList();
     }

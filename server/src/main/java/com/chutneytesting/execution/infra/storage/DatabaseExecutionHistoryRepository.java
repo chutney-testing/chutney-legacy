@@ -3,12 +3,11 @@ package com.chutneytesting.execution.infra.storage;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 import com.chutneytesting.campaign.infra.CampaignJpaRepository;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionReport;
-import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseJpaRepository;
+import com.chutneytesting.scenario.infra.raw.ScenarioJpaRepository;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.Execution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.ExecutionSummary;
@@ -16,6 +15,7 @@ import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryR
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundException;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import java.util.List;
 import java.util.Map;
@@ -30,30 +30,30 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
 
     private final DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository;
     private final ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository;
-    private final DatabaseTestCaseJpaRepository databaseTestCaseJpaRepository;
     private final CampaignJpaRepository campaignJpaRepository;
+    private final TestCaseRepository testCaseRepository;
 
     DatabaseExecutionHistoryRepository(
         DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository,
         ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository,
-        DatabaseTestCaseJpaRepository databaseTestCaseJpaRepository,
-        CampaignJpaRepository campaignJpaRepository) {
+        ScenarioJpaRepository scenarioJpaRepository,
+        CampaignJpaRepository campaignJpaRepository, TestCaseRepository testCaseRepository) {
         this.scenarioExecutionsJpaRepository = scenarioExecutionsJpaRepository;
         this.scenarioExecutionReportJpaRepository = scenarioExecutionReportJpaRepository;
-        this.databaseTestCaseJpaRepository = databaseTestCaseJpaRepository;
         this.campaignJpaRepository = campaignJpaRepository;
+        this.testCaseRepository = testCaseRepository;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Map<String, ExecutionSummary> getLastExecutions(List<String> scenarioIds) {
-        List<Long> scenarioIdL = scenarioIds.stream().filter(id -> !invalidScenarioId(id)).map(Long::valueOf).toList();
+        List<String> scenarioIdL = scenarioIds.stream().filter(id -> !invalidScenarioId(id)).toList();
         Iterable<ScenarioExecution> lastExecutions = scenarioExecutionsJpaRepository.findAllById(
             scenarioExecutionsJpaRepository.findLastExecutionsByScenarioId(scenarioIdL)
                 .stream().map(t -> t.get(0, Long.class)).toList()
         );
         return StreamSupport.stream(lastExecutions.spliterator(), true)
-            .collect(Collectors.toMap(se -> se.scenarioId().toString(), ScenarioExecution::toDomain));
+            .collect(Collectors.toMap(ScenarioExecution::scenarioId, ScenarioExecution::toDomain));
     }
 
     @Override
@@ -62,7 +62,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         if (invalidScenarioId(scenarioId)) {
             return emptyList();
         }
-        List<ScenarioExecution> scenarioExecutions = scenarioExecutionsJpaRepository.findFirst20ByScenarioIdOrderByIdDesc(Long.valueOf(scenarioId));
+        List<ScenarioExecution> scenarioExecutions = scenarioExecutionsJpaRepository.findFirst20ByScenarioIdOrderByIdDesc(scenarioId);
         return scenarioExecutions.stream()
             .map(this::scenarioExecutionToExecutionSummary)
             .toList();
@@ -80,7 +80,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
 
     private ExecutionSummary scenarioExecutionToExecutionSummary(ScenarioExecution scenarioExecution) {
         CampaignExecutionReport campaignExecutionReport = ofNullable(scenarioExecution.campaignExecution())
-            .map(ce -> ce.toDomain(campaignJpaRepository.findById(ce.campaignId()).get(), false))
+            .map(ce -> ce.toDomain(campaignJpaRepository.findById(ce.campaignId()).get(), false, null))
             .orElse(null);
         return scenarioExecution.toDomain(campaignExecutionReport);
     }
@@ -88,7 +88,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     @Override
     public Execution store(String scenarioId, DetachedExecution detachedExecution) throws IllegalStateException {
         if(invalidScenarioId(scenarioId)) {
-            throw new IllegalStateException("Scenario id is not a number");
+            throw new IllegalStateException("Scenario id is null or empty");
         }
         ScenarioExecution scenarioExecution = ScenarioExecution.fromDomain(scenarioId, detachedExecution);
         scenarioExecution = scenarioExecutionsJpaRepository.save(scenarioExecution);
@@ -101,7 +101,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     @Transactional(readOnly = true)
     // TODO remove scenarioId params
     public Execution getExecution(String scenarioId, Long reportId) throws ReportNotFoundException {
-        if (invalidScenarioId(scenarioId) || !databaseTestCaseJpaRepository.existsById(Long.valueOf(scenarioId)) || !scenarioExecutionsJpaRepository.existsById(reportId)) {
+        if (invalidScenarioId(scenarioId) || testCaseRepository.findById(scenarioId).isEmpty()) {
             throw new ReportNotFoundException(scenarioId, reportId);
         }
         return scenarioExecutionReportJpaRepository.findById(reportId).map(ScenarioExecutionReport::toDomain)
@@ -175,6 +175,6 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     private boolean invalidScenarioId(String scenarioId) {
-        return isNullOrEmpty(scenarioId) || !isNumeric(scenarioId);
+        return isNullOrEmpty(scenarioId);
     }
 }

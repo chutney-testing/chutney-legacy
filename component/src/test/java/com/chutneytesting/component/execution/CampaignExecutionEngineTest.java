@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.component.execution.domain.ExecutableComposedScenario;
 import com.chutneytesting.component.execution.domain.ExecutableComposedTestCase;
@@ -47,6 +48,7 @@ public class CampaignExecutionEngineTest {
     private static ExecutorService executorService;
 
     private final CampaignRepository campaignRepository = mock(CampaignRepository.class);
+    private final CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
     private final ScenarioExecutionEngine scenarioExecutionEngine = mock(ScenarioExecutionEngine.class);
     private final ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
     private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
@@ -67,7 +69,7 @@ public class CampaignExecutionEngineTest {
     @Test
     public void should_override_scenario_dataset_with_campaign_dataset_before_execution() {
         // Given
-        CampaignExecutionEngine sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, Optional.of(dataSetHistoryRepository), jiraXrayPlugin, metrics, executorService, objectMapper);
+        CampaignExecutionEngine sut = new CampaignExecutionEngine(campaignRepository, campaignExecutionRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, Optional.of(dataSetHistoryRepository), jiraXrayPlugin, metrics, executorService, objectMapper);
         TestCase composedTestCase = createExecutableComposedTestCase();
 
         Map<String, String> campaignDataSet = Maps.of(

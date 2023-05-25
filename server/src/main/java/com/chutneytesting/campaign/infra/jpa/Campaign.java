@@ -3,12 +3,12 @@ package com.chutneytesting.campaign.infra.jpa;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 
-import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.scenario.infra.raw.TagListMapper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,11 +16,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
+import javax.persistence.OrderBy;
 import javax.persistence.Version;
 
 @Entity(name = "CAMPAIGN")
@@ -56,14 +53,9 @@ public class Campaign implements Serializable {
     @Version
     private Integer version;
 
-    @ManyToMany
-    @JoinTable(
-        name = "CAMPAIGN_SCENARIOS",
-        joinColumns = {@JoinColumn(name = "CAMPAIGN_ID", referencedColumnName = "ID")},
-        inverseJoinColumns = {@JoinColumn(name = "SCENARIO_ID", referencedColumnName = "ID")}
-    )
-    @OrderColumn(name = "RANK")
-    private List<Scenario> scenarios;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "campaign")
+    @OrderBy("rank ASC")
+    private List<CampaignScenario> campaignScenarios;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "campaign")
     private Set<CampaignParameter> parameters;
@@ -75,11 +67,11 @@ public class Campaign implements Serializable {
         this(null, title, "", null, false, false, null, null, null, null, null);
     }
 
-    public Campaign(String title, List<Scenario> scenarios) {
+    public Campaign(String title, List<CampaignScenario> scenarios) {
         this(null, title, "", null, false, false, null, null, null, scenarios, null);
     }
 
-    public Campaign(Long id, String title, String description, String environment, boolean parallelRun, boolean retryAuto, String datasetId, List<String> tags, Integer version, List<Scenario> scenarios, Set<CampaignParameter> parameters) {
+    public Campaign(Long id, String title, String description, String environment, boolean parallelRun, boolean retryAuto, String datasetId, List<String> tags, Integer version, List<CampaignScenario> campaignScenarios, Set<CampaignParameter> parameters) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -89,11 +81,11 @@ public class Campaign implements Serializable {
         this.datasetId = datasetId;
         this.tags = TagListMapper.tagsListToString(tags);
         this.version = ofNullable(version).orElse(1);
-        this.scenarios = scenarios;
+        fromCampaignScenarios(campaignScenarios);
         fromCampaignParameters(parameters);
     }
 
-    public static Campaign fromDomain(com.chutneytesting.server.core.domain.scenario.campaign.Campaign campaign, List<Scenario> scenarios, Integer version) {
+    public static Campaign fromDomain(com.chutneytesting.server.core.domain.scenario.campaign.Campaign campaign, Integer version) {
         return new Campaign(
             campaign.id,
             campaign.title,
@@ -104,9 +96,18 @@ public class Campaign implements Serializable {
             campaign.externalDatasetId,
             campaign.tags,
             version,
-            new ArrayList<>(scenarios),
+            CampaignScenario.fromDomain(campaign),
             CampaignParameter.fromDomain(campaign)
         );
+    }
+
+    private void fromCampaignScenarios(List<CampaignScenario> campaignScenarios) {
+        initCampaignScenarios();
+        if (campaignScenarios != null && !campaignScenarios.isEmpty()) {
+            this.campaignScenarios.clear();
+            this.campaignScenarios.addAll(campaignScenarios);
+            attachCampaignScenarios();
+        }
     }
 
     private void fromCampaignParameters(Set<CampaignParameter> campaignParameters) {
@@ -123,7 +124,7 @@ public class Campaign implements Serializable {
             id,
             title,
             description,
-            scenarios.stream().map(Scenario::id).map(String::valueOf).toList(),
+            campaignScenarios.stream().map(CampaignScenario::scenarioId).toList(),
             parameters.stream().collect(toMap(CampaignParameter::parameter, CampaignParameter::value)),
             environment,
             parallelRun,
@@ -141,8 +142,8 @@ public class Campaign implements Serializable {
         return title;
     }
 
-    public List<Scenario> scenarios() {
-        return scenarios;
+    public List<CampaignScenario> campaignScenarios() {
+        return campaignScenarios;
     }
 
     public Set<CampaignParameter> parameters() {
@@ -153,8 +154,27 @@ public class Campaign implements Serializable {
         return version;
     }
 
-    public void removeScenario(Scenario scenario) {
-        scenarios.remove(scenario);
+    public void removeScenario(String scenarioId) {
+        Optional<CampaignScenario> campaignScenario = campaignScenarios.stream()
+            .filter(cs -> cs.scenarioId().equals(scenarioId))
+            .findFirst();
+        if (campaignScenario.isPresent()) {
+            CampaignScenario cs = campaignScenario.get();
+            campaignScenarios.remove(cs.rank().intValue());
+            for (int i = cs.rank(); i < campaignScenarios.size(); i++) {
+                campaignScenarios.get(i).rank(i);
+            }
+        }
+    }
+
+    private void initCampaignScenarios() {
+        if (this.campaignScenarios == null) {
+            this.campaignScenarios = new ArrayList<>();
+        }
+    }
+
+    private void attachCampaignScenarios() {
+        ofNullable(campaignScenarios).ifPresent(css -> css.forEach(cs -> cs.forCampaign(this)));
     }
 
     private void initParameters() {
