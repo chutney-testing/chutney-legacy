@@ -10,6 +10,7 @@ import com.chutneytesting.dataset.domain.DataSetRepository;
 import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
@@ -35,8 +36,7 @@ public class FileDatasetRepository implements DataSetRepository {
 
     private final ObjectMapper objectMapper = new ObjectMapper()
         .findAndRegisterModules()
-        .enable(SerializationFeature.INDENT_OUTPUT)
-        .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        .enable(SerializationFeature.INDENT_OUTPUT);
 
     FileDatasetRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
