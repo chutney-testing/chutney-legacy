@@ -1,7 +1,8 @@
 <button *ngIf="type === 'trash-button'" type="button" class="btn {{btnSizeClass ? 'btn-' + btnSizeClass : ''}} btn-{{btnColor ? btnColor : 'danger'}} trash-btn"
         (click)="openModal(template)"
         [attr.disabled]="disabledBoolean(disabled)"
-        ngbTooltip="{{'global.actions.delete' | translate}}">
+        ngbTooltip="{{'global.actions.delete' | translate}}"
+        placement="top" container="body">
     <span class="fa {{btnClassIcon ? btnClassIcon : 'fa-trash'}}"></span>
 </button>
 <chutney-link *ngIf="type === 'link'" [model]="label" (click)="openModal(template)">
