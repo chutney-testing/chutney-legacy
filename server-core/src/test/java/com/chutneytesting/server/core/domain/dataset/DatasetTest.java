@@ -57,20 +57,22 @@ public class DatasetTest {
     }
 
     @Test
-    public void should_strip_whitespaces_in_keys_and_values() {
-        Map<String, String> expectedMap = Map.of("key1", "value", "key2", "value");
+    public void should_strip_whitespaces_in_keys() {
+        Map<String, String> expectedMap = Map.of("key1", "value ", "key2", "value");
         DataSet dataSet = DataSet.builder()
             .withConstants(
                 Map.of("key1 ", "value ", "", "value", " key2   ", "value")
             )
             .withDatatable(asList(
-                Map.of("key1", " value", "", "", "key2     ", "value"),
-                Map.of("key1", "", "", "", "key2  ", ""),
-                Map.of("key1 ", "value", "", " value", "key2", "value")
+                Map.of(" key1 ", "", "", "", "key2  ", "  value  "),
+                Map.of(" key1 ", "  value", "", "", "key2  ", "")
             ))
             .build();
 
         assertThat(dataSet.constants).containsExactlyInAnyOrderEntriesOf(expectedMap);
-        assertThat(dataSet.datatable).containsExactly(expectedMap, expectedMap);
+        assertThat(dataSet.datatable).containsExactlyInAnyOrder(
+            Map.of("key1", "", "key2", "  value  "),
+            Map.of("key1", "  value", "key2", "")
+        );
     }
 }
