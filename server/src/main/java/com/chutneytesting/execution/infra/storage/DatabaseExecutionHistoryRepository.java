@@ -1,5 +1,13 @@
 package com.chutneytesting.execution.infra.storage;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
+
+import com.chutneytesting.campaign.infra.CampaignJpaRepository;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionReport;
+import com.chutneytesting.scenario.infra.raw.ScenarioJpaRepository;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.Execution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.ExecutionSummary;
@@ -7,140 +15,125 @@ import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryR
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundException;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
-import com.google.common.collect.ImmutableMap;
-import java.time.ZoneId;
-import java.util.Collections;
-import java.util.HashMap;
+import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
 
-    private static final int LIMIT_BLOC_SIZE = 20;
-    private final ExecutionRowMapper executionRowMapper = new ExecutionRowMapper();
-    private final ExecutionSummaryRowMapper executionSummaryRowMapper = new ExecutionSummaryRowMapper();
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository;
+    private final ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository;
+    private final CampaignJpaRepository campaignJpaRepository;
+    private final TestCaseRepository testCaseRepository;
 
-    DatabaseExecutionHistoryRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    DatabaseExecutionHistoryRepository(
+        DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository,
+        ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository,
+        ScenarioJpaRepository scenarioJpaRepository,
+        CampaignJpaRepository campaignJpaRepository, TestCaseRepository testCaseRepository) {
+        this.scenarioExecutionsJpaRepository = scenarioExecutionsJpaRepository;
+        this.scenarioExecutionReportJpaRepository = scenarioExecutionReportJpaRepository;
+        this.campaignJpaRepository = campaignJpaRepository;
+        this.testCaseRepository = testCaseRepository;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<String, ExecutionSummary> getLastExecutions(List<String> scenarioIds) {
-        Map<String, ExecutionSummary> result = new HashMap<>();
-        namedParameterJdbcTemplate.query(
-            "SELECT t1.SCENARIO_ID, t1.ID, t1.EXECUTION_TIME, t1.DURATION, t1.STATUS, t1.INFORMATION, t1.ERROR, t1.TEST_CASE_TITLE, t1.ENVIRONMENT, t1.DATASET_ID, t1.DATASET_VERSION, t1.USER_ID " +
-                "FROM SCENARIO_EXECUTION_HISTORY t1 " +
-                "inner join ( "+
-                    "select max(ID) max_ID, SCENARIO_ID "+
-                    "from SCENARIO_EXECUTION_HISTORY "+
-                    "WHERE SCENARIO_ID in (" + scenarioIds.stream().map(s -> "'" + s + "'").collect(Collectors.joining(",")) + ") "+
-                    "group by SCENARIO_ID "+
-                ") t2 " +
-            "on t1.SCENARIO_ID= t2.SCENARIO_ID "+
-            "and t1.id= t2.max_ID",
-            (rs, rowNum) ->
-                result.put(rs.getString("SCENARIO_ID"), executionSummaryRowMapper.mapRow(rs,0))
+        List<String> scenarioIdL = scenarioIds.stream().filter(id -> !invalidScenarioId(id)).toList();
+        Iterable<ScenarioExecution> lastExecutions = scenarioExecutionsJpaRepository.findAllById(
+            scenarioExecutionsJpaRepository.findLastExecutionsByScenarioId(scenarioIdL)
+                .stream().map(t -> t.get(0, Long.class)).toList()
         );
-
-        return result;
+        return StreamSupport.stream(lastExecutions.spliterator(), true)
+            .collect(Collectors.toMap(ScenarioExecution::scenarioId, ScenarioExecution::toDomain));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ExecutionSummary> getExecutions(String scenarioId) {
-        return namedParameterJdbcTemplate.query(
-            "SELECT SCENARIO_HIST.ID, SCENARIO_HIST.EXECUTION_TIME, SCENARIO_HIST.DURATION, SCENARIO_HIST.STATUS, SCENARIO_HIST.INFORMATION, SCENARIO_HIST.ERROR, " +
-                "SCENARIO_HIST.TEST_CASE_TITLE, SCENARIO_HIST.ENVIRONMENT,SCENARIO_HIST.DATASET_ID, SCENARIO_HIST.DATASET_VERSION, SCENARIO_HIST.USER_ID, " +
-                "CAMP.TITLE AS CAMPAIGN_TITLE, " +
-                "CAMP.ID AS CAMPAIGN_ID, " +
-                "CAMP_HIST.ID AS CAMPAIGN_EXECUTION_ID " +
-                "FROM SCENARIO_EXECUTION_HISTORY SCENARIO_HIST " +
-                "LEFT JOIN CAMPAIGN_EXECUTION_HISTORY CAMP_HIST ON CAMP_HIST.SCENARIO_EXECUTION_ID = SCENARIO_HIST.ID " +
-                "LEFT JOIN CAMPAIGN CAMP ON CAMP.ID = CAMP_HIST .CAMPAIGN_ID " +
-                "WHERE SCENARIO_HIST.SCENARIO_ID = :scenarioId ORDER BY SCENARIO_HIST.ID DESC LIMIT " + LIMIT_BLOC_SIZE,
-            ImmutableMap.<String, Object>builder().put("scenarioId", scenarioId).build(),
-            executionSummaryRowMapper);
+        if (invalidScenarioId(scenarioId)) {
+            return emptyList();
+        }
+        List<ScenarioExecution> scenarioExecutions = scenarioExecutionsJpaRepository.findFirst20ByScenarioIdOrderByIdDesc(scenarioId);
+        return scenarioExecutions.stream()
+            .map(this::scenarioExecutionToExecutionSummary)
+            .toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ExecutionSummary getExecutionSummary(Long executionId) {
-        try {
-            return namedParameterJdbcTemplate.queryForObject(
-                "SELECT SCENARIO_HIST.ID, SCENARIO_HIST.EXECUTION_TIME, SCENARIO_HIST.DURATION, SCENARIO_HIST.STATUS, SCENARIO_HIST.INFORMATION, SCENARIO_HIST.ERROR, " +
-                    "SCENARIO_HIST.TEST_CASE_TITLE, SCENARIO_HIST.ENVIRONMENT,SCENARIO_HIST.DATASET_ID, SCENARIO_HIST.DATASET_VERSION, SCENARIO_HIST.USER_ID, " +
-                    "CAMP.TITLE AS CAMPAIGN_TITLE, " +
-                    "CAMP.ID AS CAMPAIGN_ID, " +
-                    "CAMP_HIST.ID AS CAMPAIGN_EXECUTION_ID " +
-                    "FROM SCENARIO_EXECUTION_HISTORY SCENARIO_HIST " +
-                    "LEFT JOIN CAMPAIGN_EXECUTION_HISTORY CAMP_HIST ON CAMP_HIST.SCENARIO_EXECUTION_ID = SCENARIO_HIST.ID " +
-                    "LEFT JOIN CAMPAIGN CAMP ON CAMP.ID = CAMP_HIST .CAMPAIGN_ID " +
-                    "WHERE SCENARIO_HIST.ID = :executionId",
-                ImmutableMap.<String, Object>builder().put("executionId", executionId).build(),
-                executionSummaryRowMapper);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ReportNotFoundException(executionId);
-        }
+        return scenarioExecutionsJpaRepository.findById(executionId)
+            .map(this::scenarioExecutionToExecutionSummary)
+            .orElseThrow(
+                () -> new ReportNotFoundException(executionId)
+            );
+    }
 
+    private ExecutionSummary scenarioExecutionToExecutionSummary(ScenarioExecution scenarioExecution) {
+        CampaignExecutionReport campaignExecutionReport = ofNullable(scenarioExecution.campaignExecution())
+            .map(ce -> ce.toDomain(campaignJpaRepository.findById(ce.campaignId()).get(), false, null))
+            .orElse(null);
+        return scenarioExecution.toDomain(campaignExecutionReport);
     }
 
     @Override
     public Execution store(String scenarioId, DetachedExecution detachedExecution) throws IllegalStateException {
-        long nextId = namedParameterJdbcTemplate.queryForObject("SELECT nextval('SCENARIO_EXECUTION_HISTORY_SEQ')", Collections.emptyMap(), long.class);
-        Execution execution = detachedExecution.attach(nextId);
-        Map<String, Object> executionParameters = executionParameters(execution);
-        executionParameters.put("scenarioId", scenarioId);
-        executionParameters.put("id", nextId);
-        namedParameterJdbcTemplate.update("INSERT INTO SCENARIO_EXECUTION_HISTORY"
-                + "(ID, SCENARIO_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION, USER_ID) VALUES "
-                + "(:id, :scenarioId, :executionTime, :duration, :status, :information, :error, :report, :title, :environment, :datasetId, :datasetVersion, :user)",
-            executionParameters);
-
-        return ImmutableExecutionHistory.Execution.builder()
-            .from(execution)
-            .executionId(nextId)
-            .build();
+        if(invalidScenarioId(scenarioId)) {
+            throw new IllegalStateException("Scenario id is null or empty");
+        }
+        ScenarioExecution scenarioExecution = ScenarioExecution.fromDomain(scenarioId, detachedExecution);
+        scenarioExecution = scenarioExecutionsJpaRepository.save(scenarioExecution);
+        scenarioExecutionReportJpaRepository.save(new ScenarioExecutionReport(scenarioExecution, detachedExecution.report()));
+        Execution execution = detachedExecution.attach(scenarioExecution.id());
+        return ImmutableExecutionHistory.Execution.builder().from(execution).build();
     }
 
     @Override
+    @Transactional(readOnly = true)
     // TODO remove scenarioId params
     public Execution getExecution(String scenarioId, Long reportId) throws ReportNotFoundException {
-        try {
-            return namedParameterJdbcTemplate.queryForObject(
-                "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, REPORT, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION, USER_ID FROM SCENARIO_EXECUTION_HISTORY WHERE ID = :reportId AND SCENARIO_ID = :scenarioId",
-                ImmutableMap.<String, Object>builder()
-                    .put("reportId", reportId)
-                    .put("scenarioId", scenarioId)
-                    .build(),
-                executionRowMapper);
-        } catch (EmptyResultDataAccessException e) {
+        if (invalidScenarioId(scenarioId) || testCaseRepository.findById(scenarioId).isEmpty()) {
             throw new ReportNotFoundException(scenarioId, reportId);
         }
+        return scenarioExecutionReportJpaRepository.findById(reportId).map(ScenarioExecutionReport::toDomain)
+            .orElseThrow(
+                () -> new ReportNotFoundException(scenarioId, reportId)
+            );
     }
 
     @Override
     public void update(String scenarioId, Execution updatedExecution) throws ReportNotFoundException {
-        int updatedEntries = update(updatedExecution);
-
-        if (updatedEntries == 0) {
+        if (!scenarioExecutionsJpaRepository.existsById(updatedExecution.executionId())) {
             throw new ReportNotFoundException(scenarioId, updatedExecution.executionId());
         }
+        update(updatedExecution);
     }
 
-    private int update(Execution updatedExecution) throws ReportNotFoundException {
-        Map<String, Object> executionParameters = executionParameters(updatedExecution);
-        executionParameters.put("id", updatedExecution.executionId());
+    private void update(Execution updatedExecution) throws ReportNotFoundException {
+        ScenarioExecution execution = scenarioExecutionsJpaRepository.findById(updatedExecution.executionId()).orElseThrow(
+            () -> new ReportNotFoundException(updatedExecution.executionId())
+        );
 
-        return namedParameterJdbcTemplate.update(
-            "UPDATE SCENARIO_EXECUTION_HISTORY SET "
-                + "EXECUTION_TIME = :executionTime, DURATION = :duration, STATUS = :status, INFORMATION = :information, ERROR = :error, REPORT = :report "
-                + "WHERE ID = :id",
-            executionParameters);
+        execution.updateFromExecution(updatedExecution);
+        scenarioExecutionsJpaRepository.save(execution);
+        updateReport(updatedExecution);
+    }
+
+    private void updateReport(Execution execution) throws ReportNotFoundException {
+        ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionReportJpaRepository.findById(execution.executionId()).orElseThrow(
+            () -> new ReportNotFoundException(execution.executionId())
+        );
+        scenarioExecutionReport.updateReport(execution);
+        scenarioExecutionReportJpaRepository.save(scenarioExecutionReport);
     }
 
     @Override
@@ -155,11 +148,9 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ExecutionSummary> getExecutionsWithStatus(ServerReportStatus status) {
-        return namedParameterJdbcTemplate.query(
-            "SELECT ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT, DATASET_ID, DATASET_VERSION, USER_ID FROM SCENARIO_EXECUTION_HISTORY WHERE STATUS = :status",
-            ImmutableMap.<String, Object>builder().put("status", status.name()).build(),
-            executionSummaryRowMapper);
+        return scenarioExecutionsJpaRepository.findByStatus(status).stream().map(ScenarioExecution::toDomain).toList();
     }
 
     private void updateExecutionsToKO(List<ExecutionSummary> executions) {
@@ -183,19 +174,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
             .build();
     }
 
-    private Map<String, Object> executionParameters(Execution execution) {
-        Map<String, Object> executionParameters = new HashMap<>();
-        executionParameters.put("executionTime", execution.time().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        executionParameters.put("duration", execution.duration());
-        executionParameters.put("status", execution.status().name());
-        executionParameters.put("information", execution.info().map(info -> StringUtils.substring(info, 0, 512)).orElse(null));
-        executionParameters.put("error", execution.error().map(error -> StringUtils.substring(error, 0, 512)).orElse(null));
-        executionParameters.put("report", execution.report());
-        executionParameters.put("title", execution.testCaseTitle());
-        executionParameters.put("environment", execution.environment());
-        executionParameters.put("datasetId", execution.datasetId().orElse(null));
-        executionParameters.put("datasetVersion", execution.datasetVersion().orElse(null));
-        executionParameters.put("user", execution.user());
-        return executionParameters;
+    private boolean invalidScenarioId(String scenarioId) {
+        return isNullOrEmpty(scenarioId);
     }
 }

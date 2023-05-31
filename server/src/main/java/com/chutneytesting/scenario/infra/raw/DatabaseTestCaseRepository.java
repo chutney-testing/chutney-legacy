@@ -1,117 +1,144 @@
 package com.chutneytesting.scenario.infra.raw;
 
-import static com.chutneytesting.scenario.infra.jpa.ScenarioDao.fromTestCaseData;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.Long.valueOf;
 import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static java.util.stream.Collectors.toList;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
+import com.chutneytesting.campaign.infra.CampaignScenarioJpaRepository;
+import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
+import com.chutneytesting.execution.infra.storage.DatabaseExecutionJpaRepository;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.scenario.infra.jpa.ScenarioDao;
+import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
-import com.google.common.collect.ImmutableMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
+@Transactional
 public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestCase> {
 
-    private final NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate;
-    private final DatabaseTestCaseRepositoryDao jpa;
+    private final ScenarioJpaRepository scenarioJpaRepository;
+    private final DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository;
+    private final CampaignScenarioJpaRepository campaignScenarioJpaRepository;
+    private final EntityManager entityManager;
 
-    public DatabaseTestCaseRepository(NamedParameterJdbcTemplate uiNamedParameterJdbcTemplate,
-                                      DatabaseTestCaseRepositoryDao jpa) {
-
-        this.uiNamedParameterJdbcTemplate = uiNamedParameterJdbcTemplate;
-        this.jpa = jpa;
+    public DatabaseTestCaseRepository(
+        ScenarioJpaRepository jpa,
+        DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository,
+        CampaignScenarioJpaRepository campaignScenarioJpaRepository, EntityManager entityManager
+    ) {
+        this.scenarioJpaRepository = jpa;
+        this.scenarioExecutionsJpaRepository = scenarioExecutionsJpaRepository;
+        this.campaignScenarioJpaRepository = campaignScenarioJpaRepository;
+        this.entityManager = entityManager;
     }
 
     @Override
-    //@Transactional(propagation = Propagation.NOT_SUPPORTED)
     public String save(GwtTestCase testCase) {
-        TestCaseData testCaseData = TestCaseDataMapper.toDto(testCase);
-        return doSave(testCaseData).toString();
+        try {
+            return scenarioJpaRepository.save(Scenario.fromGwtTestCase(testCase)).id().toString();
+        } catch (ObjectOptimisticLockingFailureException e) {
+            throw new ScenarioNotFoundException(testCase.id(), testCase.metadata().version());
+        }
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<GwtTestCase> findById(String scenarioId) {
         if (checkIdInput(scenarioId)) {
             return empty();
         }
-        try {
-            Optional<ScenarioDao> scenarioDao = jpa.findById(valueOf(scenarioId));
-            return scenarioDao.map(ScenarioDao::toGwtTestCase);
-        } catch (IncorrectResultSizeDataAccessException e) {
-            return empty();
-        }
+        Optional<Scenario> scenarioDao = scenarioJpaRepository.findByIdAndActivated(valueOf(scenarioId), true)
+            .filter(Scenario::activated);
+        return scenarioDao.map(Scenario::toGwtTestCase);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<TestCase> findExecutableById(String id) {
-        if (checkIdInput(id)) {
-            return empty();
-        }
-        Optional<GwtTestCase> byId = findById(id);
-        if (byId.isPresent()) {
-            return of(byId.get());
-        } else {
-            return empty();
-        }
+        return findById(id).map(TestCase.class::cast);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<TestCaseMetadata> findMetadataById(String testCaseId) {
-        return findById(testCaseId).map(t -> t.metadata());
+        if (checkIdInput(testCaseId)) {
+            return empty();
+        }
+        return scenarioJpaRepository.findMetaDataByIdAndActivated(valueOf(testCaseId), true).map(Scenario::toTestCaseMetadata);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TestCaseMetadata> findAll() {
-        return jpa.findAll().stream().map(ScenarioDao::toTestCaseMetadata).collect(toList());
+        return scenarioJpaRepository.findMetaDataByActivatedTrue().stream()
+            .map(Scenario::toTestCaseMetadata)
+            .toList();
     }
 
     @Override
-    @Transactional
     public void removeById(String scenarioId) {
         if (checkIdInput(scenarioId)) {
             return;
         }
-        // TODO - Refactor - Use CampaignRepository up in callstack
-        uiNamedParameterJdbcTemplate.update("DELETE FROM CAMPAIGN_EXECUTION_HISTORY WHERE SCENARIO_ID = :id", buildIdParameterMap(scenarioId));
-        uiNamedParameterJdbcTemplate.update("DELETE FROM CAMPAIGN_SCENARIOS WHERE SCENARIO_ID = :id", buildIdParameterMap(scenarioId));
-        jpa.deactivateScenario(valueOf(scenarioId));
+        scenarioJpaRepository.findByIdAndActivated(valueOf(scenarioId), true)
+            .ifPresent(scenarioJpa -> {
+                List<ScenarioExecution> allExecutions = scenarioExecutionsJpaRepository.findAllByScenarioId(scenarioId);
+                allExecutions.forEach(e -> {
+                    e.forCampaignExecution(null);
+                    scenarioExecutionsJpaRepository.save(e);
+                });
+
+                List<CampaignScenario> allCampaignScenarios = campaignScenarioJpaRepository.findAllByScenarioId(scenarioId);
+                campaignScenarioJpaRepository.deleteAll(allCampaignScenarios);
+
+                scenarioJpa.deactivate();
+                scenarioJpaRepository.save(scenarioJpa);
+            });
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Integer> lastVersion(String scenarioId) {
         if (checkIdInput(scenarioId)) {
             return empty();
         }
         try {
-            return jpa.getLastVersion(valueOf(scenarioId));
+            return scenarioJpaRepository.lastVersion(valueOf(scenarioId));
         } catch (IncorrectResultSizeDataAccessException e) {
             return empty();
         }
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TestCaseMetadata> search(String textFilter) {
         if (!textFilter.isEmpty()) {
             String[] words = escapeSql(textFilter).split("\\s");
-            Specification<ScenarioDao> scenarioDaoSpecification = buildLikeSpecificationOnContent(words);
-            List<ScenarioDao> all = jpa.findAll(scenarioDaoSpecification);
-            return all.stream().map(ScenarioDao::toTestCaseMetadata).collect(Collectors.toList());
+            Specification<Scenario> scenarioDaoSpecification = buildLikeSpecificationOnContent(words);
+
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Scenario> query = builder.createQuery(Scenario.class);
+            Root<Scenario> root = query.from(Scenario.class);
+            query.select(builder.construct(Scenario.class, root.get("id"), root.get("title"), root.get("description"), root.get("tags"), root.get("creationDate"), root.get("dataset"), root.get("activated"), root.get("userId"), root.get("updateDate"), root.get("version")));
+            query = query.where(scenarioDaoSpecification.toPredicate(root, query, builder));
+
+            return entityManager.createQuery(query).getResultList().stream().map(Scenario::toTestCaseMetadata).toList();
         } else {
             return findAll();
         }
@@ -124,29 +151,15 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         return str.replace("'", "''");
     }
 
-    private Specification<ScenarioDao> buildLikeSpecificationOnContent(String[] words) {
-        Specification<ScenarioDao> scenarioDaoSpecification = null;
+    private Specification<Scenario> buildLikeSpecificationOnContent(String[] words) {
+        Specification<Scenario> scenarioDaoSpecification = null;
         for (String word : words) {
-            Specification<ScenarioDao> wordSpecification = DatabaseTestCaseRepositoryDao.contentContains(word);
-            if (scenarioDaoSpecification == null) {
-                scenarioDaoSpecification = wordSpecification;
-            } else {
-                scenarioDaoSpecification = scenarioDaoSpecification.or(wordSpecification);
-            }
+            Specification<Scenario> wordSpecification = ScenarioJpaRepository.contentContains(word);
+            scenarioDaoSpecification = ofNullable(scenarioDaoSpecification)
+                .map(s -> s.or(wordSpecification))
+                .orElse(wordSpecification);
         }
         return scenarioDaoSpecification;
-    }
-
-    private Long doSave(TestCaseData scenario) {
-        try {
-            return jpa.save(fromTestCaseData(scenario)).getId();
-        } catch (ObjectOptimisticLockingFailureException e) {
-            throw new ScenarioNotFoundException(scenario.id, scenario.version);
-        }
-    }
-
-    private ImmutableMap<String, Object> buildIdParameterMap(String scenarioId) {
-        return ImmutableMap.<String, Object>builder().put("id", scenarioId).build();
     }
 
     private boolean checkIdInput(String scenarioId) {

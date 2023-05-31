@@ -1,6 +1,5 @@
 package com.chutneytesting.execution.domain.campaign;
 
-import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -21,12 +20,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static util.WaitUtils.awaitDuring;
 
+import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.jira.api.ReportForJira;
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
@@ -39,10 +39,10 @@ import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus
 import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +60,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.stubbing.Answer;
 import org.springframework.core.task.support.ExecutorServiceAdapter;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 
 public class CampaignExecutionEngineTest {
@@ -70,9 +69,10 @@ public class CampaignExecutionEngineTest {
     private CampaignExecutionEngine sut;
 
     private final CampaignRepository campaignRepository = mock(CampaignRepository.class);
+    private final CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
     private final ScenarioExecutionEngine scenarioExecutionEngine = mock(ScenarioExecutionEngine.class);
     private final ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
-    private final TestCaseRepositoryAggregator testCaseRepository = mock(TestCaseRepositoryAggregator.class);
+    private final TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
     private final DataSetHistoryRepository dataSetHistoryRepository = mock(DataSetHistoryRepository.class);
     private final JiraXrayEmbeddedApi jiraXrayPlugin = mock(JiraXrayEmbeddedApi.class);
     private final ChutneyMetrics metrics = mock(ChutneyMetrics.class);
@@ -95,7 +95,7 @@ public class CampaignExecutionEngineTest {
 
     @BeforeEach
     public void setUp() {
-        sut = new CampaignExecutionEngine(campaignRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, Optional.of(dataSetHistoryRepository), jiraXrayPlugin, metrics, executorService, objectMapper);
+        sut = new CampaignExecutionEngine(campaignRepository, campaignExecutionRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, Optional.of(dataSetHistoryRepository), jiraXrayPlugin, metrics, executorService, objectMapper);
         firstTestCase = createGwtTestCase("1");
         secondTestCase = createGwtTestCase("2");
         when(testCaseRepository.findExecutableById(firstTestCase.id())).thenReturn(of(firstTestCase));
@@ -255,11 +255,8 @@ public class CampaignExecutionEngineTest {
     public void should_throw_when_campaign_already_running() {
         Campaign campaign = createCampaign(1L);
 
-        Field currentCampaignExecutionsField = ReflectionUtils.findField(CampaignExecutionEngine.class, "currentCampaignExecutions");
-        currentCampaignExecutionsField.setAccessible(true);
-        Map<Long, CampaignExecutionReport> field = (Map<Long, CampaignExecutionReport>) ReflectionUtils.getField(currentCampaignExecutionsField, sut);
         CampaignExecutionReport mockReport = new CampaignExecutionReport(1L, "", false, "", null, null, "");
-        field.put(1L, mockReport);
+        when(campaignExecutionRepository.currentExecution(1L)).thenReturn(Optional.of(mockReport));
 
         // When
         assertThatThrownBy(() -> sut.executeScenarioInCampaign(null, campaign, "user"))
@@ -282,7 +279,7 @@ public class CampaignExecutionEngineTest {
         verify(campaignRepository).findById(campaign.id);
         verify(campaignRepository).findByName(campaign.title);
 
-        verify(campaignRepository, times(2)).newCampaignExecution();
+        verify(campaignRepository, times(2)).newCampaignExecution(campaign.id);
     }
 
     @Test
@@ -319,13 +316,10 @@ public class CampaignExecutionEngineTest {
 
     @Test
     public void should_retrieve_current_campaign_executions() {
-        Field currentCampaignExecutionsField = ReflectionUtils.findField(CampaignExecutionEngine.class, "currentCampaignExecutions");
-        currentCampaignExecutionsField.setAccessible(true);
-        Map<Long, CampaignExecutionReport> field = (Map<Long, CampaignExecutionReport>) ReflectionUtils.getField(currentCampaignExecutionsField, sut);
         CampaignExecutionReport report = new CampaignExecutionReport(1L, 33L, emptyList(), "", false, "", null, null, "");
         CampaignExecutionReport report2 = new CampaignExecutionReport(2L, 42L, emptyList(), "", false, "", null, null, "");
-        field.put(1L, report);
-        field.put(2L, report2);
+        when(campaignExecutionRepository.currentExecution(1L)).thenReturn(Optional.of(report));
+        when(campaignExecutionRepository.currentExecution(2L)).thenReturn(Optional.of(report2));
 
         Optional<CampaignExecutionReport> campaignExecutionReport = sut.currentExecution(1L);
 

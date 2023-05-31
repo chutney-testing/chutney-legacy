@@ -133,7 +133,7 @@ Feature: Final action for registering final actions for a testcase
                     "targets": [
                         {
                             "name": "test_http",
-                            "url": "https://localhost:${T(System).getProperty('securePort')}",
+                            "url": "${#target.rawUri()}",
                             "properties": [
                                 { "key" : "keyStore", "value": "${#escapeJson(#resourcePath("blackbox/keystores/client.jks"))}" },
                                 { "key" : "keyStorePassword", "value": "client" },

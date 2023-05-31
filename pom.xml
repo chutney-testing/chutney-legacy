@@ -97,6 +97,8 @@
         <orientdb.version>3.2.12</orientdb.version> <!-- Divergence on dependencies istack-commons-runtime and asm-->
         <jsr305.version>3.0.2</jsr305.version>
         <liquibase.version>4.18.0</liquibase.version>
+        <sqlite.version>3.40.1.0</sqlite.version>
+        <sqlite.hibernate.dialect.version>0.1.2</sqlite.hibernate.dialect.version>
 
         <!-- action-impl dependencies versions -->
         <sshj.version>0.34.0</sshj.version>
@@ -114,6 +116,7 @@
         <!-- test dependencies versions -->
         <jqwik.version>1.7.3</jqwik.version>
         <wire-mock.version>2.27.2</wire-mock.version>
+        <testcontainers.version>1.16.3</testcontainers.version>
     </properties>
 
     <dependencies>
@@ -335,6 +338,16 @@
                 <artifactId>liquibase-core</artifactId>
                 <version>${liquibase.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.xerial</groupId>
+                <artifactId>sqlite-jdbc</artifactId>
+                <version>${sqlite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.gwenn</groupId>
+                <artifactId>sqlite-dialect</artifactId>
+                <version>${sqlite.hibernate.dialect.version}</version>
+            </dependency>
             <!-- Test dependencies -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -387,6 +400,13 @@
                 <artifactId>jqwik</artifactId>
                 <version>${jqwik.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <!-- Dependency Convergence -->

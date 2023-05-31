@@ -3,10 +3,10 @@ package com.chutneytesting.execution.domain.campaign;
 import static java.util.Collections.singleton;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.FailedExecutionAttempt;
@@ -19,13 +19,13 @@ import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
+import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import com.chutneytesting.tools.Try;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,27 +51,29 @@ public class CampaignExecutionEngine {
 
     private final ExecutorService executor;
     private final CampaignRepository campaignRepository;
+    private final CampaignExecutionRepository campaignExecutionRepository;
     private final ScenarioExecutionEngine scenarioExecutionEngine;
     private final ExecutionHistoryRepository executionHistoryRepository;
-    private final TestCaseRepositoryAggregator testCaseRepository;
+    private final TestCaseRepository testCaseRepository;
     private final DataSetHistoryRepository dataSetHistoryRepository;
     private final JiraXrayEmbeddedApi jiraXrayEmbeddedApi;
     private final ChutneyMetrics metrics;
 
-    private final Map<Long, CampaignExecutionReport> currentCampaignExecutions = new ConcurrentHashMap<>();
     private final Map<Long, Boolean> currentCampaignExecutionsStopRequests = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper;
 
     public CampaignExecutionEngine(CampaignRepository campaignRepository,
+                                   CampaignExecutionRepository campaignExecutionRepository,
                                    ScenarioExecutionEngine scenarioExecutionEngine,
                                    ExecutionHistoryRepository executionHistoryRepository,
-                                   TestCaseRepositoryAggregator testCaseRepository,
+                                   TestCaseRepository testCaseRepository,
                                    Optional<DataSetHistoryRepository> dataSetHistoryRepository,
                                    JiraXrayEmbeddedApi jiraXrayEmbeddedApi,
                                    ChutneyMetrics metrics,
                                    ExecutorService executorService,
                                    ObjectMapper objectMapper) {
         this.campaignRepository = campaignRepository;
+        this.campaignExecutionRepository = campaignExecutionRepository;
         this.scenarioExecutionEngine = scenarioExecutionEngine;
         this.executionHistoryRepository = executionHistoryRepository;
         this.testCaseRepository = testCaseRepository;
@@ -106,12 +108,11 @@ public class CampaignExecutionEngine {
     }
 
     public Optional<CampaignExecutionReport> currentExecution(Long campaignId) {
-        return Optional.ofNullable(campaignId)
-            .map(id -> currentCampaignExecutions.get(campaignId));
+        return campaignExecutionRepository.currentExecution(campaignId);
     }
 
     public List<CampaignExecutionReport> currentExecutions() {
-        return new ArrayList<>(currentCampaignExecutions.values());
+        return campaignExecutionRepository.currentExecutions();
     }
 
     public void stopExecution(Long executionId) {
@@ -122,7 +123,7 @@ public class CampaignExecutionEngine {
 
     public CampaignExecutionReport executeScenarioInCampaign(List<String> failedIds, Campaign campaign, String userId) {
         verifyNotAlreadyRunning(campaign);
-        Long executionId = campaignRepository.newCampaignExecution();
+        Long executionId = campaignRepository.newCampaignExecution(campaign.id);
 
         CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(
             executionId,
@@ -134,7 +135,7 @@ public class CampaignExecutionEngine {
             userId
         );
 
-        currentCampaignExecutions.put(campaign.id, campaignExecutionReport);
+        campaignExecutionRepository.startExecution(campaign.id, campaignExecutionReport);
         currentCampaignExecutionsStopRequests.put(executionId, Boolean.FALSE);
         try {
             if (failedIds.isEmpty()) {
@@ -149,7 +150,7 @@ public class CampaignExecutionEngine {
             campaignExecutionReport.endCampaignExecution();
             LOGGER.info("Save campaign {} execution {} with status {}", campaign.id, campaignExecutionReport.executionId, campaignExecutionReport.status());
             currentCampaignExecutionsStopRequests.remove(executionId);
-            currentCampaignExecutions.remove(campaign.id);
+            campaignExecutionRepository.stopExecution(campaign.id);
 
             Try.exec(() -> {
                 campaignRepository.saveReport(campaign.id, campaignExecutionReport);

@@ -105,7 +105,7 @@ public class FakeCampaignRepository implements CampaignRepository {
     }
 
     @Override
-    public Long newCampaignExecution() {
+    public Long newCampaignExecution(Long campaignId) {
         return new Random(100).nextLong();
     }
 

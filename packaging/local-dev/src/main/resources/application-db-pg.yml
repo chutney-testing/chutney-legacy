@@ -1,4 +1,8 @@
 spring:
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQL10Dialect
+      hibernate.id.new_generator_mappings: false
   datasource:
     url: jdbc:postgresql://localhost:10457/postgres
     username: postgres

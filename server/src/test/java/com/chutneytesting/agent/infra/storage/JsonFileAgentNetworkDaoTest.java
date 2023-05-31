@@ -2,7 +2,6 @@ package com.chutneytesting.agent.infra.storage;
 
 import static com.chutneytesting.agent.infra.storage.JsonFileAgentNetworkDao.AGENTS_FILE_NAME;
 import static com.chutneytesting.agent.infra.storage.JsonFileAgentNetworkDao.ROOT_DIRECTORY_NAME;
-import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,6 +10,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.tools.ThrowingRunnable;
 import com.fasterxml.jackson.databind.ObjectMapper;

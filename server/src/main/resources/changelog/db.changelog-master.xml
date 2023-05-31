@@ -1,8 +1,7 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.18.xsd">
 
     <changeSet id="db_check_version" author="ICG">
         <preConditions onFail="HALT" onFailMessage="Database must be new or have been updated up to 2.0.0-4 version">
@@ -121,15 +120,21 @@
     <!-- If not doing that we have : current value of sequence SCENARIO_SEQ is not yet defined in this session-->
     <changeSet id="init_scenario_seq" author="ICG"  dbms="h2" runAlways="true">
         <validCheckSum>8:cedc00e540a2be8d95813f0b8269098e</validCheckSum>
+        <preConditions onFail="CONTINUE">
+            <sequenceExists sequenceName="SCENARIO_SEQ"/>
+        </preConditions>
         <comment>Init sequence in session</comment>
         <sql>select nextval('SCENARIO_SEQ')</sql>
     </changeSet>
     <changeSet id="20190719-003-h2" author="ICG" dbms="h2" runAlways="true">
         <preConditions onFail="CONTINUE">
-            <not>
-                <tableIsEmpty tableName="SCENARIO"/>
-                <sqlCheck expectedResult="0">select currval('SCENARIO_SEQ') - (select max(cast(ID as integer)) from SCENARIO)</sqlCheck>
-            </not>
+            <and>
+                <sequenceExists sequenceName="SCENARIO_SEQ"/>
+                <not>
+                    <tableIsEmpty tableName="SCENARIO"/>
+                    <sqlCheck expectedResult="0">select currval('SCENARIO_SEQ') - (select max(cast(ID as integer)) from SCENARIO)</sqlCheck>
+                </not>
+            </and>
         </preConditions>
         <comment>Update SCENARIO id sequence</comment>
         <sql>alter sequence SCENARIO_SEQ restart with (select max(cast(ID as integer))+1 from SCENARIO)</sql>
@@ -137,10 +142,13 @@
 
     <changeSet id="20190719-003-pg" author="ICG" dbms="postgresql" runAlways="true">
         <preConditions onFail="CONTINUE">
-            <not>
-                <tableIsEmpty tableName="SCENARIO"/>
-                <sqlCheck expectedResult="0">select (select last_value from SCENARIO_SEQ) - (select max(cast(ID as integer)) from SCENARIO)</sqlCheck>
-            </not>
+            <and>
+                <sequenceExists schemaName="fake_name" sequenceName="SCENARIO_SEQ"/>
+                <not>
+                    <tableIsEmpty tableName="SCENARIO"/>
+                    <sqlCheck expectedResult="0">select (select last_value from SCENARIO_SEQ) - (select max(cast(ID as integer)) from SCENARIO)</sqlCheck>
+                </not>
+            </and>
         </preConditions>
         <comment>Update SCENARIO id sequence</comment>
         <sql>select setval('SCENARIO_SEQ', max(cast(ID as integer))+1) from SCENARIO</sql>
@@ -171,15 +179,21 @@
     <!-- If not doing that we have : current value of sequence CAMPAIGN_SEQ is not yet defined in this session-->
     <changeSet id="init_campaign_seq" author="ICG" dbms="h2" runAlways="true">
         <validCheckSum>8:b2d47bad6bb04a1521a1c36f1f69ef31</validCheckSum>
+        <preConditions onFail="CONTINUE">
+            <sequenceExists sequenceName="CAMPAIGN_SEQ"/>
+        </preConditions>
         <comment>Init sequence in session</comment>
         <sql>select nextval('CAMPAIGN_SEQ')</sql>
     </changeSet>
     <changeSet id="20190719-005-h2" author="ICG" dbms="h2" runAlways="true">
         <preConditions onFail="CONTINUE">
-            <not>
-                <tableIsEmpty tableName="CAMPAIGN"/>
-                <sqlCheck expectedResult="0">select currval('CAMPAIGN_SEQ') - (select max(ID) from CAMPAIGN)</sqlCheck>
-            </not>
+            <and>
+                <sequenceExists sequenceName="CAMPAIGN_SEQ"/>
+                <not>
+                    <tableIsEmpty tableName="CAMPAIGN"/>
+                    <sqlCheck expectedResult="0">select currval('CAMPAIGN_SEQ') - (select max(ID) from CAMPAIGN)</sqlCheck>
+                </not>
+            </and>
         </preConditions>
         <comment>Update CAMPAIGN id sequence</comment>
         <sql>alter sequence CAMPAIGN_SEQ restart with (select max(ID)+1 from CAMPAIGN)</sql>
@@ -187,10 +201,13 @@
 
     <changeSet id="20190719-005-pg" author="ICG" dbms="postgresql" runAlways="true">
         <preConditions onFail="CONTINUE">
-            <not>
-                <tableIsEmpty tableName="CAMPAIGN"/>
-                <sqlCheck expectedResult="0">select (select last_value from CAMPAIGN_SEQ) - (select max(ID) from CAMPAIGN)</sqlCheck>
-            </not>
+            <and>
+                <sequenceExists schemaName="fake_name" sequenceName="CAMPAIGN_SEQ"/>
+                <not>
+                    <tableIsEmpty tableName="CAMPAIGN"/>
+                    <sqlCheck expectedResult="0">select (select last_value from CAMPAIGN_SEQ) - (select max(ID) from CAMPAIGN)</sqlCheck>
+                </not>
+            </and>
         </preConditions>
         <comment>Update CAMPAIGN id sequence</comment>
         <sql>select setval('CAMPAIGN_SEQ', max(ID)+1) from CAMPAIGN</sql>
@@ -229,15 +246,21 @@
     <!-- If not doing that we have : current value of sequence SCENARIO_EXECUTION_HISTORY_SEQ is not yet defined in this session-->
     <changeSet id="init_execution_history_seq" author="ICG" dbms="h2" runAlways="true">
         <validCheckSum>8:1236e6d6f029325bc6aed052f04e158e</validCheckSum>
+        <preConditions onFail="CONTINUE">
+            <sequenceExists sequenceName="SCENARIO_EXECUTION_HISTORY_SEQ"/>
+        </preConditions>
         <comment>Init sequence in session</comment>
         <sql>select nextval('SCENARIO_EXECUTION_HISTORY_SEQ')</sql>
     </changeSet>
     <changeSet id="20190719-007-h2" author="ICG" dbms="h2" runAlways="true">
         <preConditions onFail="CONTINUE">
-            <not>
-                <tableIsEmpty tableName="SCENARIO_EXECUTION_HISTORY"/>
-                <sqlCheck expectedResult="0" >select currval('SCENARIO_EXECUTION_HISTORY_SEQ') - (select max(ID) from SCENARIO_EXECUTION_HISTORY)</sqlCheck>
-            </not>
+            <and>
+                <sequenceExists sequenceName="SCENARIO_EXECUTION_HISTORY_SEQ"/>
+                <not>
+                    <tableIsEmpty tableName="SCENARIO_EXECUTION_HISTORY"/>
+                    <sqlCheck expectedResult="0" >select currval('SCENARIO_EXECUTION_HISTORY_SEQ') - (select max(ID) from SCENARIO_EXECUTION_HISTORY)</sqlCheck>
+                </not>
+            </and>
         </preConditions>
         <comment>Update SCENARIO_EXECUTION_HISTORY id sequence</comment>
         <sql>alter sequence SCENARIO_EXECUTION_HISTORY_SEQ restart with (select max(ID)+1 from SCENARIO_EXECUTION_HISTORY)</sql>
@@ -245,10 +268,13 @@
 
     <changeSet id="20190719-007-pg" author="ICG" dbms="postgresql" runAlways="true">
         <preConditions onFail="CONTINUE">
-            <not>
-                <tableIsEmpty tableName="SCENARIO_EXECUTION_HISTORY"/>
-                <sqlCheck expectedResult="0" >select (select last_value from SCENARIO_EXECUTION_HISTORY_SEQ) - (select max(ID) from SCENARIO_EXECUTION_HISTORY)</sqlCheck>
-            </not>
+            <and>
+                <sequenceExists schemaName="fake_name" sequenceName="SCENARIO_EXECUTION_HISTORY_SEQ"/>
+                <not>
+                    <tableIsEmpty tableName="SCENARIO_EXECUTION_HISTORY"/>
+                    <sqlCheck expectedResult="0" >select (select last_value from SCENARIO_EXECUTION_HISTORY_SEQ) - (select max(ID) from SCENARIO_EXECUTION_HISTORY)</sqlCheck>
+                </not>
+            </and>
         </preConditions>
         <comment>Update SCENARIO_EXECUTION_HISTORY id sequence</comment>
         <sql>select setval('SCENARIO_EXECUTION_HISTORY_SEQ', max(ID)+1) from SCENARIO_EXECUTION_HISTORY</sql>
@@ -302,15 +328,21 @@
     <!-- If not doing that we have : current value of sequence CAMPAIGN_EXECUTION_SEQ is not yet defined in this session-->
     <changeSet id="init_campaign_execution_history_seq" author="ICG" dbms="h2" runAlways="true">
         <validCheckSum>8:b7b1dbdf1c198f4edf3cd444e2d5b1b4</validCheckSum>
+        <preConditions onFail="CONTINUE">
+            <sequenceExists sequenceName="CAMPAIGN_EXECUTION_SEQ"/>
+        </preConditions>
         <comment>Init sequence in session</comment>
         <sql>select nextval('CAMPAIGN_EXECUTION_SEQ')</sql>
     </changeSet>
     <changeSet id="20190719-011-h2" author="ICG" dbms="h2" runAlways="true">
         <preConditions onFail="CONTINUE">
-            <not>
-                <tableIsEmpty tableName="CAMPAIGN_EXECUTION_HISTORY"/>
-                <sqlCheck expectedResult="0">select currval('CAMPAIGN_EXECUTION_SEQ') - (select max(ID) from CAMPAIGN_EXECUTION_HISTORY)</sqlCheck>
-            </not>
+            <and>
+                <sequenceExists sequenceName="CAMPAIGN_EXECUTION_SEQ"/>
+                <not>
+                    <tableIsEmpty tableName="CAMPAIGN_EXECUTION_HISTORY"/>
+                    <sqlCheck expectedResult="0">select currval('CAMPAIGN_EXECUTION_SEQ') - (select max(ID) from CAMPAIGN_EXECUTION_HISTORY)</sqlCheck>
+                </not>
+            </and>
         </preConditions>
         <comment>Update CAMPAIGN_EXECUTION_HISTORY id sequence</comment>
         <sql>alter sequence CAMPAIGN_EXECUTION_SEQ restart with (select max(ID)+1 from CAMPAIGN_EXECUTION_HISTORY)</sql>
@@ -318,10 +350,13 @@
 
     <changeSet id="20190719-011-pg" author="ICG" dbms="postgresql" runAlways="true">
         <preConditions onFail="CONTINUE">
-            <not>
-                <tableIsEmpty tableName="CAMPAIGN_EXECUTION_HISTORY"/>
-                <sqlCheck expectedResult="0">select (select last_value from CAMPAIGN_EXECUTION_SEQ) - (select max(ID) from CAMPAIGN_EXECUTION_HISTORY)</sqlCheck>
-            </not>
+            <and>
+                <sequenceExists schemaName="fake_name" sequenceName="CAMPAIGN_EXECUTION_SEQ"/>
+                <not>
+                    <tableIsEmpty tableName="CAMPAIGN_EXECUTION_HISTORY"/>
+                    <sqlCheck expectedResult="0">select (select last_value from CAMPAIGN_EXECUTION_SEQ) - (select max(ID) from CAMPAIGN_EXECUTION_HISTORY)</sqlCheck>
+                </not>
+            </and>
         </preConditions>
         <comment>Update CAMPAIGN_EXECUTION_HISTORY id sequence</comment>
         <sql>select setval('CAMPAIGN_EXECUTION_SEQ', max(ID)+1) from CAMPAIGN_EXECUTION_HISTORY</sql>
@@ -567,7 +602,9 @@
         <renameColumn tableName="CAMPAIGN_PARAMETER" oldColumnName="VALUE" newColumnName="PARAMETER_VALUE"></renameColumn>
     </changeSet>
 
-    <changeSet id="Migration-table-scenario" author="ICG">
+    <include file="db.changelog-test-data.xml" relativeToChangelogFile="true" context="test"/>
+
+    <changeSet id="Migration-table-scenario" dbms="h2,postgresql" author="ICG">
         <comment>Migrate Scenario table</comment>
         <renameTable oldTableName="SCENARIO" newTableName="SCENARIO_OLD"></renameTable>
         <createTable tableName="SCENARIO">
@@ -615,5 +652,345 @@
         <sql>
             SELECT SETVAL('scenario_id_seq', (SELECT MAX(id) FROM SCENARIO))
         </sql>
+    </changeSet>
+
+    <changeSet id="Create-table-scenario" dbms="sqlite" author="ICG">
+        <comment>Create Scenario table</comment>
+        <renameTable oldTableName="SCENARIO" newTableName="SCENARIO_OLD"></renameTable>
+        <createTable tableName="SCENARIO">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(300)"/>
+            <column name="CONTENT" type="LONGVARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAGS" type="VARCHAR(300)"/>
+            <column name="CREATION_DATE" type="NUMBER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATASET" type="LONGVARCHAR"/>
+            <column defaultValueBoolean="true" name="ACTIVATED" type="BOOLEAN"/>
+            <column name="USER_ID" type="VARCHAR(64)"/>
+            <column name="UPDATE_DATE" type="NUMBER">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="VERSION" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-drop-sequence" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Scenario table sequence</comment>
+        <dropSequence sequenceName="SCENARIO_SEQ"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-drop" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Scenario table</comment>
+        <dropTable tableName="SCENARIO_OLD"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-drop-content_version" dbms="h2,postgresql" author="ICG">
+        <comment>Drop Scenario CONTENT_VERSION column</comment>
+        <dropColumn tableName="SCENARIO" columnName="CONTENT_VERSION"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-unique-index-id" dbms="h2,postgresql" author="ICG">
+        <comment>Create Scenario ID unique index</comment>
+        <createIndex tableName="SCENARIO" indexName="IDX_SCENARIO_ID" unique="true">
+            <column name="ID"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-drop-fk" dbms="h2,postgresql" author="ICG">
+        <comment>Drop campaign foreign keys (sqlite convergence)</comment>
+        <dropForeignKeyConstraint baseTableName="CAMPAIGN_SCENARIOS" constraintName="FK_CS_CAMPAIGN_ID"/>
+        <dropForeignKeyConstraint baseTableName="CAMPAIGN_PARAMETER" constraintName="FK_CD_CAMPAIGN_ID"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-drop-fk-ceh" dbms="h2,postgresql" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="CAMPAIGN_EXECUTION_HISTORY" foreignKeyName="FK_CEH_CAMPAIGN_ID"/>
+        </preConditions>
+        <comment>Drop campaign foreign keys specifics (sqlite convergence)</comment>
+        <dropForeignKeyConstraint baseTableName="CAMPAIGN_EXECUTION_HISTORY" constraintName="FK_CEH_CAMPAIGN_ID"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign" author="ICG">
+        <comment>Migrate table CAMPAIGN (sqlite convergence)</comment>
+        <renameTable oldTableName="CAMPAIGN" newTableName="CAMPAIGN_OLD"/>
+        <createTable tableName="CAMPAIGN">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="GLOBAL" name="ENVIRONMENT" type="VARCHAR(64)"/>
+            <column defaultValueBoolean="false" name="PARALLEL_RUN" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="RETRY_AUTO" type="BOOLEAN"/>
+            <column name="DATASET_ID" type="VARCHAR(20)"/>
+            <column name="TAGS" type="VARCHAR(300)"/>
+            <column defaultValueNumeric="1" name="VERSION" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-data" dbms="h2,postgresql" author="ICG">
+        <sql>
+            INSERT INTO CAMPAIGN ( ID, TITLE, DESCRIPTION, ENVIRONMENT, PARALLEL_RUN, RETRY_AUTO, DATASET_ID, TAGS )
+            SELECT  ID, TITLE, DESCRIPTION, ENVIRONMENT, PARALLEL_RUN, RETRY_AUTO, DATASET_ID, TAGS
+            FROM CAMPAIGN_OLD
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-init-id" dbms="h2" author="ICG">
+        <sql>
+            ALTER TABLE CAMPAIGN ALTER COLUMN ID RESTART WITH (SELECT MAX(ID)+1 FROM CAMPAIGN)
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-init-id" dbms="postgresql" author="ICG">
+        <sql>
+            SELECT SETVAL('campaign_id_seq', (SELECT MAX(ID) FROM CAMPAIGN))
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-drop-sequence" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Campaign table sequence</comment>
+        <dropSequence sequenceName="CAMPAIGN_SEQ"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-drop" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Campaign table</comment>
+        <dropTable tableName="CAMPAIGN_OLD"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-scenarios" author="ICG">
+        <comment>Migrate table CAMPAIGN_SCENARIOS (sqlite convergence)</comment>
+        <renameTable oldTableName="CAMPAIGN_SCENARIOS" newTableName="CAMPAIGN_SCENARIOS_OLD"/>
+        <createTable tableName="CAMPAIGN_SCENARIOS">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="CAMPAIGN_ID" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SCENARIO_ID" type="VARCHAR(12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RANK" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-scenarios-data" dbms="h2,postgresql" author="ICG">
+        <sql>
+            INSERT INTO CAMPAIGN_SCENARIOS ( CAMPAIGN_ID, SCENARIO_ID, RANK )
+            SELECT CAMPAIGN_ID, SCENARIO_ID, INDEX
+            FROM CAMPAIGN_SCENARIOS_OLD
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-scenarios-drop" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Campaign scenarios table</comment>
+        <dropTable tableName="CAMPAIGN_SCENARIOS_OLD"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-parameters" author="ICG">
+        <comment>Migrate table CAMPAIGN_PARAMETER (sqlite convergence)</comment>
+        <renameTable oldTableName="CAMPAIGN_PARAMETER" newTableName="CAMPAIGN_PARAMETER_OLD"/>
+        <createTable tableName="CAMPAIGN_PARAMETERS">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="CAMPAIGN_ID" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARAMETER" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARAMETER_VALUE" type="LONGVARCHAR"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-parameters-data" dbms="h2,postgresql" author="ICG">
+        <sql>
+            INSERT INTO CAMPAIGN_PARAMETERS ( ID, CAMPAIGN_ID, PARAMETER, PARAMETER_VALUE )
+            SELECT  ID, CAMPAIGN_ID, PARAMETER, PARAMETER_VALUE
+            FROM CAMPAIGN_PARAMETER_OLD
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-parameters-init-id" dbms="h2" author="ICG">
+        <sql>
+            ALTER TABLE CAMPAIGN_PARAMETERS ALTER COLUMN ID RESTART WITH (SELECT MAX(ID)+1 FROM CAMPAIGN_PARAMETERS)
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-parameters-init-id" dbms="postgresql" author="ICG">
+        <sql>
+            SELECT SETVAL('campaign_parameters_id_seq', (SELECT MAX(ID) FROM CAMPAIGN_PARAMETERS))
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-parameters-drop-sequence" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Campaign Parameter sequence</comment>
+        <dropSequence sequenceName="CAMPAIGN_PARAMETER_SEQ"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-parameters-drop" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Campaign Parameter table</comment>
+        <dropTable tableName="CAMPAIGN_PARAMETER_OLD"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-executions" author="ICG">
+        <comment>Migrate table SCENARIO_EXECUTION_HISTORY (sqlite convergence)</comment>
+        <createTable tableName="SCENARIO_EXECUTIONS">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="SCENARIO_ID" type="VARCHAR(12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CAMPAIGN_EXECUTION_ID" type="INTEGER"/>
+            <column name="EXECUTION_TIME" type="BIGINT"/>
+            <column name="DURATION" type="INTEGER"/>
+            <column name="STATUS" type="VARCHAR(32)"/>
+            <column name="INFORMATION" type="VARCHAR(512)"/>
+            <column name="ERROR" type="VARCHAR(512)"/>
+            <column defaultValue="Undefined scenario title" name="SCENARIO_TITLE" type="VARCHAR(300)"/>
+            <column defaultValue="" name="ENVIRONMENT" type="VARCHAR(20)"/>
+            <column defaultValue="" name="USER_ID" type="VARCHAR(64)"/>
+            <column name="DATASET_ID" type="VARCHAR(20)"/>
+            <column name="DATASET_VERSION" type="INTEGER"/>
+            <column defaultValueNumeric="1" name="VERSION" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="SCENARIO_EXECUTIONS_REPORTS">
+            <column name="SCENARIO_EXECUTION_ID" type="INTEGER">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="REPORT" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="VERSION" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-executions-data" dbms="h2,postgresql" author="ICG">
+        <sql>
+            INSERT INTO SCENARIO_EXECUTIONS ( ID, SCENARIO_ID, CAMPAIGN_EXECUTION_ID, EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, SCENARIO_TITLE, ENVIRONMENT, USER_ID, DATASET_ID, DATASET_VERSION )
+            SELECT  ID, SCENARIO_ID, (SELECT ID FROM CAMPAIGN_EXECUTION_HISTORY where SCENARIO_EXECUTION_ID = ID), EXECUTION_TIME, DURATION, STATUS, INFORMATION, ERROR, TEST_CASE_TITLE, ENVIRONMENT, USER_ID, DATASET_ID, DATASET_VERSION
+            FROM SCENARIO_EXECUTION_HISTORY
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-executions-reports-data" dbms="h2,postgresql" author="ICG">
+        <sql>
+            INSERT INTO SCENARIO_EXECUTIONS_REPORTS ( SCENARIO_EXECUTION_ID, REPORT )
+            SELECT  ID, REPORT
+            FROM SCENARIO_EXECUTION_HISTORY
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-executions-init-id" dbms="h2" author="ICG">
+        <sql>
+            ALTER TABLE SCENARIO_EXECUTIONS ALTER COLUMN ID RESTART WITH (SELECT MAX(ID)+1 FROM SCENARIO_EXECUTIONS)
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-executions-init-id" dbms="postgresql" author="ICG">
+        <sql>
+            SELECT SETVAL('scenario_executions_id_seq', (SELECT MAX(ID) FROM SCENARIO_EXECUTIONS))
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-executions-drop-sequence" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Scenario executions table sequence</comment>
+        <dropSequence sequenceName="SCENARIO_EXECUTION_HISTORY_SEQ"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-executions-drop-index" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Scenario executions table index</comment>
+        <dropIndex tableName="SCENARIO_EXECUTION_HISTORY" indexName="IDX_SEH_SCENARIO_ID"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-scenario-executions-drop" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Scenario executions table</comment>
+        <dropTable tableName="SCENARIO_EXECUTION_HISTORY"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-executions" author="ICG">
+        <comment>Migrate table CAMPAIGN_EXECUTION_HISTORY (sqlite convergence)</comment>
+        <createTable tableName="CAMPAIGN_EXECUTIONS">
+            <column name="ID" type="INTEGER" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="CAMPAIGN_ID" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="false" name="PARTIAL" type="BOOLEAN"/>
+            <column name="ENVIRONMENT" type="VARCHAR(64)"/>
+            <column defaultValue="" name="USER_ID" type="VARCHAR(64)"/>
+            <column name="DATASET_ID" type="VARCHAR(20)"/>
+            <column name="DATASET_VERSION" type="INTEGER"/>
+            <column defaultValueNumeric="1" name="VERSION" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-executions-data" dbms="h2,postgresql" author="ICG">
+        <sql>
+            INSERT INTO CAMPAIGN_EXECUTIONS ( ID, CAMPAIGN_ID, PARTIAL, ENVIRONMENT, USER_ID, DATASET_ID, DATASET_VERSION )
+            SELECT ID, MIN(CAMPAIGN_ID), EVERY(PARTIAL_EXECUTION), MIN(EXECUTION_ENVIRONMENT), MIN(USER_ID), MIN(DATASET_ID), MIN(DATASET_VERSION)
+            FROM CAMPAIGN_EXECUTION_HISTORY
+            GROUP BY ID
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-scenarios-executions-data" dbms="h2,postgresql" author="ICG">
+        <sql>
+            UPDATE SCENARIO_EXECUTIONS
+            SET CAMPAIGN_EXECUTION_ID = (SELECT ceh.ID FROM CAMPAIGN_EXECUTION_HISTORY ceh WHERE ceh.SCENARIO_EXECUTION_ID = SCENARIO_EXECUTIONS.ID)
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-executions-init-id" dbms="h2" author="ICG">
+        <sql>
+            ALTER TABLE CAMPAIGN_EXECUTIONS ALTER COLUMN ID RESTART WITH (SELECT MAX(ID)+1 FROM CAMPAIGN_EXECUTIONS)
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-executions-init-id" dbms="postgresql" author="ICG">
+        <sql>
+            SELECT SETVAL('campaign_executions_id_seq', (SELECT MAX(ID) FROM CAMPAIGN_EXECUTIONS))
+        </sql>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-executions-drop-sequence" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Campaign executions table sequence</comment>
+        <dropSequence sequenceName="CAMPAIGN_EXECUTION_SEQ"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-executions-drop-index" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Campaign executions table index</comment>
+        <dropIndex tableName="CAMPAIGN_EXECUTION_HISTORY" indexName="IDX_CEH_CAMPAIGN_ID"/>
+    </changeSet>
+
+    <changeSet id="migrate-sqlite-table-campaign-executions-drop" dbms="h2,postgresql" author="ICG">
+        <comment>Drop old Campaign executions table</comment>
+        <dropTable tableName="CAMPAIGN_EXECUTION_HISTORY"/>
     </changeSet>
 </databaseChangeLog>

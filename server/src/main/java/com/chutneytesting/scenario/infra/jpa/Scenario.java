@@ -1,9 +1,12 @@
 package com.chutneytesting.scenario.infra.jpa;
 
+import static java.lang.String.valueOf;
+import static java.util.Optional.ofNullable;
+
+import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
 import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.infra.raw.TagListMapper;
-import com.chutneytesting.scenario.infra.raw.TestCaseData;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.security.User;
@@ -12,16 +15,19 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.Map;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.Version;
 
 @Entity(name = "SCENARIO")
-public class ScenarioDao {
+public class Scenario {
+
+    private static final GwtScenarioMarshaller marshaller = new GwtScenarioMapper();
 
     @Id
     @Column(name = "ID")
@@ -34,7 +40,8 @@ public class ScenarioDao {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "CONTENT", columnDefinition = "TEXT")
+    @Column(name = "CONTENT")
+    @Basic(fetch = FetchType.LAZY)
     private String content;
 
     @Column(name = "TAGS")
@@ -43,14 +50,11 @@ public class ScenarioDao {
     @Column(name = "CREATION_DATE", updatable = false)
     private Long creationDate;
 
-    @Column(name = "DATASET", columnDefinition = "TEXT")
+    @Column(name = "DATASET")
     private String dataset;
 
     @Column(name = "ACTIVATED")
     private Boolean activated;
-
-    @Column(name = "CONTENT_VERSION")
-    private String contentVersion;
 
     @Column(name = "USER_ID")
     private String userId;
@@ -62,10 +66,23 @@ public class ScenarioDao {
     @Version
     private Integer version;
 
-    public ScenarioDao() {
+    public Scenario() {
     }
 
-    public ScenarioDao(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String contentVersion, String userId, Instant updateDate, Integer version) {
+    public Scenario(Long id, String title, String description, String tags, Long creationDate, String dataset, Boolean activated, String userId, Long updateDate, Integer version) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.tags = tags;
+        this.creationDate = creationDate;
+        this.dataset = dataset;
+        this.activated = activated;
+        this.userId = userId;
+        this.updateDate = updateDate;
+        this.version = version;
+    }
+
+    public Scenario(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String userId, Instant updateDate, Integer version) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -74,37 +91,47 @@ public class ScenarioDao {
         this.creationDate = creationDate.toEpochMilli();
         this.dataset = dataset;
         this.activated = activated;
-        this.contentVersion = contentVersion;
         this.userId = userId;
         this.updateDate = updateDate.toEpochMilli();
         this.version = version;
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
-    public static ScenarioDao fromTestCaseData(TestCaseData scenario) {
-        return new ScenarioDao(
-            Long.valueOf(scenario.id),
-            scenario.title,
-            scenario.description,
-            scenario.rawScenario,
-            TagListMapper.tagsListToString(scenario.tags),
-            scenario.creationDate,
-            transformParametersToJson(scenario.executionParameters),
+    public String title() {
+        return title;
+    }
+
+    public boolean activated() {
+        return activated;
+    }
+
+    public void deactivate() {
+        activated = false;
+    }
+
+    public static Scenario fromGwtTestCase(GwtTestCase testCase) {
+        return new Scenario(
+            Long.valueOf(testCase.id()),
+            testCase.metadata().title(),
+            testCase.metadata().description(),
+            ofNullable(testCase.scenario).map(marshaller::serialize).orElse(null),
+            TagListMapper.tagsListToString(testCase.metadata().tags()),
+            testCase.metadata().creationDate(),
+            transformParametersToJson(testCase.executionParameters()),
             true,
-            scenario.contentVersion,
-            User.isAnonymous(scenario.author) ? null : scenario.author,
-            scenario.updateDate,
-            scenario.version
+            User.isAnonymous(testCase.metadata().author()) ? null : testCase.metadata().author(),
+            testCase.metadata().updateDate(),
+            testCase.metadata().version()
         );
     }
 
     public GwtTestCase toGwtTestCase() {
         return GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
-                .withId("" + id)
+                .withId(valueOf(id))
                 .withTitle(title)
                 .withDescription(description)
                 .withCreationDate(Instant.ofEpochMilli(creationDate))
@@ -113,14 +140,14 @@ public class ScenarioDao {
                 .withUpdateDate(Instant.ofEpochMilli(updateDate))
                 .withVersion(version)
                 .build())
-            .withScenario(new GwtScenarioMapper().deserialize(title, description, content))
+            .withScenario(ofNullable(content).map(c -> new GwtScenarioMapper().deserialize(title, description, c)).orElse(null))
             .withExecutionParameters(transformParametersMap(dataset))
             .build();
     }
 
     public TestCaseMetadata toTestCaseMetadata() {
         return TestCaseMetadataImpl.builder()
-            .withId("" + id)
+            .withId(valueOf(id))
             .withTitle(title)
             .withDescription(description)
             .withTags(TagListMapper.tagsStringToList(tags))

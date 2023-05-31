@@ -11,7 +11,6 @@ import com.chutneytesting.server.core.domain.scenario.TestCase;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -178,10 +177,6 @@ public class CampaignExecutionReport {
             return ServerReportStatus.STOPPED;
         }
         return foundStatus;
-    }
-
-    public static Comparator<CampaignExecutionReport> executionIdComparator() {
-        return Comparator.comparingLong(value -> value.executionId);
     }
 
     @Override

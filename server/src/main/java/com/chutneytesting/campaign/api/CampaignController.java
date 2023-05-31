@@ -3,7 +3,6 @@ package com.chutneytesting.campaign.api;
 import static com.chutneytesting.campaign.api.dto.CampaignMapper.fromDto;
 import static com.chutneytesting.campaign.api.dto.CampaignMapper.toDto;
 import static com.chutneytesting.campaign.api.dto.CampaignMapper.toDtoWithoutReport;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.chutneytesting.campaign.api.dto.CampaignDto;
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportDto;
@@ -12,7 +11,7 @@ import com.chutneytesting.campaign.api.dto.CampaignMapper;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.scenario.infra.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
@@ -73,9 +72,6 @@ public class CampaignController {
     public CampaignDto getCampaignById(@PathVariable("campaignId") Long campaignId) {
         Campaign campaign = campaignRepository.findById(campaignId);
         List<CampaignExecutionReport> reports = campaignRepository.findExecutionsById(campaignId);
-        if (!isEmpty(reports)) {
-            reports.sort(CampaignExecutionReport.executionIdComparator().reversed());
-        }
         campaignExecutionEngine.currentExecution(campaignId)
             .ifPresent(report -> addCurrentExecution(reports, report));
         return toDto(campaign, reports);

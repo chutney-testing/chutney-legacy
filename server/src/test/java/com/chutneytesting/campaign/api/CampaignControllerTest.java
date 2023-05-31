@@ -1,6 +1,5 @@
 package com.chutneytesting.campaign.api;
 
-import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -13,6 +12,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.WebConfiguration;
@@ -22,7 +22,7 @@ import com.chutneytesting.campaign.infra.FakeCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.scenario.api.raw.dto.ImmutableTestCaseIndexDto;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.scenario.infra.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;

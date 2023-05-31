@@ -1,8 +1,6 @@
-package com.chutneytesting;
+package blackbox;
 
 import static java.util.Optional.ofNullable;
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.PATCH;
@@ -15,6 +13,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.chutneytesting.ServerConfiguration;
 import com.chutneytesting.security.api.UserDto;
 import com.chutneytesting.tools.file.FileUtils;
 import java.io.File;
@@ -37,8 +36,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-@SpringBootTest
+@SpringBootTest(classes = {ServerConfiguration.class})
 @TestPropertySource(properties = "spring.datasource.url=jdbc:h2:mem:testdbsecu")
+@TestPropertySource(properties = "spring.config.location=classpath:blackbox/")
 public class SecuredControllerSpringBootIntegrationTest {
 
     @Autowired
@@ -78,11 +78,11 @@ public class SecuredControllerSpringBootIntegrationTest {
             {POST, "/api/v1/agentnetwork/configuration", "ADMIN_ACCESS", "{}", OK},
             {GET, "/api/v1/description", "ADMIN_ACCESS", null, OK},
             {POST, "/api/v1/agentnetwork/explore", "ADMIN_ACCESS", "{\"creationDate\":\"1235\"}", OK},
-            {POST, "/api/ui/campaign/v1", "CAMPAIGN_WRITE", "{\"title\":\"secu\",\"scenarioIds\":[],\"tags\":[]}", OK},
-            {PUT, "/api/ui/campaign/v1", "CAMPAIGN_WRITE", "{\"title\":\"secu\",\"scenarioIds\":[],\"tags\":[]}", OK},
+            {POST, "/api/ui/campaign/v1", "CAMPAIGN_WRITE", "{\"title\":\"secu\",\"description\":\"desc\",\"scenarioIds\":[],\"tags\":[]}", OK},
+            {PUT, "/api/ui/campaign/v1", "CAMPAIGN_WRITE", "{\"title\":\"secu\",\"description\":\"desc\",\"scenarioIds\":[],\"tags\":[]}", OK},
             {DELETE, "/api/ui/campaign/v1/666", "CAMPAIGN_WRITE", null, OK},
             {GET, "/api/ui/campaign/v1/666", "CAMPAIGN_READ", null, NOT_FOUND},
-            {GET, "/api/ui/campaign/v1/666/scenarios", "CAMPAIGN_READ", null, OK},
+            {GET, "/api/ui/campaign/v1/666/scenarios", "CAMPAIGN_READ", null, NOT_FOUND},
             {GET, "/api/ui/campaign/v1", "CAMPAIGN_READ", null, OK},
             {GET, "/api/ui/campaign/v1/lastexecutions/20", "CAMPAIGN_READ", null, OK},
             {GET, "/api/ui/campaign/v1/scenario/scenarioId", "SCENARIO_READ", null, OK},
@@ -159,8 +159,8 @@ public class SecuredControllerSpringBootIntegrationTest {
             {POST, "/api/ui/campaign/execution/v1/666/stop", "CAMPAIGN_EXECUTE", "{}", NOT_FOUND},
             {GET, "/api/ui/campaign/execution/v1/byID/666", "CAMPAIGN_EXECUTE", null, NOT_FOUND},
             {GET, "/api/ui/campaign/execution/v1/byID/666/env", "CAMPAIGN_EXECUTE", null, NOT_FOUND},
-            {GET, "/api/ui/scenario/scenarioId/execution/v1", "SCENARIO_READ", null, OK},
-            {GET, "/api/ui/scenario/scenarioId/execution/666/v1", "SCENARIO_READ", null, NOT_FOUND},
+            {GET, "/api/ui/scenario/123/execution/v1", "SCENARIO_READ", null, OK},
+            {GET, "/api/ui/scenario/123/execution/666/v1", "SCENARIO_READ", null, NOT_FOUND},
             {GET, "/api/ui/scenario/execution/666/summary/v1", "SCENARIO_READ", null, NOT_FOUND},
             {POST, "/api/ui/scenario/execution/v1/scenarioId/env", "SCENARIO_EXECUTE", null, NOT_FOUND},
             {POST, "/api/ui/componentstep/execution/v1/componentId/env", "COMPONENT_WRITE", null, NOT_FOUND},

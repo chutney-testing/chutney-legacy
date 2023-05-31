@@ -3,16 +3,17 @@ package com.chutneytesting;
 import static com.chutneytesting.action.sql.SqlAction.CONFIGURABLE_NB_LOGGED_ROW;
 
 import com.chutneytesting.action.api.EmbeddedActionEngine;
+import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
 import com.chutneytesting.engine.api.execution.TestEngine;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
+import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.execution.infra.execution.ServerTestEngineJavaImpl;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
-import com.chutneytesting.scenario.domain.TestCaseRepositoryAggregator;
+import com.chutneytesting.scenario.infra.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
-import com.chutneytesting.execution.infra.execution.ExecutionRequestMapper;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngine;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngineAsync;
 import com.chutneytesting.server.core.domain.execution.ServerTestEngine;
@@ -185,6 +186,7 @@ public class ServerConfiguration implements AsyncConfigurer {
     public SpringLiquibase liquibase(DataSource dataSource) {
         SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setChangeLog("classpath:changelog/db.changelog-master.xml");
+        liquibase.setContexts("!test");
         liquibase.setDataSource(dataSource);
         return liquibase;
     }
@@ -226,6 +228,7 @@ public class ServerConfiguration implements AsyncConfigurer {
 
     @Bean
     CampaignExecutionEngine campaignExecutionEngine(CampaignRepository campaignRepository,
+                                                    CampaignExecutionRepository campaignExecutionRepository,
                                                     ScenarioExecutionEngine scenarioExecutionEngine,
                                                     ExecutionHistoryRepository executionHistoryRepository,
                                                     TestCaseRepositoryAggregator testCaseRepository,
@@ -236,6 +239,7 @@ public class ServerConfiguration implements AsyncConfigurer {
                                                     ObjectMapper objectMapper) {
         return new CampaignExecutionEngine(
             campaignRepository,
+            campaignExecutionRepository,
             scenarioExecutionEngine,
             executionHistoryRepository,
             testCaseRepository,
