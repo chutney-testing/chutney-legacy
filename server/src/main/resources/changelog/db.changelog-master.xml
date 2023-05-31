@@ -787,9 +787,7 @@
             <column name="SCENARIO_ID" type="VARCHAR(12)">
                 <constraints nullable="false"/>
             </column>
-            <column name="RANK" type="INTEGER">
-                <constraints nullable="false"/>
-            </column>
+            <column name="RANK" type="INTEGER"/>
         </createTable>
     </changeSet>
 

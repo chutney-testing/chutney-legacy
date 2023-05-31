@@ -73,6 +73,14 @@
             <column name="SCENARIO_ID" value="2"/>
             <column name="INDEX" valueNumeric="3"/>
         </insert>
+        <insert tableName="CAMPAIGN_SCENARIOS">
+            <column name="CAMPAIGN_ID" valueNumeric="2"/>
+            <column name="SCENARIO_ID" value="1"/>
+        </insert>
+        <insert tableName="CAMPAIGN_SCENARIOS">
+            <column name="CAMPAIGN_ID" valueNumeric="2"/>
+            <column name="SCENARIO_ID" value="2"/>
+        </insert>
     </changeSet>
     <changeSet id="test-data-scenarios-executions" author="ICG">
         <insert tableName="SCENARIO_EXECUTION_HISTORY">
