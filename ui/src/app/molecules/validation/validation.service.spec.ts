@@ -44,8 +44,8 @@ it('isValidEnvironmentName returns false on empty string', () => {
   expect(service.isValidEnvironmentName('')).toBe(false);
 });
 
-it('isValidEnvironmentName returns false on lower case', () => {
-  expect(service.isValidEnvironmentName('test')).toBe(false);
+it('isValidEnvironmentName returns true on lower case', () => {
+  expect(service.isValidEnvironmentName('test')).toBe(true);
 });
 
 it('isValidEnvironmentName returns false on space', () => {
