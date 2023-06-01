@@ -86,7 +86,7 @@
         <buildMetadataRequired>false</buildMetadataRequired>
 
         <!-- Runtime dependencies versions -->
-        <springboot.version>2.7.5</springboot.version>
+        <springboot.version>3.1.0</springboot.version>
         <guava.version>31.0.1-jre</guava.version> <!-- Divergence on dependencies checker-qual and error_prone_annotations --> <!-- Test on https://github.com/FasterXML/jackson-datatypes-collections/tree/2.14/guava -->
 
         <immutables.version>2.9.0</immutables.version>
