@@ -97,7 +97,7 @@
         <orientdb.version>3.2.12</orientdb.version> <!-- Divergence on dependencies istack-commons-runtime and asm-->
         <jsr305.version>3.0.2</jsr305.version>
         <liquibase.version>4.18.0</liquibase.version>
-        <sqlite.version>3.40.1.0</sqlite.version>
+        <sqlite.version>3.42.0.0</sqlite.version>
         <sqlite.hibernate.dialect.version>0.1.2</sqlite.hibernate.dialect.version>
 
         <!-- action-impl dependencies versions -->
