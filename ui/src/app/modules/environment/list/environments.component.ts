@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DoCheck, OnInit } from '@angular/core';
 import { Environment } from '@model';
 import { ActivatedRoute } from '@angular/router';
 import { EnvironmentService } from '@core/services';
 import { ValidationService } from '../../../molecules/validation/validation.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'chutney-environments',
     templateUrl: './environments.component.html',
     styleUrls: ['./environments.component.scss']
 })
-export class EnvironmentsComponent implements OnInit {
+export class EnvironmentsComponent implements OnInit, DoCheck {
 
     editableEnvironments: Environment[] = [];
     environments: Environment[] = [];
@@ -19,7 +20,8 @@ export class EnvironmentsComponent implements OnInit {
 
     constructor(private route: ActivatedRoute,
                 private environmentService: EnvironmentService,
-                private validationService: ValidationService) {
+                private validationService: ValidationService,
+                private translateService: TranslateService) {
     }
 
     ngOnInit(): void {
@@ -27,6 +29,16 @@ export class EnvironmentsComponent implements OnInit {
             this.editableEnvironments = data.environments;
             this.environments = data.environments.map(env => ({...env}));
         });
+    }
+
+    ngDoCheck() {
+        var isNewEnvironmentInvalid = this.environment && !this.validationService.isValidEnvironmentName(this.environment.name);
+        var isEditableEnvironmentInvalid = this.editionIndex >= 0 && !this.validationService.isValidEnvironmentName(this.editableEnvironments[this.editionIndex]?.name);
+        if ( isNewEnvironmentInvalid || isEditableEnvironmentInvalid) {
+            this.errorMessage = this.translateService.instant('admin.environment.name.syntaxe.error');
+        } else {
+            this.errorMessage = null;
+        }
     }
 
     editing(index: number): boolean {

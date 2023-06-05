@@ -285,7 +285,10 @@
             "environment": "Environment"
         },
         "environment": {
-            "name.placeholder": "Name",
+            "name": {
+                "placeholder": "Name",
+                "syntaxe.error": "Environment name must be of 3 to 20 letters, digits, underscore or hyphen. Example: My_environment-1"
+            },
             "description.placeholder": "Description"
         },
         "agents": {

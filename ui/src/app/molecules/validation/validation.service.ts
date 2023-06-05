@@ -6,7 +6,7 @@ export class ValidationService {
 
     private urlRegex = new RegExp('^[a-z]+:\/\/[^:]+(:[0-9]+)?.*$');
     private spelRegex = new RegExp('\\$\\{([^}]+)\\}');
-    private environmentNameRegex = new RegExp('^[A-Z0-9_-]{3,20}$');
+    private environmentNameRegex = new RegExp('^[a-zA-Z0-9_-]{3,20}$');
 
     constructor() { }
 
@@ -26,7 +26,7 @@ export class ValidationService {
         return this.isValidUrl(text) || this.isValidSpel(text);
     }
     isValidEnvironmentName(text: string): boolean {
-        return this.environmentNameRegex.test(text);
+        return text !== null && this.environmentNameRegex.test(text);
     }
 
     isValidPattern(text: string) {
