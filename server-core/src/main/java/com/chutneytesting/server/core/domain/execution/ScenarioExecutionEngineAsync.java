@@ -3,7 +3,6 @@ package com.chutneytesting.server.core.domain.execution;
 import static io.reactivex.schedulers.Schedulers.io;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;

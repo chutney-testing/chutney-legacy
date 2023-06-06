@@ -10,13 +10,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.ExecutionConfiguration;
 import com.chutneytesting.action.domain.ActionTemplateRegistry;
 import com.chutneytesting.action.spi.FinallyAction;
-import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
-import com.chutneytesting.engine.api.execution.StatusDto;
-import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
-import com.chutneytesting.engine.api.execution.TestEngine;
 import com.chutneytesting.engine.domain.delegation.DelegationService;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
@@ -28,8 +23,6 @@ import com.chutneytesting.engine.domain.execution.strategies.SoftAssertStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategies;
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategy;
 import com.chutneytesting.engine.domain.report.Reporter;
-import com.chutneytesting.tools.Jsons;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -67,7 +60,7 @@ class DefaultExecutionEngineTest {
         StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null, fakeEnvironment);
 
         // When
-        Long executionId = sut.execute(stepDefinition, emptyDataset, ScenarioExecution.createScenarioExecution(null));
+        Long executionId = sut.execute(stepDefinition, emptyDataset, createScenarioExecution(null));
         assertThat(executionId).isNotNull();
         StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
         assertThat(report).isNotNull();
@@ -94,7 +87,7 @@ class DefaultExecutionEngineTest {
             .thenReturn(strategy) // for step definition
             .thenReturn(strategy); // for tear down step
 
-        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
+        ScenarioExecution scenarioExecution = createScenarioExecution(null);
         FinallyAction finallyAction = FinallyAction.Builder.forAction("final", "action name").build();
         scenarioExecution.registerFinallyAction(finallyAction);
 
@@ -140,7 +133,7 @@ class DefaultExecutionEngineTest {
         DefaultExecutionEngine sut = new DefaultExecutionEngine(new StepDataEvaluator(null), stepExecutionStrategies, delegationService, reporter, actionExecutor);
 
         String environment = "FakeTestEnvironment";
-        Map<String, Object> inputs = Collections.singletonMap("currentEnvironment", "${#environment}");
+        Map<String, Object> inputs = singletonMap("currentEnvironment", "${#environment}");
         StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, inputs, null, null, null, environment);
 
         // When
@@ -198,7 +191,7 @@ class DefaultExecutionEngineTest {
         DefaultExecutionEngine sut = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, actionExecutor);
         StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null, fakeEnvironment);
 
-        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
+        ScenarioExecution scenarioExecution = createScenarioExecution(null);
         FinallyAction finallyAction = FinallyAction.Builder.forAction("final", "action name").build();
         scenarioExecution.registerFinallyAction(finallyAction);
 
@@ -240,7 +233,7 @@ class DefaultExecutionEngineTest {
 
         StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null, fakeEnvironment);
 
-        ScenarioExecution scenarioExecution = ScenarioExecution.createScenarioExecution(null);
+        ScenarioExecution scenarioExecution = createScenarioExecution(null);
 
         Map<String, Object> inputs1 = Map.of("key1", "value1");
         Map<String, Object> inputs2 = Map.of("key2", "value2");

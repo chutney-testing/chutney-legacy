@@ -5,8 +5,6 @@ import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionR
 import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
-import java.util.Optional;
-import org.apache.commons.lang3.tuple.Pair;
 
 
 public class ScenarioExecutionEngine {

@@ -1,6 +1,6 @@
 import { areEquals, Equals } from '@shared/equals';
 import { Clonable, cloneAsPossible } from '@shared/clonable';
-import { ComponentTask, KeyValue } from '../component-task.model';
+import { ComponentTask, KeyValue } from '@core/model';
 
 export class ScenarioComponent implements Equals<ScenarioComponent>, Clonable<ScenarioComponent> {
 
@@ -20,7 +20,7 @@ export class ScenarioComponent implements Equals<ScenarioComponent>, Clonable<Sc
         public tags: Array<string> = [],
         public datasetId: string = null
     ) {
-        this.defaultDataset = this.datasetId
+        this.defaultDataset = this.datasetId;
     }
 
     public equals(obj: ScenarioComponent): boolean {

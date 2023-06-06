@@ -34,7 +34,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import org.apache.groovy.util.Maps;
@@ -71,7 +70,7 @@ public class CampaignExecutionEngineTest {
     @Test
     public void should_override_scenario_dataset_with_campaign_dataset_before_execution() {
         // Given
-        CampaignExecutionEngine sut = new CampaignExecutionEngine(campaignRepository, campaignExecutionRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, Optional.of(dataSetHistoryRepository), jiraXrayPlugin, metrics, executorService, datasetRepository, objectMapper);
+        CampaignExecutionEngine sut = new CampaignExecutionEngine(campaignRepository, campaignExecutionRepository, scenarioExecutionEngine, executionHistoryRepository, testCaseRepository, of(dataSetHistoryRepository), jiraXrayPlugin, metrics, executorService, datasetRepository, objectMapper);
         TestCase composedTestCase = createExecutableComposedTestCase();
 
         Map<String, String> campaignDataSet = Maps.of(

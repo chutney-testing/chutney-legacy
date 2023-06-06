@@ -26,7 +26,7 @@ public class FileGlobalVarRepositoryTest {
 
     @AfterEach
     public void tearDown() throws IOException {
-        Files.walk(Paths.get(STORE_PATH + "/" + FileGlobalVarRepository.ROOT_DIRECTORY_NAME))
+        Files.walk(Paths.get(STORE_PATH + "/" + ROOT_DIRECTORY_NAME))
             .filter(Files::isRegularFile)
             .forEach(ThrowingConsumer.toUnchecked(Files::delete));
     }
@@ -35,7 +35,7 @@ public class FileGlobalVarRepositoryTest {
     public void shouldFlatKey() {
         // G
         String urlValue = "http://host:port/path";
-        String mulitlineValuePattern = "" +
+        String multiLineValuePattern = "" +
             "%sMy half empty glass,\n" +
             "%sI will fill your empty half.\n" +
             "%sNow you are half full.";
@@ -46,7 +46,7 @@ public class FileGlobalVarRepositoryTest {
             "    key2: {\n" +
             "        subKey1:\n" +
             "          '''\n" +
-            String.format(mulitlineValuePattern, "          ", "          ", "          ") + "\n" +
+            String.format(multiLineValuePattern, "          ", "          ", "          ") + "\n" +
             "          '''\n" +
             "        subKey2: \"subValue2\"\n" +
             "    },\n" +
@@ -67,7 +67,7 @@ public class FileGlobalVarRepositoryTest {
         // T
         assertThat(result).containsOnly(
             entry("key1", urlValue),
-            entry("key2.subKey1", String.format(mulitlineValuePattern, "", "", "")),
+            entry("key2.subKey1", String.format(multiLineValuePattern, "", "", "")),
             entry("key2.subKey2", "subValue2"),
             entry("key3[0].test1", "value"),
             entry("key3[0].test2", "value"),

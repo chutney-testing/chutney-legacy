@@ -43,7 +43,7 @@ export class DataSetService {
 
     save(dataset: Dataset, oldId?: string): Observable<Dataset> {
         if (dataset.id && dataset.id.length > 0) {
-            return this.httpClient.put<Dataset>(environment.backend + this.resourceUrl, dataset, {params: {oldId: oldId}})
+            return this.httpClient.put<Dataset>(environment.backend + this.resourceUrl, dataset, {params: {oldId}})
                 .pipe(
                     map(dto => this.fromDto(dto))
                 );

@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -159,7 +158,7 @@ public class ComponentDataSetControllerTest {
         // Then
         verify(dataSetRepository).removeById(eq(id));
         verify(dataSetHistoryRepository).removeHistory(eq(id));
-        Assertions.assertThat(mvcResult.getResponse().getContentLength()).isZero();
+        assertThat(mvcResult.getResponse().getContentLength()).isZero();
     }
 
     @Test
@@ -196,7 +195,7 @@ public class ComponentDataSetControllerTest {
             .andReturn();
 
         // Then
-        Assertions.assertThat(mvcResult.getResponse().getContentAsString()).isEqualTo("5");
+        assertThat(mvcResult.getResponse().getContentAsString()).isEqualTo("5");
     }
 
     @Test
