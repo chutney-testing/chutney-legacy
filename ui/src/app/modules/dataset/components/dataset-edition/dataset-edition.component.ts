@@ -126,7 +126,7 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
     }
 
     cancel() {
-        this.router.navigateByUrl('/dataset');
+        this.location.back();
     }
 
     selectTab(tab: string) {

@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { newInstance } from '@shared/tools';
 import { distinct, flatMap } from '@shared/tools/array-utils';
 import { DataSetService } from '@core/services';
 import { Dataset, Authorization } from '@model';
+import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { FeatureName } from '@core/feature/feature.model';
 import { FeatureService } from '@core/feature/feature.service';
 
@@ -12,7 +15,7 @@ import { FeatureService } from '@core/feature/feature.service';
     templateUrl: './dataset-list.component.html',
     styleUrls: ['./dataset-list.component.scss']
 })
-export class DatasetListComponent implements OnInit {
+export class DatasetListComponent implements OnInit, OnDestroy {
 
     datasets: Array<Dataset> = [];
 
@@ -23,11 +26,14 @@ export class DatasetListComponent implements OnInit {
     settings = {};
     selectedTags: string[] = [];
     selectedItem: any[];
+    urlParams: Subscription;
 
     Authorization = Authorization;
 
     constructor(
-        private dataSetService: DataSetService
+        private router: Router,
+        private dataSetService: DataSetService,
+        private readonly route: ActivatedRoute
     ) {}
 
     ngOnInit(): void {
@@ -35,6 +41,7 @@ export class DatasetListComponent implements OnInit {
             (res) => {
                 this.datasets = res;
                 this.initTags();
+                this.applyUriState();
             },
             (error) => console.log(error)
         );
@@ -43,6 +50,12 @@ export class DatasetListComponent implements OnInit {
             enableCheckAll: false,
             autoPosition: false
         };
+    }
+
+    ngOnDestroy(): void {
+        if (this.urlParams) {
+            this.urlParams.unsubscribe();
+        }
     }
 
     showPreview(dataset: Dataset) {
@@ -85,4 +98,31 @@ export class DatasetListComponent implements OnInit {
         this.selectedTags = newInstance([]);
     }
 
+    applyFiltersToRoute() {
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {
+                text: this.dataSetFilter ? this.dataSetFilter : null,
+                tags: this.selectedItem?.length ? this.selectedItem.map((i) => i.itemName).toString() : null
+            }
+        });
+    }
+
+    private applyUriState() {
+        this.urlParams = this.route.queryParams
+            .pipe(map((params: Array<any>) => {
+                    if (params['text']) {
+                        this.dataSetFilter = params['text'];
+                    }
+                    if (params['tags']) {
+                        const uriTag = params['tags'].split(',');
+                        if (uriTag != null) {
+                            this.selectedItem = this.itemList.filter((tagItem) => uriTag.includes(tagItem.itemName));
+                            this.selectedTags = this.selectedItem.map((i) => i.itemName);
+                            this.applyFiltersToRoute();
+                        }
+                    }
+                }))
+            .subscribe();
+    }
 }
