@@ -1,8 +1,4 @@
 {
-    "dataset": {
-        "constants": {},
-        "datatable": []
-    },
     "scenario": {
         "name": "Test iterations",
         "steps": [

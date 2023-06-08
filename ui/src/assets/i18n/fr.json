@@ -73,7 +73,8 @@
                 "executor": "Utilisateur",
                 "campaign": "Campagne",
                 "report": "Rapport",
-                "empty": "Aucune exécution"
+                "empty": "Aucune exécution",
+                "default-dataset": "Dataset par default"
             },
             "step": {
                 "actions": {
