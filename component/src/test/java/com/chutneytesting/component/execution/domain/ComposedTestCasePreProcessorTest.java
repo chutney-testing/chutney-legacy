@@ -126,7 +126,7 @@ public class ComposedTestCasePreProcessorTest {
 
         // When
         final ExecutableComposedTestCase executableComposedTestCaseProcessed = sut.apply(
-            new ExecutionRequest(ExecutableComposedTestCase, environment, userId, DataSet.builder().build())
+            new ExecutionRequest(ExecutableComposedTestCase, environment, userId)
         );
 
         // Then
@@ -259,7 +259,7 @@ public class ComposedTestCasePreProcessorTest {
 
         // When
         ExecutableComposedTestCase processedTestCase = sut.apply(
-            new ExecutionRequest(testCase, "env", userId, DataSet.builder().build())
+            new ExecutionRequest(testCase, "env", userId)
         );
 
         // Then

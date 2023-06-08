@@ -11,7 +11,9 @@ public class DatasetDto {
 
     public DatasetDto(Map<String, String> constants, List<Map<String, String>> datatable) {
         this.constants = Collections.unmodifiableMap(constants);
-        this.datatable = Collections.unmodifiableList(datatable);
+        this.datatable = datatable.stream()
+            .map(Collections::unmodifiableMap)
+            .toList();
     }
 
 }

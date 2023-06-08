@@ -17,4 +17,11 @@ public class ExecutionRequest {
         this.dataset = dataset;
     }
 
+    public ExecutionRequest(TestCase testCase, String environment, String userId) {
+        this.testCase = testCase;
+        this.environment = environment;
+        this.userId = userId;
+        this.dataset = DataSet.NO_DATASET;
+    }
+
 }

@@ -11,7 +11,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
@@ -49,7 +48,6 @@ public class ScenarioExecutionEngineAsyncTest {
     private final ExecutionStateRepository executionStateRepository = mock(ExecutionStateRepository.class);
     private final ChutneyMetrics metrics = mock(ChutneyMetrics.class);
     private final TestCasePreProcessors testCasePreProcessors = mock(TestCasePreProcessors.class);
-    private DataSet emptyDataset = DataSet.builder().build();
 
     @AfterEach
     public void after() {
@@ -98,7 +96,7 @@ public class ScenarioExecutionEngineAsyncTest {
         );
 
         // When
-        ExecutionRequest request = new ExecutionRequest(testCase, "Exec env", "Exec user", emptyDataset);
+        ExecutionRequest request = new ExecutionRequest(testCase, "Exec env", "Exec user");
         sut.execute(request);
 
         // Then
@@ -138,7 +136,7 @@ public class ScenarioExecutionEngineAsyncTest {
         sut.setDebounceMilliSeconds(0);
 
         // When
-        TestObserver<ScenarioExecutionReport> testObserver = sut.buildScenarioExecutionReportObservable(new ExecutionRequest(emptyTestCase(), "", "", emptyDataset), executionId, engineStub.getLeft()).test();
+        TestObserver<ScenarioExecutionReport> testObserver = sut.buildScenarioExecutionReportObservable(new ExecutionRequest(emptyTestCase(), "", ""), executionId, engineStub.getLeft()).test();
 
         // Then
         assertTestObserverStateWithValues(testObserver, 0, false);
@@ -194,7 +192,7 @@ public class ScenarioExecutionEngineAsyncTest {
         );
 
         // When
-        ExecutionRequest request = new ExecutionRequest(testCase, "", "", emptyDataset);
+        ExecutionRequest request = new ExecutionRequest(testCase, "", "");
         Long executionIdFromExecute = sut.execute(request);
         TestObserver<ScenarioExecutionReport> testObserver = sut.followExecution(testCase.id(), executionIdFromExecute).test();
 

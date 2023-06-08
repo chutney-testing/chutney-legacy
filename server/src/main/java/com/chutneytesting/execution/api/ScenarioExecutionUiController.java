@@ -89,7 +89,7 @@ public class ScenarioExecutionUiController {
             .build();
 
         ScenarioExecutionReport report = executionEngine.simpleSyncExecution(
-            new ExecutionRequest(testCase, env, userId, DataSet.builder().build())
+            new ExecutionRequest(testCase, env, userId)
         );
 
         return objectMapper.writeValueAsString(report);

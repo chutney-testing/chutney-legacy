@@ -11,7 +11,6 @@ import com.chutneytesting.scenario.domain.gwt.GwtStepImplementation;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
-import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.globalvar.GlobalvarRepository;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
@@ -47,7 +46,7 @@ public class DataSetPreProcessorTest {
 
         // When
         RawTestCase actual = dataSetPreProcessor.apply(
-            new ExecutionRequest(fakeTestCase, null, "", DataSet.builder().build())
+            new ExecutionRequest(fakeTestCase, null, "")
         );
 
         // Then
@@ -90,7 +89,7 @@ public class DataSetPreProcessorTest {
 
         // When
         GwtTestCase actual = dataSetPreProcessor.apply(
-            new ExecutionRequest(parameterizedTestCase, null, "", DataSet.builder().build())
+            new ExecutionRequest(parameterizedTestCase, null, "")
         );
 
         // Then

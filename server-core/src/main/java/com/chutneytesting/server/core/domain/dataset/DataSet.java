@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 public class DataSet {
 
     public static Comparator<DataSet> datasetComparator = Comparator.comparing(DataSet::getName, String.CASE_INSENSITIVE_ORDER);
+    public static DataSet NO_DATASET = DataSet.builder().build();
 
     public final String id;
     public final String name;

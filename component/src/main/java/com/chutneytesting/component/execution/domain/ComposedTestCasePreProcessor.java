@@ -3,7 +3,6 @@ package com.chutneytesting.component.execution.domain;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.component.dataset.infra.OrientDataSetRepository;
-import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessor;
 import com.chutneytesting.server.core.domain.globalvar.GlobalvarRepository;
@@ -30,13 +29,13 @@ public class ComposedTestCasePreProcessor implements TestCasePreProcessor<Execut
         ExecutableComposedTestCase testCase = (ExecutableComposedTestCase) executionRequest.testCase;
         if (ofNullable(testCase.metadata.defaultDataset()).isPresent()) {
             testCase = dataSetPreProcessor.apply(
-                new ExecutionRequest(testCase, environment, userId, DataSet.builder().build())
+                new ExecutionRequest(testCase, environment, userId)
             );
         }
 
         // Process parameters (value them)
         return parametersResolutionPreProcessor.apply(
-            new ExecutionRequest(testCase, environment, userId, DataSet.builder().build())
+            new ExecutionRequest(testCase, environment, userId)
         );
     }
 }
