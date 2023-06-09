@@ -22,11 +22,11 @@ public class FileGlobalVarRepositoryTest {
 
     private static final String FILE_NAME = "global_var";
     private static final String STORE_PATH = org.assertj.core.util.Files.temporaryFolderPath();
-    private FileGlobalVarRepository sut;
+    private final FileGlobalVarRepository sut = new FileGlobalVarRepository(STORE_PATH);
 
     @AfterEach
     public void tearDown() throws IOException {
-        Files.walk(Paths.get(STORE_PATH + "/global_var"))
+        Files.walk(Paths.get(STORE_PATH + "/" + ROOT_DIRECTORY_NAME))
             .filter(Files::isRegularFile)
             .forEach(ThrowingConsumer.toUnchecked(Files::delete));
     }
@@ -34,10 +34,8 @@ public class FileGlobalVarRepositoryTest {
     @Test
     public void shouldFlatKey() {
         // G
-        sut = new FileGlobalVarRepository(STORE_PATH);
-
         String urlValue = "http://host:port/path";
-        String mulitlineValuePattern = "" +
+        String multiLineValuePattern = "" +
             "%sMy half empty glass,\n" +
             "%sI will fill your empty half.\n" +
             "%sNow you are half full.";
@@ -48,7 +46,7 @@ public class FileGlobalVarRepositoryTest {
             "    key2: {\n" +
             "        subKey1:\n" +
             "          '''\n" +
-            String.format(mulitlineValuePattern, "          ", "          ", "          ") + "\n" +
+            String.format(multiLineValuePattern, "          ", "          ", "          ") + "\n" +
             "          '''\n" +
             "        subKey2: \"subValue2\"\n" +
             "    },\n" +
@@ -69,7 +67,7 @@ public class FileGlobalVarRepositoryTest {
         // T
         assertThat(result).containsOnly(
             entry("key1", urlValue),
-            entry("key2.subKey1", String.format(mulitlineValuePattern, "", "", "")),
+            entry("key2.subKey1", String.format(multiLineValuePattern, "", "", "")),
             entry("key2.subKey2", "subValue2"),
             entry("key3[0].test1", "value"),
             entry("key3[0].test2", "value"),
@@ -80,7 +78,6 @@ public class FileGlobalVarRepositoryTest {
     @Test
     public void should_flat_keys_from_all_files() {
         // G
-        sut = new FileGlobalVarRepository(STORE_PATH);
         sut.saveFile(FILE_NAME, "{" +
             "    key1: \"value1\"," +
             "    key2: {" +
@@ -134,7 +131,6 @@ public class FileGlobalVarRepositoryTest {
     @Test
     public void aliasShouldOverrideKeyPath() {
         // G
-        sut = new FileGlobalVarRepository(STORE_PATH);
         sut.saveFile(FILE_NAME, "{menu: {" +
             "    items: [" +
             "        {id: \"Open\"}," +
@@ -163,7 +159,6 @@ public class FileGlobalVarRepositoryTest {
         Files.createDirectories(backup.getParent());
         Files.deleteIfExists(backup);
 
-        sut = new FileGlobalVarRepository(STORE_PATH);
         sut.saveFile("a_file", "{\"keyA\": \"valueA\"}");
         sut.saveFile("another_file", "{\"keyB\": \"valueB\"}");
 

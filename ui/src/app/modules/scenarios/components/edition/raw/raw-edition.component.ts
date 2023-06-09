@@ -114,6 +114,7 @@ export class RawEditionComponent
                         this.testCase.updateDate = null;
                         this.testCase.author = null;
                         this.testCase.title = '--COPY-- ' + this.testCase.title;
+                        this.testCase.defaultDataset = null;
                         this.previousTestCase.title =
                             '--COPY-- ' + this.previousTestCase.title;
                     }
@@ -189,4 +190,9 @@ export class RawEditionComponent
         this.modifiedContent = data;
         this.checkParseError();
     }
+
+    selectDataset(dataset: string) {
+        this.testCase.defaultDataset = dataset;
+    }
+
 }

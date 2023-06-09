@@ -1,7 +1,6 @@
 package com.chutneytesting.server.core.domain.execution;
 
 import static io.reactivex.schedulers.Schedulers.io;
-import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
@@ -77,21 +76,17 @@ public class ScenarioExecutionEngineAsync {
         this.debounceMilliSeconds = debounceMilliSeconds;
     }
 
-    public Long execute(ExecutionRequest executionRequest) {
-        return execute(executionRequest, empty());
-    }
-
     /**
      * Execute a test case with ExecutionEngine and store StepExecutionReport.
      *
      * @param executionRequest with the test case to execute and the environment chosen
      * @return execution id.
      */
-    public Long execute(ExecutionRequest executionRequest, Optional<Pair<String, Integer>> executionDataSet) {
+    public Long execute(ExecutionRequest executionRequest) {
         // Compile testcase for execution
-        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.userId);
+        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.userId, executionRequest.dataset);
         // Initialize execution history
-        ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequestProcessed, executionDataSet);
+        ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequestProcessed);
         // Start engine execution
         Pair<Observable<StepExecutionReportCore>, Long> followResult = callEngineExecution(executionRequestProcessed, storedExecution);
         // Build execution observable
@@ -106,7 +101,7 @@ public class ScenarioExecutionEngineAsync {
         return storedExecution.executionId();
     }
 
-    private ExecutionHistory.Execution storeInitialReport(ExecutionRequest executionRequest, Optional<Pair<String, Integer>> executionDataSet) {
+    private ExecutionHistory.Execution storeInitialReport(ExecutionRequest executionRequest) {
         ExecutionHistory.DetachedExecution detachedExecution = ImmutableExecutionHistory.DetachedExecution.builder()
             .time(LocalDateTime.now())
             .duration(0L)
@@ -116,8 +111,6 @@ public class ScenarioExecutionEngineAsync {
             .report("")
             .testCaseTitle(executionRequest.testCase.metadata().title())
             .environment(executionRequest.environment)
-            .datasetId(executionDataSet.map(Pair::getLeft))
-            .datasetVersion(executionDataSet.map(Pair::getRight))
             .user(executionRequest.userId)
             .build();
 

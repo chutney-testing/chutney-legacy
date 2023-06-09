@@ -9,10 +9,11 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-import com.chutneytesting.component.dataset.domain.DataSetRepository;
+import com.chutneytesting.component.dataset.infra.OrientDataSetRepository;
 import com.chutneytesting.engine.domain.execution.strategies.DataSetIterationsStrategy;
 import com.chutneytesting.scenario.domain.gwt.Strategy;
 import com.chutneytesting.server.core.domain.dataset.DataSet;
+import com.chutneytesting.server.core.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessor;
 import java.util.ArrayList;
@@ -33,9 +34,9 @@ public class ComposedTestCaseDatatableIterationsPreProcessor implements TestCase
 
     public final static String DATASET_ITERATIONS_STRATEGY_TYPE = DataSetIterationsStrategy.TYPE;
 
-    private final DataSetRepository dataSetRepository;
+    private final OrientDataSetRepository dataSetRepository;
 
-    ComposedTestCaseDatatableIterationsPreProcessor(DataSetRepository dataSetRepository) {
+    ComposedTestCaseDatatableIterationsPreProcessor(OrientDataSetRepository dataSetRepository) {
         this.dataSetRepository = dataSetRepository;
     }
 
@@ -46,18 +47,21 @@ public class ComposedTestCaseDatatableIterationsPreProcessor implements TestCase
     }
 
     ExecutableComposedTestCase apply(ExecutableComposedTestCase testCase) {
-        Optional<DataSet> oDataset = testCase.metadata.datasetId().map(dataSetRepository::findById);
-        if (oDataset.isEmpty()) {
+        if (testCase.metadata.defaultDataset().isBlank()) {
             return testCase;
         }
 
-        DataSet dataset = oDataset.get();
-        Map<Boolean, List<String>> matchedHeaders = findDatableHeadersMatchingExecutionParameters(testCase, dataset.datatable);
+        try {
+            DataSet dataset = dataSetRepository.findById(testCase.metadata.defaultDataset());
+            Map<Boolean, List<String>> matchedHeaders = findDatableHeadersMatchingExecutionParameters(testCase, dataset.datatable);
 
-        return new ExecutableComposedTestCase(
-            testCase.metadata,
-            applyToScenario(testCase.composedScenario, matchedHeaders, dataset),
-            applyToExecutionParameters(testCase.executionParameters, matchedHeaders.get(Boolean.TRUE), dataset));
+            return new ExecutableComposedTestCase(
+                testCase.metadata,
+                applyToScenario(testCase.composedScenario, matchedHeaders, dataset),
+                applyToExecutionParameters(testCase.executionParameters, matchedHeaders.get(Boolean.TRUE), dataset));
+        } catch (DataSetNotFoundException e) {
+            return testCase;
+        }
     }
 
     private Map<Boolean, List<String>> findDatableHeadersMatchingExecutionParameters(ExecutableComposedTestCase testCase, List<Map<String, String>> datatable) {

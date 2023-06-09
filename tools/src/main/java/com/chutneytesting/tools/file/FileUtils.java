@@ -33,7 +33,7 @@ public class FileUtils {
             try {
                 Files.createFile(testPath);
             } catch (IOException e) {
-                throw new UncheckedIOException("Unable to write in directory: " + folderPath, e);
+                throw new UncheckedIOException("Cannot write in directory: " + folderPath, e);
             }
         }
 
@@ -48,7 +48,7 @@ public class FileUtils {
         } catch (DirectoryNotEmptyException e) {
             cleanFolder(folderPath);
         } catch (IOException e) {
-            throw new UncheckedIOException("Unable to delete directory: " + folderPath, e);
+            throw new UncheckedIOException("Cannot delete directory: " + folderPath, e);
         }
     }
 
@@ -60,6 +60,29 @@ public class FileUtils {
                 }
                 file.delete();
             });
+    }
+
+    public static void delete(Path file) {
+        if (Files.isRegularFile(file)) {
+            try {
+                Files.delete(file);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Cannot delete file: " + file, e);
+            }
+        }
+        else {
+           deleteFolder(file);
+        }
+    }
+
+    public static void createFile(Path filePath) {
+        if (!Files.exists(filePath)) {
+            try {
+                Files.createFile(filePath);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Cannot create file: " + filePath, e);
+            }
+        }
     }
 
     public static String getNameWithoutExtension(Path path) {
@@ -74,7 +97,7 @@ public class FileUtils {
         try (Stream<Path> stream = Files.list(path)) {
             return exec.apply(stream);
         } catch (IOException e) {
-            throw new UncheckedIOException("Unable to do something on files of path: " + path, e);
+            throw new UncheckedIOException("Cannot do something on files of path: " + path, e);
         }
     }
 
@@ -90,7 +113,7 @@ public class FileUtils {
         try {
             return new String(Files.readAllBytes(path));
         } catch (IOException e) {
-            throw new UncheckedIOException("Cannot read variable file: " + path, e);
+            throw new UncheckedIOException("Cannot read file: " + path, e);
         }
     }
 

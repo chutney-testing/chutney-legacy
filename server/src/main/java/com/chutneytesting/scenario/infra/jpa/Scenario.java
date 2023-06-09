@@ -66,10 +66,13 @@ public class Scenario {
     @Version
     private Integer version;
 
+    @Column(name = "DEFAULT_DATASET_ID")
+    private String defaultDataset;
+
     public Scenario() {
     }
 
-    public Scenario(Long id, String title, String description, String tags, Long creationDate, String dataset, Boolean activated, String userId, Long updateDate, Integer version) {
+    public Scenario(Long id, String title, String description, String tags, Long creationDate, String dataset, Boolean activated, String userId, Long updateDate, Integer version, String defaultDataset) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -80,9 +83,10 @@ public class Scenario {
         this.userId = userId;
         this.updateDate = updateDate;
         this.version = version;
+        this.defaultDataset = defaultDataset;
     }
 
-    public Scenario(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String userId, Instant updateDate, Integer version) {
+    public Scenario(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String userId, Instant updateDate, Integer version, String defaultDataset) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -94,6 +98,7 @@ public class Scenario {
         this.userId = userId;
         this.updateDate = updateDate.toEpochMilli();
         this.version = version;
+        this.defaultDataset = defaultDataset;
     }
 
     public Long id() {
@@ -124,7 +129,8 @@ public class Scenario {
             true,
             User.isAnonymous(testCase.metadata().author()) ? null : testCase.metadata().author(),
             testCase.metadata().updateDate(),
-            testCase.metadata().version()
+            testCase.metadata().version(),
+            testCase.metadata().defaultDataset()
         );
     }
 
@@ -139,6 +145,7 @@ public class Scenario {
                 .withAuthor(userId)
                 .withUpdateDate(Instant.ofEpochMilli(updateDate))
                 .withVersion(version)
+                .withDefaultDataset(defaultDataset)
                 .build())
             .withScenario(ofNullable(content).map(c -> new GwtScenarioMapper().deserialize(title, description, c)).orElse(null))
             .withExecutionParameters(transformParametersMap(dataset))
@@ -155,6 +162,7 @@ public class Scenario {
             .withAuthor(userId)
             .withUpdateDate(Instant.ofEpochMilli(updateDate))
             .withVersion(version)
+            .withDefaultDataset(defaultDataset)
             .build();
     }
 

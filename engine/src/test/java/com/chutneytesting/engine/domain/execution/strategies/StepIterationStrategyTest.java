@@ -14,6 +14,19 @@ import org.junit.jupiter.api.Test;
 class StepIterationStrategyTest {
 
     @Test
+    public void should_fail_if_no_dataset_with_iteration_strategy() {
+        // G
+        final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/error_without_dataset_iterations.json", ExecutionRequestDto.class);
+
+        // W
+        StepExecutionReportDto result = testEngine.execute(requestDto);
+
+        // T
+        assertThat(result).hasFieldOrPropertyWithValue("status", StatusDto.FAILURE);
+    }
+
+    @Test
     public void should_repeat_step_with_iteration_strategy() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();

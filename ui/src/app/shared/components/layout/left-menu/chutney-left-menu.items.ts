@@ -35,8 +35,7 @@ export const allMenuItems: MenuItem [] = [
                 label: 'menu.principal.dataset',
                 link: '/dataset',
                 iconClass: 'fa fa-table',
-                authorizations: [Authorization.DATASET_READ,Authorization.DATASET_WRITE],
-                feature: FeatureName.COMPONENT
+                authorizations: [Authorization.DATASET_READ,Authorization.DATASET_WRITE]
             },
         ],
     },

@@ -19,11 +19,13 @@ public class ExecutionRequestDto {
 
     public final StepDefinitionRequestDto scenario;
     public final String environment;
+    public final DatasetDto dataset;
 
     @JsonCreator
-    public ExecutionRequestDto(StepDefinitionRequestDto scenario, String environment) {
+    public ExecutionRequestDto(StepDefinitionRequestDto scenario, String environment, DatasetDto dataset) {
         this.scenario = scenario;
         this.environment = environment;
+        this.dataset = dataset;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

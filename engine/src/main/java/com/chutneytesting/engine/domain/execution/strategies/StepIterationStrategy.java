@@ -35,6 +35,9 @@ public class StepIterationStrategy implements StepExecutionStrategy {
         );
 
         List<Map<String, Object>> dataset = (List<Map<String, Object>>) step.dataEvaluator().evaluate(strategyDefinition.strategyProperties.get("dataset"), scenarioContext);
+        if (dataset.isEmpty()) {
+            throw new IllegalArgumentException("Step iteration cannot have empty dataset");
+        }
         final String indexName = (String) Optional.ofNullable(strategyDefinition.strategyProperties.get("index")).orElse("i");
         step.beginExecution(scenarioExecution);
         AtomicInteger index = new AtomicInteger(0);
@@ -46,7 +49,7 @@ public class StepIterationStrategy implements StepExecutionStrategy {
             List<Pair<Step, Map<String, Object>>> iterations = dataset.stream()
                 .map(data -> buildParentIteration(indexName, index.getAndIncrement(), step, subSteps, data))
                 .peek(p -> step.addStepExecution(p.getLeft()))
-                .collect(Collectors.toList());
+                .toList();
 
             iterations.forEach(it ->
                 DefaultStepExecutionStrategy.instance.execute(scenarioExecution, it.getLeft()/*step*/, scenarioContext, it.getRight()/*localContext*/, strategies));
@@ -55,7 +58,7 @@ public class StepIterationStrategy implements StepExecutionStrategy {
             List<Pair<Step, Map<String, Object>>> iterations = dataset.stream()
                 .map(data -> buildIteration(indexName, index.getAndIncrement(), step, data))
                 .peek(e -> step.addStepExecution(e.getKey()))
-                .collect(Collectors.toList());
+                .toList();
 
             iterations.forEach(it -> it.getLeft().execute(scenarioExecution, scenarioContext, it.getRight()));
         }

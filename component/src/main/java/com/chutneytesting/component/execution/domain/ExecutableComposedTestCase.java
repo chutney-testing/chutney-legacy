@@ -48,7 +48,7 @@ public class ExecutableComposedTestCase implements TestCase {
     public TestCase withDataSetId(String dataSetId) {
         return new ExecutableComposedTestCase(
             TestCaseMetadataImpl.TestCaseMetadataBuilder.from(metadata)
-                .withDatasetId(dataSetId)
+                .withDefaultDataset(dataSetId)
                 .build(),
             composedScenario,
             executionParameters

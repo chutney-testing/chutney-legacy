@@ -654,6 +654,18 @@
         </sql>
     </changeSet>
 
+    <changeSet id="20230417_scenario_default_dataset" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="SCENARIO" columnName="DEFAULT_DATASET"/>
+            </not>
+        </preConditions>
+        <comment>Create columns DEFAULT_DATASET_ID in SCENARIO</comment>
+        <addColumn tableName="SCENARIO">
+            <column name="DEFAULT_DATASET_ID" type="VARCHAR(64)"></column>
+        </addColumn>
+    </changeSet>
+
     <changeSet id="Create-table-scenario" dbms="sqlite" author="ICG">
         <comment>Create Scenario table</comment>
         <renameTable oldTableName="SCENARIO" newTableName="SCENARIO_OLD"></renameTable>
@@ -673,6 +685,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="DATASET" type="LONGVARCHAR"/>
+            <column name="DEFAULT_DATASET_ID" type="VARCHAR(64)"/>
             <column defaultValueBoolean="true" name="ACTIVATED" type="BOOLEAN"/>
             <column name="USER_ID" type="VARCHAR(64)"/>
             <column name="UPDATE_DATE" type="NUMBER">
@@ -736,7 +749,7 @@
             <column defaultValue="GLOBAL" name="ENVIRONMENT" type="VARCHAR(64)"/>
             <column defaultValueBoolean="false" name="PARALLEL_RUN" type="BOOLEAN"/>
             <column defaultValueBoolean="false" name="RETRY_AUTO" type="BOOLEAN"/>
-            <column name="DATASET_ID" type="VARCHAR(20)"/>
+            <column name="DATASET_ID" type="VARCHAR(64)"/>
             <column name="TAGS" type="VARCHAR(300)"/>
             <column defaultValueNumeric="1" name="VERSION" type="INTEGER">
                 <constraints nullable="false"/>
@@ -869,7 +882,7 @@
             <column defaultValue="Undefined scenario title" name="SCENARIO_TITLE" type="VARCHAR(300)"/>
             <column defaultValue="" name="ENVIRONMENT" type="VARCHAR(20)"/>
             <column defaultValue="" name="USER_ID" type="VARCHAR(64)"/>
-            <column name="DATASET_ID" type="VARCHAR(20)"/>
+            <column name="DATASET_ID" type="VARCHAR(64)"/>
             <column name="DATASET_VERSION" type="INTEGER"/>
             <column defaultValueNumeric="1" name="VERSION" type="INTEGER">
                 <constraints nullable="false"/>
@@ -943,7 +956,7 @@
             <column defaultValueBoolean="false" name="PARTIAL" type="BOOLEAN"/>
             <column name="ENVIRONMENT" type="VARCHAR(64)"/>
             <column defaultValue="" name="USER_ID" type="VARCHAR(64)"/>
-            <column name="DATASET_ID" type="VARCHAR(20)"/>
+            <column name="DATASET_ID" type="VARCHAR(64)"/>
             <column name="DATASET_VERSION" type="INTEGER"/>
             <column defaultValueNumeric="1" name="VERSION" type="INTEGER">
                 <constraints nullable="false"/>

@@ -1,23 +1,27 @@
 package com.chutneytesting.server.core.domain.execution;
 
-import static java.util.Objects.requireNonNull;
-
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
-import java.util.Map;
 
 public class ExecutionRequest {
 
     public final TestCase testCase;
     public final String environment;
     public final String userId;
+    public final DataSet dataset;
+
+    public ExecutionRequest(TestCase testCase, String environment, String userId, DataSet dataset) {
+        this.testCase = testCase;
+        this.environment = environment;
+        this.userId = userId;
+        this.dataset = dataset;
+    }
 
     public ExecutionRequest(TestCase testCase, String environment, String userId) {
         this.testCase = testCase;
         this.environment = environment;
         this.userId = userId;
+        this.dataset = DataSet.NO_DATASET;
     }
 
-    public ExecutionRequest(TestCase testCase, String environment, Map<String, String> specificDataSet, String userId) {
-        this(requireNonNull(testCase).usingExecutionParameters(requireNonNull(specificDataSet)), environment, userId);
-    }
 }

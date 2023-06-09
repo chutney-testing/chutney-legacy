@@ -30,7 +30,7 @@
                 "outputs": {
                     "pouet_<i>": "${\"/\" + #env + \"/\" + #user + \"/<i>\"}"
                 },
-                "validations" : {
+                "validations": {
                     "env_ok": "${#env == \"A\" || #env == \"B\"}",
                     "pouet_<i>_ok": "${#pouet_<i> == \"/\" + #env + \"/\" + #user + \"/<i>\"}"
                 },
@@ -44,7 +44,7 @@
             {
                 "name": "Scenario Context is not altered by iterations",
                 "type": "success",
-                "validations" : {
+                "validations": {
                     "env_ok": "${#env == \"fixEnv\"}"
                 }
             }

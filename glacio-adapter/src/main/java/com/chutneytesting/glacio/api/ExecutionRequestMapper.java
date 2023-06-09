@@ -1,8 +1,10 @@
 package com.chutneytesting.glacio.api;
 
+import com.chutneytesting.engine.api.execution.DatasetDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.StepDefinitionDto;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,7 +12,7 @@ public class ExecutionRequestMapper {
 
     public static ExecutionRequestDto toDto(StepDefinitionDto stepDefinitionDto, String environment) {
         final StepDefinitionRequestDto stepDefinitionRequestDto = getStepDefinitionRequestFromStepDef(stepDefinitionDto);
-        return new ExecutionRequestDto(stepDefinitionRequestDto, environment);
+        return new ExecutionRequestDto(stepDefinitionRequestDto, environment, new DatasetDto(Collections.emptyMap(), Collections.emptyList()));
     }
 
     private static StepDefinitionRequestDto getStepDefinitionRequestFromStepDef(StepDefinitionDto definition) {

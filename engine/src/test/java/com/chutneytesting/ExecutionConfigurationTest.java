@@ -7,6 +7,7 @@ import com.chutneytesting.action.domain.ActionTemplateParserV2;
 import com.chutneytesting.action.domain.ActionTemplateRegistry;
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
+import com.chutneytesting.engine.api.execution.DatasetDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.StatusDto;
@@ -25,13 +26,14 @@ public class ExecutionConfigurationTest {
 
     private final ExecutionConfiguration sut = new ExecutionConfiguration();
     private final String FAKE_ENV = "fakeEnv";
+    private final DatasetDto dataset = new DatasetDto(Collections.emptyMap(), Collections.emptyList());
 
     @Test
     public void should_execute_scenario_async() {
         //G
         final TestEngine testEngine = sut.embeddedTestEngine();
         StepDefinitionRequestDto stepDefinition = createSucessStep();
-        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition, FAKE_ENV);
+        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition, FAKE_ENV, dataset);
 
         //W
         Long executionId = testEngine.executeAsync(requestDto);
@@ -48,7 +50,7 @@ public class ExecutionConfigurationTest {
         //G
         final TestEngine testEngine = sut.embeddedTestEngine();
         StepDefinitionRequestDto stepDefinition = createSucessStep();
-        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition, FAKE_ENV);
+        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition, FAKE_ENV, dataset);
 
         //W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -62,7 +64,7 @@ public class ExecutionConfigurationTest {
         //G
         final TestEngine testEngine = sut.embeddedTestEngine();
         StepDefinitionRequestDto stepDefinition = createScenarioForPause();
-        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition, FAKE_ENV);
+        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition, FAKE_ENV, dataset);
 
         //W
         List<StepExecutionReportDto> results = new ArrayList<>();
@@ -109,7 +111,7 @@ public class ExecutionConfigurationTest {
             Collections.emptyMap(),
             Collections.emptyMap()
         );
-        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition, FAKE_ENV);
+        ExecutionRequestDto requestDto = new ExecutionRequestDto(stepDefinition, FAKE_ENV, dataset);
 
         //W
         StepExecutionReportDto result = testEngine.execute(requestDto);

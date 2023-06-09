@@ -19,7 +19,8 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
         public executions: Array<Execution> = [],
         public tags?: Array<string>,
         public scenario: Scenario = new Scenario(),
-        public wrappedParams: ExampleParameters = new ExampleParameters()
+        public wrappedParams: ExampleParameters = new ExampleParameters(),
+        public defaultDataset?: string,
     ) {
     }
 
@@ -36,7 +37,8 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
             Execution.deserializeExecutions(jsonObject.executions),
             jsonObject.tags,
             Scenario.deserialize(jsonObject.scenario),
-            ExampleParameters.deserialize(jsonObject.computedParameters)
+            ExampleParameters.deserialize(jsonObject.computedParameters),
+            jsonObject.defaultDataset
         );
     }
 
@@ -55,6 +57,7 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
         addOptionalParam(jsonObject, 'tags', this.tags);
         jsonObject['scenario'] = this.scenario.serialize();
         addOptionalParam(jsonObject, 'computedParameters', this.wrappedParams.serialize());
+        addOptionalParam(jsonObject, 'defaultDataset', this.defaultDataset);
         return jsonObject;
     }
 
@@ -80,7 +83,8 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
             null,
             cloneAsPossible(this.tags),
             cloneAsPossible(this.scenario),
-            cloneAsPossible(this.wrappedParams)
+            cloneAsPossible(this.wrappedParams),
+            null
         );
     }
 }

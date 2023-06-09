@@ -13,9 +13,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.component.dataset.domain.DataSetRepository;
-import com.chutneytesting.server.core.domain.dataset.DataSet;
+import com.chutneytesting.component.dataset.infra.OrientDataSetRepository;
 import com.chutneytesting.scenario.domain.gwt.Strategy;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import java.util.Arrays;
@@ -31,9 +31,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class ComposedTestCaseDatatableIterationsPreProcessorTest {
 
     ComposedTestCaseDatatableIterationsPreProcessor sut;
-    private DataSetRepository mockDatasetRepository;
+    private OrientDataSetRepository mockDatasetRepository;
 
-    private final TestCaseMetadata metadata = TestCaseMetadataImpl.builder().withDatasetId("fakeId").build();
+    private final TestCaseMetadata metadata = TestCaseMetadataImpl.builder().withDefaultDataset("fakeId").build();
     private final ExecutableComposedStep stepGenerating2Iterations = ExecutableComposedStep.builder()
         .withName("Should generate 2 iterations for letter A and B")
         .withImplementation(Optional.of(
@@ -43,7 +43,7 @@ public class ComposedTestCaseDatatableIterationsPreProcessorTest {
 
     @BeforeEach
     public void setUp() {
-        mockDatasetRepository = mock(DataSetRepository.class);
+        mockDatasetRepository = mock(OrientDataSetRepository.class);
     }
 
     private void stubDatasetRepository(Map<String, String> constants, List<Map<String, String>> datatable) {

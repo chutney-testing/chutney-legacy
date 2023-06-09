@@ -78,7 +78,7 @@ public class OrientDataSetRepositoryTest {
         );
         List<String> tags = Lists.list("T1");
         String description = "another description";
-        String name = "another name";
+        String name = "another_name";
 
         // When
         DataSet foundUpdatedDataSet = saveAndReload(

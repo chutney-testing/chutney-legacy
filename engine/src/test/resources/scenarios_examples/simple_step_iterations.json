@@ -1,4 +1,17 @@
 {
+    "dataset": {
+        "constants": {},
+        "datatable": [
+            {
+                "env": "A",
+                "user": "Tata"
+            },
+            {
+                "env": "B",
+                "user": "Baba"
+            }
+        ]
+    },
     "scenario": {
         "name": "Test iterations",
         "steps": [
@@ -18,16 +31,7 @@
                     "type": "for",
                     "parameters": {
                         "index": "idx",
-                        "dataset": [
-                            {
-                                "env": "A",
-                                "user": "Tata"
-                            },
-                            {
-                                "env": "B",
-                                "user": "Baba"
-                            }
-                        ]
+                        "dataset": "${#dataset}"
                     }
                 }
             }
