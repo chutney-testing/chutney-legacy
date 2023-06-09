@@ -49,7 +49,7 @@ public class StepIterationStrategy implements StepExecutionStrategy {
             List<Pair<Step, Map<String, Object>>> iterations = dataset.stream()
                 .map(data -> buildParentIteration(indexName, index.getAndIncrement(), step, subSteps, data))
                 .peek(p -> step.addStepExecution(p.getLeft()))
-                .collect(Collectors.toList());
+                .toList();
 
             iterations.forEach(it ->
                 DefaultStepExecutionStrategy.instance.execute(scenarioExecution, it.getLeft()/*step*/, scenarioContext, it.getRight()/*localContext*/, strategies));
@@ -58,7 +58,7 @@ public class StepIterationStrategy implements StepExecutionStrategy {
             List<Pair<Step, Map<String, Object>>> iterations = dataset.stream()
                 .map(data -> buildIteration(indexName, index.getAndIncrement(), step, data))
                 .peek(e -> step.addStepExecution(e.getKey()))
-                .collect(Collectors.toList());
+                .toList();
 
             iterations.forEach(it -> it.getLeft().execute(scenarioExecution, scenarioContext, it.getRight()));
         }

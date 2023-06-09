@@ -41,7 +41,7 @@ spring:
     change-log: classpath:/changelog/db.changelog-master.xml
   jpa:
     open-in-view: false
-    show_sql: true
+    show_sql: false
     generate-ddl: false
     hibernate:
       ddl-auto: none

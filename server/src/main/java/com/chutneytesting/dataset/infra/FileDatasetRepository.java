@@ -58,7 +58,7 @@ public class FileDatasetRepository implements DataSetRepository {
     @Override
     public DataSet findById(String fileName) {
         if (null == fileName || fileName.isBlank()) {
-            return DataSet.builder().build();
+            return DataSet.NO_DATASET;
         }
 
         Path file = this.storeFolderPath.resolve(fileName + FILE_EXTENSION);
