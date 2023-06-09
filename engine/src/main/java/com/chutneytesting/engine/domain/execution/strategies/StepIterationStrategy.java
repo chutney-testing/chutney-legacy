@@ -35,6 +35,9 @@ public class StepIterationStrategy implements StepExecutionStrategy {
         );
 
         List<Map<String, Object>> dataset = (List<Map<String, Object>>) step.dataEvaluator().evaluate(strategyDefinition.strategyProperties.get("dataset"), scenarioContext);
+        if (dataset.isEmpty()) {
+            throw new IllegalArgumentException("Step iteration cannot have empty dataset");
+        }
         final String indexName = (String) Optional.ofNullable(strategyDefinition.strategyProperties.get("index")).orElse("i");
         step.beginExecution(scenarioExecution);
         AtomicInteger index = new AtomicInteger(0);

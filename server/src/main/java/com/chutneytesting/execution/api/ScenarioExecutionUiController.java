@@ -102,7 +102,7 @@ public class ScenarioExecutionUiController {
         TestCase testCase = testCaseRepository.findExecutableById(scenarioId).orElseThrow(() -> new ScenarioNotFoundException(scenarioId));
         Map<String, String> executionParameters = KeyValue.toMap(executionParametersKV);
         String userId = userService.currentUser().getId();
-        DataSet dataset = datasetRepository.findById(testCase.metadata().defaultDataset());
+        DataSet dataset = getDataSet(testCase);
         return executionEngineAsync.execute(new ExecutionRequest(requireNonNull(testCase.usingExecutionParameters(requireNonNull(executionParameters))), env, userId, dataset)).toString();
     }
 
@@ -112,7 +112,7 @@ public class ScenarioExecutionUiController {
         LOGGER.debug("executeScenario for scenarioId='{}'", scenarioId);
         TestCase testCase = testCaseRepository.findExecutableById(scenarioId).orElseThrow(() -> new ScenarioNotFoundException(scenarioId));
         String userId = userService.currentUserId();
-        DataSet dataset = datasetRepository.findById(testCase.metadata().defaultDataset());
+        DataSet dataset = getDataSet(testCase);
         ScenarioExecutionReport report = executionEngine.simpleSyncExecution(new ExecutionRequest(testCase, env, userId, dataset));
         return reportObjectMapper.writeValueAsString(report);
     }
@@ -158,5 +158,14 @@ public class ScenarioExecutionUiController {
                 .data(reportObjectMapper.writeValueAsString(reportEvent))
                 .build()
         ).toFlowable(BackpressureStrategy.BUFFER));
+    }
+
+    private DataSet getDataSet(TestCase testCase) {
+        String defaultDatasetId = testCase.metadata().defaultDataset();
+        if (!defaultDatasetId.isEmpty()) {
+            return datasetRepository.findById(defaultDatasetId);
+        } else {
+            return DataSet.NO_DATASET;
+        }
     }
 }
