@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.0.0](https://github.com/chutney-testing/chutney/tree/2.0.0)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/1.7.1...2.0.0)
+
+## What's Changed
+### 🚀 Implemented enhancements:
+* Step iterations dataset by [\#1021](https://github.com/chutney-testing/chutney/pull/1021)
+* Targets new UI/UX [\#1020](https://github.com/chutney-testing/chutney/pull/1020)
+* Show error message for invalid environment name [\#1054](https://github.com/chutney-testing/chutney/pull/1054)
+* Run all scenario format using a dataset [\#1065](https://github.com/chutney-testing/chutney/pull/1065)
+### 🔧 Technical enhancements:
+* Remove 'test' workflow & improve issue template [\#1051](https://github.com/chutney-testing/chutney/pull/1051)
+* Toggle components feature when it's not available [\#1038](https://github.com/chutney-testing/chutney/pull/1038)
+* Include private and package-only fields in SqlAction ou… [\#1052](https://github.com/chutney-testing/chutney/pull/1052)
+* SQLite migration with JPA : Add campaign and executions [\#1040](https://github.com/chutney-testing/chutney/pull/1040)
+### 👒 Dependencies:
+* Bump maven-surefire-plugin from 3.0.0-M7 to 3.0.0 [\#1049](https://github.com/chutney-testing/chutney/pull/1049)
+* Bump jqwik from 1.7.1 to 1.7.3 [\#1041](https://github.com/chutney-testing/chutney/pull/1041)
+
+
+**Full Changelog**: https://github.com/chutney-testing/chutney/compare/1.7.1...2.0.0
+
 ## [1.7.1](https://github.com/chutney-testing/chutney/tree/1.7.1)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.7.0...1.7.1)
