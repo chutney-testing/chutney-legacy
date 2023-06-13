@@ -82,6 +82,7 @@ export class DatasetListComponent implements OnInit, OnDestroy {
 
     filterSearchChange(searchFilter: string) {
         this.dataSetFilter = searchFilter;
+        this.applyFiltersToRoute();
     }
 
     onItemSelect(item: any) {

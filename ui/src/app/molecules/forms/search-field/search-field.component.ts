@@ -20,4 +20,8 @@ export class SearchFieldComponent implements OnInit {
   fireChangeEvent() {
     this.searchInputEvent.emit(this.searchInput);
   }
+
+  clearSearchInput() {
+    this.searchInputEvent.emit('');
+  }
 }
