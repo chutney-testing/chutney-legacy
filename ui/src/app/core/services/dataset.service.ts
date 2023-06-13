@@ -42,6 +42,7 @@ export class DataSetService {
     }
 
     save(dataset: Dataset, oldId?: string): Observable<Dataset> {
+        DataSetService.cleanTags(dataset);
         if (dataset.id && dataset.id.length > 0) {
             return this.httpClient.put<Dataset>(environment.backend + this.resourceUrl, dataset, {params: {oldId}})
                 .pipe(
@@ -69,6 +70,18 @@ export class DataSetService {
             dto.multipleValues.map(l => l.map(o => new KeyValue(o.key, o.value))),
             dto.version,
             dto.id);
+    }
+
+    private static cleanTags(dataset: Dataset) {
+        if (dataset.tags != null && dataset.tags.length > 0) {
+            dataset.tags = dataset.tags.map((tag) => tag.toLocaleUpperCase().trim())
+                .reduce((filteredTags, tag) => {
+                    if (filteredTags.indexOf(tag) < 0) {
+                        filteredTags.push(tag);
+                    }
+                    return filteredTags;
+                }, []);
+        }
     }
 
 }
