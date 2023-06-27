@@ -205,10 +205,10 @@ public class CampaignExecutionEngine {
                 // Init scenario execution in campaign report
                 campaignExecutionReport.startScenarioExecution(testCase, campaign.executionEnvironment(), campaignExecutionReport.userId);
                 // Execute scenario
-                ScenarioExecutionReportCampaign scenarioExecutionReport = executeScenario(campaign, testCase, campaignExecutionReport.userId);
+                ScenarioExecutionReportCampaign scenarioExecutionReport = executeScenario(campaign, testCase, campaignExecutionReport);
                 // Retry one time if failed
                 if (campaign.retryAuto && ServerReportStatus.FAILURE.equals(scenarioExecutionReport.status())) {
-                    scenarioExecutionReport = executeScenario(campaign, testCase, campaignExecutionReport.userId);
+                    scenarioExecutionReport = executeScenario(campaign, testCase, campaignExecutionReport);
                 }
                 // Add scenario report to campaign's one
                 ofNullable(scenarioExecutionReport)
@@ -222,12 +222,12 @@ public class CampaignExecutionEngine {
         };
     }
 
-    private ScenarioExecutionReportCampaign executeScenario(Campaign campaign, TestCase testCase, String userId) {
+    private ScenarioExecutionReportCampaign executeScenario(Campaign campaign, TestCase testCase, CampaignExecutionReport campaignExecutionReport) {
         Long executionId;
         String scenarioName;
         try {
             LOGGER.trace("Execute scenario {} for campaign {}", testCase.id(), campaign.id);
-            ExecutionRequest executionRequest = buildExecutionRequest(campaign, testCase, userId);
+            ExecutionRequest executionRequest = buildExecutionRequest(campaign, testCase, campaignExecutionReport);
             ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionEngine.execute(executionRequest);
             executionId = scenarioExecutionReport.executionId;
             scenarioName = scenarioExecutionReport.scenarioName;
@@ -245,12 +245,12 @@ public class CampaignExecutionEngine {
         return new ScenarioExecutionReportCampaign(testCase.id(), scenarioName, execution.summary());
     }
 
-    private ExecutionRequest buildExecutionRequest(Campaign campaign, TestCase testCase, String userId) {
+    private ExecutionRequest buildExecutionRequest(Campaign campaign, TestCase testCase, CampaignExecutionReport campaignExecutionReport) {
         // Only composable test cases can use an external dataset, which can be override if set on the campaign
         if (isNotBlank(campaign.externalDatasetId) && testCase.id().contains("-")) {  // TODO remove after component deprecation
-            return executionWithDatasetIdOverrideByCampaign(campaign, testCase, userId);
+            return executionWithDatasetIdOverrideByCampaign(campaign, testCase, campaignExecutionReport.userId);
         } else {
-            return executionWithCombinedParametersFromCampaignAndTestCase(campaign, testCase, userId);
+            return executionWithCombinedParametersFromCampaignAndTestCase(campaign, testCase, campaignExecutionReport);
         }
     }
 
@@ -263,13 +263,13 @@ public class CampaignExecutionEngine {
         );
     }
 
-    private ExecutionRequest executionWithCombinedParametersFromCampaignAndTestCase(Campaign campaign, TestCase testCase, String userId) {
+    private ExecutionRequest executionWithCombinedParametersFromCampaignAndTestCase(Campaign campaign, TestCase testCase, CampaignExecutionReport campaignExecutionReport) {
         Map<String, String> executionParameters = new HashMap<>(testCase.executionParameters());
         executionParameters.putAll(campaign.executionParameters);
         DataSet dataset = ofNullable(campaign.externalDatasetId)
             .map(datasetRepository::findById)
             .orElseGet(() -> datasetRepository.findById(testCase.metadata().defaultDataset()));
-        return new ExecutionRequest(testCase.usingExecutionParameters(executionParameters), campaign.executionEnvironment(), userId, dataset);
+        return new ExecutionRequest(testCase.usingExecutionParameters(executionParameters), campaign.executionEnvironment(), campaignExecutionReport.userId, dataset, campaignExecutionReport);
     }
 
     private CampaignExecutionReport executeCampaign(Campaign campaign, String userId) {

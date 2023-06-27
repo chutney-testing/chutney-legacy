@@ -4,7 +4,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.campaign.infra.CampaignExecutionJpaRepository;
 import com.chutneytesting.campaign.infra.CampaignJpaRepository;
+import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionReport;
 import com.chutneytesting.scenario.infra.raw.ScenarioJpaRepository;
@@ -19,6 +21,7 @@ import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Component;
@@ -31,17 +34,20 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     private final DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository;
     private final ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository;
     private final CampaignJpaRepository campaignJpaRepository;
+    private final CampaignExecutionJpaRepository campaignExecutionJpaRepository;
     private final TestCaseRepository testCaseRepository;
 
     DatabaseExecutionHistoryRepository(
         DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository,
         ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository,
         ScenarioJpaRepository scenarioJpaRepository,
-        CampaignJpaRepository campaignJpaRepository, TestCaseRepository testCaseRepository) {
+        CampaignJpaRepository campaignJpaRepository, TestCaseRepository testCaseRepository,
+        CampaignExecutionJpaRepository campaignExecutionJpaRepository) {
         this.scenarioExecutionsJpaRepository = scenarioExecutionsJpaRepository;
         this.scenarioExecutionReportJpaRepository = scenarioExecutionReportJpaRepository;
         this.campaignJpaRepository = campaignJpaRepository;
         this.testCaseRepository = testCaseRepository;
+        this.campaignExecutionJpaRepository = campaignExecutionJpaRepository;
     }
 
     @Override
@@ -87,10 +93,14 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
 
     @Override
     public Execution store(String scenarioId, DetachedExecution detachedExecution) throws IllegalStateException {
-        if(invalidScenarioId(scenarioId)) {
+        if (invalidScenarioId(scenarioId)) {
             throw new IllegalStateException("Scenario id is null or empty");
         }
         ScenarioExecution scenarioExecution = ScenarioExecution.fromDomain(scenarioId, detachedExecution);
+        if (detachedExecution.campaignReport().isPresent()) {
+            Optional<CampaignExecution> campaignExecution = campaignExecutionJpaRepository.findById(detachedExecution.campaignReport().get().executionId.longValue());
+            scenarioExecution.forCampaignExecution(campaignExecution.get());
+        }
         scenarioExecution = scenarioExecutionsJpaRepository.save(scenarioExecution);
         scenarioExecutionReportJpaRepository.save(new ScenarioExecutionReport(scenarioExecution, detachedExecution.report()));
         Execution execution = detachedExecution.attach(scenarioExecution.id());
