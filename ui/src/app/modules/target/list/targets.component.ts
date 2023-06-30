@@ -38,7 +38,7 @@ export class TargetsComponent implements OnInit {
         this.environmentService.list().subscribe({
             next: envs => {
                 this.environments = envs;
-                this.targets = envs.flatMap(env => env.targets);
+                this.targets = envs.flatMap(env => env.targets).sort(this.targetSortFunction());
                 this.targetsNames = distinct(this.targets.map(target => target.name));
             },
             error: error => this.errorMessage = error.error
@@ -103,6 +103,7 @@ export class TargetsComponent implements OnInit {
                 this.environmentFilter = env;
                 this.targets = env.targets;
             }
+            this.targets.sort(this.targetSortFunction());
         }
 
        this.targetsNames = distinct(this.filterByKeyword(this.targets).map(target => target.name));
@@ -111,5 +112,9 @@ export class TargetsComponent implements OnInit {
     private match(target: Target): boolean{
         return match(target.name, this.targetFilter) || match(target.url, this.targetFilter) ||
             filterOnTextContent(target.properties, this.targetFilter, ['key', 'value'])?.length;
+    }
+
+    private targetSortFunction(): (a: Target, b: Target) => number {
+        return (t1, t2) => t1.name.localeCompare(t2.name);
     }
 }
