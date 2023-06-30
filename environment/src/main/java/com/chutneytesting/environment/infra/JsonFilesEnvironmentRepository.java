@@ -8,6 +8,7 @@ import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentException;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
+import com.chutneytesting.environment.domain.exception.TargetAlreadyExistsException;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +19,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
 
@@ -89,6 +92,18 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
 
     private void doSave(Environment environment) {
         Path environmentPath = getEnvironmentPath(environment.name);
+        Set<String> notUniqueTargets = environment.targets
+            .stream()
+            .filter(target -> environment.targets
+                .stream()
+                .filter(t -> t.name.equals(target.name))
+                .toList()
+                .size() > 1)
+            .map(t -> t.name)
+            .collect(Collectors.toSet());
+        if (!notUniqueTargets.isEmpty()) {
+            throw new TargetAlreadyExistsException("Targets are not unique : " + String.join(", ", notUniqueTargets));
+        }
         try {
             byte[] bytes = objectMapper.writeValueAsBytes(JsonEnvironment.from(environment));
             try {

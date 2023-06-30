@@ -7,12 +7,14 @@ import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
+import com.chutneytesting.environment.domain.exception.TargetAlreadyExistsException;
 import com.chutneytesting.tools.ThrowingConsumer;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Set;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -57,6 +59,47 @@ public class JsonFilesEnvironmentRepositoryTest {
         assertThat(testEnv.targets).containsExactly(
             Target.builder().withName("target1").withUrl(url).withEnvironment("TEST").build()
         );
+    }
+
+    @Test
+    void should_throw_exception_when_target_is_not_unique() {
+        // Given
+        final String url = "http://target:8080";
+        final Environment environment = Environment.builder()
+            .withName("TEST")
+            .withDescription("some description")
+            .withTargets(
+                Set.of(Target.builder()
+                        .withName("target0")
+                        .withEnvironment("envName1")
+                        .withUrl(url)
+                        .build(),
+                    Target.builder()
+                        .withName("target1")
+                        .withEnvironment("envName1")
+                        .withUrl(url)
+                        .build(),
+                    Target.builder()
+                        .withName("target1")
+                        .withEnvironment("envName2")
+                        .withUrl(url)
+                        .build(),
+                    Target.builder()
+                        .withName("target2")
+                        .withEnvironment("envName1")
+                        .withUrl(url)
+                        .build(),
+                    Target.builder()
+                        .withName("target2")
+                        .withEnvironment("envName2")
+                        .withUrl(url)
+                        .build()))
+            .build();
+        // When & Then
+        assertThatThrownBy(() -> sut.save(environment))
+            .isInstanceOf(TargetAlreadyExistsException.class)
+            .message()
+            .isEqualTo("Targets are not unique : target2, target1");
     }
 
     @Test
