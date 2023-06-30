@@ -250,10 +250,12 @@ In order to do so :
 
 9. You are done creating the keys :)
 10. Now safely backup the masterkey pgp file created on step 3 and safely store its passphrase !
-11. Set the secret subkey on CI, follow [instruction](#pgp_export_secret)
-12. Set the public subkey on servers, follow [instruction](#pgp_export_public)
+11. Set the secret signin subkey on CI, follow [instruction to export secret signin subkey](#pgp_export_secret)
+12. Publish the public subkey on servers, follow [instruction to export public signin subkey](#pgp_export_public)
 
 #### <a name="pgp_export_secret"></a> Export secret signin subkey
+
+In order to sign artifacts during CI builds, we should provide the secret signin subkey
 
 1. List keys : ```gpg -K --with-keygrip --keyid-format LONG```
     ```
@@ -279,12 +281,14 @@ In order to do so :
 
 #### <a name="pgp_export_public"></a> Export public signin subkey
 
+In order to let Sonatype OSSRH and others check our artifacts signature, we should publish our public signin key.
+
 1. ```gpg -a --export B041166A290ECDF7 > chutney_signin_public_key.pub```
-2. Go to a public server like https://keyserver.ubuntu.com/#  and copy/paste ascii armor key content :
+2. Go to a public server like [keyserver.ubuntu.com](https://keyserver.ubuntu.com) or [keys.openpgp.org](keys.openpgp.org) and copy/paste ascii armor key content :
     ```
-    -----BEGIN PGP PRIVATE KEY BLOCK-----
+    -----BEGIN PGP PUBLIC KEY BLOCK-----
     [...]
-    -----END PGP PRIVATE KEY BLOCK-----
+    -----END PGP PUBLIC KEY BLOCK-----
     ```
 
 #### <a name="pgp_extend_subkey"></a> Extend the subkey expiration date
