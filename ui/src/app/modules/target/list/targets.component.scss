@@ -15,3 +15,7 @@
 .props {
     table-layout: fixed;
 }
+
+:host ::ng-deep .ngb-highlight {
+    background-color: violet !important;
+}
