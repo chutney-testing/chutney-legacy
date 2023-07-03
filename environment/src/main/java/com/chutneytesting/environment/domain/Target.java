@@ -22,6 +22,10 @@ public class Target {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public static TargetBuilder builder() {
         return new TargetBuilder();
     }

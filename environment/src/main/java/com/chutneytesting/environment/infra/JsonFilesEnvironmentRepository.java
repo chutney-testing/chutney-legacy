@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentException;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
@@ -19,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -92,18 +94,7 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
 
     private void doSave(Environment environment) {
         Path environmentPath = getEnvironmentPath(environment.name);
-        Set<String> notUniqueTargets = environment.targets
-            .stream()
-            .filter(target -> environment.targets
-                .stream()
-                .filter(t -> t.name.equals(target.name))
-                .toList()
-                .size() > 1)
-            .map(t -> t.name)
-            .collect(Collectors.toSet());
-        if (!notUniqueTargets.isEmpty()) {
-            throw new TargetAlreadyExistsException("Targets are not unique : " + String.join(", ", notUniqueTargets));
-        }
+        checkTargetNameUnicity(environment.targets);
         try {
             byte[] bytes = objectMapper.writeValueAsBytes(JsonEnvironment.from(environment));
             try {
@@ -113,6 +104,20 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
             }
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot serialize " + environment, e);
+        }
+    }
+
+    private void checkTargetNameUnicity(Set<Target> targets) {
+        Set<String> notUniqueTargets = targets
+            .stream()
+            .collect(Collectors.groupingBy(Target::getName, Collectors.counting()))
+            .entrySet()
+            .stream()
+            .filter(entry -> entry.getValue() > 1)
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
+        if (!notUniqueTargets.isEmpty()) {
+            throw new TargetAlreadyExistsException("Targets are not unique : " + String.join(", ", notUniqueTargets));
         }
     }
 
