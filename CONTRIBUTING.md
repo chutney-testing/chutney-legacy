@@ -11,6 +11,10 @@
 * [Dependency management](#dep)
 * [Build Process](#build)
 * [Release Management](#release)
+  * [Create keys to sign artifacts](#pgp_create)
+  * [Export secret signin key to CI](#pgp_export_secret)
+  * [Export public signin key to public servers](#pgp_export_public)
+  * [Extend signin key expiration date](#pgp_extend_subkey)
 * [Add a new Task](#task)
 * [Licensing](#oss)
 
@@ -162,7 +166,7 @@ We use Github Actions to build and release Chutney.
 
 ## <a name="release"></a> Release Management
 
-### Signing release artifacts (Maintener)
+### <a name="pgp_create"></a> Signing release artifacts (Maintener)
 
 We need a key to sign our artifacts.
 
@@ -184,7 +188,7 @@ In order to do so :
 
 
 1. Create a master key : ```gpg --full-generate-key```
-2. Check created keys :  ```gpg -K --with-keygrip --keyid-format LONG ```
+2. Check created keys :  ```gpg -K --with-keygrip --keyid-format LONG```
    ```
    sec   rsa4096/BA9185485BBC958B 2022-05-04 [SC]
    809E390126D4C2139ADDAD97BA9185485BBC958B
@@ -215,7 +219,7 @@ In order to do so :
    DB7568F90E8783C0A9B84BDCB268801F1D3F9DC7
    ```
 6. Delete the master key : ```gpg --delete-secret-keys KEY_ID```
-   * Be carefull not to delete the subkey
+   * **Be carefull not to delete the subkey**
 
    ```
    gpg --delete-secret-keys 809E390126D4C2139ADDAD97BA9185485BBC958B
@@ -244,20 +248,14 @@ In order to do so :
        * (enter twice the new passphrase you want for the subkey)
      * ```save```
 
-9. You are done :)
+9. You are done creating the keys :)
+10. Now safely backup the masterkey pgp file created on step 3 and safely store its passphrase !
+11. Set the secret signin subkey on CI, follow [instruction to export secret signin subkey](#pgp_export_secret)
+12. Publish the public subkey on servers, follow [instruction to export public signin subkey](#pgp_export_public)
 
-#### Extend the subkey expiration date
+#### <a name="pgp_export_secret"></a> Export secret signin subkey
 
-1. Import the master key : ```gpg --import batman_master_secret_key.pgp```
-2. Edit the key : ```gpg --edit-key 809E390126D4C2139ADDAD97BA9185485BBC958B```
-3. In prompt:
-   * Select the subkey : ```key i``` (where i is the index of the listed keys)
-   * Change expiration : ```expire```
-   * save : ```save```
-4. Update the public subkey on servers
-5. Update the secret subkey on CI
-
-#### Export secret signin subkey in CI
+In order to sign artifacts during CI builds, we should provide the secret signin subkey
 
 1. List keys : ```gpg -K --with-keygrip --keyid-format LONG```
     ```
@@ -272,12 +270,40 @@ In order to do so :
     ```
 
 2. Export to ascii armor format : ```gpg -a --export-secret-subkeys B268801F1D3F9DC7 > bruce_secret_signin_subkey.asc```
-3. Create organisation or project secret (ex. GPG_PRIVATE_KEY) and copy/paste ascii armor key content :
+   * Enter subkey passphrase
+   * Then enter the masterkey passphrase
+3. Create organisation or project secret (ex. CHUTNEY_GPG_PRIVATE_KEY) and copy/paste ascii armor key content :
     ```
     -----BEGIN PGP PRIVATE KEY BLOCK-----
     [...]
     -----END PGP PRIVATE KEY BLOCK-----
     ```
+
+#### <a name="pgp_export_public"></a> Export public signin subkey
+
+In order to let Sonatype OSSRH and others check our artifacts signature, we should publish our public signin key.
+
+1. ```gpg -a --export B041166A290ECDF7 > chutney_signin_public_key.pub```
+2. Go to a public server like [keyserver.ubuntu.com](https://keyserver.ubuntu.com) or [keys.openpgp.org](keys.openpgp.org) and copy/paste ascii armor key content :
+    ```
+    -----BEGIN PGP PUBLIC KEY BLOCK-----
+    [...]
+    -----END PGP PUBLIC KEY BLOCK-----
+    ```
+
+#### <a name="pgp_extend_subkey"></a> Extend the subkey expiration date
+
+1. Import the master key : ```gpg --import batman_master_secret_key.pgp```
+    * Listing keys with ```gpg -Kv --keyid-format LONG``` should show both a 'sec' '[SC]' master key and a subkey 'ssb' signing key '[S]' with an expiration date.
+2. Edit the key using the master key id: ```gpg --edit-key 809E390126D4C2139ADDAD97BA9185485BBC958B```
+3. In prompt:
+    * Select the subkey : ```key i``` (where i is the index of the listed keys)
+        * You will see an ```*``` on the selected key
+    * Change expiration : ```expire```
+    * Enter the master key passphrase
+    * save : ```save```
+4. Update the public subkey on servers, follow [instruction](#pgp_export_public)
+5. Update the secret subkey on CI follow [instruction](#pgp_export_secret)
 
 ### Update Changelog file
 
