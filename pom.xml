@@ -116,7 +116,7 @@
         <!-- test dependencies versions -->
         <jqwik.version>1.7.3</jqwik.version>
         <wire-mock.version>2.27.2</wire-mock.version>
-        <testcontainers.version>1.16.3</testcontainers.version>
+        <testcontainers.version>1.18.3</testcontainers.version>
     </properties>
 
     <dependencies>
