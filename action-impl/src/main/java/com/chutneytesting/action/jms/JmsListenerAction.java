@@ -1,11 +1,15 @@
 package com.chutneytesting.action.jms;
 
-import static com.chutneytesting.action.jms.consumer.JmsListenerParameters.validateJmsListenerParameters;
+import static com.chutneytesting.action.jms.JmsActionParameter.DESTINATION;
+import static com.chutneytesting.action.jms.JmsActionParameter.TIMEOUT;
+import static com.chutneytesting.action.spi.validation.ActionValidatorsUtils.durationValidation;
+import static com.chutneytesting.action.spi.validation.ActionValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.action.spi.validation.ActionValidatorsUtils.targetValidation;
 import static com.chutneytesting.action.spi.validation.Validator.getErrorsFrom;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
 import com.chutneytesting.action.jms.consumer.Consumer;
-import com.chutneytesting.action.jms.consumer.JmsListenerParameters;
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Input;
@@ -20,35 +24,48 @@ import java.util.Optional;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
-import org.apache.commons.lang3.ArrayUtils;
 
 public class JmsListenerAction implements Action {
 
     private final Target target;
     private final Logger logger;
 
-    private final JmsListenerParameters listenerJmsParameters;
-
+    private final String destination;
+    private final String timeout;
     private final JmsConnectionFactory jmsConnectionFactory = new JmsConnectionFactory();
+    private final String bodySelector;
+    private final String selector;
+    private final int browserMaxDepth;
 
-    public JmsListenerAction(Target target, Logger logger, @Input("listenerJmsParameters") JmsListenerParameters listenerJmsParameters) {
+    public JmsListenerAction(Target target, Logger logger, @Input(DESTINATION) String destination, @Input(TIMEOUT) String timeout, @Input("bodySelector") String bodySelector, @Input("selector") String selector, @Input("browserMaxDepth") Integer browserMaxDepth) {
         this.target = target;
         this.logger = logger;
-        this.listenerJmsParameters = listenerJmsParameters;
+        this.destination = destination;
+        this.timeout = defaultIfEmpty(timeout, "500 ms");
+        this.bodySelector = bodySelector;
+        this.selector = selector;
+        this.browserMaxDepth = defaultIfNull(browserMaxDepth, 30);
+
+        if (browserMaxDepth != null && bodySelector == null) {
+            logger.error("[WARNING] browserMaxDepth is only used if bodySelector is filled");
+        }
+        if (bodySelector != null && timeout != null) {
+            logger.error("[WARNING] timeout is only used if bodySelector is NOT filled");
+        }
     }
 
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            ArrayUtils.add(
-                validateJmsListenerParameters(listenerJmsParameters),
-                targetValidation(target))
+            notBlankStringValidation(destination, "destination"),
+            durationValidation(timeout, "timeout"),
+            targetValidation(target)
         );
     }
 
     @Override
     public ActionExecutionResult execute() {
-        try (CloseableResource<Consumer> consumerCloseableResource = jmsConnectionFactory.createConsumer(target, listenerJmsParameters)) {
+        try (CloseableResource<Consumer> consumerCloseableResource = jmsConnectionFactory.createConsumer(target, destination, timeout, bodySelector, selector, browserMaxDepth)) {
             Optional<Message> matchingMessage = consumerCloseableResource.getResource().getMessage();
             if (matchingMessage.isPresent()) {
                 Message message = matchingMessage.get();
