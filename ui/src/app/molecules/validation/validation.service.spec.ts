@@ -36,6 +36,22 @@ it('isValidUrl returns true on valid URL', () => {
   expect(service.isValidUrl('test://test:42')).toBe(true);
 });
 
+it('isValidUrl returns true on protocol with number', () => {
+  expect(service.isValidUrl('t3://host:1234')).toBe(true);
+});
+
+it('isValidUrl returns false when protocol does not start with letter', () => {
+  expect(service.isValidUrl('1protocol://host:1234')).toBe(false);
+});
+
+it('isValidUrl returns true on protocol with : - . +', () => {
+  expect(service.isValidUrl('pro+to-co.l://host:1234')).toBe(true);
+});
+
+it('isValidUrl returns true on protocol length is 1', () => {
+  expect(service.isValidUrl('p://host:1234')).toBe(true);
+});
+
 it('isValidEnvironmentName returns false on null', () => {
   expect(service.isValidEnvironmentName(null)).toBe(false);
 });
