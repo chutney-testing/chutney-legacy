@@ -1,4 +1,10 @@
-.environment {
+.env-filter-no-focus {
+    color: var(--bs-btn-color);
+    background-color: var(--bs-btn-bg);
+    border-color: var(--bs-btn-border-color);
+}
+
+.target-environment {
     font-size: 0.7rem;
     &.active {
         background-color: var(--bs-info) !important;
@@ -8,4 +14,8 @@
 
 .props {
     table-layout: fixed;
+}
+
+:host ::ng-deep .ngb-highlight {
+    background-color: violet !important;
 }

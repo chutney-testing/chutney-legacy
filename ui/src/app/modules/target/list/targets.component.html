@@ -5,8 +5,11 @@
 <div class="d-flex flex-row justify-content-between mb-2">
     <div>
         <button *ngFor="let env of environments" type="button"
-                class="btn btn-sm me-2 rounded btn-outline-info"
-                [ngClass]="{'btn-info text-white': environmentFilter?.name === env.name}"
+                class="btn btn-sm me-2 rounded btn-outline-info shadow-none"
+                [ngClass]="{
+                    'btn-info text-white': environmentFilter?.name === env.name,
+                    'env-filter-no-focus': environmentFilter?.name != env.name
+                }"
                 (click)="filter(env)">{{ env.name }}</button>
     </div>
     <div class="btn-group" role="group">
@@ -43,7 +46,7 @@
                     [destroyOnHide]="false">
                     <li class="me-1" *ngFor="let env of environments" [ngbNavItem]="env.name"
                         [disabled]="!exist(targetName, env)">
-                        <a ngbNavLink class="environment border p-1"
+                        <a ngbNavLink class="target-environment border p-1"
                            [ngClass]="{
                         'text-info border-info': exist(targetName, env),
                         'text-warning border-warning': !exist(targetName, env)
