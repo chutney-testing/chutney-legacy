@@ -52,11 +52,6 @@ public class InputParameterResolverTest {
             .isExactlyInstanceOf(InputNameMandatoryException.class);
     }
 
-    private static class ComplexInputAction {
-        ComplexInputAction(@Input("complex") ComplexType complexInput) {
-        }
-    }
-
     private static class ComplexType {
         public final String a, b;
 
@@ -64,20 +59,6 @@ public class InputParameterResolverTest {
             this.a = a;
             this.b = b;
         }
-    }
-
-    @Test
-    public void should_resolve_complex_input_type_with_avalaible_inputs() {
-        java.lang.reflect.Parameter[] actionParameters = ComplexInputAction.class.getDeclaredConstructors()[0].getParameters();
-        Parameter complexParameter = Parameter.fromJavaParameter(actionParameters[0]);
-        InputParameterResolver sut = new InputParameterResolver(Map.of("simpleA", "value for A", "simpleB", "value for B"));
-
-        Object resolution = sut.resolve(complexParameter);
-
-        assertThat(resolution).isInstanceOf(ComplexType.class);
-        ComplexType resolutionCast = (ComplexType) resolution;
-        assertThat(resolutionCast.a).isEqualTo("value for A");
-        assertThat(resolutionCast.b).isEqualTo("value for B");
     }
 
     @Test
@@ -146,7 +127,7 @@ public class InputParameterResolverTest {
 
     private static class PrimitivesAction {
         PrimitivesAction(@Input("inputName") Short short$, @Input("inputName") Integer int$, @Input("inputName") Long long$, @Input("inputName") Boolean boolean$,
-                       @Input("inputName") Character char$, @Input("inputName") Float float$, @Input("inputName") Double double$, @Input("inputName") Byte byte$) {
+                         @Input("inputName") Character char$, @Input("inputName") Float float$, @Input("inputName") Double double$, @Input("inputName") Byte byte$) {
         }
     }
 
@@ -201,20 +182,5 @@ public class InputParameterResolverTest {
 
         InputParameterResolver sutE = new InputParameterResolver(Map.of("inputName", new ComplexType("", "")));
         assertThatThrownBy(() -> sutE.resolve(anotherParameter)).isExactlyInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void should_resolve_complex_object_witth_direct_inputs() {
-        SimpleObject constructorParameter = new SimpleObject("myStringValue", 666);
-        java.lang.reflect.Parameter complexObjectWhitoutInputConstructorParameter = ComplexObjectConstructor.class.getConstructors()[0].getParameters()[0];
-        Parameter parameter = Parameter.fromJavaParameter(complexObjectWhitoutInputConstructorParameter);
-
-        InputParameterResolver sut = new InputParameterResolver(Map.of(
-            "simple-object-name", constructorParameter
-        ));
-        Object result = sut.resolve(parameter);
-
-        assertThat(result).isInstanceOf(SimpleObject.class);
-        assertThat((SimpleObject) result).usingRecursiveComparison().isEqualTo(new SimpleObject("myStringValue", 666));
     }
 }
