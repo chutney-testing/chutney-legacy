@@ -14,21 +14,27 @@ import javax.jms.Session;
 public class ConsumerFactory {
 
     private final BodySelectorFactory bodySelectorFactory = new BodySelectorFactory();
-    private final JmsListenerParameters arguments;
+    private final String bodySelector;
+    private final String selector;
+    private final String timeout;
+    private final Integer browserMaxDepth;
 
-    public ConsumerFactory(JmsListenerParameters arguments) {
-        this.arguments = arguments;
+    public ConsumerFactory(String bodySelector, String selector, String timeout, int browserMaxDepth) {
+        this.bodySelector = bodySelector;
+        this.selector = selector;
+        this.timeout = timeout;
+        this.browserMaxDepth = browserMaxDepth;
     }
 
     public Consumer build(Session session, Destination destination) throws JMSException {
         final Consumer consumer;
-        if (arguments.bodySelector == null) {
-            MessageConsumer messageConsumer = session.createConsumer(destination, arguments.selector);
-            consumer = new SimpleMessageConsumer(messageConsumer, (int) parseToMs(arguments.timeout));
+        if (bodySelector == null || bodySelector.isEmpty()) {
+            MessageConsumer messageConsumer = session.createConsumer(destination, selector);
+            consumer = new SimpleMessageConsumer(messageConsumer, (int) parseToMs(timeout));
         } else {
-            QueueBrowser browser = session.createBrowser((Queue) destination, arguments.selector);
-            BodySelector bodySelector = bodySelectorFactory.build(arguments.bodySelector);
-            consumer = new SelectedMessageConsumer(browser, bodySelector, arguments.browserMaxDepth);
+            QueueBrowser browser = session.createBrowser((Queue) destination, selector);
+            BodySelector bodySelectorBuild = bodySelectorFactory.build(bodySelector);
+            consumer = new SelectedMessageConsumer(browser, bodySelectorBuild, browserMaxDepth);
         }
         return consumer;
     }

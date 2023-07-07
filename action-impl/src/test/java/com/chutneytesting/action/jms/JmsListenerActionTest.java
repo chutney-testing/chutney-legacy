@@ -2,6 +2,7 @@ package com.chutneytesting.action.jms;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -9,7 +10,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.action.jms.consumer.JmsListenerParameters;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Logger;
 import com.chutneytesting.action.spi.injectable.Target;
@@ -27,15 +27,14 @@ public class JmsListenerActionTest {
         Logger logger = mock(Logger.class);
 
         // Given 1 - jms task creation
-        JmsListenerParameters listenerJmsParameters = new JmsListenerParameters("","","",0,"");
-        JmsListenerAction task = new JmsListenerAction(target, logger, listenerJmsParameters);
+        JmsListenerAction task = new JmsListenerAction(target, logger, "", "", "", "", 0);
 
         TextMessage textMessageMock = mock(TextMessage.class, RETURNS_DEEP_STUBS);
         String messageBody = "FAKE_JSON_PRODUCED_BY_SGE";
         when(textMessageMock.getText()).thenReturn(messageBody);
 
         JmsConnectionFactory jmsConnectionFactoryMock = mock(JmsConnectionFactory.class, RETURNS_DEEP_STUBS);
-        when(jmsConnectionFactoryMock.createConsumer(any(), any()).getResource().getMessage()).thenReturn(Optional.of(textMessageMock));
+        when(jmsConnectionFactoryMock.createConsumer(any(), any(), any(), any(), any(), anyInt()).getResource().getMessage()).thenReturn(Optional.of(textMessageMock));
 
         ReflectionTestUtils.setField(task, "jmsConnectionFactory", jmsConnectionFactoryMock);
 

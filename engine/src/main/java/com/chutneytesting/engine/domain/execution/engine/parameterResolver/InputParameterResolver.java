@@ -6,19 +6,15 @@ import static org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper;
 import com.chutneytesting.action.domain.parameter.Parameter;
 import com.chutneytesting.action.domain.parameter.ParameterResolver;
 import com.chutneytesting.action.spi.injectable.Input;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * TODO do not mix input parameter parsing and action instantiation
+ * May be we can remove the hack because nobody write directly json now
  */
 public class InputParameterResolver implements ParameterResolver {
 
@@ -30,7 +26,6 @@ public class InputParameterResolver implements ParameterResolver {
         primitivesValueOf.put(Integer.class, Integer::valueOf);
         primitivesValueOf.put(Long.class, Long::valueOf);
         primitivesValueOf.put(Boolean.class, Boolean::valueOf);
-        //primitivesValueOf.put(Character.class, Character::valueOf);
         primitivesValueOf.put(Character.class, InputParameterResolver::characterValueOf);
         primitivesValueOf.put(Float.class, Float::valueOf);
         primitivesValueOf.put(Double.class, Double::valueOf);
@@ -48,17 +43,11 @@ public class InputParameterResolver implements ParameterResolver {
 
     @Override
     public Object resolve(Parameter parameter) {
-        boolean isParameterPrimitive = isPrimitiveOrWrapper(parameter.rawType());
         String inputName = getValidParameter(parameter);
         Object inputValue = inputs.get(inputName);
 
         if (inputValue == null) {
-            if (isParameterPrimitive) {
-                return null;
-            } else {
-                Optional<Object> valueInstantiate = createObjectFromInputs(inputs, parameter.rawType());
-                return valueInstantiate.orElse(null);
-            }
+            return null;
         }
 
         Class<?> inputClassType =  inputValue.getClass();
@@ -96,27 +85,6 @@ public class InputParameterResolver implements ParameterResolver {
             throw new InputNameMandatoryException();
         }
         return inputName;
-    }
-
-    private Optional<Object> createObjectFromInputs(Map<String, Object> inputs, Class<?> aClass) {
-        Constructor<?>[] constructors = aClass.getConstructors();
-        if (constructors.length == 1) {
-            Constructor constructor = constructors[0];
-            List<Object> parameters = Arrays.stream(constructor.getParameters())
-                .map(
-                    p -> {
-                        String inputName = getValidParameter(Parameter.fromJavaParameter(p));
-                        return inputs.get(inputName);
-                    })
-                .toList();
-            try {
-                return Optional.of(constructor.newInstance(parameters.toArray()));
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            return Optional.empty();
-        }
     }
 
     private static Character characterValueOf(String s) {

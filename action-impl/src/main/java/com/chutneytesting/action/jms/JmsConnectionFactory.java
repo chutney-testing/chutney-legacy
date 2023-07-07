@@ -5,7 +5,6 @@ import static com.chutneytesting.tools.ThrowingSupplier.toUnchecked;
 
 import com.chutneytesting.action.jms.consumer.Consumer;
 import com.chutneytesting.action.jms.consumer.ConsumerFactory;
-import com.chutneytesting.action.jms.consumer.JmsListenerParameters;
 import com.chutneytesting.action.spi.injectable.Target;
 import com.chutneytesting.tools.CloseableResource;
 import com.chutneytesting.tools.UncheckedException;
@@ -32,9 +31,13 @@ public class JmsConnectionFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JmsConnectionFactory.class);
 
-    public CloseableResource<Consumer> createConsumer(Target target, JmsListenerParameters arguments) {
-        ConsumerFactory consumerFactory = new ConsumerFactory(arguments);
-        return obtainCloseableResource(target, arguments.destination, consumerFactory::build);
+    public CloseableResource<Consumer> createConsumer(Target target, String destination, String timeout) {
+        return createConsumer(target, destination, timeout, null, null, 0);
+    }
+
+    public CloseableResource<Consumer> createConsumer(Target target, String destination, String timeout, String bodySelector, String selector, int browserMaxDepth) {
+        ConsumerFactory consumerFactory = new ConsumerFactory(bodySelector, selector, timeout, browserMaxDepth);
+        return obtainCloseableResource(target, destination, consumerFactory::build);
     }
 
     public CloseableResource<MessageSender> getMessageProducer(Target target, String destinationName) throws UncheckedJmsException {

@@ -54,7 +54,7 @@ public class XmlContent {
     }
 
     private String removeTagNamespaces(String stringRepresentationWithoutDefaultNamespace) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         Matcher matcher1 = XML_NAMESPACED_TAG_PATTERN.matcher(stringRepresentationWithoutDefaultNamespace);
         while (matcher1.find()) {
             String end = matcher1.group("end");

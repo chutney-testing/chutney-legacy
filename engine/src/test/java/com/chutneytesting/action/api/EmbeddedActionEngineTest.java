@@ -17,19 +17,19 @@ import org.mockito.Mockito;
 public class EmbeddedActionEngineTest {
 
     private EmbeddedActionEngine engine ;
-    private ActionTemplateParserV2 parser = new ActionTemplateParserV2();
+    private final ActionTemplateParserV2 parser = new ActionTemplateParserV2();
 
     @BeforeEach
     public void setUp() {
         // G
-        ActionTemplateRegistry regitry = Mockito.mock(ActionTemplateRegistry.class);
+        ActionTemplateRegistry registry = Mockito.mock(ActionTemplateRegistry.class);
         List<ActionTemplate> actions = Lists.newArrayList();
         actions.add(parser.parse(TestAction.class).result());
         actions.add(parser.parse(Test2Action.class).result());
 
-        Mockito.when(regitry.getAll()).thenReturn(actions);
+        Mockito.when(registry.getAll()).thenReturn(actions);
 
-        this.engine = new EmbeddedActionEngine(regitry);
+        this.engine = new EmbeddedActionEngine(registry);
     }
 
     @Test

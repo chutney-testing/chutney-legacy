@@ -24,15 +24,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class ActionControllerTest {
 
-    private EmbeddedActionEngine embeddedActionEngine = mock(EmbeddedActionEngine.class);
-
-    private ActionController sut;
+    private final EmbeddedActionEngine embeddedActionEngine = mock(EmbeddedActionEngine.class);
 
     private MockMvc mockMvc;
 
     @BeforeEach
     public void setUp() {
-        sut = new ActionController(embeddedActionEngine);
+        ActionController sut = new ActionController(embeddedActionEngine);
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
 
@@ -97,7 +95,7 @@ public class ActionControllerTest {
     }
 
     @Test
-    public void should_return_404_when_aske_for_not_existing_action() throws Exception {
+    public void should_return_404_when_asked_for_not_existing_action() throws Exception {
         // Given
         when(embeddedActionEngine.getAction(any()))
             .thenReturn(Optional.empty());

@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import com.chutneytesting.action.jms.consumer.Consumer;
-import com.chutneytesting.action.jms.consumer.JmsListenerParameters;
 import com.chutneytesting.action.spi.injectable.Logger;
 import com.chutneytesting.action.spi.injectable.Target;
 import com.chutneytesting.tools.CloseableResource;
@@ -32,13 +31,12 @@ public class JmsCleanQueueActionTest {
     public void setUp() {
         mockConsumer = mock(Consumer.class);
 
-        JmsListenerParameters listenerJmsParameters = new JmsListenerParameters("","","",0,"");
-        jmsCleanQueueAction = new JmsCleanQueueAction(target, logger, listenerJmsParameters);
+        jmsCleanQueueAction = new JmsCleanQueueAction(target, logger, "", "");
 
         JmsConnectionFactory jmsConnectionFactory = mock(JmsConnectionFactory.class);
         CloseableResource<Consumer> messageConsumer = mock(CloseableResource.class);
         when(messageConsumer.getResource()).thenReturn(mockConsumer);
-        when(jmsConnectionFactory.createConsumer(any(), any())).thenReturn(messageConsumer);
+        when(jmsConnectionFactory.createConsumer(any(), any(), any())).thenReturn(messageConsumer);
 
         setField(jmsCleanQueueAction, "jmsConnectionFactory", jmsConnectionFactory);
     }

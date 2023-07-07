@@ -1,11 +1,14 @@
 package com.chutneytesting.action.jms;
 
-import static com.chutneytesting.action.jms.consumer.JmsListenerParameters.validateJmsListenerParameters;
+import static com.chutneytesting.action.jms.JmsActionParameter.DESTINATION;
+import static com.chutneytesting.action.jms.JmsActionParameter.TIMEOUT;
+import static com.chutneytesting.action.spi.validation.ActionValidatorsUtils.durationValidation;
+import static com.chutneytesting.action.spi.validation.ActionValidatorsUtils.notBlankStringValidation;
 import static com.chutneytesting.action.spi.validation.ActionValidatorsUtils.targetValidation;
 import static com.chutneytesting.action.spi.validation.Validator.getErrorsFrom;
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
 import com.chutneytesting.action.jms.consumer.Consumer;
-import com.chutneytesting.action.jms.consumer.JmsListenerParameters;
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Input;
@@ -20,36 +23,36 @@ import java.util.Optional;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
-import org.apache.commons.lang3.ArrayUtils;
 
 public class JmsCleanQueueAction implements Action {
 
     private final Target target;
     private final Logger logger;
 
-    private final JmsListenerParameters listenerJmsParameters;
-
     private final JmsConnectionFactory jmsConnectionFactory = new JmsConnectionFactory();
+    private final String destination;
+    private final String timeout;
 
-    public JmsCleanQueueAction(Target target, Logger logger, @Input("listenerJmsParameters") JmsListenerParameters listenerJmsParameters) {
+    public JmsCleanQueueAction(Target target, Logger logger, @Input(DESTINATION) String destination, @Input(TIMEOUT) String timeout) {
         this.target = target;
         this.logger = logger;
-        this.listenerJmsParameters = listenerJmsParameters;
+        this.destination = destination;
+        this.timeout = defaultIfEmpty(timeout, "500 ms");
     }
 
     @Override
     public List<String> validateInputs() {
         return getErrorsFrom(
-            ArrayUtils.add(
-                validateJmsListenerParameters(listenerJmsParameters),
-                targetValidation(target))
+            notBlankStringValidation(destination, "destination"),
+            durationValidation(timeout, "timeout"),
+            targetValidation(target)
         );
     }
 
     @Override
     public ActionExecutionResult execute() {
 
-        try (CloseableResource<Consumer> consumer = jmsConnectionFactory.createConsumer(target, listenerJmsParameters)) {
+        try (CloseableResource<Consumer> consumer = jmsConnectionFactory.createConsumer(target, destination, timeout)) {
             int removedMessages = 0;
             Optional<Message> message;
             while ((message = consumer.getResource().getMessage()).isPresent()) {
@@ -82,7 +85,7 @@ public class JmsCleanQueueAction implements Action {
         Enumeration<String> propertyNames = message.getPropertyNames();
         Map<String, String> properties = new LinkedHashMap<>();
         while (propertyNames.hasMoreElements()) {
-            String propertyName = (String) propertyNames.nextElement();
+            String propertyName = propertyNames.nextElement();
             properties.put(propertyName, String.valueOf(message.getObjectProperty(propertyName)));
         }
         return properties;
