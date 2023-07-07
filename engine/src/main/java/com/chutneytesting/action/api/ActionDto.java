@@ -3,6 +3,7 @@ package com.chutneytesting.action.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 public class ActionDto {
 
@@ -61,6 +62,14 @@ public class ActionDto {
         @Override
         public int hashCode() {
             return Objects.hash(name, type);
+        }
+
+        @Override
+        public String toString() {
+            return new StringJoiner(", ", InputsDto.class.getSimpleName() + "[", "]")
+                .add("name='" + name + "'")
+                .add("type=" + type)
+                .toString();
         }
     }
 }

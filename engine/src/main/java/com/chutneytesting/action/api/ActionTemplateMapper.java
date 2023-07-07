@@ -27,20 +27,13 @@ public class ActionTemplateMapper {
     }
 
     private static List<InputsDto> toInputsDto(ActionTemplate actionTemplate) {
-        Map<Boolean, List<Parameter>> parametersMap = actionTemplate.parameters().stream()
+       return actionTemplate.parameters().stream()
             .filter(parameter -> parameter.annotations().optional(Input.class).isPresent())
-            .collect(partitioningBy(ActionTemplateMapper::isSimpleType));
-
-        return parametersMap.get(true).stream().map(ActionTemplateMapper::simpleParameterToInputsDto).toList();
+            .map(ActionTemplateMapper::simpleParameterToInputsDto)
+            .toList();
     }
 
     private static InputsDto simpleParameterToInputsDto(Parameter parameter) {
         return new InputsDto(parameter.annotations().get(Input.class).value(), parameter.rawType());
-    }
-
-
-    private static boolean isSimpleType(Parameter parameter) {
-        Class<?> rawType = parameter.rawType();
-        return rawType.isPrimitive() || rawType.equals(String.class) || rawType.equals(Object.class);
     }
 }
