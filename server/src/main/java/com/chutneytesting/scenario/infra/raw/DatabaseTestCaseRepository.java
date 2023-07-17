@@ -16,8 +16,12 @@ import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -36,6 +40,8 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     private final DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository;
     private final CampaignScenarioJpaRepository campaignScenarioJpaRepository;
     private final EntityManager entityManager;
+    private final Pattern pattern = Pattern.compile("\"([^\"]*)\"");
+
 
     public DatabaseTestCaseRepository(
         ScenarioJpaRepository jpa,
@@ -129,7 +135,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     @Transactional(readOnly = true)
     public List<TestCaseMetadata> search(String textFilter) {
         if (!textFilter.isEmpty()) {
-            String[] words = escapeSql(textFilter).split("\\s");
+            List<String> words = getWordsToSearchWithQuotes(escapeSql(textFilter));
             Specification<Scenario> scenarioDaoSpecification = buildLikeSpecificationOnContent(words);
 
             CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -144,6 +150,20 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         }
     }
 
+    public List<String> getWordsToSearchWithQuotes(String input) {
+        List<String> words = new ArrayList<>();
+        Matcher matcher = pattern.matcher(input);
+
+        while (matcher.find()) {
+            String word = matcher.group(1);
+            if (!word.isEmpty()) {
+                words.add(word);
+            }
+        }
+        words.addAll(Arrays.stream(input.replaceAll(pattern.pattern(), "").split("\\s")).filter(value -> !value.isEmpty()).toList());
+        return words;
+    }
+
     private static String escapeSql(String str) {
         if (str == null) {
             return null;
@@ -151,7 +171,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         return str.replace("'", "''");
     }
 
-    private Specification<Scenario> buildLikeSpecificationOnContent(String[] words) {
+    private Specification<Scenario> buildLikeSpecificationOnContent(List<String> words) {
         Specification<Scenario> scenarioDaoSpecification = null;
         for (String word : words) {
             Specification<Scenario> wordSpecification = ScenarioJpaRepository.contentContains(word);

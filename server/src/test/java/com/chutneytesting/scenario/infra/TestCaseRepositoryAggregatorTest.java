@@ -8,12 +8,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.campaign.infra.CampaignScenarioJpaRepository;
+import com.chutneytesting.execution.infra.storage.DatabaseExecutionJpaRepository;
 import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
+import com.chutneytesting.scenario.infra.raw.ScenarioJpaRepository;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -148,6 +152,87 @@ public class TestCaseRepositoryAggregatorTest {
 
         // Then
         assertThat(allScenario).hasSize(2);
+    }
+
+    @Test
+    public void should_split_in_3_words_when_search_without_nested_quote() {
+        // Given
+        DatabaseTestCaseRepository repo = new DatabaseTestCaseRepository(
+            mock(ScenarioJpaRepository.class),
+            mock(DatabaseExecutionJpaRepository.class),
+            mock(CampaignScenarioJpaRepository.class),
+            mock(EntityManager.class)
+        );
+
+        // When
+        List<String> words = repo.getWordsToSearchWithQuotes("toto tutu tata");
+
+        // Then
+        assertThat(words).isEqualTo(List.of("toto", "tutu", "tata"));
+    }
+
+    @Test
+    public void should_return_empty_list_when_only_with_nested_quote() {
+        // Given
+        DatabaseTestCaseRepository repo = new DatabaseTestCaseRepository(
+            mock(ScenarioJpaRepository.class),
+            mock(DatabaseExecutionJpaRepository.class),
+            mock(CampaignScenarioJpaRepository.class),
+            mock(EntityManager.class)
+        );
+        // When
+        List<String> words = repo.getWordsToSearchWithQuotes("\"\"");
+
+        // Then
+        assertThat(words).isEqualTo(List.of());
+    }
+
+    @Test
+    public void should_split_in_3_words_when_search_only_with_nested_quote() {
+        // Given
+        DatabaseTestCaseRepository repo = new DatabaseTestCaseRepository(
+            mock(ScenarioJpaRepository.class),
+            mock(DatabaseExecutionJpaRepository.class),
+            mock(CampaignScenarioJpaRepository.class),
+            mock(EntityManager.class)
+        );
+        // When
+        List<String> words = repo.getWordsToSearchWithQuotes("\"toto titi tutu tata\"");
+
+        // Then
+        assertThat(words).isEqualTo(List.of("toto titi tutu tata"));
+    }
+
+    @Test
+    public void should_split_in_3_words_when_search_with_nested_quote() {
+        // Given
+        DatabaseTestCaseRepository repo = new DatabaseTestCaseRepository(
+            mock(ScenarioJpaRepository.class),
+            mock(DatabaseExecutionJpaRepository.class),
+            mock(CampaignScenarioJpaRepository.class),
+            mock(EntityManager.class)
+        );
+        // When
+        List<String> words = repo.getWordsToSearchWithQuotes("\"toto titi\" tutu tata");
+
+        // Then
+        assertThat(words).isEqualTo(List.of("toto titi", "tutu", "tata"));
+    }
+
+    @Test
+    public void should_split_in_3_words_when_search_with_1_nested_quote() {
+        // Given
+        DatabaseTestCaseRepository repo = new DatabaseTestCaseRepository(
+            mock(ScenarioJpaRepository.class),
+            mock(DatabaseExecutionJpaRepository.class),
+            mock(CampaignScenarioJpaRepository.class),
+            mock(EntityManager.class)
+        );
+        // When
+        List<String> words = repo.getWordsToSearchWithQuotes("toto titi\" tutu tata");
+
+        // Then
+        assertThat(words).isEqualTo(List.of("toto", "titi\"", "tutu", "tata"));
     }
 
 }
