@@ -32,7 +32,7 @@ public class JsonFunctions {
     }
 
     @SpelFunction
-    public static String jsonSet(Object document, String path, String value) {
+    public static String jsonSet(Object document, String path, Object value) {
         return JsonPath.parse(JsonUtils.jsonStringify(document))
             .set(path, value)
             .jsonString();

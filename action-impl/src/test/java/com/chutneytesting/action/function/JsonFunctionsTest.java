@@ -7,7 +7,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 public class JsonFunctionsTest {
 
     @Test
@@ -47,6 +47,57 @@ public class JsonFunctionsTest {
         Object updatedJson = JsonFunctions.jsonSet(originalJson, path, value);
 
         assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":\"Batman\",\"needsCoffee\":false}}");
+    }
+
+    @Test
+    public void should_update_a_value_list_at_given_path() {
+
+        String originalJson = "{\"dev\":{\"name\":\"Bruce\", \"needsCoffee\":false}}";
+
+        String path = "$.dev.name";
+        List<Integer> value = List.of(1, 2, 3, 4, 5);
+
+        Object updatedJson = JsonFunctions.jsonSet(originalJson, path, value);
+
+        assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":[1,2,3,4,5],\"needsCoffee\":false}}");
+    }
+
+    @Test
+    public void should_update_a_value_null_object_at_given_path() {
+
+        String originalJson = "{\"dev\":{\"name\":\"Bruce\", \"needsCoffee\":false}}";
+
+        String path = "$.dev.name";
+
+        Object updatedJson = JsonFunctions.jsonSet(originalJson, path, null);
+
+        assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":null,\"needsCoffee\":false}}");
+    }
+
+    @Test
+    public void should_update_a_value_empty_object_at_given_path() {
+
+        String originalJson = "{\"dev\":{\"name\":\"Bruce\", \"needsCoffee\":false}}";
+
+        String path = "$.dev.name";
+        Object value = new Object();
+
+        Object updatedJson = JsonFunctions.jsonSet(originalJson, path, value);
+
+        assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":{},\"needsCoffee\":false}}");
+    }
+
+    @Test
+    public void should_update_a_value_nested_object_at_given_path() {
+
+        String originalJson = "{\"dev\":{\"name\":\"Bruce\", \"needsCoffee\":false}}";
+
+        String path = "$.dev.name";
+        Object value = Map.of("toto", Map.of("tata", "titi"));
+
+        Object updatedJson = JsonFunctions.jsonSet(originalJson, path, value);
+
+        assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":{\"toto\":{\"tata\":\"titi\"}},\"needsCoffee\":false}}");
     }
 
     @Test
