@@ -1,9 +1,11 @@
 package com.chutneytesting.action.function;
 
+import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 
@@ -50,6 +52,57 @@ public class JsonFunctionsTest {
     }
 
     @Test
+    public void should_update_a_value_list_at_given_path() {
+
+        String originalJson = "{\"dev\":{\"name\":\"Bruce\", \"needsCoffee\":false}}";
+
+        String path = "$.dev.name";
+        List<Integer> value = List.of(1, 2, 3, 4, 5);
+
+        Object updatedJson = JsonFunctions.jsonSet(originalJson, path, value);
+
+        assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":[1,2,3,4,5],\"needsCoffee\":false}}");
+    }
+
+    @Test
+    public void should_update_a_value_null_object_at_given_path() {
+
+        String originalJson = "{\"dev\":{\"name\":\"Bruce\", \"needsCoffee\":false}}";
+
+        String path = "$.dev.name";
+
+        Object updatedJson = JsonFunctions.jsonSet(originalJson, path, null);
+
+        assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":null,\"needsCoffee\":false}}");
+    }
+
+    @Test
+    public void should_update_a_value_empty_object_at_given_path() {
+
+        String originalJson = "{\"dev\":{\"name\":\"Bruce\", \"needsCoffee\":false}}";
+
+        String path = "$.dev.name";
+        Object value = new Object();
+
+        Object updatedJson = JsonFunctions.jsonSet(originalJson, path, value);
+
+        assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":{},\"needsCoffee\":false}}");
+    }
+
+    @Test
+    public void should_update_a_value_nested_object_at_given_path() {
+
+        String originalJson = "{\"dev\":{\"name\":\"Bruce\", \"needsCoffee\":false}}";
+
+        String path = "$.dev.name";
+        Object value = Map.of("toto", Map.of("tata", "titi"));
+
+        Object updatedJson = JsonFunctions.jsonSet(originalJson, path, value);
+
+        assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":{\"toto\":{\"tata\":\"titi\"}},\"needsCoffee\":false}}");
+    }
+
+    @Test
     public void should_update_multiple_values_at_once_when_given_paths() {
 
         String originalJson = "{\"dev\":{\"name\":\"Bruce\", \"needsCoffee\":false}}";
@@ -62,6 +115,29 @@ public class JsonFunctionsTest {
         String updatedJson = JsonFunctions.jsonSetMany(originalJson, map);
 
         assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":\"Batman\",\"needsCoffee\":true}}");
+    }
+
+    @Test
+    public void should_update_multiple_values_of_any_type_at_once_when_given_paths() {
+
+        String originalJson = "{\"dev\":{\"name\":\"Bruce\"}, \"needsCoffee\": false}";
+
+        Map<String, Object> map = Map.of(
+            "$.dev", Map.of("hero", Map.of("firstname", "Bruce", "name", "Wayne", "nickname", "Batman")),
+            "$.needsCoffee", Optional.empty()
+        );
+
+        String updatedJson = JsonFunctions.jsonSetMany(originalJson, map);
+
+        Map<String, Object> actualHero = (Map<String, Object>) JsonFunctions.jsonPath(updatedJson, "$.dev.hero");
+        Object actualNeeds = JsonFunctions.jsonPath(updatedJson, "$.needsCoffee");
+
+        assertThat(actualHero).containsExactlyInAnyOrderEntriesOf(Map.of(
+            "name", "Wayne",
+            "firstname", "Bruce",
+            "nickname", "Batman"
+        ));
+        assertThat(actualNeeds).isEqualTo(emptyMap());
     }
 
     @Test
