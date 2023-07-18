@@ -1,13 +1,15 @@
 package com.chutneytesting.action.function;
 
+import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 
-    @SuppressWarnings("unchecked")
+@SuppressWarnings("unchecked")
 public class JsonFunctionsTest {
 
     @Test
@@ -113,6 +115,29 @@ public class JsonFunctionsTest {
         String updatedJson = JsonFunctions.jsonSetMany(originalJson, map);
 
         assertThat(updatedJson).isEqualTo("{\"dev\":{\"name\":\"Batman\",\"needsCoffee\":true}}");
+    }
+
+    @Test
+    public void should_update_multiple_values_of_any_type_at_once_when_given_paths() {
+
+        String originalJson = "{\"dev\":{\"name\":\"Bruce\"}, \"needsCoffee\": false}";
+
+        Map<String, Object> map = Map.of(
+            "$.dev", Map.of("hero", Map.of("firstname", "Bruce", "name", "Wayne", "nickname", "Batman")),
+            "$.needsCoffee", Optional.empty()
+        );
+
+        String updatedJson = JsonFunctions.jsonSetMany(originalJson, map);
+
+        Map<String, Object> actualHero = (Map<String, Object>) JsonFunctions.jsonPath(updatedJson, "$.dev.hero");
+        Object actualNeeds = JsonFunctions.jsonPath(updatedJson, "$.needsCoffee");
+
+        assertThat(actualHero).containsExactlyInAnyOrderEntriesOf(Map.of(
+            "name", "Wayne",
+            "firstname", "Bruce",
+            "nickname", "Batman"
+        ));
+        assertThat(actualNeeds).isEqualTo(emptyMap());
     }
 
     @Test
