@@ -53,6 +53,7 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
+            <version>${groovy.version}</version>
         </dependency>
 
         <dependency>
@@ -64,8 +65,9 @@
             <artifactId>spring-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpclient.version}</version>
         </dependency>
         <!-- SSH -->
         <dependency>
@@ -97,6 +99,7 @@
         <dependency>
             <groupId>javax.jms</groupId>
             <artifactId>javax.jms-api</artifactId>
+            <version>${javax.jms-api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jdom</groupId>

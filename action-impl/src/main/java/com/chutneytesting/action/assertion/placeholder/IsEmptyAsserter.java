@@ -1,7 +1,7 @@
 package com.chutneytesting.action.assertion.placeholder;
 
 import com.chutneytesting.action.spi.injectable.Logger;
-import net.minidev.json.JSONArray;
+import wiremock.net.minidev.json.JSONArray;
 
 public class IsEmptyAsserter implements PlaceholderAsserter {
 

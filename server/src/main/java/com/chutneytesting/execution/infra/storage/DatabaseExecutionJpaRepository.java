@@ -3,7 +3,7 @@ package com.chutneytesting.execution.infra.storage;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import java.util.List;
-import javax.persistence.Tuple;
+import jakarta.persistence.Tuple;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

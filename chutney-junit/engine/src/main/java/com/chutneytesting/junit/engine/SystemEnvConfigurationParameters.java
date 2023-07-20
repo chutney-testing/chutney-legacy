@@ -4,6 +4,7 @@ import static java.util.Optional.ofNullable;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.platform.engine.ConfigurationParameters;
 
 public class SystemEnvConfigurationParameters implements ConfigurationParameters {
@@ -40,5 +41,10 @@ public class SystemEnvConfigurationParameters implements ConfigurationParameters
     @Override
     public int size() {
         return delegate.size() + env.size();
+    }
+
+    @Override
+    public Set<String> keySet() {
+        return env.keySet();
     }
 }

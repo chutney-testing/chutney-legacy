@@ -8,7 +8,7 @@ import com.jayway.jsonpath.Option;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.stream.StreamSupport;
-import net.minidev.json.JSONArray;
+import wiremock.net.minidev.json.JSONArray;
 
 public class JsonPathEvaluator {
 

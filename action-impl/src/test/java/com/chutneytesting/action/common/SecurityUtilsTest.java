@@ -9,7 +9,7 @@ import java.security.PrivateKey;
 import java.util.Set;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.X509KeyManager;
-import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.junit.jupiter.api.Test;
 
 class SecurityUtilsTest {

@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.logging.Level;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.Scope;

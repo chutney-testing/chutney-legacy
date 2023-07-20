@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.minidev.json.JSONArray;
+import wiremock.net.minidev.json.JSONArray;
 
 public class ValueArrayAsserter implements PlaceholderAsserter {
 

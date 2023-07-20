@@ -14,9 +14,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
@@ -42,41 +44,33 @@ public class ChutneyWebSecurityConfig {
         configureBaseHttpSecurity(http);
         UserDto anonymous = anonymous();
         http
-            .anonymous()
+            .anonymous(anonymousConfigurer -> anonymousConfigurer
                 .principal(anonymous)
-                .authorities(new ArrayList<>(anonymous.getAuthorities()))
-            .and()
-            .authorizeRequests()
-                .antMatchers(LOGIN_URL).permitAll()
-                .antMatchers(LOGOUT_URL).permitAll()
-                .antMatchers(InfoController.BASE_URL + "/**").permitAll()
-                .antMatchers(API_BASE_URL_PATTERN).authenticated()
-                .antMatchers(actuatorBaseUrl + "/**").hasAuthority(Authorization.ADMIN_ACCESS.name())
-                .anyRequest().permitAll()
-            .and()
-            .httpBasic();
+                .authorities(new ArrayList<>(anonymous.getAuthorities())))
+            .authorizeHttpRequests(httpRequest -> httpRequest
+                .requestMatchers(LOGIN_URL).permitAll()
+                .requestMatchers(LOGOUT_URL).permitAll()
+                .requestMatchers(InfoController.BASE_URL + "/**").permitAll()
+                .requestMatchers(API_BASE_URL_PATTERN).authenticated()
+                .requestMatchers(actuatorBaseUrl + "/**").hasAuthority(Authorization.ADMIN_ACCESS.name())
+                .anyRequest().permitAll())
+            .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
 
     protected void configureBaseHttpSecurity(final HttpSecurity http) throws Exception {
         http
-            .csrf()
-                .disable()
-            .exceptionHandling()
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-            .and()
-            .requiresChannel()
-                .anyRequest().requiresSecure()
-            .and()
-            .formLogin()
+            .csrf(AbstractHttpConfigurer::disable)
+            .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+            .requiresChannel(channelRequestMatcherRegistry -> channelRequestMatcherRegistry.anyRequest().requiresSecure())
+            .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
                 .loginProcessingUrl(LOGIN_URL)
                 .successForwardUrl(UserController.BASE_URL)
-                .failureHandler(new Http401FailureHandler())
-            .and()
-            .logout()
+                .failureHandler(new Http401FailureHandler()))
+            .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
                 .logoutUrl(LOGOUT_URL)
-                .logoutSuccessHandler(new HttpEmptyLogoutSuccessHandler());
+                .logoutSuccessHandler(new HttpEmptyLogoutSuccessHandler()));
     }
 
     protected UserDto anonymous() {
