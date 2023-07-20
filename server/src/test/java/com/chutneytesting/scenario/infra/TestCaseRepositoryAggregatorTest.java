@@ -149,4 +149,5 @@ public class TestCaseRepositoryAggregatorTest {
         // Then
         assertThat(allScenario).hasSize(2);
     }
+
 }

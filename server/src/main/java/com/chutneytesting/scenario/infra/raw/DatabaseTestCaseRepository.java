@@ -150,7 +150,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         }
     }
 
-    protected List<String> getWordsToSearchWithQuotes(String input) {
+    List<String> getWordsToSearchWithQuotes(String input) {
         List<String> words = new ArrayList<>();
         Matcher matcher = pattern.matcher(input);
 
