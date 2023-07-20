@@ -8,10 +8,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Assertions.within;
+import static org.mockito.Mockito.mock;
 import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
+import com.chutneytesting.campaign.infra.CampaignScenarioJpaRepository;
 import com.chutneytesting.campaign.infra.jpa.Campaign;
+import com.chutneytesting.execution.infra.storage.DatabaseExecutionJpaRepository;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
@@ -30,6 +33,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -382,6 +386,60 @@ public class DatabaseTestCaseRepositoryTest {
             List<TestCaseMetadata> raw2 = sut.search("curry");
             // Then
             assertThat(raw2).isEmpty();
+        }
+
+        @Test
+        public void should_split_in_3_words_when_search_without_nested_quote() {
+            // When
+            List<String> words = sut.getWordsToSearchWithQuotes("toto tutu tata");
+
+            // Then
+            assertThat(words).isEqualTo(List.of("toto", "tutu", "tata"));
+        }
+
+        @Test
+        public void should_return_empty_list_when_only_with_nested_quote() {
+            // When
+            List<String> words = sut.getWordsToSearchWithQuotes("\"\"");
+
+            // Then
+            assertThat(words).isEqualTo(List.of());
+        }
+
+        @Test
+        public void should_not_split_quoted_words() {
+            // When
+            List<String> words = sut.getWordsToSearchWithQuotes("\"toto titi tutu tata\"");
+
+            // Then
+            assertThat(words).isEqualTo(List.of("toto titi tutu tata"));
+        }
+
+        @Test
+        public void should_split_in_3_words_when_search_with_nested_quote() {
+            // When
+            List<String> words = sut.getWordsToSearchWithQuotes("\"toto titi\" tutu tata");
+
+            // Then
+            assertThat(words).isEqualTo(List.of("toto titi", "tutu", "tata"));
+        }
+
+        @Test
+        public void should_split_in_3_words_when_search_with_multiple_nested_quote() {
+            // When
+            List<String> words = sut.getWordsToSearchWithQuotes("\"toto tutu\" \"titi tata\" baba");
+
+            // Then
+            assertThat(words).isEqualTo(List.of("toto tutu", "titi tata", "baba"));
+        }
+
+        @Test
+        public void should_split_in_3_words_when_search_with_1_nested_quote() {
+            // When
+            List<String> words = sut.getWordsToSearchWithQuotes("toto titi\" tutu tata");
+
+            // Then
+            assertThat(words).isEqualTo(List.of("toto", "titi\"", "tutu", "tata"));
         }
     }
 }
