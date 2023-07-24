@@ -1,5 +1,6 @@
 package com.chutneytesting;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -41,8 +43,16 @@ public class DBConfiguration {
 
         @Bean
         public DataSource dataSource(DataSourceProperties internalDataSourceProperties) {
-            return internalDataSourceProperties.initializeDataSourceBuilder()
-                .type(HikariDataSource.class).build();
+
+            HikariConfig hikariConfig = new HikariConfig();
+            // Set HikariCP properties using DataSourceProperties
+            hikariConfig.setJdbcUrl(internalDataSourceProperties.determineUrl());
+            hikariConfig.setUsername(internalDataSourceProperties.determineUsername());
+            hikariConfig.setPassword(internalDataSourceProperties.determinePassword());
+            hikariConfig.setDriverClassName(DatabaseDriver.fromJdbcUrl(internalDataSourceProperties.determineUrl()).getDriverClassName());
+            hikariConfig.setMaximumPoolSize(1); // fix for sqlite
+
+            return new HikariDataSource(hikariConfig);
         }
     }
 

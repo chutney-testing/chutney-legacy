@@ -11,5 +11,3 @@ spring:
     url: jdbc:sqlite:${chutney.db-server.base-dir}/sqlitesample.db
     username:
     password:
-    configuration:
-      maximum-pool-size: 5
