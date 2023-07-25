@@ -15,15 +15,15 @@ export interface CampaignExecutionReport {
 }
 
 export class CampaignReport {
-    readonly report: CampaignExecutionReport;
+    report: CampaignExecutionReport;
 
-    readonly passed: number;
-    readonly running: number;
-    readonly failed: number;
-    readonly stopped: number;
-    readonly notexecuted: number;
-    readonly pause: number;
-    readonly total: number;
+    passed: number;
+    running: number;
+    failed: number;
+    stopped: number;
+    notexecuted: number;
+    pause: number;
+    total: number;
 
     constructor(report: CampaignExecutionReport) {
         this.report = report;
@@ -108,5 +108,18 @@ export class CampaignReport {
 
     isStopped() {
         return ExecutionStatus.STOPPED === this.report.status;
+    }
+
+    refresh(campaignReport: CampaignReport) {
+        if(campaignReport.report.campaignId === this.report.campaignId && campaignReport.report.executionId === this.report.executionId){
+            this.report = campaignReport.report;
+            this.notexecuted = campaignReport.notexecuted;
+            this.running = campaignReport.running;
+            this.passed = campaignReport.passed;
+            this.failed = campaignReport.failed;
+            this.stopped = campaignReport.stopped;
+            this.pause = campaignReport.pause;
+            this.total = campaignReport.total;
+        }
     }
 }
