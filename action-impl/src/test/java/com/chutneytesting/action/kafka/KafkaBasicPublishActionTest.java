@@ -19,6 +19,7 @@ import com.chutneytesting.action.spi.injectable.Target;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -117,7 +118,7 @@ public class KafkaBasicPublishActionTest {
         KafkaTemplate<String, String> kafkaTemplateMock = mock(KafkaTemplate.class);
         when(producerFactoryMock.create(any(), any())).thenReturn(kafkaTemplateMock);
 
-        ListenableFuture<SendResult<String, String>> listenableFutureMock = mock(ListenableFuture.class);
+        CompletableFuture<SendResult<String, String>> listenableFutureMock = mock(CompletableFuture.class);
         when(listenableFutureMock.get(anyLong(), any(TimeUnit.class))).thenReturn(null);
         when(kafkaTemplateMock.send(ArgumentMatchers.<ProducerRecord<String, String>>any())).thenReturn(listenableFutureMock);
 
@@ -142,7 +143,7 @@ public class KafkaBasicPublishActionTest {
         KafkaTemplate<String, String> kafkaTemplateMock = mock(KafkaTemplate.class);
         when(producerFactoryMock.create(any(), any())).thenReturn(kafkaTemplateMock);
 
-        ListenableFuture<SendResult<String, String>> listenableFutureMock = mock(ListenableFuture.class);
+        CompletableFuture<SendResult<String, String>> listenableFutureMock = mock(CompletableFuture.class);
         when(listenableFutureMock.get(anyLong(), any(TimeUnit.class))).thenThrow(TimeoutException.class);
         when(kafkaTemplateMock.send(ArgumentMatchers.<ProducerRecord<String, String>>any())).thenReturn(listenableFutureMock);
 

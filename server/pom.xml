@@ -172,6 +172,11 @@
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId> <!-- Divergence on dependency checker-qual and error_prone_annotations -->
         </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta.servlet-api.version}</version>
+        </dependency>
 
         <!-- Test dependencies -->
         <dependency>
