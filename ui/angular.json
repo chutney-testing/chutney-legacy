@@ -49,7 +49,7 @@
                 }
             ],
             "scripts": [
-              "node_modules/asciidoctor.js/dist/asciidoctor.min.js",
+                "node_modules/@asciidoctor/core/dist/browser/asciidoctor.min.js",
                 "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ]
           },
@@ -112,7 +112,7 @@
               "src/assets/style/style.scss"
             ],
             "scripts": [
-              "node_modules/asciidoctor.js/dist/asciidoctor.min.js"
+              "node_modules/@asciidoctor/core/dist/browser/asciidoctor.min.js"
             ],
             "assets": [
               "src/assets",
