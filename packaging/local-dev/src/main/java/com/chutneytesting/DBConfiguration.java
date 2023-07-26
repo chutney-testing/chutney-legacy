@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
+import org.sqlite.SQLiteConfig;
 
 @Configuration
 public class DBConfiguration {
@@ -43,14 +44,14 @@ public class DBConfiguration {
 
         @Bean
         public DataSource dataSource(DataSourceProperties internalDataSourceProperties) {
-
             HikariConfig hikariConfig = new HikariConfig();
-            // Set HikariCP properties using DataSourceProperties
             hikariConfig.setJdbcUrl(internalDataSourceProperties.determineUrl());
-            hikariConfig.setUsername(internalDataSourceProperties.determineUsername());
-            hikariConfig.setPassword(internalDataSourceProperties.determinePassword());
             hikariConfig.setDriverClassName(DatabaseDriver.fromJdbcUrl(internalDataSourceProperties.determineUrl()).getDriverClassName());
             hikariConfig.setMaximumPoolSize(1); // fix for sqlite
+
+            SQLiteConfig config = new SQLiteConfig();
+            /* add specific SQLite config here if necessary */
+            hikariConfig.setDataSourceProperties(config.toProperties());
 
             return new HikariDataSource(hikariConfig);
         }

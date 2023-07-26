@@ -9,5 +9,3 @@ spring:
       hibernate.id.new_generator_mappings: false
   datasource:
     url: jdbc:sqlite:${chutney.db-server.base-dir}/sqlitesample.db
-    username:
-    password:
