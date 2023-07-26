@@ -127,6 +127,17 @@ class TestInfraConfiguration {
             ));
             return jpaProperties;
         }
+
+        @Bean
+        public DataSource dataSource(DataSourceProperties dataSourceProperties) {
+            LOGGER.info("test configuration datasource : {}", dataSourceProperties.getUrl());
+            HikariConfig hikariConfig = new HikariConfig();
+            hikariConfig.setMaximumPoolSize(2);
+            hikariConfig.setJdbcUrl(dataSourceProperties.getUrl());
+            hikariConfig.setUsername(dataSourceProperties.getUsername());
+            hikariConfig.setPassword(dataSourceProperties.getPassword());
+            return new HikariDataSource(hikariConfig);
+        }
     }
 
     @Configuration
@@ -158,11 +169,13 @@ class TestInfraConfiguration {
         }
     }
 
+    @Primary
     @Bean
+    @Profile("!test-infra-sqlite")
     public DataSource dataSource(DataSourceProperties dataSourceProperties) {
         LOGGER.info("test configuration datasource : {}", dataSourceProperties.getUrl());
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setMaximumPoolSize(2);
+        hikariConfig.setMaximumPoolSize(5);
         hikariConfig.setJdbcUrl(dataSourceProperties.getUrl());
         hikariConfig.setUsername(dataSourceProperties.getUsername());
         hikariConfig.setPassword(dataSourceProperties.getPassword());
