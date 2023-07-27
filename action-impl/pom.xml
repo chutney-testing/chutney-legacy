@@ -231,6 +231,10 @@
             <groupId>org.apache.ws.security</groupId>
             <artifactId>wss4j</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+        </dependency>
 
         <!--TEST-->
         <dependency>

@@ -13,7 +13,7 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitio
 import com.chutneytesting.engine.api.execution.StatusDto;
 import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
 import com.chutneytesting.engine.api.execution.TestEngine;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

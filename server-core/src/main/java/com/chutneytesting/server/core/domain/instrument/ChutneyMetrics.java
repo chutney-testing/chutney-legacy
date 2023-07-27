@@ -4,7 +4,7 @@ import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 public interface ChutneyMetrics {
 
@@ -12,5 +12,5 @@ public interface ChutneyMetrics {
 
     void onCampaignExecutionEnded(Campaign campaign, CampaignExecutionReport campaignExecutionReport);
 
-    void onHttpError(HttpStatus status);
+    void onHttpError(HttpStatusCode status);
 }

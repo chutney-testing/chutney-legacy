@@ -24,6 +24,7 @@ import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProc
 import com.chutneytesting.server.core.domain.execution.state.ExecutionStateRepository;
 import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -33,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import liquibase.integration.spring.SpringLiquibase;
 import org.slf4j.Logger;

@@ -17,12 +17,14 @@ import com.chutneytesting.action.spi.injectable.Logger;
 import com.chutneytesting.tools.SocketUtils;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import javax.net.ssl.SSLContext;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.ssl.SSLContexts;
+import org.apache.hc.core5.ssl.TrustStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -30,6 +32,7 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.ResourceAccessException;
@@ -89,7 +92,7 @@ public class HttpsServerStartActionTest {
       server = (WireMockServer) httpsServerStartAction.execute().outputs.get("httpsServer");
 
       // When
-      HttpStatus status = httpGet().getStatusCode();
+      HttpStatusCode status = httpGet().getStatusCode();
 
       // Then
       assertThat(status).isEqualTo(HttpStatus.OK);
@@ -118,7 +121,8 @@ public class HttpsServerStartActionTest {
     TrustStrategy acceptingTrustStrategy = (x509Certificates, s) -> true;
     SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
     SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier());
-    CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
+    HttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create().setSSLSocketFactory(csf).build();
+    CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connectionManager).build();
     HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
     requestFactory.setHttpClient(httpClient);
     return new RestTemplate(requestFactory).exchange("https://localhost:" + wireMockPort + "/", HttpMethod.GET, new HttpEntity<>(null), String.class);

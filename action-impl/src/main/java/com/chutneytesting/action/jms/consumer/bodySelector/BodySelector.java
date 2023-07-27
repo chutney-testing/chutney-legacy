@@ -1,6 +1,6 @@
 package com.chutneytesting.action.jms.consumer.bodySelector;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 public interface BodySelector {
 

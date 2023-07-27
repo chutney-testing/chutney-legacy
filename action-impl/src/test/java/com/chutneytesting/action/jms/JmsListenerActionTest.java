@@ -13,8 +13,8 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Logger;
 import com.chutneytesting.action.spi.injectable.Target;
+import jakarta.jms.TextMessage;
 import java.util.Optional;
-import javax.jms.TextMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 

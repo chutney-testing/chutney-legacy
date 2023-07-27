@@ -2,11 +2,11 @@ package com.chutneytesting;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import org.h2.tools.Server;
 import org.slf4j.Logger;

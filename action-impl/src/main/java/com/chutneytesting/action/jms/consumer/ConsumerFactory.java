@@ -4,12 +4,12 @@ import static com.chutneytesting.action.spi.time.Duration.parseToMs;
 
 import com.chutneytesting.action.jms.consumer.bodySelector.BodySelector;
 import com.chutneytesting.action.jms.consumer.bodySelector.BodySelectorFactory;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.Queue;
-import javax.jms.QueueBrowser;
-import javax.jms.Session;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.Queue;
+import jakarta.jms.QueueBrowser;
+import jakarta.jms.Session;
 
 public class ConsumerFactory {
 

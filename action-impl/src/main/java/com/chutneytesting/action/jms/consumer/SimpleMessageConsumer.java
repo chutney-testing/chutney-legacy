@@ -1,9 +1,9 @@
 package com.chutneytesting.action.jms.consumer;
 
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
 import java.util.Optional;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
 
 class SimpleMessageConsumer implements Consumer {
 

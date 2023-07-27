@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.TextMessage;
 import java.util.Optional;
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.TextMessage;
 import org.junit.jupiter.api.Test;
 
 public class XpathBodySelectorParserTest {

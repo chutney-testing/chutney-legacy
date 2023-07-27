@@ -1,6 +1,6 @@
 package com.chutneytesting.engine.api.execution;
 
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
 public interface TestEngine {
 

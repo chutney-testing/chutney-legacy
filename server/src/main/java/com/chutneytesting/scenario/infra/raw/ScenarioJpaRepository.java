@@ -1,9 +1,9 @@
 package com.chutneytesting.scenario.infra.raw;
 
 import com.chutneytesting.scenario.infra.jpa.Scenario;
+import jakarta.persistence.criteria.Expression;
 import java.util.List;
 import java.util.Optional;
-import javax.persistence.criteria.Expression;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;

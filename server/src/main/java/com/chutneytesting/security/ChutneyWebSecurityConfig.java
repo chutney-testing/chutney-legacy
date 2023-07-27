@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -41,42 +42,36 @@ public class ChutneyWebSecurityConfig {
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         configureBaseHttpSecurity(http);
         UserDto anonymous = anonymous();
-        http
-            .anonymous()
-                .principal(anonymous)
-                .authorities(new ArrayList<>(anonymous.getAuthorities()))
-            .and()
-            .authorizeRequests()
-                .antMatchers(LOGIN_URL).permitAll()
-                .antMatchers(LOGOUT_URL).permitAll()
-                .antMatchers(InfoController.BASE_URL + "/**").permitAll()
-                .antMatchers(API_BASE_URL_PATTERN).authenticated()
-                .antMatchers(actuatorBaseUrl + "/**").hasAuthority(Authorization.ADMIN_ACCESS.name())
-                .anyRequest().permitAll()
-            .and()
-            .httpBasic();
-
-        return http.build();
+        return http.anonymous(anonymousConfigurer -> anonymousConfigurer
+                .authorities(new ArrayList<>(anonymous.getAuthorities())))
+            .authorizeHttpRequests(httpRequest -> httpRequest
+                .requestMatchers(LOGIN_URL).permitAll()
+                .requestMatchers(LOGOUT_URL).permitAll()
+                .requestMatchers(InfoController.BASE_URL + "/**").permitAll()
+                .requestMatchers(API_BASE_URL_PATTERN).authenticated()
+                .requestMatchers(actuatorBaseUrl + "/**").hasAuthority(Authorization.ADMIN_ACCESS.name())
+                .anyRequest().permitAll())
+            .httpBasic(Customizer.withDefaults()).build();
     }
 
     protected void configureBaseHttpSecurity(final HttpSecurity http) throws Exception {
         http
             .csrf()
-                .disable()
+            .disable()
             .exceptionHandling()
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             .and()
             .requiresChannel()
-                .anyRequest().requiresSecure()
+            .anyRequest().requiresSecure()
             .and()
             .formLogin()
-                .loginProcessingUrl(LOGIN_URL)
-                .successForwardUrl(UserController.BASE_URL)
-                .failureHandler(new Http401FailureHandler())
+            .loginProcessingUrl(LOGIN_URL)
+            .successForwardUrl(UserController.BASE_URL)
+            .failureHandler(new Http401FailureHandler())
             .and()
             .logout()
-                .logoutUrl(LOGOUT_URL)
-                .logoutSuccessHandler(new HttpEmptyLogoutSuccessHandler());
+            .logoutUrl(LOGOUT_URL)
+            .logoutSuccessHandler(new HttpEmptyLogoutSuccessHandler());
     }
 
     protected UserDto anonymous() {

@@ -50,7 +50,7 @@ import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.MessageListener;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.MimeType;
-import wiremock.com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap;
 
 @SuppressWarnings("unchecked")
 public class KafkaBasicConsumeActionTest {
