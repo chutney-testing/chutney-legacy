@@ -15,7 +15,7 @@
 
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
-        <node.version>v16.15.0</node.version>
+        <node.version>v16.19.1</node.version>
         <useExternalNpm>false</useExternalNpm>
     </properties>
 
