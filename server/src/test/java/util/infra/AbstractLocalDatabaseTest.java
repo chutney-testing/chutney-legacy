@@ -7,6 +7,8 @@ import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import liquibase.Liquibase;
+import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +62,11 @@ public abstract class AbstractLocalDatabaseTest {
         jdbcTemplate.execute("DELETE FROM SCENARIO");
     }
 
-    protected void liquibaseUpdate() throws LiquibaseException {
-        liquibase.update("!test");
+    protected void liquibaseUpdate() throws LiquibaseException, SQLException {
+        try (Connection conn = localDataSource.getConnection()) {
+            liquibase.getDatabase().setConnection(new JdbcConnection(conn));
+            liquibase.update("!test");
+        }
     }
 
     protected Scenario givenScenario() {

@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
@@ -127,6 +128,15 @@ class TestInfraConfiguration {
             ));
             return jpaProperties;
         }
+
+        @Bean
+        public DataSource dataSource(DataSourceProperties dataSourceProperties) {
+            LOGGER.info("test configuration datasource : {}", dataSourceProperties.getUrl());
+            HikariConfig hikariConfig = new HikariConfig();
+            hikariConfig.setMaximumPoolSize(1);
+            hikariConfig.setJdbcUrl(dataSourceProperties.getUrl());
+            return new HikariDataSource(hikariConfig);
+        }
     }
 
     @Configuration
@@ -158,11 +168,13 @@ class TestInfraConfiguration {
         }
     }
 
+    @Primary
     @Bean
+    @Profile("!test-infra-sqlite")
     public DataSource dataSource(DataSourceProperties dataSourceProperties) {
         LOGGER.info("test configuration datasource : {}", dataSourceProperties.getUrl());
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setMaximumPoolSize(2);
+        hikariConfig.setMaximumPoolSize(5);
         hikariConfig.setJdbcUrl(dataSourceProperties.getUrl());
         hikariConfig.setUsername(dataSourceProperties.getUsername());
         hikariConfig.setPassword(dataSourceProperties.getPassword());
@@ -207,18 +219,20 @@ class TestInfraConfiguration {
         @Value("${chutney.test-infra.liquibase.log.service:false}") boolean logService,
         @Value("${chutney.test-infra.liquibase.log.ui:true}") boolean logUi
     ) throws Exception {
-        Database liquibaseDB = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(ds.getConnection()));
-        Liquibase liquibase = new Liquibase(DB_CHANGELOG_DB_CHANGELOG_MASTER_XML, new ClassLoaderResourceAccessor(), liquibaseDB);
-        if (!logService) {
-            Scope.enter(Map.of(Scope.Attr.logService.name(), new NoLiquibaseLogService()));
+        try (Connection conn = ds.getConnection()) {
+            Database liquibaseDB = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(conn));
+            Liquibase liquibase = new Liquibase(DB_CHANGELOG_DB_CHANGELOG_MASTER_XML, new ClassLoaderResourceAccessor(), liquibaseDB);
+            if (!logService) {
+                Scope.enter(Map.of(Scope.Attr.logService.name(), new NoLiquibaseLogService()));
+            }
+            if (!logUi) {
+                Scope.enter(Map.of(Scope.Attr.ui.name(), new LoggerUIService()));
+            }
+            if (liquibaseInit) {
+                liquibase.update(initContext);
+            }
+            return liquibase;
         }
-        if (!logUi) {
-            Scope.enter(Map.of(Scope.Attr.ui.name(), new LoggerUIService()));
-        }
-        if (liquibaseInit) {
-            liquibase.update(initContext);
-        }
-        return liquibase;
     }
 
     private static class NoLiquibaseLogService extends AbstractLogService {

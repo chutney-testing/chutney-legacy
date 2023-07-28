@@ -4,6 +4,7 @@ import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
@@ -25,10 +26,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.IntStream;
+import org.hibernate.exception.LockAcquisitionException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.CannotAcquireLockException;
+import org.sqlite.SQLiteException;
 import util.infra.AbstractLocalDatabaseTest;
 import util.infra.EnableH2MemTestInfra;
 import util.infra.EnablePostgreSQLTestInfra;
@@ -56,6 +61,49 @@ public class DatabaseExecutionHistoryRepositoryTest {
         private DatabaseExecutionHistoryRepository sut;
         @Autowired
         private CampaignExecutionDBRepository campaignExecutionDBRepository;
+
+        @Test
+        public void parallel_execution_does_not_lock_database() throws InterruptedException {
+            int numThreads = 10;
+            // Given n parallels scenarios
+            List<String> ids = new ArrayList<>(numThreads);
+            for (int i = 0; i < numThreads; i++) {
+                String id = givenScenario().id().toString();
+                ids.add(id);
+                sut.store(id, buildDetachedExecution(ServerReportStatus.RUNNING, "exec", ""));
+            }
+
+            // Use a latch to sync all threads
+            CountDownLatch startLatch = new CountDownLatch(1);
+            CountDownLatch endLatch = new CountDownLatch(numThreads);
+
+            List<Throwable> throwns = new ArrayList<>(numThreads);
+            ids.forEach(((id) -> {
+                ExecutionSummary summary = sut.getExecutions(id).get(0);
+                Thread t = new Thread(() -> {
+                    try {
+                        startLatch.await();
+                        throwns.add(catchThrowable(() ->
+                            sut.update(id, buildDetachedExecution(ServerReportStatus.SUCCESS, "updated", "").attach(summary.executionId()))
+                        ));
+                    } catch (InterruptedException e) {
+                        // do nothing
+                    } finally {
+                        endLatch.countDown();
+                    }
+                });
+                t.start();
+            }));
+
+            startLatch.countDown(); // Starts all threads
+            endLatch.await(); // await termination
+
+            assertThat(throwns).doesNotHaveAnyElementsOfTypes(
+                CannotAcquireLockException.class,
+                LockAcquisitionException.class,
+                SQLiteException.class
+            );
+        }
 
         @Test
         public void execution_summary_is_available_after_storing_sorted_newest_first() {
@@ -287,7 +335,6 @@ public class DatabaseExecutionHistoryRepositoryTest {
                 .status(status)
                 .info(info)
                 .error(error)
-                //.report("report content")
                 .report("report content")
                 .testCaseTitle("Fake title")
                 .environment("")
