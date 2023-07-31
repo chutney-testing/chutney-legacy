@@ -19,6 +19,7 @@ import com.google.common.base.Ascii;
 import com.google.common.base.Joiner;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -204,6 +205,44 @@ public class ScenarioExecutionEngineAsync {
 
     public void setDebounceMilliSeconds(long debounceMilliSeconds) {
         this.debounceMilliSeconds = debounceMilliSeconds;
+    }
+
+    public void saveNotExecutedScenarioReport(ExecutionRequest executionRequest, Long executionId) {
+        StepExecutionReportCore report = new StepExecutionReportCore(
+            executionRequest.testCase.metadata().title(),
+            0L,
+            Instant.now(),
+            ServerReportStatus.NOT_EXECUTED,
+            List.of(),
+            List.of(),
+            List.of(),
+            null,
+            null,
+            null,
+            null
+        );
+        ScenarioExecutionReport scenarioExecutionReport =  new ScenarioExecutionReport(
+            executionId,
+            executionRequest.testCase.metadata().title(),
+            executionRequest.environment, executionRequest.userId,
+            report);
+        updateHistory(executionId, executionRequest, scenarioExecutionReport);
+    }
+
+    public ExecutionHistory.Execution saveNotExecutedScenarioExecution(ExecutionRequest executionRequest) {
+        ExecutionHistory.DetachedExecution detachedExecution = ImmutableExecutionHistory.DetachedExecution.builder()
+            .time(LocalDateTime.now())
+            .duration(0L)
+            .status(ServerReportStatus.NOT_EXECUTED)
+            .info("")
+            .error("")
+            .report("")
+            .testCaseTitle(executionRequest.testCase.metadata().title())
+            .environment(executionRequest.environment)
+            .user(executionRequest.userId)
+            .build();
+
+        return executionHistoryRepository.store(executionRequest.testCase.id(), detachedExecution);
     }
 
     /**

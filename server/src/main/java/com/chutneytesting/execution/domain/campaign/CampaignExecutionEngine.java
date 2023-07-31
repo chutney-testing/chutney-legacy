@@ -200,6 +200,7 @@ public class CampaignExecutionEngine {
 
     private Consumer<TestCase> executeScenarioInCampaign(Campaign campaign, CampaignExecutionReport campaignExecutionReport) {
         return testCase -> {
+            ScenarioExecutionReportCampaign scenarioExecutionReport;
             // Is stop requested ?
             if (!currentCampaignExecutionsStopRequests.get(campaignExecutionReport.executionId)) {
                 // Init scenario execution in campaign report
@@ -210,17 +211,27 @@ public class CampaignExecutionEngine {
                 if (campaign.retryAuto && ServerReportStatus.FAILURE.equals(scenarioExecutionReport.status())) {
                     scenarioExecutionReport = executeScenario(campaign, testCase, campaignExecutionReport);
                 }
-                // Add scenario report to campaign's one
-                ofNullable(scenarioExecutionReport)
-                    .ifPresent(serc -> {
-                        campaignExecutionReport.endScenarioExecution(serc);
-                        // update xray test
-                        ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(serc.scenarioId, serc.execution.executionId());
-                        jiraXrayEmbeddedApi.updateTestExecution(campaign.id, campaignExecutionReport.executionId, serc.scenarioId, JiraReportMapper.from(execution.report(), objectMapper));
-                    });
+            } else {
+                scenarioExecutionReport = generateNotExecutedScenarioExecutionAndReport(campaign, testCase, campaignExecutionReport.userId);
             }
+                // Add scenario report to campaign's one
+            ofNullable(scenarioExecutionReport)
+                .ifPresent(serc -> {
+                    campaignExecutionReport.endScenarioExecution(serc);
+                    // update xray test
+                    ExecutionHistory.Execution execution = executionHistoryRepository.getExecution(serc.scenarioId, serc.execution.executionId());
+                    jiraXrayEmbeddedApi.updateTestExecution(campaign.id, campaignExecutionReport.executionId, serc.scenarioId, JiraReportMapper.from(execution.report(), objectMapper));
+                });
         };
     }
+
+    private ScenarioExecutionReportCampaign generateNotExecutedScenarioExecutionAndReport(Campaign campaign, TestCase testCase, String userId) {
+        ExecutionRequest executionRequest = buildExecutionRequest(campaign, testCase, userId);
+        ExecutionHistory.Execution execution = scenarioExecutionEngine.saveNotExecutedScenarioExecution(executionRequest);
+        scenarioExecutionEngine.saveNotExecutedScenarioReport(executionRequest, execution.executionId());
+        return new ScenarioExecutionReportCampaign(testCase.id(), testCase.metadata().title(), execution.summary());
+    }
+
 
     private ScenarioExecutionReportCampaign executeScenario(Campaign campaign, TestCase testCase, CampaignExecutionReport campaignExecutionReport) {
         Long executionId;

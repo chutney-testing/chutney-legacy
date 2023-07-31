@@ -1,5 +1,6 @@
 package com.chutneytesting.server.core.domain.execution;
 
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessors;
 import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
 import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
@@ -37,5 +38,13 @@ public class ScenarioExecutionEngine {
 
         StepExecutionReportCore finalStepReport = executionEngine.execute(processedExecutionRequest);
         return new ScenarioExecutionReport(0L, processedExecutionRequest.testCase.metadata().title(), executionRequest.environment, executionRequest.userId, finalStepReport);
+    }
+
+    public ExecutionHistory.Execution saveNotExecutedScenarioExecution(ExecutionRequest executionRequest) {
+        return executionEngineAsync.saveNotExecutedScenarioExecution(executionRequest);
+    }
+
+    public void saveNotExecutedScenarioReport(ExecutionRequest executionRequest, Long executionId) {
+        executionEngineAsync.saveNotExecutedScenarioReport(executionRequest, executionId);
     }
 }

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
@@ -23,6 +24,7 @@ import com.chutneytesting.server.core.domain.execution.state.ExecutionStateRepos
 import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
@@ -204,6 +206,82 @@ public class ScenarioExecutionEngineAsyncTest {
         testObserver.dispose();
     }
 
+    @Test
+    public void should_save_not_executed_scenario_report() {
+        // Given
+        final ScenarioExecutionEngineAsync sut = new ScenarioExecutionEngineAsync(
+            executionHistoryRepository,
+            executionEngine,
+            executionStateRepository,
+            metrics,
+            testCasePreProcessors,
+            om
+        );
+        TestCase testCase = emptyTestCase();
+        ExecutionRequest executionRequest = new ExecutionRequest(testCase, "env", "userId");
+        long executionId = 1234L;
+        StepExecutionReportCore report = new StepExecutionReportCore(
+            executionRequest.testCase.metadata().title(),
+            0L,
+            Instant.now(),
+            ServerReportStatus.NOT_EXECUTED,
+            List.of(),
+            List.of(),
+            List.of(),
+            null,
+            null,
+            null,
+            null
+        );
+        ScenarioExecutionReport scenarioExecutionReport =  new ScenarioExecutionReport(
+            executionId,
+            executionRequest.testCase.metadata().title(),
+            executionRequest.environment, executionRequest.userId,
+            report);
+        doNothing().when(executionHistoryRepository).update(eq("1"), any(ExecutionHistory.Execution.class));
+
+        // When
+        sut.saveNotExecutedScenarioReport(executionRequest, executionId);
+
+        // Then
+        verify(executionHistoryRepository, times(1)).update(eq("1"), any(ExecutionHistory.Execution.class));
+    }
+
+    @Test
+    public void should_save_not_executed_scenario_execution() {
+        // Given
+        final ScenarioExecutionEngineAsync sut = new ScenarioExecutionEngineAsync(
+            executionHistoryRepository,
+            executionEngine,
+            executionStateRepository,
+            metrics,
+            testCasePreProcessors,
+            om
+        );
+        TestCase testCase = emptyTestCase();
+        ExecutionRequest executionRequest = new ExecutionRequest(testCase, "env", "userId");
+
+        ExecutionHistory.Execution expected = buildExecutionMock(executionRequest);
+        when(executionHistoryRepository.store(eq("1"), any(ExecutionHistory.DetachedExecution.class))).thenReturn(expected);
+
+        // When
+        ExecutionHistory.Execution execution = sut.saveNotExecutedScenarioExecution(executionRequest);
+
+        // Then
+        verify(executionHistoryRepository, times(1)).store(eq("1"), any(ExecutionHistory.DetachedExecution.class));
+        assertThat(execution.executionId()).isEqualTo(expected.executionId());
+        assertThat(execution.duration()).isEqualTo(expected.duration());
+        assertThat(execution.environment()).isEqualTo(expected.environment());
+        assertThat(execution.user()).isEqualTo(expected.user());
+        assertThat(execution.report()).isEqualTo(expected.report());
+        assertThat(execution.testCaseTitle()).isEqualTo(expected.testCaseTitle());
+        assertThat(execution.status()).isEqualTo(expected.status());
+        assertThat(execution.datasetId()).isEqualTo(expected.datasetId());
+        assertThat(execution.datasetVersion()).isEqualTo(expected.datasetVersion());
+        assertThat(execution.info()).isEqualTo(expected.info());
+        assertThat(execution.campaignReport()).isEqualTo(expected.campaignReport());
+    }
+
     private void assertTestObserverStateAndValues(TestObserver<ScenarioExecutionReport> testObserver, Long executionId, List<StepExecutionReportCore> reportsList, int valuesCount) {
         assertTestObserverStateAndValues(testObserver, false, executionId, reportsList, valuesCount);
     }
@@ -307,5 +385,74 @@ public class ScenarioExecutionEngineAsyncTest {
         when(executionHistoryRepository.getExecution(scenarioId, executionId)).thenReturn(storedExecution);
 
         return storedExecution;
+    }
+
+    private ExecutionHistory.Execution buildExecutionMock(ExecutionRequest executionRequest) {
+        return new ExecutionHistory.Execution() {
+            @Override
+            public Long executionId() {
+                return 1L;
+            }
+
+            @Override
+            public LocalDateTime time() {
+                return LocalDateTime.now();
+            }
+
+            @Override
+            public long duration() {
+                return 0L;
+            }
+
+            @Override
+            public ServerReportStatus status() {
+                return ServerReportStatus.NOT_EXECUTED;
+            }
+
+            @Override
+            public Optional<String> info() {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<String> error() {
+                return Optional.empty();
+            }
+
+            @Override
+            public String testCaseTitle() {
+                return executionRequest.testCase.metadata().title();
+            }
+
+            @Override
+            public String environment() {
+                return executionRequest.environment;
+            }
+
+            @Override
+            public Optional<String> datasetId() {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<Integer> datasetVersion() {
+                return Optional.empty();
+            }
+
+            @Override
+            public String user() {
+                return executionRequest.userId;
+            }
+
+            @Override
+            public Optional<CampaignExecutionReport> campaignReport() {
+                return Optional.empty();
+            }
+
+            @Override
+            public String report() {
+                return null;
+            }
+        };
     }
 }
