@@ -1,6 +1,7 @@
 package com.chutneytesting.server.core.domain.execution;
 
 import static io.reactivex.schedulers.Schedulers.io;
+import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
@@ -207,42 +208,44 @@ public class ScenarioExecutionEngineAsync {
         this.debounceMilliSeconds = debounceMilliSeconds;
     }
 
-    public void saveNotExecutedScenarioReport(ExecutionRequest executionRequest, Long executionId) {
-        StepExecutionReportCore report = new StepExecutionReportCore(
-            executionRequest.testCase.metadata().title(),
-            0L,
-            Instant.now(),
-            ServerReportStatus.NOT_EXECUTED,
-            List.of(),
-            List.of(),
-            List.of(),
-            null,
-            null,
-            null,
-            null
-        );
-        ScenarioExecutionReport scenarioExecutionReport =  new ScenarioExecutionReport(
-            executionId,
-            executionRequest.testCase.metadata().title(),
-            executionRequest.environment, executionRequest.userId,
-            report);
-        updateHistory(executionId, executionRequest, scenarioExecutionReport);
-    }
-
     public ExecutionHistory.Execution saveNotExecutedScenarioExecution(ExecutionRequest executionRequest) {
         ExecutionHistory.DetachedExecution detachedExecution = ImmutableExecutionHistory.DetachedExecution.builder()
             .time(LocalDateTime.now())
             .duration(0L)
             .status(ServerReportStatus.NOT_EXECUTED)
-            .info("")
-            .error("")
             .report("")
             .testCaseTitle(executionRequest.testCase.metadata().title())
             .environment(executionRequest.environment)
             .user(executionRequest.userId)
             .build();
 
-        return executionHistoryRepository.store(executionRequest.testCase.id(), detachedExecution);
+        ExecutionHistory.Execution execution = executionHistoryRepository.store(executionRequest.testCase.id(), detachedExecution);
+        saveNotExecutedReport(executionRequest, execution);
+        return execution;
+    }
+
+    private void saveNotExecutedReport(ExecutionRequest executionRequest, ExecutionHistory.Execution execution) {
+        StepExecutionReportCore report = new StepExecutionReportCore(
+            executionRequest.testCase.metadata().title(),
+            0L,
+            Instant.now(),
+            ServerReportStatus.NOT_EXECUTED,
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            null,
+            null,
+            null,
+            null
+        );
+
+        ScenarioExecutionReport scenarioExecutionReport =  new ScenarioExecutionReport(
+            execution.executionId(),
+            executionRequest.testCase.metadata().title(),
+            executionRequest.environment, executionRequest.userId,
+            report
+        );
+        updateHistory(execution.executionId(), executionRequest, scenarioExecutionReport);
     }
 
     /**

@@ -206,13 +206,13 @@ public class CampaignExecutionEngine {
                 // Init scenario execution in campaign report
                 campaignExecutionReport.startScenarioExecution(testCase, campaign.executionEnvironment(), campaignExecutionReport.userId);
                 // Execute scenario
-                ScenarioExecutionReportCampaign scenarioExecutionReport = executeScenario(campaign, testCase, campaignExecutionReport);
+                scenarioExecutionReport = executeScenario(campaign, testCase, campaignExecutionReport);
                 // Retry one time if failed
                 if (campaign.retryAuto && ServerReportStatus.FAILURE.equals(scenarioExecutionReport.status())) {
                     scenarioExecutionReport = executeScenario(campaign, testCase, campaignExecutionReport);
                 }
             } else {
-                scenarioExecutionReport = generateNotExecutedScenarioExecutionAndReport(campaign, testCase, campaignExecutionReport.userId);
+                scenarioExecutionReport = generateNotExecutedScenarioExecutionAndReport(campaign, testCase, campaignExecutionReport);
             }
                 // Add scenario report to campaign's one
             ofNullable(scenarioExecutionReport)
@@ -225,10 +225,9 @@ public class CampaignExecutionEngine {
         };
     }
 
-    private ScenarioExecutionReportCampaign generateNotExecutedScenarioExecutionAndReport(Campaign campaign, TestCase testCase, String userId) {
-        ExecutionRequest executionRequest = buildExecutionRequest(campaign, testCase, userId);
+    private ScenarioExecutionReportCampaign generateNotExecutedScenarioExecutionAndReport(Campaign campaign, TestCase testCase, CampaignExecutionReport campaignExecutionReport) {
+        ExecutionRequest executionRequest = buildExecutionRequest(campaign, testCase, campaignExecutionReport);
         ExecutionHistory.Execution execution = scenarioExecutionEngine.saveNotExecutedScenarioExecution(executionRequest);
-        scenarioExecutionEngine.saveNotExecutedScenarioReport(executionRequest, execution.executionId());
         return new ScenarioExecutionReportCampaign(testCase.id(), testCase.metadata().title(), execution.summary());
     }
 

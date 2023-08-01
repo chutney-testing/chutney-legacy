@@ -44,7 +44,4 @@ public class ScenarioExecutionEngine {
         return executionEngineAsync.saveNotExecutedScenarioExecution(executionRequest);
     }
 
-    public void saveNotExecutedScenarioReport(ExecutionRequest executionRequest, Long executionId) {
-        executionEngineAsync.saveNotExecutedScenarioReport(executionRequest, executionId);
-    }
 }
