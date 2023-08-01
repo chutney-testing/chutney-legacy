@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
@@ -204,6 +205,64 @@ public class ScenarioExecutionEngineAsyncTest {
         testObserver.dispose();
     }
 
+    @Test
+    public void should_save_not_executed_scenario_report() {
+        // Given
+        final ScenarioExecutionEngineAsync sut = new ScenarioExecutionEngineAsync(
+            executionHistoryRepository,
+            executionEngine,
+            executionStateRepository,
+            metrics,
+            testCasePreProcessors,
+            om
+        );
+        TestCase testCase = emptyTestCase();
+        ExecutionRequest executionRequest = new ExecutionRequest(testCase, "env", "userId");
+
+        when(executionHistoryRepository.store(eq("1"), any()))
+            .thenReturn(mock(ExecutionHistory.Execution.class));
+
+        // When
+        sut.saveNotExecutedScenarioExecution(executionRequest);
+
+        // Then
+        verify(executionHistoryRepository, times(1)).update(eq("1"), any(ExecutionHistory.Execution.class));
+    }
+
+    @Test
+    public void should_save_not_executed_scenario_execution() {
+        // Given
+        final ScenarioExecutionEngineAsync sut = new ScenarioExecutionEngineAsync(
+            executionHistoryRepository,
+            executionEngine,
+            executionStateRepository,
+            metrics,
+            testCasePreProcessors,
+            om
+        );
+        TestCase testCase = emptyTestCase();
+        ExecutionRequest executionRequest = new ExecutionRequest(testCase, "env", "userId");
+
+        ExecutionHistory.Execution expected = ImmutableExecutionHistory.Execution.builder()
+            .executionId(1L)
+            .time(LocalDateTime.now())
+            .duration(0L)
+            .status(ServerReportStatus.NOT_EXECUTED)
+            .testCaseTitle(executionRequest.testCase.metadata().title())
+            .environment(executionRequest.environment)
+            .user(executionRequest.userId)
+            .report("")
+            .build();
+        when(executionHistoryRepository.store(eq("1"), any(ExecutionHistory.DetachedExecution.class))).thenReturn(expected);
+
+        // When
+        ExecutionHistory.Execution execution = sut.saveNotExecutedScenarioExecution(executionRequest);
+
+        // Then
+        verify(executionHistoryRepository, times(1)).store(eq("1"), any(ExecutionHistory.DetachedExecution.class));
+        assertThat(execution).isEqualTo(expected);
+    }
+
     private void assertTestObserverStateAndValues(TestObserver<ScenarioExecutionReport> testObserver, Long executionId, List<StepExecutionReportCore> reportsList, int valuesCount) {
         assertTestObserverStateAndValues(testObserver, false, executionId, reportsList, valuesCount);
     }
@@ -308,4 +367,5 @@ public class ScenarioExecutionEngineAsyncTest {
 
         return storedExecution;
     }
+
 }
