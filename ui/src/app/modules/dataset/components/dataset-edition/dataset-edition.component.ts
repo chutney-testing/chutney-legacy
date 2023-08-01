@@ -13,6 +13,7 @@ import { ValidationService } from '../../../../molecules/validation/validation.s
 import { Dataset, KeyValue } from '@model';
 import { FeatureService } from '@core/feature/feature.service';
 import { FeatureName } from '@core/feature/feature.model';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'chutney-dataset-edition',
@@ -31,6 +32,8 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
     message;
     private savedMessage: string;
     componentsActive = false;
+    errorDuplicateHeader = false;
+    errorDuplicateHeaderMessage: string
 
     @ViewChild('dataSetName') dataSetName: ElementRef;
 
@@ -72,6 +75,9 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
         this.translate.get('global.actions.done.saved').subscribe((res: string) => {
             this.savedMessage = res;
         });
+        this.translate.get('components.dataset.error.duplicatedHeader').subscribe((res: string) => {
+            this.errorDuplicateHeaderMessage = res;
+        });
     }
 
     ngOnDestroy() {
@@ -104,12 +110,22 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
 
     save() {
         const dataset = this.createDataset();
+        this.errorDuplicateHeader = false;
         this.dataSetService.save(dataset, this.previousDataSet.id)
-            .subscribe( (res) => {
-                this.setCurrentDataSet(res);
-                this.location.replaceState('/dataset/' + this.dataset.id + '/edition');
-                this.notify(this.savedMessage);
-                this.modificationsSaved = true;
+            .subscribe({ 
+                next: (res) => {
+                    this.setCurrentDataSet(res);
+                    this.location.replaceState('/dataset/' + this.dataset.id + '/edition');
+                    this.notify(this.savedMessage);
+                    this.modificationsSaved = true;
+                },
+                error: error => {
+                    if (error.status === 400) {
+                        this.errorDuplicateHeader = true;
+                        this.notify(this.errorDuplicateHeaderMessage);
+                        this.modificationsSaved = false;
+                    }
+                }
             });
     }
 

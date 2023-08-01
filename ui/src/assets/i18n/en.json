@@ -399,6 +399,11 @@
                     "steps": "Steps"
                 }
             }
+        },
+        "dataset": {
+            "error": {
+                "duplicatedHeader": "Duplicated header"
+            }
         }
     },
     "login": {

@@ -2,6 +2,7 @@ package com.chutneytesting.dataset.api;
 
 import static com.chutneytesting.dataset.api.DataSetMapper.fromDto;
 import static com.chutneytesting.dataset.api.DataSetMapper.toDto;
+import static com.chutneytesting.dataset.api.DataSetValidator.validateDatasetSave;
 
 import com.chutneytesting.dataset.domain.DatasetService;
 import java.util.List;
@@ -47,12 +48,14 @@ public class DataSetController {
     @PreAuthorize("hasAuthority('DATASET_WRITE')")
     @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public DataSetDto save(@RequestBody DataSetDto datasetDto) {
+        validateDatasetSave(datasetDto);
         return toDto(datasetService.save(fromDto(datasetDto)));
     }
 
     @PreAuthorize("hasAuthority('DATASET_WRITE')")
     @PutMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public DataSetDto update(@RequestBody DataSetDto dataSetDto, @RequestParam Optional<String> oldId) {
+        validateDatasetSave(dataSetDto);
         return toDto(datasetService.update(oldId, fromDto(dataSetDto)));
     }
 
