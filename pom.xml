@@ -109,7 +109,7 @@
         <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version> <!-- Divergence on dependencies commons-logging and joda-time -->
 
         <!-- action-impl test dependencies versions -->
-        <mockrunner-jms.version>1.1.2</mockrunner-jms.version>
+        <mockrunner-jms.version>2.0.7</mockrunner-jms.version>
         <activemq-junit.version>5.16.5</activemq-junit.version> <!-- = Follow spring boot version -->
         <rabbitmq-mock.version>1.2.0</rabbitmq-mock.version>
 
