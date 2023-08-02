@@ -402,7 +402,7 @@
         },
         "dataset": {
             "error": {
-                "duplicatedHeader": "Un header est dupliqué"
+                "duplicatedHeader": "Une ou plusieurs colonnes ont le même header"
             }
         }
     },

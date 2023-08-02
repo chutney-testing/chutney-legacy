@@ -1,7 +1,8 @@
 package com.chutneytesting.dataset.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.chutneytesting.server.core.domain.tools.ui.ImmutableKeyValue;
 import java.util.List;
@@ -47,16 +48,19 @@ public class DataSetControllerTest {
             .name("toto")
             .datatable(List.of(
                 List.of(
-                    ImmutableKeyValue.builder().key("toto").value("tata").build(),
-                    ImmutableKeyValue.builder().key("toto").value("tutu").build()
+                    ImmutableKeyValue.builder().key("A").build(),
+                    ImmutableKeyValue.builder().key("A").build(),
+                    ImmutableKeyValue.builder().key("B").build(),
+                    ImmutableKeyValue.builder().key("C").build(),
+                    ImmutableKeyValue.builder().key("C").build()
                 )
             ))
             .build();
 
-        // When / Then
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> DataSetController.hasNoDuplicatedHeaders(dataSetDto)
-        );
+        Throwable thrown = catchThrowable(() -> DataSetController.hasNoDuplicatedHeaders(dataSetDto));
+
+        assertThat(thrown)
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("2 column(s) have duplicated headers: [A, C]");
     }
 }

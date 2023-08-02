@@ -10,12 +10,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.immutables.value.Value;
 
 @Value.Immutable
@@ -59,13 +56,16 @@ public interface DataSetDto {
         return emptyList();
     }
 
-    default boolean hasDuplicatedHeader() {
+    default List<String> duplicatedHeaders() {
         if(!datatable().isEmpty()) {
-            Set<String> uniqueElements = new HashSet<>();
             List<String> headers = datatable().get(0).stream().map(KeyValue::key).toList();
-            return headers.stream().anyMatch(h -> !uniqueElements.add(h));
+            return headers.stream()
+                .collect(groupingBy(h -> h, counting()))
+                .entrySet().stream()
+                .filter(entry -> entry.getValue() > 1)
+                .map(Map.Entry::getKey)
+                .toList();
         }
-
-        return false;
+        return emptyList();
     }
 }

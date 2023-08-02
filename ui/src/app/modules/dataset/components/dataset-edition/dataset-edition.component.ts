@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -13,7 +13,6 @@ import { ValidationService } from '../../../../molecules/validation/validation.s
 import { Dataset, KeyValue } from '@model';
 import { FeatureService } from '@core/feature/feature.service';
 import { FeatureName } from '@core/feature/feature.model';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'chutney-dataset-edition',
@@ -30,11 +29,12 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
     private previousDataSet: Dataset = this.dataset;
     private modificationsSaved = false;
     message;
+    backendError;
     private savedMessage: string;
     componentsActive = false;
     errorDuplicateHeader = false;
-    errorDuplicateHeaderMessage: string
 
+    errorDuplicateHeaderMessage: string
     @ViewChild('dataSetName') dataSetName: ElementRef;
 
     constructor(private dataSetService: DataSetService,
@@ -112,28 +112,30 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
         const dataset = this.createDataset();
         this.errorDuplicateHeader = false;
         this.dataSetService.save(dataset, this.previousDataSet.id)
-            .subscribe({ 
+            .subscribe({
                 next: (res) => {
                     this.setCurrentDataSet(res);
                     this.location.replaceState('/dataset/' + this.dataset.id + '/edition');
-                    this.notify(this.savedMessage);
+                    this.notify(this.savedMessage, null);
                     this.modificationsSaved = true;
                 },
-                error: error => {
+                error: (error) => {
                     if (error.status === 400) {
                         this.errorDuplicateHeader = true;
-                        this.notify(this.errorDuplicateHeaderMessage);
+                        this.notify(this.errorDuplicateHeaderMessage + ':', error.error);
                         this.modificationsSaved = false;
                     }
                 }
             });
     }
 
-    notify(message: string) {
+    notify(message: string, backendError: string) {
         (async () => {
             this.message = message;
-            await delay(3000);
+            this.backendError = backendError;
+            await delay(5000);
             this.message = null;
+            this.backendError = null;
         })();
     }
 
