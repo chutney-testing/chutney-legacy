@@ -1,26 +1,13 @@
 package com.chutneytesting.dataset.api;
 
-import com.chutneytesting.server.core.domain.tools.ui.ImmutableKeyValue;
-import java.util.List;
-import java.util.NoSuchElementException;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DataSetValidatorTest {
-    @Test
-    void should_reject_null_dataset() {
-        // Given
-        DataSetDto dataSetDto = null;
+import com.chutneytesting.server.core.domain.tools.ui.ImmutableKeyValue;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
-        // When / Then
-        assertThrows(
-            NoSuchElementException.class,
-            () -> DataSetValidator.validateDatasetSave(dataSetDto)
-        );
-    }
-
+public class DataSetControllerTest {
     @Test
     void should_accept_empty_dataset() {
         // Given
@@ -31,7 +18,7 @@ public class DataSetValidatorTest {
             .build();
 
         // When / Then
-        assertDoesNotThrow(() -> DataSetValidator.validateDatasetSave(dataSetDto));
+        assertDoesNotThrow(() -> DataSetController.hasNoDuplicatedHeaders(dataSetDto));
     }
 
     @Test
@@ -49,7 +36,7 @@ public class DataSetValidatorTest {
             .build();
 
         // When / Then
-        assertDoesNotThrow(() -> DataSetValidator.validateDatasetSave(dataSetDto));
+        assertDoesNotThrow(() -> DataSetController.hasNoDuplicatedHeaders(dataSetDto));
     }
 
     @Test
@@ -69,7 +56,7 @@ public class DataSetValidatorTest {
         // When / Then
         assertThrows(
             IllegalArgumentException.class,
-            () -> DataSetValidator.validateDatasetSave(dataSetDto)
+            () -> DataSetController.hasNoDuplicatedHeaders(dataSetDto)
         );
     }
 }

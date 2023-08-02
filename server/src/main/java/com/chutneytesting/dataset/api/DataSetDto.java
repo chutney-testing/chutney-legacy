@@ -2,14 +2,20 @@ package com.chutneytesting.dataset.api;
 
 import static java.time.Instant.now;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 
 import com.chutneytesting.server.core.domain.tools.ui.KeyValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.immutables.value.Value;
 
 @Value.Immutable
@@ -51,5 +57,15 @@ public interface DataSetDto {
     @JsonProperty("multipleValues")
     default List<List<KeyValue>> datatable() {
         return emptyList();
+    }
+
+    default boolean hasDuplicatedHeader() {
+        if(!datatable().isEmpty()) {
+            Set<String> uniqueElements = new HashSet<>();
+            List<String> headers = datatable().get(0).stream().map(KeyValue::key).toList();
+            return headers.stream().anyMatch(h -> !uniqueElements.add(h));
+        }
+
+        return false;
     }
 }
