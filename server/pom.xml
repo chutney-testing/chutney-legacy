@@ -231,10 +231,6 @@
             <artifactId>activemq-junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.mockrunner</groupId>
-            <artifactId>mockrunner-jms</artifactId>
-        </dependency>
-        <dependency>
             <groupId>net.jqwik</groupId>
             <artifactId>jqwik</artifactId>
         </dependency>

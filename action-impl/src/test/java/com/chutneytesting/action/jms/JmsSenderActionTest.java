@@ -23,14 +23,12 @@ import java.util.Map;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 public class JmsSenderActionTest {
 
     @Test
-    @Disabled
     public void should_send_jms_message_to_destination() {
 
         String body = "builder";

@@ -249,9 +249,12 @@
             <groupId>org.apache.activemq.tooling</groupId>
             <artifactId>activemq-junit</artifactId>
         </dependency>
+
+        <!-- Follow https://github.com/mockrunner/mockrunner/issues/83 -->
         <dependency>
-            <groupId>com.mockrunner</groupId>
+            <groupId>net.oneandone.mockrunner</groupId>
             <artifactId>mockrunner-jms</artifactId>
+            <version>3.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
