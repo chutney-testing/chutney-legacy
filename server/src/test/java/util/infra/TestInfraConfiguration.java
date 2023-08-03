@@ -122,7 +122,7 @@ class TestInfraConfiguration {
         public Properties jpaProperties() {
             Properties jpaProperties = new Properties();
             jpaProperties.putAll(Map.of(
-                "hibernate.dialect", "org.sqlite.hibernate.dialect.SQLiteDialect",
+                "hibernate.dialect", "org.hibernate.community.dialect.SQLiteDialect",
                 "hibernate.show_sql", "true",
                 "hibernate.use-new-id-generator-mappings", "false"
             ));

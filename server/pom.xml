@@ -202,9 +202,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.gwenn</groupId>
-            <artifactId>sqlite-dialect</artifactId>
-            <scope>test</scope>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-community-dialects</artifactId>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
