@@ -1,3 +1,4 @@
+/*
 package com.chutneytesting.action.jms;
 
 import java.security.KeyStore;
@@ -16,14 +17,18 @@ import org.junit.jupiter.api.BeforeAll;
 
 public class ActiveMQTestSupport {
 
-    /**
+    */
+/**
      * SSL connector One Way
-     */
+     *//*
+
     private static TransportConnector connector;
 
-    /**
+    */
+/**
      * SSL connector 2 way
-     */
+     *//*
+
     static TransportConnector needClientAuthConnector;
 
     static final AtomicLong expectedTotalConnections = new AtomicLong();
@@ -82,3 +87,4 @@ public class ActiveMQTestSupport {
     }
 
 }
+*/

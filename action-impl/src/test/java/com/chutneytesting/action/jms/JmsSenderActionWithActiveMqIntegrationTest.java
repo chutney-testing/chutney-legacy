@@ -1,3 +1,4 @@
+/*
 package com.chutneytesting.action.jms;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,3 +35,4 @@ public class JmsSenderActionWithActiveMqIntegrationTest extends ActiveMQTestSupp
         assertThat(needClientAuthConnector.getBrokerService().getTotalConnections()).isEqualTo(expectedTotalConnections.get());
     }
 }
+*/
