@@ -1,5 +1,42 @@
 # Changelog
 
+## [2.1.0](https://github.com/chutney-testing/chutney/tree/2.1.0)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/2.0.0...2.1.0)
+
+## What's Changed
+
+### 🚀 Implemented enhancements:
+* feat(ui): persist dataset filter by @rbenyoussef in [\#1066](https://github.com/chutney-testing/chutney/pull/1066)
+* fix(server): save campaign - scenario link at scenario execution end by @rbenyoussef in [\#1037](https://github.com/chutney-testing/chutney/pull/1037)
+* feature(functions) : jsonSet now accept objects, not only strings by @DelaunayAlex in [\#1086](https://github.com/chutney-testing/chutney/pull/1086)
+* feature(search sceanario) : allow research with nested quotes by @DelaunayAlex in [\#1084](https://github.com/chutney-testing/chutney/pull/1084)
+* feature(scenario execution): show not executed scenario when campain stop by @DelaunayAlex in [\#1093](https://github.com/chutney-testing/chutney/pull/1093)
+* feature(ui,dataset): handle and display error while trying to save dataset with duplicated headers by @DelaunayAlex in [\#1105](https://github.com/chutney-testing/chutney/pull/1105)
+
+### 🐛 Fixed bugs:
+* fix(ui): fix target properties edition by @KarimGl in [\#1069](https://github.com/chutney-testing/chutney/pull/1069)
+* fix(pkg): Fix parallel exec - Set maxPoolSize to 1 for SQLite by @bessonm in [\#1090](https://github.com/chutney-testing/chutney/pull/1090)
+
+### 🔧 Technical enhancements:
+* fix(environment) : check that all targets are unique before saving by @DelaunayAlex in [\#1081](https://github.com/chutney-testing/chutney/pull/1081)
+* fix(target) : fix url regex to include numbers, +, - and . in the protocol section by @DelaunayAlex in [\#1082](https://github.com/chutney-testing/chutney/pull/1082)
+* Remove complex object from action input by @nbrouand in [\#1083](https://github.com/chutney-testing/chutney/pull/1083)
+* doc: Improve GPG signin keys instructions by @bessonm in [\#1068](https://github.com/chutney-testing/chutney/pull/1068)
+
+### 👒 Dependencies:
+* chore(deps): Bump maven-enforcer-plugin from 3.1.0 to 3.3.0 by @dependabot in [\#1064](https://github.com/chutney-testing/chutney/pull/1064)
+* chore(deps): Bump testcontainers-bom from 1.16.3 to 1.18.3 by @dependabot in [\#1071](https://github.com/chutney-testing/chutney/pull/1071)
+* chore(deps-dev): Bump net.jqwik:jqwik from 1.7.3 to 1.7.4 by @dependabot in [\#1102](https://github.com/chutney-testing/chutney/pull/1102)
+* chore(deps): Bump org.apache.maven.plugins:maven-source-plugin from 3.2.1 to 3.3.0 by @dependabot in [\#1095](https://github.com/chutney-testing/chutney/pull/1095)
+* chore(deps): Bump org.jacoco:jacoco-maven-plugin from 0.8.8 to 0.8.10 by @dependabot in [\#1099](https://github.com/chutney-testing/chutney/pull/1099)
+* chore(deps): Bump org.apache.maven.plugins:maven-resources-plugin from 3.3.0 to 3.3.1 by @dependabot in [\#1100](https://github.com/chutney-testing/chutney/pull/1100)
+* chore(deps-dev): Bump com.mockrunner:mockrunner-jms from 1.1.2 to 2.0.7 by @dependabot in [\#1103](https://github.com/chutney-testing/chutney/pull/1103)
+* chore(ui): Bump nodejs version from v16.15.0 to v16.19.1 by @bessonm in [\#1091](https://github.com/chutney-testing/chutney/pull/1091)
+* chore: Bump SpringBoot version from 2.7.5 to 2.7.14 by @bessonm in [\#1108](https://github.com/chutney-testing/chutney/pull/1108)
+
+**Full Changelog**: https://github.com/chutney-testing/chutney/compare/2.0.0...2.1.0
+
 ## [2.0.0](https://github.com/chutney-testing/chutney/tree/2.0.0)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/1.7.1...2.0.0)
