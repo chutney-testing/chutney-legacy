@@ -1,5 +1,7 @@
-<div class="notification text-center bg-info text-white rounded">
-    <strong *ngIf="message">{{ message }}</strong>
+<div *ngIf="message" class="notification text-center text-white rounded" [ngClass]="errorDuplicateHeader ? 'bg-danger' : 'bg-info'">
+    <strong>{{ message }}</strong>
+    <br>
+    <strong *ngIf="backendError">{{ backendError }}</strong>
 </div>
 <div class="p-3">
     <ng-container [formGroup]="datasetForm">

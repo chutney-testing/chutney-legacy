@@ -399,6 +399,11 @@
                     "steps": "Steps"
                 }
             }
+        },
+        "dataset": {
+            "error": {
+                "duplicatedHeader": "One or many columns have duplicated header"
+            }
         }
     },
     "login": {

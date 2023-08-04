@@ -47,12 +47,14 @@ public class DataSetController {
     @PreAuthorize("hasAuthority('DATASET_WRITE')")
     @PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public DataSetDto save(@RequestBody DataSetDto datasetDto) {
+        hasNoDuplicatedHeaders(datasetDto);
         return toDto(datasetService.save(fromDto(datasetDto)));
     }
 
     @PreAuthorize("hasAuthority('DATASET_WRITE')")
     @PutMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public DataSetDto update(@RequestBody DataSetDto dataSetDto, @RequestParam Optional<String> oldId) {
+        hasNoDuplicatedHeaders(dataSetDto);
         return toDto(datasetService.update(oldId, fromDto(dataSetDto)));
     }
 
@@ -66,6 +68,13 @@ public class DataSetController {
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public DataSetDto findById(@PathVariable String id) {
         return toDto(datasetService.findById(id));
+    }
+
+    static void hasNoDuplicatedHeaders(DataSetDto dataset) {
+        List<String> duplicates = dataset.duplicatedHeaders();
+        if (!duplicates.isEmpty()) {
+            throw new IllegalArgumentException( duplicates.size() + " column(s) have duplicated headers: [" + String.join(", ", duplicates) +"]");
+        }
     }
 
 }

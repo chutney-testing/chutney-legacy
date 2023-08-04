@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -29,9 +29,12 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
     private previousDataSet: Dataset = this.dataset;
     private modificationsSaved = false;
     message;
+    backendError;
     private savedMessage: string;
     componentsActive = false;
+    errorDuplicateHeader = false;
 
+    errorDuplicateHeaderMessage: string
     @ViewChild('dataSetName') dataSetName: ElementRef;
 
     constructor(private dataSetService: DataSetService,
@@ -72,6 +75,9 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
         this.translate.get('global.actions.done.saved').subscribe((res: string) => {
             this.savedMessage = res;
         });
+        this.translate.get('components.dataset.error.duplicatedHeader').subscribe((res: string) => {
+            this.errorDuplicateHeaderMessage = res;
+        });
     }
 
     ngOnDestroy() {
@@ -104,20 +110,32 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
 
     save() {
         const dataset = this.createDataset();
+        this.errorDuplicateHeader = false;
         this.dataSetService.save(dataset, this.previousDataSet.id)
-            .subscribe( (res) => {
-                this.setCurrentDataSet(res);
-                this.location.replaceState('/dataset/' + this.dataset.id + '/edition');
-                this.notify(this.savedMessage);
-                this.modificationsSaved = true;
+            .subscribe({
+                next: (res) => {
+                    this.setCurrentDataSet(res);
+                    this.location.replaceState('/dataset/' + this.dataset.id + '/edition');
+                    this.notify(this.savedMessage, null);
+                    this.modificationsSaved = true;
+                },
+                error: (error) => {
+                    if (error.status === 400) {
+                        this.errorDuplicateHeader = true;
+                        this.notify(this.errorDuplicateHeaderMessage + ':', error.error);
+                        this.modificationsSaved = false;
+                    }
+                }
             });
     }
 
-    notify(message: string) {
+    notify(message: string, backendError: string) {
         (async () => {
             this.message = message;
-            await delay(3000);
+            this.backendError = backendError;
+            await delay(5000);
             this.message = null;
+            this.backendError = null;
         })();
     }
 
