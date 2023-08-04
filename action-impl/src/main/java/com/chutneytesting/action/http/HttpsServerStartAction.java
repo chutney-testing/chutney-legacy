@@ -55,7 +55,7 @@ public class HttpsServerStartAction implements Action {
         WireMockConfiguration wireMockConfiguration = wireMockConfig()
             .dynamicPort()
             .httpsPort(port)
-            .containerThreads(7)
+            .containerThreads(8)
             .asynchronousResponseThreads(1)
             .jettyAcceptors(1);
 
