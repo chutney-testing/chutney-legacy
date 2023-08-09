@@ -32,6 +32,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
@@ -285,6 +286,57 @@ public class DatabaseTestCaseRepositoryTest {
             assertThatThrownBy(() -> sut.save(newTestCase))
                 .isInstanceOf(ScenarioNotFoundException.class)
                 .hasMessageContainingAll(scenarioId, newVersion.toString());
+        }
+
+        @Test
+        public void should_save_scenario_without_given_id() {
+            // Given
+            final String scenarioId = sut.save(GWT_TEST_CASE);
+            GwtTestCase testCase = GwtTestCase.builder().from(GWT_TEST_CASE)
+                .withMetadata(TestCaseMetadataImpl.builder().build())
+                .build();
+
+            // When
+            final String savedScenarioId = sut.save(testCase);
+
+            // Then
+            assertThat(scenarioId).isNotEqualTo(savedScenarioId);
+            assertThat(Long.parseLong(scenarioId)).isEqualTo(Long.parseLong(savedScenarioId) - 1);
+        }
+
+        @Test
+        public void should_save_scenario_with_given_id() {
+            // Given
+            final String scenarioId = sut.save(GWT_TEST_CASE);
+            final String newScenarioId = "12345";
+            GwtTestCase testCase = GwtTestCase.builder().from(GWT_TEST_CASE)
+                .withMetadata(TestCaseMetadataImpl.builder().withId(newScenarioId).build())
+                .build();
+
+            // When
+            final String savedScenarioId = sut.save(testCase);
+
+            // Then
+            assertThat(scenarioId).isNotEqualTo(savedScenarioId);
+            assertThat(savedScenarioId + 1).isNotEqualTo(scenarioId); // Make sure there is no autoincrement
+            assertThat(savedScenarioId).isEqualTo(newScenarioId);
+        }
+
+        @Test
+        public void should_update_scenario_with_different_title() {
+            // Given
+            final String scenarioId = sut.save(GWT_TEST_CASE);
+            String title = "New title";
+            GwtTestCase testCase = GwtTestCase.builder().from(GWT_TEST_CASE)
+                .withMetadata(TestCaseMetadataImpl.builder().withId(scenarioId).withTitle(title).build())
+                .build();
+
+            // When
+            final String savedScenarioId = sut.save(testCase);
+
+            // Then
+            assertThat(scenarioId).isEqualTo(savedScenarioId);
+            assertThat(sut.findById(scenarioId).orElseThrow(NoSuchElementException::new).metadata.title).isEqualTo(title);
         }
 
         @Test

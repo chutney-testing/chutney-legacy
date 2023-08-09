@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.persistence.criteria.Expression;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -31,6 +32,11 @@ public interface ScenarioJpaRepository extends CrudRepository<Scenario, Long>, J
         WHERE s.activated = true
         """)
     List<Scenario> findMetaDataByActivatedTrue();
+
+
+    @Modifying
+    @Query("UPDATE SCENARIO scenario SET scenario.id = :newId WHERE scenario.id = :currentId")
+    void updateScenarioId(@Param("currentId") Long currentId, @Param("newId") Long newId);
 
     static Specification<Scenario> contentContains(String searchWord) {
         return (root, query, builder) -> {

@@ -14,6 +14,7 @@ import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import java.util.ArrayList;
@@ -54,12 +55,32 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         this.entityManager = entityManager;
     }
 
-    @Override
-    public String save(GwtTestCase testCase) {
+    public String save2(GwtTestCase testCase) {
         try {
             return scenarioJpaRepository.save(Scenario.fromGwtTestCase(testCase)).id().toString();
         } catch (ObjectOptimisticLockingFailureException e) {
             throw new ScenarioNotFoundException(testCase.id(), testCase.metadata().version());
+        }
+    }
+
+    @Transactional
+    @Override
+    public String save(GwtTestCase testCase) {
+        try {
+            Long targetScenarioId = null;
+            if (testCase.id() != null) {
+              targetScenarioId = Long.valueOf(testCase.id());
+            }
+            Long scenarioId = scenarioJpaRepository.save(Scenario.fromGwtTestCase(testCase)).id();
+            if (targetScenarioId != null && targetScenarioId > 0 && !scenarioId.equals(targetScenarioId)) {
+                scenarioJpaRepository.updateScenarioId(scenarioId, targetScenarioId);
+                return targetScenarioId.toString();
+            }
+            return scenarioId.toString();
+        } catch (ObjectOptimisticLockingFailureException e) {
+            throw new ScenarioNotFoundException(testCase.id(), testCase.metadata().version());
+        } catch (NumberFormatException e) {
+            throw new ScenarioNotParsableException("Cannot parse id", e);
         }
     }
 
