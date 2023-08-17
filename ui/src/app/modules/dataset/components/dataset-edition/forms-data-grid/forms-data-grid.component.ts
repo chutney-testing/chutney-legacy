@@ -3,7 +3,7 @@ import {
     AbstractControl,
     ControlValueAccessor,
     FormArray,
-    FormBuilder,
+    FormBuilder, FormControl,
     FormGroup,
     NG_VALIDATORS,
     NG_VALUE_ACCESSOR,
@@ -32,7 +32,7 @@ import { FileSaverService } from 'ngx-filesaver';
 export class FormsDataGridComponent implements ControlValueAccessor {
 
     dataGridForm: FormArray;
-    headers: Array<string> = [];
+    headers: FormArray = this.fb.array([]);
 
     constructor(private fb: FormBuilder,
                 private fileSaverService: FileSaverService) {
@@ -42,7 +42,6 @@ export class FormsDataGridComponent implements ControlValueAccessor {
     // Columns
 
     updateHeader(col: number, newHeader: string) {
-        this.headers[col] = newHeader;
         const lines = this.dataGridForm.controls;
         lines.forEach((line: FormArray) => {
             let cell = line.controls[col];
@@ -55,7 +54,7 @@ export class FormsDataGridComponent implements ControlValueAccessor {
             this.insertLine(this.createLine([]))
         }
 
-        this.headers.push('');
+        this.headers.push(this.fb.control(''));
         this.dataGridForm.controls.forEach((line: FormArray) => {
             line.push(this.createKeyValue('', ''));
             line.updateValueAndValidity();
@@ -68,7 +67,7 @@ export class FormsDataGridComponent implements ControlValueAccessor {
     }
 
     removeColumn(col: number) {
-        this.headers.splice(col, 1);
+        this.headers.removeAt(col);
         this.dataGridForm.controls.forEach((line: FormArray) => {
             line.removeAt(col);
         });
@@ -83,7 +82,7 @@ export class FormsDataGridComponent implements ControlValueAccessor {
     }
 
     private clearForm() {
-        this.headers = [];
+        this.headers.clear();
         while (this.dataGridForm.length !== 0) {
             this.dataGridForm.removeAt(0)
         }
@@ -93,10 +92,10 @@ export class FormsDataGridComponent implements ControlValueAccessor {
 
     addLine() {
         if (this.thereIsNoHeader()) {
-            this.headers.push('');
+            this.headers.push(this.fb.control(''));
         }
 
-        let line: Array<KeyValue> = this.headers.map(h => {
+        let line: Array<KeyValue> = this.headers.value.map(h => {
             return new KeyValue(h, '');
         });
         this.insertLine(this.createLine(line));
@@ -134,7 +133,7 @@ export class FormsDataGridComponent implements ControlValueAccessor {
 
     private headerLine(delimiter: string) {
         let headerLine = '';
-        this.headers.forEach(header => {
+        this.headers.value.forEach(header => {
             headerLine += header + delimiter;
         });
         return headerLine;
@@ -148,12 +147,14 @@ export class FormsDataGridComponent implements ControlValueAccessor {
             const content = '' + fileReader.result;
             const lines = content.split('\n');
 
-            this.headers = this.cleanLastSemicolon(lines.shift()).split(';');
+            this.headers = this.fb.array(this.cleanLastSemicolon(lines.shift()).split(';')
+                .map(header => this.fb.control(header)));
 
             lines.forEach(l => {
                 const lineValues = this.cleanLastSemicolon(l).split(';');
 
                 const kv = this.headers
+                    .value
                     .map( (header, i) => [header, lineValues[i]])
                     .map( ([key, value]) => new KeyValue(key, value) );
 
@@ -190,7 +191,7 @@ export class FormsDataGridComponent implements ControlValueAccessor {
                    .forEach(l => this.insertLine(l));
             }
 
-            this.headers = this.getHeaders();
+            this.headers = this.fb.array(this.getHeaders().map(header => this.fb.control(header)))
         }
     }
 
@@ -246,4 +247,6 @@ export class FormsDataGridComponent implements ControlValueAccessor {
             }
         };
     }
+
+    protected readonly FormControl = FormControl;
 }
