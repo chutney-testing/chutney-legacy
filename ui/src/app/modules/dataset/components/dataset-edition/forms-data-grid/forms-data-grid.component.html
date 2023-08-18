@@ -42,7 +42,7 @@
             <tbody>
             <tr *ngFor="let line of dataGridForm.controls; let i = index">
                 <td style="width:30px">
-                    <button type="button" class="btn btn-outline-danger delete-button-height" (click)="removeLine(i)"
+                    <button tabindex="-1" type="button" class="btn btn-outline-danger delete-button-height" (click)="removeLine(i)"
                             title="{{'global.actions.delete' | translate}}">
                         <span class="fa fa-times"></span>
                     </button>
