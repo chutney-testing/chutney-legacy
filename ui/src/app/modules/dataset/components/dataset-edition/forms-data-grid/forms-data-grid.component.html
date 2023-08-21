@@ -26,15 +26,15 @@
                 <th style="width:30px">
                 </th>
                 <th class="header index-col">#</th>
-                <th class="header" scope="col" *ngFor="let header of headers; let i = index" style="min-width:250px ">
+                <th class="header" scope="col" *ngFor="let header of headers.controls; let i = index;" style="min-width:250px ">
                     <div style="text-align: center; margin-bottom: 2px;">
-                        <button type="button" class="btn btn-outline-danger delete-button-height removeBtn"
+                        <button tabindex="-1" type="button" class="btn btn-outline-danger delete-button-height removeBtn"
                                 (click)="removeColumn(i)"
                                 title="{{'global.actions.delete' | translate}}">
                             <span class="fa fa-times"></span>
                         </button>
                     </div>
-                    <input type="text" class="form-control" id="{{i}}-header" placeholder="{{ 'global.smallword.key' | translate }}" value="{{header}}"
+                    <input type="text" class="form-control" id="{{i}}-header" placeholder="{{ 'global.smallword.key' | translate }}" [formControl]="header"
                            (change)="updateHeader(i, $event.target.value)"/>
                 </th>
             </tr>
@@ -42,7 +42,7 @@
             <tbody>
             <tr *ngFor="let line of dataGridForm.controls; let i = index">
                 <td style="width:30px">
-                    <button type="button" class="btn btn-outline-danger delete-button-height" (click)="removeLine(i)"
+                    <button tabindex="-1" type="button" class="btn btn-outline-danger delete-button-height" (click)="removeLine(i)"
                             title="{{'global.actions.delete' | translate}}">
                         <span class="fa fa-times"></span>
                     </button>
