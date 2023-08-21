@@ -27,7 +27,7 @@ import javax.persistence.Version;
 @Entity(name = "SCENARIO")
 public class Scenario {
 
-    private static final GwtScenarioMarshaller marshaller = new GwtScenarioMapper();
+    public static final GwtScenarioMarshaller marshaller = new GwtScenarioMapper();
 
     @Id
     @Column(name = "ID")
@@ -166,7 +166,7 @@ public class Scenario {
             .build();
     }
 
-    private static String transformParametersToJson(Map<String, String> executionParameters) {
+    public static String transformParametersToJson(Map<String, String> executionParameters) {
         if (executionParameters != null && !executionParameters.isEmpty()) {
             return Try.exec(() -> {
                     ObjectMapper objectMapper = new ObjectMapper();

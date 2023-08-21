@@ -44,4 +44,20 @@ public interface ScenarioJpaRepository extends CrudRepository<Scenario, Long>, J
             return builder.like(content, "%" + searchWord.toLowerCase() + "%");
         };
     }
+
+    @Modifying
+    @Query(nativeQuery = true, value = "INSERT INTO SCENARIO (ID, TITLE, DESCRIPTION, CONTENT, TAGS, CREATION_DATE, DATASET, ACTIVATED, USER_ID, UPDATE_DATE, VERSION, DEFAULT_DATASET_ID) VALUES (:id, :title, :description, :content, :tags, :creationDate, :dataset, :activated, :userId, :updateDate, :version, :defaultDataset)")
+    void saveScenarioWithExplicitId(
+        @Param("id") Long id,
+        @Param("title") String title,
+        @Param("description") String description,
+        @Param("content") String content,
+        @Param("tags") String tags,
+        @Param("creationDate") Long creationDate,
+        @Param("dataset") String dataset,
+        @Param("activated") Boolean activated,
+        @Param("userId") String userId,
+        @Param("updateDate") Long updateDate,
+        @Param("version") Integer version,
+        @Param("defaultDataset") String defaultDataset);
 }

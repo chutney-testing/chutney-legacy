@@ -17,6 +17,7 @@ import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
+import com.chutneytesting.server.core.domain.security.User;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,28 +56,15 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         this.entityManager = entityManager;
     }
 
-    public String save2(GwtTestCase testCase) {
-        try {
-            return scenarioJpaRepository.save(Scenario.fromGwtTestCase(testCase)).id().toString();
-        } catch (ObjectOptimisticLockingFailureException e) {
-            throw new ScenarioNotFoundException(testCase.id(), testCase.metadata().version());
-        }
-    }
-
     @Transactional
     @Override
     public String save(GwtTestCase testCase) {
         try {
-            Long targetScenarioId = null;
-            if (testCase.id() != null) {
-              targetScenarioId = Long.valueOf(testCase.id());
+            if (testCase.id() != null && Long.parseLong(testCase.id()) >= 0 && findById(testCase.id()).isEmpty()) {
+              saveScenarioWithExplicitId(testCase);
+              return testCase.id();
             }
-            Long scenarioId = scenarioJpaRepository.save(Scenario.fromGwtTestCase(testCase)).id();
-            if (targetScenarioId != null && targetScenarioId > 0 && !scenarioId.equals(targetScenarioId)) {
-                scenarioJpaRepository.updateScenarioId(scenarioId, targetScenarioId);
-                return targetScenarioId.toString();
-            }
-            return scenarioId.toString();
+            return scenarioJpaRepository.save(Scenario.fromGwtTestCase(testCase)).id().toString();
         } catch (ObjectOptimisticLockingFailureException e) {
             throw new ScenarioNotFoundException(testCase.id(), testCase.metadata().version());
         } catch (NumberFormatException e) {
@@ -183,6 +171,23 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         }
         words.addAll(Arrays.stream(input.replaceAll(pattern.pattern(), "").split("\\s")).filter(value -> !value.isEmpty()).toList());
         return words;
+    }
+
+    private void saveScenarioWithExplicitId(GwtTestCase testCase) {
+      scenarioJpaRepository.saveScenarioWithExplicitId(
+            Long.valueOf(testCase.id()),
+            testCase.metadata().title(),
+            testCase.metadata().description(),
+            ofNullable(testCase.scenario).map(Scenario.marshaller::serialize).orElse(null),
+            TagListMapper.tagsListToString(testCase.metadata().tags()),
+            testCase.metadata().creationDate().toEpochMilli(),
+            Scenario.transformParametersToJson(testCase.executionParameters()),
+            true,
+            User.isAnonymous(testCase.metadata().author()) ? null : testCase.metadata().author(),
+            testCase.metadata().updateDate().toEpochMilli(),
+            testCase.metadata().version(),
+            testCase.metadata().defaultDataset()
+        );
     }
 
     private static String escapeSql(String str) {

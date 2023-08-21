@@ -323,7 +323,7 @@ public class DatabaseTestCaseRepositoryTest {
         }
 
         @Test
-        public void should_update_scenario_with_different_title() {
+        public void should_update_scenario_without_modifying_id() {
             // Given
             final String scenarioId = sut.save(GWT_TEST_CASE);
             String title = "New title";
