@@ -4,6 +4,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import com.chutneytesting.action.spi.FinallyAction;
 import com.chutneytesting.action.spi.injectable.Target;
@@ -25,6 +26,7 @@ import com.chutneytesting.engine.domain.execution.strategies.StrategyProperties;
 import com.chutneytesting.engine.domain.report.Reporter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
@@ -66,7 +68,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
             final ScenarioContext scenarioContext = new ScenarioContextImpl();
             scenarioContext.put("environment", stepDefinition.environment);
             scenarioContext.put("dataset", dataset.datatable);
-            scenarioContext.putAll(dataset.constants);
+            scenarioContext.putAll(evaluateDatasetConstants(dataset, scenarioContext));
 
             try {
                 try {
@@ -92,6 +94,13 @@ public class DefaultExecutionEngine implements ExecutionEngine {
         });
 
         return execution.executionId;
+    }
+
+    private Map<String, ?> evaluateDatasetConstants(Dataset dataset, ScenarioContext scenarioContext) {
+        Map<String, ?> evaluatedConstants = dataset.constants.entrySet().stream()
+            .map(e -> Map.entry(e.getKey(), dataEvaluator.evaluate(e.getValue(), scenarioContext)))
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return evaluatedConstants;
     }
 
     private Optional<Step> initFinalRootStep(AtomicReference<Step> rootStep, List<FinallyAction> finallyActionsSnapshot) {
