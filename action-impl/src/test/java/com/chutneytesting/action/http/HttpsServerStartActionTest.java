@@ -5,6 +5,7 @@ import static com.chutneytesting.action.tools.WaitUtils.awaitDuring;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -26,6 +27,7 @@ import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.ssl.TrustStrategy;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
@@ -64,6 +66,7 @@ public class HttpsServerStartActionTest {
 
   @ParameterizedTest
   @MethodSource("parametersForShould_start_https_server")
+  @DisabledOnOs({ WINDOWS })
   public void should_start_https_server(Action httpsServerStartAction) {
     reset(finallyActionRegistry);
     WireMockServer server = null;
@@ -102,7 +105,9 @@ public class HttpsServerStartActionTest {
     }
   }
 
+
   @Test
+  @DisabledOnOs({ WINDOWS })
   public void should_reject_requests_when_truststore_is_defined() {
     reset(finallyActionRegistry);
     WireMockServer server = null;

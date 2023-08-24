@@ -10,21 +10,21 @@ import com.chutneytesting.action.spi.injectable.Logger;
 import com.chutneytesting.action.spi.validation.Validator;
 import java.util.List;
 import java.util.Objects;
-import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.artemis.core.server.ActiveMQServer;
 
 public class JmsBrokerStopAction implements Action {
 
     private final Logger logger;
-    private final BrokerService brokerService;
+    private final ActiveMQServer brokerService;
 
-    public JmsBrokerStopAction(Logger logger, @Input("jms-broker-service") BrokerService brokerService) {
+    public JmsBrokerStopAction(Logger logger, @Input("jms-broker-service") ActiveMQServer brokerService) {
         this.logger = logger;
         this.brokerService = brokerService;
     }
 
     @Override
     public List<String> validateInputs() {
-        Validator<BrokerService> jmsBrokerValidation = of(brokerService)
+        Validator<ActiveMQServer> jmsBrokerValidation = of(brokerService)
             .validate(Objects::nonNull, "No jms-broker-service provided");
         return getErrorsFrom(jmsBrokerValidation);
     }

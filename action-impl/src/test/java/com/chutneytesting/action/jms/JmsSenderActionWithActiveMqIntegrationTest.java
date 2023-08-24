@@ -1,10 +1,11 @@
-/*
 package com.chutneytesting.action.jms;
 
+import static com.chutneytesting.action.spi.ActionExecutionResult.Status.Success;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 import com.chutneytesting.action.TestTarget;
+import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Logger;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,18 +22,27 @@ public class JmsSenderActionWithActiveMqIntegrationTest extends ActiveMQTestSupp
 
         TestTarget target = TestTarget.TestTargetBuilder.builder()
             .withTargetId("id")
-            .withUrl(needClientAuthConnector.getPublishableConnectString())
-            .withProperty("java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQSslInitialContextFactory")
-            .withProperty("trustStore", "security/truststore.jks")
-            .withProperty("trustStorePassword", "truststore")
+            .withUrl("tcp://localhost:61617?" +
+                "sslEnabled=true" +
+                "&keyStorePath=" + keyStorePath +
+                "&keyStorePassword=" + keyStorePassword +
+                "&trustStorePath=" + trustStorePath +
+                "&trustStorePassword" + trustStorePassword +
+                "&verifyHost=false"
+            )
+            .withProperty("java.naming.factory.initial", "org.apache.activemq.artemis.jndi.ActiveMQInitialContextFactory")
             .build();
 
         Logger logger = mock(Logger.class);
         JmsSenderAction action = new JmsSenderAction(target, logger, destination, body, headers);
 
-        action.execute();
+        ActionExecutionResult result = action.execute();
 
-        assertThat(needClientAuthConnector.getBrokerService().getTotalConnections()).isEqualTo(expectedTotalConnections.get());
+        assertThat(result.status).isEqualTo(Success);
+
+        JmsListenerAction jmsListenerAction = new JmsListenerAction(target, logger, destination, "2 sec", null, null, null);
+        result = jmsListenerAction.execute();
+        assertThat(result.status).isEqualTo(Success);
+        assertThat(result.outputs.get("textMessage")).isEqualTo("messageBody");
     }
 }
-*/

@@ -1,7 +1,7 @@
 package com.chutneytesting.action.jms.jackson;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.artemis.core.server.ActiveMQServer;
 
 public class ActiveMQModule extends SimpleModule {
 
@@ -9,6 +9,6 @@ public class ActiveMQModule extends SimpleModule {
 
     public ActiveMQModule() {
         super(NAME);
-        addSerializer(BrokerService.class, new BrokerServiceSerializer());
+        addSerializer(ActiveMQServer.class, new ActiveMQServerSerializer());
     }
 }
