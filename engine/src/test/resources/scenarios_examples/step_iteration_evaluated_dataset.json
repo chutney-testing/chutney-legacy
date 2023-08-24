@@ -1,0 +1,38 @@
+{
+    "dataset": {
+        "constants": {},
+        "datatable": [
+            {
+                "generatedID": "${#randomID()}"
+            },
+            {
+                "generatedID": "${#randomID()}"
+            }
+        ]
+    },
+    "scenario": {
+        "name": "Test iterations with local context evaluation",
+        "steps": [
+            {
+                "name": "<idx> - Use the ID ${#generatedID} generated in datable",
+                "type": "complex",
+                "inputs": {
+                    "stringParam": "${#generatedID}"
+                },
+                "outputs": {
+                    "pouet_<idx>": "${\"/\" + #generatedID + \"/<idx>\"}"
+                },
+                "validations": {
+                    "pouet_<idx>_ok": "${#pouet_<idx> == \"/\" + #generatedID + \"/<idx>\"}"
+                },
+                "strategy": {
+                    "type": "for",
+                    "parameters": {
+                        "index": "idx",
+                        "dataset": "${#dataset}"
+                    }
+                }
+            }
+        ]
+    }
+}

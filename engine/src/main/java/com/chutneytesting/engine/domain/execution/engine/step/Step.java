@@ -239,7 +239,7 @@ public class Step {
     }
 
     public void updateContextFrom(StepExecutionReport remoteReport) {
-        ActionExecutionResult.Status status =  Status.SUCCESS.equals(remoteReport.status) ? ActionExecutionResult.Status.Success : ActionExecutionResult.Status.Failure;
+        ActionExecutionResult.Status status = Status.SUCCESS.equals(remoteReport.status) ? ActionExecutionResult.Status.Success : ActionExecutionResult.Status.Failure;
         updateContextWith(status, remoteReport.stepResults, emptyList(), emptyList());
     }
 
