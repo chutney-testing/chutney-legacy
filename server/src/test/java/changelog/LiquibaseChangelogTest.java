@@ -51,14 +51,14 @@ class LiquibaseChangelogTest {
 
                 // Then
                 Scenario s2 = givenScenario();
-                assertThat(s2.id()).isEqualTo(s1.id() + 1);
+                assertThat(s2.getId()).isEqualTo(s1.getId() + 1);
 
                 // When redo liquibase
                 assertDoesNotThrow(this::liquibaseUpdate);
 
                 // Then
                 Scenario s3 = givenScenario();
-                assertThat(s3.id()).isEqualTo(s2.id() + 1);
+                assertThat(s3.getId()).isEqualTo(s2.getId() + 1);
             }
         }
 
@@ -108,7 +108,7 @@ class LiquibaseChangelogTest {
             @DisplayName("Set scenario sequence correctly")
             void set_scenario_sequence_value_after_migration() {
                 Scenario scenario = givenScenario();
-                assertThat(scenario.id()).isEqualTo(3);
+                assertThat(scenario.getId()).isEqualTo(3);
             }
 
             @Test

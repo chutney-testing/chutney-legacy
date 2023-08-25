@@ -68,7 +68,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             // Given n parallels scenarios
             List<String> ids = new ArrayList<>(numThreads);
             for (int i = 0; i < numThreads; i++) {
-                String id = givenScenario().id().toString();
+                String id = givenScenario().getId().toString();
                 ids.add(id);
                 sut.store(id, buildDetachedExecution(ServerReportStatus.RUNNING, "exec", ""));
             }
@@ -176,7 +176,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
 
         @Test
         public void update_execution_alters_last_one() {
-            String scenarioId = givenScenario().id().toString();
+            String scenarioId = givenScenario().getId().toString();
             sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.RUNNING, "exec", ""));
 
             ExecutionSummary last = sut.getExecutions(scenarioId).get(0);
@@ -250,7 +250,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
 
         @Test
         public void getExecution_throws_when_exist_but_not_on_this_scenario() {
-            String scenarioId = givenScenario().id().toString();
+            String scenarioId = givenScenario().getId().toString();
             Execution executionCreated = sut.store(scenarioId, buildDetachedExecution(ServerReportStatus.RUNNING, "exec1", ""));
 
             assertThat(sut.getExecution(scenarioId, executionCreated.executionId())).isNotNull();
@@ -280,16 +280,16 @@ public class DatabaseExecutionHistoryRepositoryTest {
             Scenario scenario = givenScenario();
             Campaign campaign = givenCampaign(scenario);
 
-            ScenarioExecution scenarioExecutionOne = givenScenarioExecution(scenario.id(), ServerReportStatus.FAILURE);
-            ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.id().toString(), scenario.title(), scenarioExecutionOne.toDomain());
-            ScenarioExecution scenarioExecutionTwo = givenScenarioExecution(scenario.id(), ServerReportStatus.SUCCESS);
+            ScenarioExecution scenarioExecutionOne = givenScenarioExecution(scenario.getId(), ServerReportStatus.FAILURE);
+            ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecutionOne.toDomain());
+            ScenarioExecution scenarioExecutionTwo = givenScenarioExecution(scenario.getId(), ServerReportStatus.SUCCESS);
 
             Long campaignExecutionId = campaignExecutionDBRepository.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
             campaignExecutionDBRepository.saveCampaignReport(campaign.id(), campaignExecutionReport);
 
             // When
-            List<ExecutionSummary> executions = sut.getExecutions(scenario.id().toString());
+            List<ExecutionSummary> executions = sut.getExecutions(scenario.getId().toString());
 
             // Then
             assertThat(executions).hasSize(2);
@@ -308,9 +308,9 @@ public class DatabaseExecutionHistoryRepositoryTest {
             Scenario scenario = givenScenario();
             Campaign campaign = givenCampaign(scenario);
 
-            ScenarioExecution scenarioExecutionOne = givenScenarioExecution(scenario.id(), ServerReportStatus.FAILURE);
-            ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.id().toString(), scenario.title(), scenarioExecutionOne.toDomain());
-            givenScenarioExecution(scenario.id(), ServerReportStatus.SUCCESS);
+            ScenarioExecution scenarioExecutionOne = givenScenarioExecution(scenario.getId(), ServerReportStatus.FAILURE);
+            ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecutionOne.toDomain());
+            givenScenarioExecution(scenario.getId(), ServerReportStatus.SUCCESS);
 
             Long campaignExecutionId = campaignExecutionDBRepository.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");

@@ -17,7 +17,6 @@ import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
-import com.chutneytesting.server.core.domain.security.User;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,19 +55,16 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         this.entityManager = entityManager;
     }
 
-    @Transactional
     @Override
     public String save(GwtTestCase testCase) {
+        if (testCaseDoesNotExist(testCase.id())) {
+          saveScenarioWithExplicitId(testCase);
+          return testCase.id();
+        }
         try {
-            if (testCase.id() != null && Long.parseLong(testCase.id()) >= 0 && findById(testCase.id()).isEmpty()) {
-              saveScenarioWithExplicitId(testCase);
-              return testCase.id();
-            }
-            return scenarioJpaRepository.save(Scenario.fromGwtTestCase(testCase)).id().toString();
+            return scenarioJpaRepository.save(Scenario.fromGwtTestCase(testCase)).getId().toString();
         } catch (ObjectOptimisticLockingFailureException e) {
             throw new ScenarioNotFoundException(testCase.id(), testCase.metadata().version());
-        } catch (NumberFormatException e) {
-            throw new ScenarioNotParsableException("Cannot parse id", e);
         }
     }
 
@@ -79,7 +75,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
             return empty();
         }
         Optional<Scenario> scenarioDao = scenarioJpaRepository.findByIdAndActivated(valueOf(scenarioId), true)
-            .filter(Scenario::activated);
+            .filter(Scenario::isActivated);
         return scenarioDao.map(Scenario::toGwtTestCase);
     }
 
@@ -159,6 +155,14 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         }
     }
 
+    private boolean testCaseDoesNotExist(String id) {
+        try {
+            return Long.parseLong(id) >= 0 && findById(id).isEmpty();
+        } catch (NumberFormatException e) {
+            throw new ScenarioNotParsableException("Cannot parse id", e);
+        }
+    }
+
     List<String> getWordsToSearchWithQuotes(String input) {
         List<String> words = new ArrayList<>();
         Matcher matcher = pattern.matcher(input);
@@ -174,19 +178,20 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     }
 
     private void saveScenarioWithExplicitId(GwtTestCase testCase) {
-      scenarioJpaRepository.saveScenarioWithExplicitId(
-            Long.valueOf(testCase.id()),
-            testCase.metadata().title(),
-            testCase.metadata().description(),
-            ofNullable(testCase.scenario).map(Scenario.marshaller::serialize).orElse(null),
-            TagListMapper.tagsListToString(testCase.metadata().tags()),
-            testCase.metadata().creationDate().toEpochMilli(),
-            Scenario.transformParametersToJson(testCase.executionParameters()),
-            true,
-            User.isAnonymous(testCase.metadata().author()) ? null : testCase.metadata().author(),
-            testCase.metadata().updateDate().toEpochMilli(),
-            testCase.metadata().version(),
-            testCase.metadata().defaultDataset()
+        Scenario scenario = Scenario.fromGwtTestCase(testCase);
+        scenarioJpaRepository.saveWithExplicitId(
+            scenario.getId(),
+            scenario.getTitle(),
+            scenario.getDescription(),
+            scenario.getContent(),
+            scenario.getTags(),
+            scenario.getCreationDate(),
+            scenario.getDataset(),
+            scenario.isActivated(),
+            scenario.getUserId(),
+            scenario.getUpdateDate(),
+            scenario.getVersion(),
+            scenario.getDefaultDataset()
         );
     }
 

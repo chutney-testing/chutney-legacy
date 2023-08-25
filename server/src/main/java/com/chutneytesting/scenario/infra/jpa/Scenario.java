@@ -27,7 +27,7 @@ import javax.persistence.Version;
 @Entity(name = "SCENARIO")
 public class Scenario {
 
-    public static final GwtScenarioMarshaller marshaller = new GwtScenarioMapper();
+    private static final GwtScenarioMarshaller marshaller = new GwtScenarioMapper();
 
     @Id
     @Column(name = "ID")
@@ -101,16 +101,52 @@ public class Scenario {
         this.defaultDataset = defaultDataset;
     }
 
-    public Long id() {
+    public Long getId() {
         return id;
     }
 
-    public String title() {
+    public String getTitle() {
         return title;
     }
 
-    public boolean activated() {
+    public boolean isActivated() {
         return activated;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public Long getCreationDate() {
+        return creationDate;
+    }
+
+    public String getDataset() {
+        return dataset;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public Long getUpdateDate() {
+        return updateDate;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public String getDefaultDataset() {
+        return defaultDataset;
     }
 
     public void deactivate() {
@@ -166,7 +202,7 @@ public class Scenario {
             .build();
     }
 
-    public static String transformParametersToJson(Map<String, String> executionParameters) {
+    private static String transformParametersToJson(Map<String, String> executionParameters) {
         if (executionParameters != null && !executionParameters.isEmpty()) {
             return Try.exec(() -> {
                     ObjectMapper objectMapper = new ObjectMapper();

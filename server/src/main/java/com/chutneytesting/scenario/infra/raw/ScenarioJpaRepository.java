@@ -33,11 +33,6 @@ public interface ScenarioJpaRepository extends CrudRepository<Scenario, Long>, J
         """)
     List<Scenario> findMetaDataByActivatedTrue();
 
-
-    @Modifying
-    @Query("UPDATE SCENARIO scenario SET scenario.id = :newId WHERE scenario.id = :currentId")
-    void updateScenarioId(@Param("currentId") Long currentId, @Param("newId") Long newId);
-
     static Specification<Scenario> contentContains(String searchWord) {
         return (root, query, builder) -> {
             Expression<String> content = builder.lower(root.get("content"));
@@ -47,7 +42,7 @@ public interface ScenarioJpaRepository extends CrudRepository<Scenario, Long>, J
 
     @Modifying
     @Query(nativeQuery = true, value = "INSERT INTO SCENARIO (ID, TITLE, DESCRIPTION, CONTENT, TAGS, CREATION_DATE, DATASET, ACTIVATED, USER_ID, UPDATE_DATE, VERSION, DEFAULT_DATASET_ID) VALUES (:id, :title, :description, :content, :tags, :creationDate, :dataset, :activated, :userId, :updateDate, :version, :defaultDataset)")
-    void saveScenarioWithExplicitId(
+    void saveWithExplicitId(
         @Param("id") Long id,
         @Param("title") String title,
         @Param("description") String description,
