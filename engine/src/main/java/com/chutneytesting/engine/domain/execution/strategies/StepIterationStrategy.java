@@ -73,7 +73,7 @@ public class StepIterationStrategy implements StepExecutionStrategy {
             .map(iterationData -> iterationData.entrySet().stream()
                 .map(e -> Map.entry(e.getKey(), evaluator.evaluate(e.getValue(), scenarioContext)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))
-            .collect(Collectors.toList());
+            .toList();
         return evaluatedDataset;
     }
 

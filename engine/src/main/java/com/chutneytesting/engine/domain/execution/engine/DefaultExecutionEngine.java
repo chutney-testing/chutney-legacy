@@ -97,10 +97,9 @@ public class DefaultExecutionEngine implements ExecutionEngine {
     }
 
     private Map<String, ?> evaluateDatasetConstants(Dataset dataset, ScenarioContext scenarioContext) {
-        Map<String, ?> evaluatedConstants = dataset.constants.entrySet().stream()
+        return dataset.constants.entrySet().stream()
             .map(e -> Map.entry(e.getKey(), dataEvaluator.evaluate(e.getValue(), scenarioContext)))
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-        return evaluatedConstants;
     }
 
     private Optional<Step> initFinalRootStep(AtomicReference<Step> rootStep, List<FinallyAction> finallyActionsSnapshot) {
