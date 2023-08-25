@@ -22,10 +22,10 @@
                     "stringParam": "/${#env}/${#user}"
                 },
                 "outputs": {
-                    "pouet_<idx>": "${\"/\" + #env + \"/\" + #user + \"/<idx>\"}"
+                    "check_<idx>": "${\"/\" + #env + \"/\" + #user + \"/<idx>\"}"
                 },
                 "validations" : {
-                    "pouet_<idx>_ok": "${#pouet_<idx> == \"/\" + #env + \"/\" + #user + \"/<idx>\"}"
+                    "check_<idx>_ok": "${#check_<idx> == \"/\" + #env + \"/\" + #user + \"/<idx>\"}"
                 },
                 "strategy": {
                     "type": "for",

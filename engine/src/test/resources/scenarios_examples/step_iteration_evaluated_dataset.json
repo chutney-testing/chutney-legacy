@@ -20,10 +20,10 @@
                     "stringParam": "${#generatedID}"
                 },
                 "outputs": {
-                    "pouet_<idx>": "${\"/\" + #generatedID + \"/<idx>\"}"
+                    "check_<idx>": "${\"/\" + #generatedID + \"/<idx>\"}"
                 },
                 "validations": {
-                    "pouet_<idx>_ok": "${#pouet_<idx> == \"/\" + #generatedID + \"/<idx>\"}"
+                    "check_<idx>_ok": "${#check_<idx> == \"/\" + #generatedID + \"/<idx>\"}"
                 },
                 "strategy": {
                     "type": "for",

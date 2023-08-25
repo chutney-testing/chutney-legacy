@@ -60,13 +60,13 @@ class StepIterationStrategyTest {
         StepExecutionReportDto iteration0 = parentStep.steps.get(0);
         assertThat(iteration0.status).isEqualTo(SUCCESS);
         assertThat(iteration0.name).startsWith("0 -");
-        assertThat(iteration0.information.get(0)).isEqualTo("Validation [pouet_0_ok : ${#pouet_0 == \"/\" + #generatedID + \"/0\"}] : OK");
+        assertThat(iteration0.information.get(0)).isEqualTo("Validation [check_0_ok : ${#check_0 == \"/\" + #generatedID + \"/0\"}] : OK");
         assertDoesNotThrow(() -> UUID.fromString((String) iteration0.context.evaluatedInputs.get("stringParam")));
 
         StepExecutionReportDto iteration1 = parentStep.steps.get(1);
         assertThat(iteration1.status).isEqualTo(SUCCESS);
         assertThat(iteration1.name).startsWith("1 -");
-        assertThat(iteration1.information.get(0)).isEqualTo("Validation [pouet_1_ok : ${#pouet_1 == \"/\" + #generatedID + \"/1\"}] : OK");
+        assertThat(iteration1.information.get(0)).isEqualTo("Validation [check_1_ok : ${#check_1 == \"/\" + #generatedID + \"/1\"}] : OK");
         assertDoesNotThrow(() -> UUID.fromString((String) iteration1.context.evaluatedInputs.get("stringParam")));
     }
 
@@ -83,10 +83,10 @@ class StepIterationStrategyTest {
         StepExecutionReportDto parentStep = result.steps.get(0);
         assertThat(parentStep.steps).hasSize(2);
         assertThat(parentStep.steps.get(0).name).isEqualTo("0 - Hello website on A with user Tata");
-        assertThat(parentStep.steps.get(0).errors).contains("Validation [pouet_0_ok : ${#env == \"B\"}] : KO");
+        assertThat(parentStep.steps.get(0).errors).contains("Validation [check_0_ok : ${#env == \"B\"}] : KO");
         assertThat(parentStep.steps.get(0).status).isEqualTo(StatusDto.FAILURE);
         assertThat(parentStep.steps.get(1).name).isEqualTo("1 - Hello website on B with user Baba");
-        assertThat(parentStep.steps.get(1).information).contains("Validation [pouet_1_ok : ${#env == \"B\"}] : OK");
+        assertThat(parentStep.steps.get(1).information).contains("Validation [check_1_ok : ${#env == \"B\"}] : OK");
         assertThat(parentStep.steps.get(1).status).isEqualTo(SUCCESS);
     }
 

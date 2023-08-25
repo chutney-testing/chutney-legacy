@@ -93,7 +93,7 @@ public class DataSetPatchUtilsTest {
     public void should_create_then_apply_diff() throws PatchFailedException {
         // Given
         String original = "p1 | value1\n" +
-            "pouetpouet | v2\n" +
+            "checkcheck | v2\n" +
             "\n" +
             "| p3 | param4 |\n" +
             "| v31 | value41 |\n" +
