@@ -28,11 +28,11 @@
                     "stringParam": "/${#env}/${#user}"
                 },
                 "outputs": {
-                    "pouet_<i>": "${\"/\" + #env + \"/\" + #user + \"/<i>\"}"
+                    "check_<i>": "${\"/\" + #env + \"/\" + #user + \"/<i>\"}"
                 },
                 "validations": {
                     "env_ok": "${#env == \"A\" || #env == \"B\"}",
-                    "pouet_<i>_ok": "${#pouet_<i> == \"/\" + #env + \"/\" + #user + \"/<i>\"}"
+                    "check_<i>_ok": "${#check_<i> == \"/\" + #env + \"/\" + #user + \"/<i>\"}"
                 },
                 "strategy": {
                     "type": "for",

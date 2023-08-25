@@ -3,29 +3,27 @@
         "constants": {},
         "datatable": [
             {
-                "env": "A",
-                "user": "Tata"
+                "generatedID": "${#randomID()}"
             },
             {
-                "env": "B",
-                "user": "Baba"
+                "generatedID": "${#randomID()}"
             }
         ]
     },
     "scenario": {
-        "name": "Test iterations",
+        "name": "Test iterations with local context evaluation",
         "steps": [
             {
-                "name": "<idx> - Hello website on ${#env} with user ${#user}",
+                "name": "<idx> - Use the ID ${#generatedID} generated in datable",
                 "type": "complex",
                 "inputs": {
-                    "stringParam": "/${#env}/${#user}"
+                    "stringParam": "${#generatedID}"
                 },
                 "outputs": {
-                    "check_<idx>": "${\"/\" + #env + \"/\" + #user + \"/<idx>\"}"
+                    "check_<idx>": "${\"/\" + #generatedID + \"/<idx>\"}"
                 },
-                "validations" : {
-                    "check_<idx>_ok": "${#check_<idx> == \"/\" + #env + \"/\" + #user + \"/<idx>\"}"
+                "validations": {
+                    "check_<idx>_ok": "${#check_<idx> == \"/\" + #generatedID + \"/<idx>\"}"
                 },
                 "strategy": {
                     "type": "for",

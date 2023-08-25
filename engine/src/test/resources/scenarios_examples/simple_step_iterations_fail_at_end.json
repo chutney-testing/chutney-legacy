@@ -6,7 +6,7 @@
                 "name": "<i> - Hello website on ${#env} with user ${#user}",
                 "type": "success",
                 "validations" : {
-                    "pouet_<i>_ok": "${#env == \"B\"}"
+                    "check_<i>_ok": "${#env == \"B\"}"
                 },
                 "strategy": {
                     "type": "for",

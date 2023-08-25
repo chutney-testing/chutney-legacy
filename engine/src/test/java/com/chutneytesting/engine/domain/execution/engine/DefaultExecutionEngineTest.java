@@ -6,6 +6,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -16,6 +17,8 @@ import com.chutneytesting.engine.domain.delegation.DelegationService;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEvaluator;
+import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctionCallback;
+import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.strategies.DefaultStepExecutionStrategy;
@@ -23,9 +26,11 @@ import com.chutneytesting.engine.domain.execution.strategies.SoftAssertStrategy;
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategies;
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategy;
 import com.chutneytesting.engine.domain.report.Reporter;
+import com.chutneytesting.tools.loader.ExtensionLoaders;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
@@ -35,6 +40,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.util.ReflectionUtils;
 
 class DefaultExecutionEngineTest {
 
@@ -173,6 +179,36 @@ class DefaultExecutionEngineTest {
         assertThat(report.scenarioContext).contains(entry("keyA", "A"));
         assertThat(report.scenarioContext).contains(entry("keyB", "B"));
         assertThat(report.scenarioContext).contains(entry("dataset", datatable));
+    }
+
+    @Test
+    public void should_evaluate_dataset_constants() {
+        when(stepExecutionStrategies.buildStrategyFrom(any())).thenReturn(DefaultStepExecutionStrategy.instance);
+
+        ActionTemplateRegistry actionTemplateRegistry = mock(ActionTemplateRegistry.class);
+        when(actionTemplateRegistry.getByIdentifier(any())).thenReturn(Optional.empty());
+        when(delegationService.findExecutor(any())).thenReturn(new DefaultStepExecutor(actionTemplateRegistry));
+
+        StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, emptyMap(), emptyList(), emptyMap(), emptyMap(), "env");
+
+        Map<String, String> constants = Map.of("myID", "${#randomID()}");
+        Dataset dataset = new Dataset(constants, emptyList());
+
+        Reporter reporter = new Reporter();
+
+        SpelFunctionCallback spelFunctionCallback = new SpelFunctionCallback();
+        ExtensionLoaders
+            .classpathToClass("META-INF/extension/chutney.functions")
+            .load().forEach(c -> ReflectionUtils.doWithMethods(c, spelFunctionCallback));
+        SpelFunctions functions = spelFunctionCallback.getSpelFunctions();
+        DefaultExecutionEngine sut = new DefaultExecutionEngine(new StepDataEvaluator(functions), stepExecutionStrategies, delegationService, reporter, actionExecutor);
+
+        // When
+        Long executionId = sut.execute(stepDefinition, dataset, createScenarioExecution(null));
+        StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
+
+        // Then
+        assertDoesNotThrow(() -> UUID.fromString((String) report.scenarioContext.get("myID")));
     }
 
     @ParameterizedTest(name = "{index}: {0}")
