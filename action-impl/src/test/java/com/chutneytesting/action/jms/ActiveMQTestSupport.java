@@ -36,8 +36,6 @@ public class ActiveMQTestSupport {
                 // "&wantClientAuth=true" certificate must either be marked as having both clientAuth and serverAuth extended key usage
             ));
         server.start();
-
-        System.out.println("test");
     }
 
     @AfterAll
