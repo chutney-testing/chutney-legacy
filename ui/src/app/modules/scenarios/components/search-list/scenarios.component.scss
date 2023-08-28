@@ -71,6 +71,30 @@
         color: var(--bs-white);
         border-radius: 0.5rem;
     }
+
+    .cuppa-dropdown {
+        border: none;
+
+        .selected-list {
+            width: max-content!important;
+
+            .c-angle-up {
+                display: none!important;
+            }
+
+            .c-angle-down {
+                display: none!important;
+            }
+
+            .clear-all {
+                display: none!important;
+            }
+        }
+        
+        .dropdown-list {
+            width: max-content!important;
+        }
+    }
 }
 
 .btn:focus {
