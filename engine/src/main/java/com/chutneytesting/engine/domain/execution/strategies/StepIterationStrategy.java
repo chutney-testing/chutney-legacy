@@ -9,6 +9,7 @@ import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEval
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContext;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.Status;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -101,6 +102,7 @@ public class StepIterationStrategy implements StepExecutionStrategy {
     }
 
     private StepDefinition iterationDefinition(String indexName, Integer index, StepDefinition definition, StepDataEvaluator evaluator, StepStrategyDefinition strategyDefinition, Map<String, Object> iterationContext) {
+
         return StepDefinitionBuilder.copyFrom(definition)
             .withName(evaluator.evaluate(index(indexName, index, definition.name), iterationContext))
             .withInputs(index(indexName, index, definition.inputs()))
@@ -118,7 +120,26 @@ public class StepIterationStrategy implements StepExecutionStrategy {
         return inputs.entrySet().stream()
             .collect(Collectors.toMap(
                 e -> index(indexName, index, e.getKey()),
-                e -> index(indexName, index, e.getValue().toString())
+                e -> index(indexName, index, e.getValue())
             ));
+    }
+
+    private List<Object> index(String indexName, Integer index, List<Object> inputs) {
+        return inputs.stream()
+            .map(e -> index(indexName, index, e))
+            .toList();
+    }
+
+    private Object index(String indexName, Integer index, Object value) {
+        if (value instanceof Map) {
+            return index(indexName, index, (Map) value);
+        }
+
+        if (value instanceof List) {
+            return index(indexName, index, (List) value);
+        }
+
+        return index(indexName, index, (String) value);
+
     }
 }

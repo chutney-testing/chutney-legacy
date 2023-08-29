@@ -1,0 +1,47 @@
+{
+    "dataset": {
+        "constants": {},
+        "datatable": [
+            { "time": "${#now()}" },
+            { "time": "${#now()}" }
+        ]
+    },
+    "scenario": {
+        "name": "Test iterations with local context evaluation",
+        "steps": [
+            {
+                "name": "Preserve Map inputs",
+                "type": "context-put",
+                "inputs": {
+                    "entries" : {
+                        "time_minus_<i>": "${#time.minus(T(java.time.Duration).ofHours(<i>))}"
+                    }
+                },
+                "strategy": {
+                    "type": "for",
+                    "parameters": {
+                        "index": "i",
+                        "dataset": "${#dataset}"
+                    }
+                }
+            },
+            {
+                "name": "Preserve List inputs",
+                "type": "list",
+                "inputs": {
+                    "list": [ "${#time_minus_<i>}" ]
+                },
+                "outputs": {
+                    "list_<i>": "${#mylist}"
+                },
+                "strategy": {
+                    "type": "for",
+                    "parameters": {
+                        "index": "i",
+                        "dataset": "${#dataset}"
+                    }
+                }
+            }
+        ]
+    }
+}
