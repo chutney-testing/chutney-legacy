@@ -14,11 +14,11 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.action.spi.injectable.Logger;
 import com.chutneytesting.action.spi.injectable.Target;
-import com.mockrunner.jms.DestinationManager;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import javax.jms.ConnectionFactory;
+import javax.jms.Queue;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
@@ -52,21 +52,20 @@ public class JmsSenderActionTest {
 
     private void configureServer(Target targetMock) {
         Map<String, String> props = new HashMap<>();
-        props.put(Context.INITIAL_CONTEXT_FACTORY, MockRunnerInitialContextFactory.class.getName());
+        props.put(Context.INITIAL_CONTEXT_FACTORY, MockInitialContextFactory.class.getName());
         when(targetMock.prefixedProperties(any())).thenReturn(props);
         when(targetMock.property("connectionFactoryName")).thenReturn(empty());
         when(targetMock.prefixedProperties(any(), anyBoolean())).thenReturn(emptyMap());
         when(targetMock.user()).thenReturn(empty());
     }
 
-    public static final class MockRunnerInitialContextFactory implements InitialContextFactory {
+    public static final class MockInitialContextFactory implements InitialContextFactory {
         private final Context context;
 
-        public MockRunnerInitialContextFactory() throws NamingException {
-            DestinationManager dm = new DestinationManager();
+        public MockInitialContextFactory() throws NamingException {
             this.context = mock(Context.class);
-            when(context.lookup(any(String.class))).thenAnswer(iom -> dm.createQueue(iom.getArgument(0)));
-            when(context.lookup(eq("ConnectionFactory"))).thenReturn(Mockito.mock(ConnectionFactory.class,RETURNS_DEEP_STUBS));
+            when(context.lookup(any(String.class))).thenAnswer(iom -> Mockito.mock(Queue.class, RETURNS_DEEP_STUBS));
+            when(context.lookup(eq("ConnectionFactory"))).thenReturn(Mockito.mock(ConnectionFactory.class, RETURNS_DEEP_STUBS));
         }
 
         @Override

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 public class JakartaSenderActionWithActiveMqIntegrationTest extends ActiveMQTestSupport {
     @Test
-    public void failedSSL2WayAskWithOneWayProvidedWithArtemisClient() throws Exception {
+    public void failedSSL2WayAskWithOneWayProvided() {
 
         String body = "messageBody";
         String destination = "dynamicQueues/testD";

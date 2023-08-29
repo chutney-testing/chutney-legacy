@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 public class JmsSenderActionWithActiveMqIntegrationTest extends ActiveMQTestSupport {
     @Test
-    public void failedSSL2WayAskWithOneWayProvidedWithArtemisClient() throws Exception {
+    public void failedSSL2WayAskWithOneWayProvided() throws Exception {
 
         String body = "messageBody";
         String destination = "dynamicQueues/testD";
@@ -23,7 +23,7 @@ public class JmsSenderActionWithActiveMqIntegrationTest extends ActiveMQTestSupp
 
         TestTarget target = TestTarget.TestTargetBuilder.builder()
             .withTargetId("id")
-            .withUrl("tcp://localhost:61617")
+            .withUrl(needClientAuthConnector.getPublishableConnectString())
             .withProperty("java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQSslInitialContextFactory")
             .withProperty("trustStore", "security/truststore.jks")
             .withProperty("trustStorePassword", "truststore")
@@ -32,14 +32,9 @@ public class JmsSenderActionWithActiveMqIntegrationTest extends ActiveMQTestSupp
         Logger logger = mock(Logger.class);
         JmsSenderAction action = new JmsSenderAction(target, logger, destination, body, headers);
 
-        ActionExecutionResult result = action.execute();
+        action.execute();
 
-        assertThat(result.status).isEqualTo(Success);
-
-        JmsListenerAction jmsListenerAction = new JmsListenerAction(target, logger, destination, "2 sec", null, null, null);
-        result = jmsListenerAction.execute();
-        assertThat(result.status).isEqualTo(Success);
-        assertThat(result.outputs.get("textMessage")).isEqualTo("messageBody");
+        assertThat(needClientAuthConnector.getBrokerService().getTotalConnections()).isEqualTo(expectedTotalConnections.get());
     }
 
 }

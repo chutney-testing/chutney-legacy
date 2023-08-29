@@ -107,7 +107,6 @@
         <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version> <!-- Divergence on dependencies commons-logging and joda-time -->
 
         <!-- action-impl test dependencies versions -->
-        <mockrunner-jms.version>3.0.1</mockrunner-jms.version>
         <activemq-junit.version>5.18.2</activemq-junit.version> <!-- = Follow spring boot version -->
         <rabbitmq-mock.version>1.2.0</rabbitmq-mock.version>
 
@@ -360,18 +359,6 @@
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>net.oneandone.mockrunner</groupId>
-                <artifactId>mockrunner-jms</artifactId>
-                <version>${mockrunner-jms.version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

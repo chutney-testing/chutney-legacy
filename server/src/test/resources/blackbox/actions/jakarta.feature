@@ -1,8 +1,8 @@
 # language: en
-@Jms
-Feature: Jms Task test
+@jakarta
+Feature: jakarta Task test
 
-    Scenario Outline: Jms <jms-action-id> wrong url
+    Scenario Outline: jakarta <jakarta-action-id> wrong url
         Given A target pointing to an unknown service
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
@@ -12,11 +12,11 @@ Feature: Jms Task test
                 With body
                 """
                 {
-                    "name": "JMS_${'<jms-action-id>'.toUpperCase()}_KO",
+                    "name": "jakarta_${'<jakarta-action-id>'.toUpperCase()}_KO",
                     "description": "",
                     "targets": [
                         {
-                            "name": "test_jms",
+                            "name": "test_jakarta",
                             "url": "tcp://localhost:12345",
                             "properties": [
                                 {
@@ -38,12 +38,12 @@ Feature: Jms Task test
                 With body
                 """
                 {
-                    "title":"jms client failure <jms-action-id>",
+                    "title":"jakarta client failure <jakarta-action-id>",
                     "scenario":{
                         "when":{
-                            "sentence":"Make failed jms request",
+                            "sentence":"Make failed jakarta request",
                             "implementation":{
-                                "task":"{\n type: jms-<jms-action-id> \n target: test_jms \n inputs: {\n <action_inputs> \n} \n}"
+                                "task":"{\n type: jakarta-<jakarta-action-id> \n target: test_jakarta \n inputs: {\n <action_inputs> \n} \n}"
                             }
                         },
                         "thens":[
@@ -62,7 +62,7 @@ Feature: Jms Task test
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
-                With uri /api/ui/scenario/execution/v1/${#scenarioId}/JMS_${'<jms-action-id>'.toUpperCase()}_KO
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/jakarta_${'<jakarta-action-id>'.toUpperCase()}_KO
                 With timeout 5 s
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
@@ -73,15 +73,15 @@ Feature: Jms Task test
                 With mode equals
 
         Examples:
-            | jms-action-id | action_inputs                                 |
+            | jakarta-action-id | action_inputs                                 |
             | sender      | destination: test \n body: something        |
             | clean-queue | destination: test \n bodySelector: selector |
             | listener    | destination: test \n bodySelector: selector |
 
-    Scenario: Jms sender then clean then send and listen it on embedded broker
-        Given a jms endpoint
-            Do jms-broker-start
-                With config-uri broker:(tcp://localhost:${#tcpPort()})?useJmx=false&persistent=false
+    Scenario: jakarta sender then clean then send and listen it on embedded broker
+        Given a jakarta endpoint
+            Do jakarta-broker-start
+                With config-uri tcp://localhost:61616
         And an associated target
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
@@ -91,16 +91,16 @@ Feature: Jms Task test
                 With body
                 """
                 {
-                    "name": "JMS_ENV_OK",
+                    "name": "jakarta_ENV_OK",
                     "description": "",
                     "targets": [
                         {
-                            "name": "test_jms",
-                            "url": "vm://localhost:61616",
+                            "name": "test_jakarta",
+                            "url": "tcp://localhost:61616",
                             "properties": [
                                 {
                                     "key": "java.naming.factory.initial",
-                                    "value": "org.apache.activemq.jndi.ActiveMQInitialContextFactory"
+                                    "value": "org.apache.activemq.artemis.jndi.ActiveMQInitialContextFactory"
                                 }
                             ]
                         }
@@ -117,35 +117,35 @@ Feature: Jms Task test
                 With body
                 """
                 {
-                    "title":"jms actions scenario",
+                    "title":"jakarta actions scenario",
                     "scenario":{
                         "when":{
-                            "sentence":"Send JMS Message",
+                            "sentence":"Send jakarta Message",
                             "implementation":{
-                                "task":"{\n type: jms-sender \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n body: something \n} \n}"
+                                "task":"{\n type: jakarta-sender \n target: test_jakarta \n inputs: {\n destination: dynamicQueues/test \n body: something \n} \n}"
                             }
                         },
                         "thens":[
                             {
                                 "sentence":"Clean queue",
                                 "implementation":{
-                                    "task":"{\n type: jms-clean-queue \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n} \n}"
+                                    "task":"{\n type: jakarta-clean-queue \n target: test_jakarta \n inputs: {\n destination: dynamicQueues/test \n} \n}"
                                 }
                             },
                             {
-                                "sentence":"Send JMS Message",
+                                "sentence":"Send jakarta Message",
                                 "implementation":{
-                                    "task":"{\n type: jms-sender \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n body: message to catch \n} \n}"
+                                    "task":"{\n type: jakarta-sender \n target: test_jakarta \n inputs: {\n destination: dynamicQueues/test \n body: message to catch \n} \n}"
                                 }
                             },
                             {
                                 "sentence":"Listen to queue",
                                 "implementation":{
-                                    "task":"{\n type: jms-listener \n target: test_jms \n inputs: {\n destination: dynamicQueues/test \n} \n}"
+                                    "task":"{\n type: jakarta-listener \n target: test_jakarta \n inputs: {\n destination: dynamicQueues/test \n} \n}"
                                 }
                             },
                             {
-                                "sentence":"Check JMS message",
+                                "sentence":"Check jakarta message",
                                 "implementation":{
                                     "task":"{\n type: string-assert \n inputs: {\n document: \${#textMessage} \n expected: message to catch \n} \n}"
                                 }
@@ -159,7 +159,7 @@ Feature: Jms Task test
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
-                With uri /api/ui/scenario/execution/v1/${#scenarioId}/JMS_ENV_OK
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/jakarta_ENV_OK
                 With timeout 5 s
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}

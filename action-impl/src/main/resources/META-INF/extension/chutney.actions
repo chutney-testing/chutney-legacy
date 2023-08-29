@@ -47,6 +47,12 @@ com.chutneytesting.action.jakarta.JakartaSenderAction
 com.chutneytesting.action.jakarta.JakartaBrokerStartAction
 com.chutneytesting.action.jakarta.JakartaBrokerStopAction
 
+com.chutneytesting.action.jms.JmsCleanQueueAction
+com.chutneytesting.action.jms.JmsListenerAction
+com.chutneytesting.action.jms.JmsSenderAction
+com.chutneytesting.action.jms.JmsBrokerStartAction
+com.chutneytesting.action.jms.JmsBrokerStopAction
+
 com.chutneytesting.action.sql.SqlAction
 
 com.chutneytesting.action.selenium.SeleniumDriverInitAction
