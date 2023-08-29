@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 import com.chutneytesting.action.TestTarget;
+import com.chutneytesting.action.jms.JmsListenerAction;
+import com.chutneytesting.action.jms.JmsSenderAction;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Logger;
 import java.util.HashMap;
@@ -12,9 +14,8 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 public class JmsSenderActionWithActiveMqIntegrationTest extends ActiveMQTestSupport {
-
     @Test
-    public void failedSSL2WayAskWithOneWayProvided() throws Exception {
+    public void failedSSL2WayAskWithOneWayProvidedWithArtemisClient() throws Exception {
 
         String body = "messageBody";
         String destination = "dynamicQueues/testD";
@@ -22,15 +23,10 @@ public class JmsSenderActionWithActiveMqIntegrationTest extends ActiveMQTestSupp
 
         TestTarget target = TestTarget.TestTargetBuilder.builder()
             .withTargetId("id")
-            .withUrl("tcp://localhost:61617?" +
-                "sslEnabled=true" +
-                "&keyStorePath=" + keyStorePath +
-                "&keyStorePassword=" + keyStorePassword +
-                "&trustStorePath=" + trustStorePath +
-                "&trustStorePassword" + trustStorePassword +
-                "&verifyHost=false"
-            )
-            .withProperty("java.naming.factory.initial", "org.apache.activemq.artemis.jndi.ActiveMQInitialContextFactory")
+            .withUrl("tcp://localhost:61617")
+            .withProperty("java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQSslInitialContextFactory")
+            .withProperty("trustStore", "security/truststore.jks")
+            .withProperty("trustStorePassword", "truststore")
             .build();
 
         Logger logger = mock(Logger.class);
@@ -45,4 +41,5 @@ public class JmsSenderActionWithActiveMqIntegrationTest extends ActiveMQTestSupp
         assertThat(result.status).isEqualTo(Success);
         assertThat(result.outputs.get("textMessage")).isEqualTo("messageBody");
     }
+
 }

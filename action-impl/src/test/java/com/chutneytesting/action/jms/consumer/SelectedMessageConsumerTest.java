@@ -8,10 +8,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.chutneytesting.action.jms.consumer.bodySelector.BodySelector;
-import jakarta.jms.JMSException;
-import jakarta.jms.Message;
-import jakarta.jms.QueueBrowser;
 import java.util.Optional;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.QueueBrowser;
 import org.junit.jupiter.api.Test;
 
 public class SelectedMessageConsumerTest {

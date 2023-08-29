@@ -8,11 +8,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
+import com.chutneytesting.action.jms.JmsCleanQueueAction;
+import com.chutneytesting.action.jms.JmsConnectionFactory;
 import com.chutneytesting.action.jms.consumer.Consumer;
 import com.chutneytesting.action.spi.injectable.Logger;
 import com.chutneytesting.action.spi.injectable.Target;
 import com.chutneytesting.tools.CloseableResource;
-import jakarta.jms.Message;
+import javax.jms.Message;
 import java.util.Optional;
 import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;

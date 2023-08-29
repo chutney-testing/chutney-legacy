@@ -3,6 +3,8 @@ package com.chutneytesting.action.jms.consumer.bodySelector;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import com.chutneytesting.action.jms.consumer.bodySelector.BodySelector;
+import com.chutneytesting.action.jms.consumer.bodySelector.BodySelectorFactory;
 import org.junit.jupiter.api.Test;
 
 public class BodySelectorFactoryTest {

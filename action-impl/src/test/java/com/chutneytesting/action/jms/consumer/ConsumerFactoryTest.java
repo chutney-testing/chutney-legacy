@@ -3,8 +3,8 @@ package com.chutneytesting.action.jms.consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import jakarta.jms.JMSException;
-import jakarta.jms.Session;
+import javax.jms.JMSException;
+import javax.jms.Session;
 import org.junit.jupiter.api.Test;
 
 public class ConsumerFactoryTest {

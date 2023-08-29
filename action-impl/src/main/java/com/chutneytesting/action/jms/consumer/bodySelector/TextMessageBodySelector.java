@@ -1,8 +1,8 @@
 package com.chutneytesting.action.jms.consumer.bodySelector;
 
-import jakarta.jms.JMSException;
-import jakarta.jms.Message;
-import jakarta.jms.TextMessage;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.TextMessage;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

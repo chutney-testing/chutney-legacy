@@ -41,11 +41,11 @@ com.chutneytesting.action.ssh.SshServerStopAction
 com.chutneytesting.action.ssh.ScpUploadAction
 com.chutneytesting.action.ssh.ScpDownloadAction
 
-com.chutneytesting.action.jms.JmsCleanQueueAction
-com.chutneytesting.action.jms.JmsListenerAction
-com.chutneytesting.action.jms.JmsSenderAction
-com.chutneytesting.action.jms.JmsBrokerStartAction
-com.chutneytesting.action.jms.JmsBrokerStopAction
+com.chutneytesting.action.jakarta.JakartaCleanQueueAction
+com.chutneytesting.action.jakarta.JakartaListenerAction
+com.chutneytesting.action.jakarta.JakartaSenderAction
+com.chutneytesting.action.jakarta.JakartaBrokerStartAction
+com.chutneytesting.action.jakarta.JakartaBrokerStopAction
 
 com.chutneytesting.action.sql.SqlAction
 

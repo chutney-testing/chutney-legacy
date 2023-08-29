@@ -7,7 +7,7 @@ import static com.chutneytesting.action.spi.validation.Validator.getErrorsFrom;
 import com.chutneytesting.action.assertion.placeholder.PlaceholderAsserter;
 import com.chutneytesting.action.assertion.placeholder.PlaceholderAsserterUtils;
 import com.chutneytesting.action.common.XmlUtils;
-import com.chutneytesting.action.jms.domain.XmlContent;
+import com.chutneytesting.action.jakarta.domain.XmlContent;
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Input;

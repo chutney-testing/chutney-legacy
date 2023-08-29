@@ -14,17 +14,17 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.action.spi.injectable.Logger;
 import com.chutneytesting.action.spi.injectable.Target;
-import com.mockrunner.jms.ConfigurationManager;
 import com.mockrunner.jms.DestinationManager;
-import com.mockrunner.mock.jms.MockConnectionFactory;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 public class JmsSenderActionTest {
 
@@ -66,7 +66,7 @@ public class JmsSenderActionTest {
             DestinationManager dm = new DestinationManager();
             this.context = mock(Context.class);
             when(context.lookup(any(String.class))).thenAnswer(iom -> dm.createQueue(iom.getArgument(0)));
-            when(context.lookup(eq("ConnectionFactory"))).thenReturn(new MockConnectionFactory(dm, new ConfigurationManager()));
+            when(context.lookup(eq("ConnectionFactory"))).thenReturn(Mockito.mock(ConnectionFactory.class,RETURNS_DEEP_STUBS));
         }
 
         @Override

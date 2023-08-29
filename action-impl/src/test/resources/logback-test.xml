@@ -7,8 +7,13 @@
         </encoder>
     </appender>
 
-    <logger name="com.intellij" level="ERROR"/>
-    <logger name="com.jayway" level="WARN"/>
+    <logger name="org.apache.http" level="ERROR"/>
+    <logger name="org.apache.commons" level="ERROR"/>
+    <logger name="io.netty" level="ERROR"/>
+    <logger name="com.github" level="ERROR"/>
+    <logger name="org.testcontainers" level="ERROR"/>
+
+    <!--logger name="com.jayway" level="WARN"/>
     <logger name="com.zaxxer" level="WARN"/>
     <logger name="io.undertow" level="ERROR"/>
     <logger name="liquibase" level="WARN"/>
@@ -24,9 +29,9 @@
     <logger name="org.xnio" level="WARN"/>
     <logger name="net.schmizz" level="WARN" />
     <logger name="wiremock" level="WARN" />
-    <logger name="wiremock.org.eclipse.jetty.util.thread.QueuedThreadPool" level="ERROR" />
+    <logger name="wiremock.org.eclipse.jetty.util.thread.QueuedThreadPool" level="ERROR" /-->
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>
