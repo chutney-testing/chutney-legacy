@@ -8,13 +8,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Assertions.within;
-import static org.mockito.Mockito.mock;
 import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
-import com.chutneytesting.campaign.infra.CampaignScenarioJpaRepository;
 import com.chutneytesting.campaign.infra.jpa.Campaign;
-import com.chutneytesting.execution.infra.storage.DatabaseExecutionJpaRepository;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
@@ -32,8 +29,8 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -172,21 +169,21 @@ public class DatabaseTestCaseRepositoryTest {
             Scenario scenario = givenScenario();
             Campaign campaign = givenCampaign(scenario);
 
-            ScenarioExecution scenarioExecution = givenScenarioExecution(scenario.id(), ServerReportStatus.NOT_EXECUTED);
+            ScenarioExecution scenarioExecution = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
 
             // When: the scenarioTemplate is removed
-            sut.removeById(scenario.id().toString());
+            sut.removeById(scenario.getId().toString());
 
             // Then: the scenarioTemplate is not found in the repository
-            Optional<GwtTestCase> noScenario = sut.findById(scenario.id().toString());
+            Optional<GwtTestCase> noScenario = sut.findById(scenario.getId().toString());
             assertThat(noScenario).isEmpty();
 
             Number executionsCount = (Number) entityManager.createNativeQuery(
-                "SELECT count(*) as count FROM SCENARIO_EXECUTIONS WHERE SCENARIO_ID = '" + scenario.id() + "'").getSingleResult();
+                "SELECT count(*) as count FROM SCENARIO_EXECUTIONS WHERE SCENARIO_ID = '" + scenario.getId() + "'").getSingleResult();
             assertThat(executionsCount.intValue()).isOne();
 
             Number campaignAssociationCount = (Number) entityManager.createNativeQuery(
-                "SELECT count(*) as count FROM CAMPAIGN_SCENARIOS WHERE SCENARIO_ID = '" + scenario.id() + "'").getSingleResult();
+                "SELECT count(*) as count FROM CAMPAIGN_SCENARIOS WHERE SCENARIO_ID = '" + scenario.getId() + "'").getSingleResult();
             assertThat(campaignAssociationCount.intValue()).isZero();
         }
 
@@ -285,6 +282,57 @@ public class DatabaseTestCaseRepositoryTest {
             assertThatThrownBy(() -> sut.save(newTestCase))
                 .isInstanceOf(ScenarioNotFoundException.class)
                 .hasMessageContainingAll(scenarioId, newVersion.toString());
+        }
+
+        @Test
+        public void should_save_scenario_without_given_id() {
+            // Given
+            final String scenarioId = sut.save(GWT_TEST_CASE);
+            GwtTestCase testCase = GwtTestCase.builder().from(GWT_TEST_CASE)
+                .withMetadata(TestCaseMetadataImpl.builder().build())
+                .build();
+
+            // When
+            final String savedScenarioId = sut.save(testCase);
+
+            // Then
+            assertThat(scenarioId).isNotEqualTo(savedScenarioId);
+            assertThat(Long.parseLong(scenarioId)).isEqualTo(Long.parseLong(savedScenarioId) - 1);
+        }
+
+        @Test
+        public void should_save_scenario_with_given_id() {
+            // Given
+            final String scenarioId = sut.save(GWT_TEST_CASE);
+            final String newScenarioId = "12345";
+            GwtTestCase testCase = GwtTestCase.builder().from(GWT_TEST_CASE)
+                .withMetadata(TestCaseMetadataImpl.builder().withId(newScenarioId).build())
+                .build();
+
+            // When
+            final String savedScenarioId = sut.save(testCase);
+
+            // Then
+            assertThat(scenarioId).isNotEqualTo(savedScenarioId);
+            assertThat(savedScenarioId + 1).isNotEqualTo(scenarioId); // Make sure there is no autoincrement
+            assertThat(savedScenarioId).isEqualTo(newScenarioId);
+        }
+
+        @Test
+        public void should_update_scenario_without_modifying_id() {
+            // Given
+            final String scenarioId = sut.save(GWT_TEST_CASE);
+            String title = "New title";
+            GwtTestCase testCase = GwtTestCase.builder().from(GWT_TEST_CASE)
+                .withMetadata(TestCaseMetadataImpl.builder().withId(scenarioId).withTitle(title).build())
+                .build();
+
+            // When
+            final String savedScenarioId = sut.save(testCase);
+
+            // Then
+            assertThat(scenarioId).isEqualTo(savedScenarioId);
+            assertThat(sut.findById(scenarioId).orElseThrow(NoSuchElementException::new).metadata.title).isEqualTo(title);
         }
 
         @Test

@@ -14,6 +14,7 @@ import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
+import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import java.util.ArrayList;
@@ -56,8 +57,12 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
 
     @Override
     public String save(GwtTestCase testCase) {
+        if (testCaseDoesNotExist(testCase.id())) {
+          saveScenarioWithExplicitId(testCase);
+          return testCase.id();
+        }
         try {
-            return scenarioJpaRepository.save(Scenario.fromGwtTestCase(testCase)).id().toString();
+            return scenarioJpaRepository.save(Scenario.fromGwtTestCase(testCase)).getId().toString();
         } catch (ObjectOptimisticLockingFailureException e) {
             throw new ScenarioNotFoundException(testCase.id(), testCase.metadata().version());
         }
@@ -70,7 +75,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
             return empty();
         }
         Optional<Scenario> scenarioDao = scenarioJpaRepository.findByIdAndActivated(valueOf(scenarioId), true)
-            .filter(Scenario::activated);
+            .filter(Scenario::isActivated);
         return scenarioDao.map(Scenario::toGwtTestCase);
     }
 
@@ -150,6 +155,14 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         }
     }
 
+    private boolean testCaseDoesNotExist(String id) {
+        try {
+            return Long.parseLong(id) >= 0 && findById(id).isEmpty();
+        } catch (NumberFormatException e) {
+            throw new ScenarioNotParsableException("Cannot parse id", e);
+        }
+    }
+
     List<String> getWordsToSearchWithQuotes(String input) {
         List<String> words = new ArrayList<>();
         Matcher matcher = pattern.matcher(input);
@@ -162,6 +175,24 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         }
         words.addAll(Arrays.stream(input.replaceAll(pattern.pattern(), "").split("\\s")).filter(value -> !value.isEmpty()).toList());
         return words;
+    }
+
+    private void saveScenarioWithExplicitId(GwtTestCase testCase) {
+        Scenario scenario = Scenario.fromGwtTestCase(testCase);
+        scenarioJpaRepository.saveWithExplicitId(
+            scenario.getId(),
+            scenario.getTitle(),
+            scenario.getDescription(),
+            scenario.getContent(),
+            scenario.getTags(),
+            scenario.getCreationDate(),
+            scenario.getDataset(),
+            scenario.isActivated(),
+            scenario.getUserId(),
+            scenario.getUpdateDate(),
+            scenario.getVersion(),
+            scenario.getDefaultDataset()
+        );
     }
 
     private static String escapeSql(String str) {

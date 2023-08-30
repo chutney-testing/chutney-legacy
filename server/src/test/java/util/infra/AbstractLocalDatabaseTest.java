@@ -93,7 +93,7 @@ public abstract class AbstractLocalDatabaseTest {
         return transactionTemplate.execute(ts -> {
             for (int i = 0; i < scenarios.length; i++) {
                 Scenario scenario = scenarios[i];
-                campaignScenarios.add(new CampaignScenario(campaign, scenario.id().toString(), i));
+                campaignScenarios.add(new CampaignScenario(campaign, scenario.getId().toString(), i));
             }
             campaign.campaignScenarios().addAll(campaignScenarios);
             entityManager.persist(campaign);
@@ -110,6 +110,6 @@ public abstract class AbstractLocalDatabaseTest {
     }
 
     protected List<String> scenariosIds(Scenario... scenarios) {
-        return Arrays.stream(scenarios).map(Scenario::id).map(String::valueOf).toList();
+        return Arrays.stream(scenarios).map(Scenario::getId).map(String::valueOf).toList();
     }
 }

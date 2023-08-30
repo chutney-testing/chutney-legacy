@@ -171,7 +171,7 @@ public class DatabaseCampaignRepositoryTest {
             sut.createOrUpdate(campaign4);
 
             // When
-            List<String> scenarioCampaignNames = sut.findCampaignsByScenarioId(s1.id().toString()).stream()
+            List<String> scenarioCampaignNames = sut.findCampaignsByScenarioId(s1.getId().toString()).stream()
                 .map(sc -> sc.title)
                 .collect(Collectors.toList());
 
@@ -191,7 +191,7 @@ public class DatabaseCampaignRepositoryTest {
             sut.createOrUpdate(campaign1);
 
             // When
-            List<Campaign> scenarioCampaigns = sut.findCampaignsByScenarioId(String.valueOf(s1.id() + 666));
+            List<Campaign> scenarioCampaigns = sut.findCampaignsByScenarioId(String.valueOf(s1.getId() + 666));
 
             // Then
             Assertions.assertThat(scenarioCampaigns).isEmpty();
