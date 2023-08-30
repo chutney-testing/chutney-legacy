@@ -179,6 +179,20 @@ public abstract class TestActionTemplateFactory {
         }
     }
 
+    public static class ListAction implements Action {
+
+        private final List<Map<String, Object>> list;
+
+        public ListAction(@Input("list") List<Map<String, Object>> list) {
+            this.list = list;
+        }
+
+        @Override
+        public ActionExecutionResult execute() {
+            return ActionExecutionResult.ok("mylist", list);
+        }
+    }
+
     public static class Pojo {
         public final String param1;
         public final String param2;

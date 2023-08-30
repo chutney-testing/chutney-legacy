@@ -1,6 +1,7 @@
 package com.chutneytesting.tools;
 
 import com.chutneytesting.action.spi.SpelFunction;
+import java.time.ZonedDateTime;
 import java.util.Random;
 import java.util.UUID;
 
@@ -16,4 +17,10 @@ public class TestFunctions {
     public static String randomInt(int bound) {
         return String.valueOf(RANDOM_GENERATOR.nextInt(bound));
     }
+
+    @SpelFunction
+    public static ZonedDateTime now() {
+        return ZonedDateTime.now();
+    }
+
 }

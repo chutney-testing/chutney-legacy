@@ -71,6 +71,25 @@ class StepIterationStrategyTest {
     }
 
     @Test
+    public void should_preserve_input_types() {
+        // G
+        final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/step_iteration_preserve_input_types.json", ExecutionRequestDto.class);
+
+        // W
+        StepExecutionReportDto result = testEngine.execute(requestDto);
+
+        // T
+        StepExecutionReportDto parentStep = result.steps.get(0);
+        assertThat(parentStep.steps).hasSize(2);
+        assertThat(parentStep.status).isEqualTo(SUCCESS);
+
+        parentStep = result.steps.get(1);
+        assertThat(parentStep.steps).hasSize(2);
+        assertThat(parentStep.status).isEqualTo(SUCCESS);
+    }
+
+    @Test
     public void should_fail_at_end_by_default() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();

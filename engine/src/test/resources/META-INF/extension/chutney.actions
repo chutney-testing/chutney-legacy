@@ -3,3 +3,4 @@ com.chutneytesting.action.TestActionTemplateFactory$FailAction
 com.chutneytesting.action.TestActionTemplateFactory$SleepAction
 com.chutneytesting.action.TestActionTemplateFactory$ComplexAction
 com.chutneytesting.action.TestActionTemplateFactory$ContextPutAction
+com.chutneytesting.action.TestActionTemplateFactory$ListAction
