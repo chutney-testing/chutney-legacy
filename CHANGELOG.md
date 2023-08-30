@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.2.0](https://github.com/chutney-testing/chutney/tree/2.2.0)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/2.1.0...2.2.0)
+
+## What's Changed
+
+### 🚀 Implemented enhancements:
+* feat(scenario): Allow creation of scenario in database with explicit id by @DelaunayAlex in [\#1112](https://github.com/chutney-testing/chutney/pull/1112)
+* feat(ui): Add filter by status for scenarios list by @rbenyoussef in [\#1115](https://github.com/chutney-testing/chutney/pull/1115)
+
+### 🐛 Fixed bugs:
+* fix(ui): Fix navigation in empty dataset by @KarimGl in [\#1113](https://github.com/chutney-testing/chutney/pull/1113)
+* fix(engine): Evaluate dataset content by @bessonm in [\#1114](https://github.com/chutney-testing/chutney/pull/1114)
+* fix(engine): Indexing iteration preserves input types by @bessonm in [\#1116](https://github.com/chutney-testing/chutney/pull/1116)
+
+
 ## [2.1.0](https://github.com/chutney-testing/chutney/tree/2.1.0)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/2.0.0...2.1.0)
@@ -36,6 +52,7 @@
 * chore: Bump SpringBoot version from 2.7.5 to 2.7.14 by @bessonm in [\#1108](https://github.com/chutney-testing/chutney/pull/1108)
 
 **Full Changelog**: https://github.com/chutney-testing/chutney/compare/2.0.0...2.1.0
+
 
 ## [2.0.0](https://github.com/chutney-testing/chutney/tree/2.0.0)
 
