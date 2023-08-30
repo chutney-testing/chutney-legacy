@@ -16,6 +16,9 @@ import { JiraPluginConfigurationService, JiraPluginService, ScenarioService } fr
 import { Authorization, ScenarioIndex, ScenarioType, SelectableTags, TestCase } from '@model';
 import { FeatureService } from '@core/feature/feature.service';
 import { FeatureName } from '@core/feature/feature.model';
+import { ExecutionStatus } from '@core/model/scenario/execution-status';
+import { TranslateService } from '@ngx-translate/core';
+import { AngularMultiSelect } from 'angular2-multiselect-dropdown';
 
 @Component({
     selector: 'chutney-scenarios',
@@ -39,6 +42,8 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     tags = [];
     selectedTags = [];
     fullTextSearch = false;
+    status: { id: string, itemName: string }[] = [];
+    selectedStatus= [];
     // Jira
     jiraMap: Map<string, string> = new Map();
     jiraUrl = '';
@@ -58,7 +63,8 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         private jiraPluginConfigurationService: JiraPluginConfigurationService,
         private stateService: StateService,
         private readonly route: ActivatedRoute,
-        private featureService: FeatureService
+        private featureService: FeatureService,
+        private translateService: TranslateService
     ) {
     }
 
@@ -91,22 +97,32 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
 
         this.settings = {
-            text: 'Select tag',
+            text: '',
             enableCheckAll: false,
             enableSearchFilter: true,
             autoPosition: false
         };
     }
 
-    private initTags() {
-        const allTagsInScenario: string[] = this.findAllTags();
-        this.tags = this.getTagsForComboModel(allTagsInScenario);
-    }
-
     ngOnDestroy(): void {
         if (this.urlParams) {
             this.urlParams.unsubscribe();
         }
+    }
+
+    private initFilters() {
+        const allTagsInScenario: string[] = this.findAllTags();
+        this.tags = this.getTagsForComboModel(allTagsInScenario);
+        this.status = [...new Set(this.scenarios.map(scenario => scenario.status))].map(status => this.toSelectOption(status,  this.translateService.instant(ExecutionStatus.toString(status))));
+    }
+
+    private toSelectOption(id: string, label: string = id) {
+        return {id: id, itemName: label };
+    }
+
+    toggleDropDown(dropDown: AngularMultiSelect, event) {
+        event.stopPropagation();
+        dropDown.toggleDropdown(event);
     }
 
     private async getScenarios() {
@@ -116,7 +132,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     private applyDefaultState() {
         this.viewedScenarios = this.scenarios;
         this.scenarioTypeFilter.initialize(this.SCENARIO_TYPES);
-        this.initTags();
+        this.initFilters();
     }
 
     private findAllTags() {
@@ -151,6 +167,9 @@ export class ScenariosComponent implements OnInit, OnDestroy {
                     }
                     if (params['orderBy']) {
                         this.orderBy = params['orderBy'];
+                    }
+                    if (params['status']) {
+                        this.selectedStatus = this.status.filter((status) => params['status'].split(',').includes(status.itemName));
                     }
                     if (params['reverseOrder']) {
                         this.reverseOrder = params['reverseOrder'] === 'true';
@@ -277,12 +296,20 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         const scenarioTypes = this.scenarioTypeFilter.selected();
 
         return input.filter((scenario: ScenarioIndex) => {
-            return this.tagPresent(tags, scenario) && this.scenarioTypePresent(scenarioTypes, scenario);
+            return this.tagPresent(tags, scenario) && this.scenarioTypePresent(scenarioTypes, scenario) && this.scenarioStatusPresent(this.selectedStatus, scenario);
         });
     }
 
     private scenarioTypePresent(scenarioTypes: ScenarioType[], scenario: ScenarioIndex): boolean {
         return intersection(scenarioTypes, [scenario.type]).length > 0;
+    }
+
+    private scenarioStatusPresent(statusFilter: any[], scenario: ScenarioIndex): boolean {
+        if (statusFilter.length > 0) {
+            return intersection(statusFilter.map((status)=>status.id), [scenario.status]).length > 0;
+        } else {
+            return true;
+        }
     }
 
     private applyFiltersToRoute(): void {
@@ -291,6 +318,7 @@ export class ScenariosComponent implements OnInit, OnDestroy {
             queryParams: {
                 text: this.textFilter,
                 orderBy: this.orderBy,
+                status:this.selectedStatus.map((status) => status.itemName).join(','),
                 reverseOrder: this.reverseOrder,
                 type: this.scenarioTypeFilter.selected().toString(),
                 tags: this.getSelectedTags().toString()

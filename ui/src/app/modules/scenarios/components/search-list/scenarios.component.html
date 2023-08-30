@@ -52,17 +52,6 @@
                 </button>
             </ng-container>
         </div>
-
-        <div class="col-4">
-            <angular2-multiselect [data]="tags"
-                                  [(ngModel)]="selectedTags"
-                                  [settings]="settings"
-                                  (onSelect)="onItemSelect()"
-                                  (onDeSelect)="OnItemDeSelect()"
-                                  (onDeSelectAll)="OnItemDeSelectAll()"
-            >
-            </angular2-multiselect>
-        </div>
     </div>
 </div>
 
@@ -71,42 +60,77 @@
     <div class="table-responsive mb-3 mx-3">
         <table class="table table-sm table-striped table-hover">
             <thead>
-            <tr>
-                <th class="filter w3" scope="col" (click)="sortBy('id')">ID
-                    <span *ngIf="orderBy == 'id' && reverseOrder" class="fa fa-caret-down"></span>
-                    <span *ngIf="orderBy == 'id' && !reverseOrder" class="fa fa-caret-up"></span>
-                </th>
-                <th scope="col" class="w1" *ngIf="componentsActive">&nbsp;</th>
-                <th class="filter w3" scope="col" (click)="sortBy('status')">{{ 'scenarios.list.header.status'  | translate  }}
-                    <span *ngIf="orderBy == 'status' && reverseOrder" class="fa fa-caret-down"></span>
-                    <span *ngIf="orderBy == 'status' && !reverseOrder" class="fa fa-caret-up"></span>
-                </th>
-                <th class="filter w10" scope="col" (click)="sortBy('lastExecution')">{{ 'scenarios.list.header.execLast'  | translate  }}
-                    <span *ngIf="orderBy == 'lastExecution' && reverseOrder" class="fa fa-caret-down"></span>
-                    <span *ngIf="orderBy == 'lastExecution' && !reverseOrder" class="fa fa-caret-up"></span>
-                </th>
+                <tr class="headers-labels">
+                    <th class="filter w3" scope="col" (click)="sortBy('id')">ID
+                        <span *ngIf="orderBy == 'id' && reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'id' && !reverseOrder" class="fa fa-caret-up"></span>
+                    </th>
+                    <th scope="col" class="w1" *ngIf="componentsActive">&nbsp;</th>
+                    <th class="filter w3" scope="col" (click)="toggleDropDown(statusDropdown, $event)">
+                        <span>{{ 'scenarios.list.header.status'  | translate  }}</span>
+                            <i class="ms-2 fa" [ngClass]="{
+                                'fa-chevron-up': statusDropdown.isActive,
+                                'fa-chevron-down': !statusDropdown.isActive}"></i>
+                    </th>
+                    <th class="filter w10" scope="col" (click)="sortBy('lastExecution')">{{ 'scenarios.list.header.execLast'  | translate  }}
+                        <span *ngIf="orderBy == 'lastExecution' && reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'lastExecution' && !reverseOrder" class="fa fa-caret-up"></span>
+                    </th>
 
-                <th class="filter w40" scope="col" (click)="sortBy('title')">{{ 'scenarios.list.header.title'  | translate  }}
-                    <span *ngIf="orderBy == 'title' && reverseOrder" class="fa fa-caret-down"></span>
-                    <span *ngIf="orderBy == 'title' && !reverseOrder" class="fa fa-caret-up"></span>
-                </th>
-                <th scope="col" class="w1">&nbsp;</th>
-                <th scope="col" class="w1">&nbsp;</th>
-                <th class="filter w12" scope="col" (click)="sortBy('tags')">{{ 'scenarios.list.header.tags'  | translate  }}
-                    <span *ngIf="orderBy == 'tags' && reverseOrder" class="fa fa-caret-down"></span>
-                    <span *ngIf="orderBy == 'tags' && !reverseOrder" class="fa fa-caret-up"></span>
-                </th>
-                <th class="filter w10" scope="col" (click)="sortBy('updateDate')">{{ 'scenarios.list.header.update'  | translate  }}
-                    <span *ngIf="orderBy == 'updateDate' && reverseOrder" class="fa fa-caret-down"></span>
-                    <span *ngIf="orderBy == 'updateDate' && !reverseOrder" class="fa fa-caret-up"></span>
-                </th>
-                <th class="filter w10" scope="col" (click)="sortBy('creationDate')">{{ 'scenarios.list.header.creation'  | translate  }}
-                    <span *ngIf="orderBy == 'creationDate' && reverseOrder" class="fa fa-caret-down"></span>
-                    <span *ngIf="orderBy == 'creationDate' && !reverseOrder" class="fa fa-caret-up"></span>
-                </th>
-                <th class="w6" scope="col">
-                </th>
-            </tr>
+                    <th class="filter w40" scope="col" (click)="sortBy('title')">{{ 'scenarios.list.header.title'  | translate  }}
+                        <span *ngIf="orderBy == 'title' && reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'title' && !reverseOrder" class="fa fa-caret-up"></span>
+                    </th>
+                    <th scope="col" class="w1">&nbsp;</th>
+                    <th scope="col" class="w1">&nbsp;</th>
+                    <th class="filter w12" scope="col" (click)="toggleDropDown(tagsDropdown, $event)">
+                        <span>{{ 'scenarios.list.header.tags'  | translate  }}</span>
+                            <i class="ms-2 fa" [ngClass]="{
+                                'fa-chevron-up': tagsDropdown.isActive,
+                                'fa-chevron-down': !tagsDropdown.isActive}"></i>
+                    </th>
+                    <th class="filter w10" scope="col" (click)="sortBy('updateDate')">{{ 'scenarios.list.header.update'  | translate  }}
+                        <span *ngIf="orderBy == 'updateDate' && reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'updateDate' && !reverseOrder" class="fa fa-caret-up"></span>
+                    </th>
+                    <th class="filter w10" scope="col" (click)="sortBy('creationDate')">{{ 'scenarios.list.header.creation'  | translate  }}
+                        <span *ngIf="orderBy == 'creationDate' && reverseOrder" class="fa fa-caret-down"></span>
+                        <span *ngIf="orderBy == 'creationDate' && !reverseOrder" class="fa fa-caret-up"></span>
+                    </th>
+                    <th class="w6" scope="col">
+                    </th>
+                </tr>
+                <tr class="headers-filters">
+                    <th></th>
+                    <th *ngIf="componentsActive"></th>
+                    <th>
+                        <angular2-multiselect #statusDropdown 
+                            [data]="status"
+                            [(ngModel)]="selectedStatus"
+                            [settings]="settings"
+                            (onSelect)="applyFilters()" 
+                            (onDeSelect)="applyFilters()"
+                            (onDeSelectAll)="applyFilters()" >
+                        </angular2-multiselect>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>
+                        <angular2-multiselect #tagsDropdown
+                                [data]="tags"
+                                [(ngModel)]="selectedTags"
+                                [settings]="settings"
+                                (onSelect)="onItemSelect()"
+                                (onDeSelect)="OnItemDeSelect()"
+                                (onDeSelectAll)="OnItemDeSelectAll()">
+                        </angular2-multiselect>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
             </thead>
             <tbody>
             <tr *ngFor="let scenario of viewedScenarios" class="align-baseline">
