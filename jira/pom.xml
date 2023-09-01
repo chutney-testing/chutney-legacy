@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-java-client-app</artifactId>
-            <version>5.2.4</version>
+            <version>5.2.6</version>
             <exclusions>
                 <exclusion>
                     <groupId>log4j</groupId>
