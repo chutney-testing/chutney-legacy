@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 import org.apache.commons.exec.util.MapUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -72,6 +71,7 @@ public class KafkaBasicConsumeAction implements Action {
     private final List<Map<String, Object>> consumedMessages = new ArrayList<>();
     private final String group;
     private final String ackMode;
+    private MimeType recordContentType;
 
     public KafkaBasicConsumeAction(Target target,
                                    @Input("topic") String topic,
@@ -151,7 +151,6 @@ public class KafkaBasicConsumeAction implements Action {
             return true;
         }
 
-        MimeType recordContentType = getRecordContentType((Map<String, Object>) message.get(OUTPUT_BODY_HEADERS_KEY));
         if (recordContentType.getSubtype().contains(APPLICATION_JSON.getSubtype())) {
             try {
                 String messageAsString = OBJECT_MAPPER.writeValueAsString(message);
@@ -193,8 +192,8 @@ public class KafkaBasicConsumeAction implements Action {
         countDownLatch.countDown();
     }
 
-    private Object extractPayload(ConsumerRecord<String, String> record, MimeType contentType) {
-        if (contentType.getSubtype().contains(APPLICATION_JSON.getSubtype())) {
+    private Object extractPayload(ConsumerRecord<String, String> record) {
+        if (recordContentType.getSubtype().contains(APPLICATION_JSON.getSubtype())) {
             try {
                 return OBJECT_MAPPER.readValue(record.value(), Map.class);
             } catch (IOException e) {
@@ -207,8 +206,8 @@ public class KafkaBasicConsumeAction implements Action {
     private Map<String, Object> extractMessageFromRecord(ConsumerRecord<String, String> record) {
         final Map<String, Object> message = new HashMap<>();
         final Map<String, Object> headers = extractHeaders(record);
-        MimeType recordContentType = getRecordContentType(headers);
-        Object payload = extractPayload(record, recordContentType);
+        checkContentTypeHeader(headers);
+        Object payload = extractPayload(record);
         message.put(OUTPUT_BODY_HEADERS_KEY, headers);
         message.put(OUTPUT_BODY_PAYLOAD_KEY, payload);
         return message;
@@ -239,8 +238,8 @@ public class KafkaBasicConsumeAction implements Action {
         return results;
     }
 
-    private MimeType getRecordContentType(Map<String, Object> headers) {
-        AtomicReference<MimeType> recordContentType = new AtomicReference<>(this.contentType);
+    private void checkContentTypeHeader(Map<String, Object> headers) {
+        recordContentType = this.contentType;
         try {
             Optional<MimeType> contentType = headers.entrySet().stream()
                 .filter(e -> e.getKey().replaceAll("[- ]", "").equalsIgnoreCase("contenttype"))
@@ -250,11 +249,10 @@ public class KafkaBasicConsumeAction implements Action {
                 .map(s -> s.replace("\"", ""))
                 .map(MimeTypeUtils::parseMimeType);
 
-            contentType.ifPresent(recordContentType::set);
+            contentType.ifPresent(ct -> this.recordContentType = ct);
         } catch (Exception e) {
             logger.error("Cannot parse content type from message received:  " + e.getMessage());
         }
-        return recordContentType.get();
     }
 
     private Map<String, String> extractConsumerConfig(Target target) {
