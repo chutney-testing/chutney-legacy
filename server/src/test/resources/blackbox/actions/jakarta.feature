@@ -2,7 +2,7 @@
 @jakarta
 Feature: jakarta Task test
 
-    Scenario Outline: jakarta <jakarta-action-id> wrong url
+    Scenario Outline: Jakarta <jakarta-action-id> wrong url
         Given A target pointing to an unknown service
             Do http-post Create environment and target
                 On CHUTNEY_LOCAL
@@ -12,7 +12,7 @@ Feature: jakarta Task test
                 With body
                 """
                 {
-                    "name": "jakarta_${'<jakarta-action-id>'.toUpperCase()}_KO",
+                    "name": "JAKARTA_${'<jakarta-action-id>'.toUpperCase()}_KO",
                     "description": "",
                     "targets": [
                         {
@@ -62,7 +62,7 @@ Feature: jakarta Task test
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
-                With uri /api/ui/scenario/execution/v1/${#scenarioId}/jakarta_${'<jakarta-action-id>'.toUpperCase()}_KO
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/JAKARTA_${'<jakarta-action-id>'.toUpperCase()}_KO
                 With timeout 5 s
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
@@ -75,7 +75,7 @@ Feature: jakarta Task test
         Examples:
             | jakarta-action-id | action_inputs                                 |
             | sender      | destination: test \n body: something        |
-            | clean-queue | destination: test \n bodySelector: selector |
+            | clean | destination: test \n bodySelector: selector |
             | listener    | destination: test \n bodySelector: selector |
 
     Scenario: jakarta sender then clean then send and listen it on embedded broker
@@ -91,7 +91,7 @@ Feature: jakarta Task test
                 With body
                 """
                 {
-                    "name": "jakarta_ENV_OK",
+                    "name": "JAKARTA_ENV_OK",
                     "description": "",
                     "targets": [
                         {

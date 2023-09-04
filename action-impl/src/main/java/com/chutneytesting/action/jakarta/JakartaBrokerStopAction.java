@@ -17,7 +17,7 @@ public class JakartaBrokerStopAction implements Action {
     private final Logger logger;
     private final ActiveMQServer brokerService;
 
-    public JakartaBrokerStopAction(Logger logger, @Input("jms-broker-service") ActiveMQServer brokerService) {
+    public JakartaBrokerStopAction(Logger logger, @Input("jakarta-broker-service") ActiveMQServer brokerService) {
         this.logger = logger;
         this.brokerService = brokerService;
     }
@@ -25,7 +25,7 @@ public class JakartaBrokerStopAction implements Action {
     @Override
     public List<String> validateInputs() {
         Validator<ActiveMQServer> jmsBrokerValidation = of(brokerService)
-            .validate(Objects::nonNull, "No jms-broker-service provided");
+            .validate(Objects::nonNull, "No jakarta-broker-service provided");
         return getErrorsFrom(jmsBrokerValidation);
     }
 

@@ -58,8 +58,8 @@ public class JakartaBrokerStartAction implements Action {
     private void createQuitFinallyAction(ActiveMQServer brokerService) {
         finallyActionRegistry.registerFinallyAction(
             FinallyAction.Builder
-                .forAction("jms-broker-stop", JakartaBrokerStartAction.class)
-                .withInput("jms-broker-service", brokerService)
+                .forAction("jakarta-broker-stop", JakartaBrokerStartAction.class)
+                .withInput("jakarta-broker-service", brokerService)
                 .build()
         );
         logger.info("JmsBrokerStop finally action registered");
