@@ -19,6 +19,11 @@ final class ChutneyKafkaProducerFactory {
         Map<String, Object> producerConfig = new HashMap<>();
         producerConfig.put(BOOTSTRAP_SERVERS_CONFIG, resolveBootStrapServerConfig(target));
         producerConfig.putAll(config);
+        target.trustStore().ifPresent(trustStore -> {
+          producerConfig.put("security.protocol", "SSL");
+          producerConfig.put("ssl.truststore.location", trustStore);
+          producerConfig.put("ssl.truststore.password", target.trustStorePassword().orElseThrow(IllegalArgumentException::new));
+        });
 
         this.factory = new DefaultKafkaProducerFactory<>(
             producerConfig,
