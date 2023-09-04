@@ -1,8 +1,8 @@
 package com.chutneytesting.action.common;
 
 import com.chutneytesting.action.spi.injectable.Target;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -36,7 +36,7 @@ public class SecurityUtils {
         String keyPassword = target.keyPassword().orElse(keystorePassword);
         if (keystore.isPresent()) {
             KeyStore store = KeyStore.getInstance(KeyStore.getDefaultType());
-            store.load(Paths.get(keystore.get()).toUri().toURL().openStream(), keystorePassword.toCharArray());
+            store.load(new FileInputStream(keystore.get()), keystorePassword.toCharArray());
             sslContextBuilder.loadKeyMaterial(store, keyPassword.toCharArray());
         }
     }
@@ -46,7 +46,7 @@ public class SecurityUtils {
         String truststorePassword = target.trustStorePassword().orElse("");
         if (truststore.isPresent()) {
             KeyStore trustMaterial = KeyStore.getInstance(KeyStore.getDefaultType());
-            trustMaterial.load(Paths.get(truststore.get()).toUri().toURL().openStream(), truststorePassword.toCharArray());
+            trustMaterial.load(new FileInputStream(truststore.get()), truststorePassword.toCharArray());
             sslContextBuilder.loadTrustMaterial(trustMaterial, new TrustSelfSignedStrategy());
         } else {
             sslContextBuilder.loadTrustMaterial(null, (chain, authType) -> true);
