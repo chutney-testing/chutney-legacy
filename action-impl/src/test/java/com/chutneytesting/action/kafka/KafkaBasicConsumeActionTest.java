@@ -357,17 +357,47 @@ public class KafkaBasicConsumeActionTest {
         assertThat(payload).isEqualTo(textMessageToSelect);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"Content-Type", "Contenttype", "content type"})
-    public void should_override_given_mime_type_by_message_header(String contentTypeHeaderKey) {
+    @Test
+    public void should_not_filter_by_given_mime_type_when_no_selector() {
         // Given
         ImmutableList<Header> headers = ImmutableList.of(
             new RecordHeader("X-Custom-HeaderKey", "X-Custom-HeaderValue".getBytes()),
-            new RecordHeader(contentTypeHeaderKey, APPLICATION_JSON_VALUE.getBytes())
+            new RecordHeader("Content-Type", APPLICATION_JSON_VALUE.getBytes())
         );
-        Action action = givenKafkaConsumeAction(null, APPLICATION_XML_VALUE, null);
+
+        Action action = givenKafkaConsumeAction(2,null, null, APPLICATION_XML_VALUE, null);
         givenActionReceiveMessages(action,
-            buildRecord(FIRST_OFFSET, "KEY1", "{\"value\": \"test message\", \"id\": \"1\" }", headers)
+            buildRecord(FIRST_OFFSET, "KEY1", "{\"value\": \"test message\", \"id\": \"1\" }", headers),
+            buildRecord(FIRST_OFFSET + 1, "KEY2", "<root>second test message</root>", ImmutableList.of(
+                new RecordHeader("X-Custom-HeaderKey", "X-Custom-HeaderValue".getBytes())
+            ))
+        );
+
+        // When
+        ActionExecutionResult actionExecutionResult = action.execute();
+
+        // Then
+        assertThat(actionExecutionResult.status).isEqualTo(Success);
+        List<Map<String, Object>> body = assertActionOutputsSize(actionExecutionResult, 2);
+
+        assertThat(body.get(0).get(OUTPUT_BODY_PAYLOAD_KEY)).isEqualTo(Map.of("id","1","value","test message"));
+        assertThat(body.get(1).get(OUTPUT_BODY_PAYLOAD_KEY)).isEqualTo("<root>second test message</root>");
+    }
+
+    @Test
+    public void should_filter_by_given_mime_type_when_selector_is_defined() {
+        // Given
+        ImmutableList<Header> headers = ImmutableList.of(
+            new RecordHeader("X-Custom-HeaderKey", "X-Custom-HeaderValue".getBytes()),
+            new RecordHeader("Content-Type", APPLICATION_JSON_VALUE.getBytes())
+        );
+
+        Action action = givenKafkaConsumeAction("//root", APPLICATION_XML_VALUE, null);
+        givenActionReceiveMessages(action,
+            buildRecord(FIRST_OFFSET, "KEY1", "{\"value\": \"test message\", \"id\": \"1\" }", headers),
+            buildRecord(FIRST_OFFSET + 1, "KEY2", "<root>second test message</root>", ImmutableList.of(
+                new RecordHeader("X-Custom-HeaderKey", "X-Custom-HeaderValue".getBytes())
+            ))
         );
 
         // When
@@ -377,12 +407,7 @@ public class KafkaBasicConsumeActionTest {
         assertThat(actionExecutionResult.status).isEqualTo(Success);
         List<Map<String, Object>> body = assertActionOutputsSize(actionExecutionResult, 1);
 
-        assertThat(logger.info).contains("Found content type header " + APPLICATION_JSON_VALUE);
-
-        final Map<String, String> payload = (Map<String, String>) body.get(0).get(OUTPUT_BODY_PAYLOAD_KEY);
-        assertThat(payload)
-            .containsEntry("value", "test message")
-            .containsEntry("id", "1");
+        assertThat(body.get(0).get(OUTPUT_BODY_PAYLOAD_KEY)).isEqualTo("<root>second test message</root>");
     }
 
     @Test

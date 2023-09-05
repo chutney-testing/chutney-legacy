@@ -62,7 +62,7 @@ public class KafkaBasicConsumeAction implements Action {
     private final Logger logger;
     private final Integer nbMessages;
     private final Map<String, String> properties;
-    private MimeType contentType;
+    private final MimeType contentType;
     private final String timeout;
     private final String selector;
     private final String headerSelector;
@@ -71,18 +71,19 @@ public class KafkaBasicConsumeAction implements Action {
     private final List<Map<String, Object>> consumedMessages = new ArrayList<>();
     private final String group;
     private final String ackMode;
+    private MimeType recordContentType;
 
     public KafkaBasicConsumeAction(Target target,
-                                 @Input("topic") String topic,
-                                 @Input("group") String group,
-                                 @Input("properties") Map<String, String> properties,
-                                 @Input("nb-messages") Integer nbMessages,
-                                 @Input("selector") String selector,
-                                 @Input("header-selector") String headerSelector,
-                                 @Input("content-type") String contentType,
-                                 @Input("timeout") String timeout,
-                                 @Input("ackMode") String ackMode,
-                                 Logger logger) {
+                                   @Input("topic") String topic,
+                                   @Input("group") String group,
+                                   @Input("properties") Map<String, String> properties,
+                                   @Input("nb-messages") Integer nbMessages,
+                                   @Input("selector") String selector,
+                                   @Input("header-selector") String headerSelector,
+                                   @Input("content-type") String contentType,
+                                   @Input("timeout") String timeout,
+                                   @Input("ackMode") String ackMode,
+                                   Logger logger) {
         this.topic = topic;
         this.nbMessages = defaultIfNull(nbMessages, 1);
         this.selector = selector;
@@ -150,7 +151,7 @@ public class KafkaBasicConsumeAction implements Action {
             return true;
         }
 
-        if (contentType.getSubtype().contains(APPLICATION_JSON.getSubtype())) {
+        if (recordContentType.getSubtype().contains(APPLICATION_JSON.getSubtype())) {
             try {
                 String messageAsString = OBJECT_MAPPER.writeValueAsString(message);
                 return JsonPathEvaluator.evaluate(messageAsString, selector);
@@ -158,7 +159,7 @@ public class KafkaBasicConsumeAction implements Action {
                 logger.info("Received a message, however cannot read process it as json, ignoring payload selection : " + e.getMessage());
                 return true;
             }
-        } else if (contentType.getSubtype().contains(APPLICATION_XML.getSubtype())) {
+        } else if (recordContentType.getSubtype().contains(APPLICATION_XML.getSubtype())) {
             try {
                 Object result = XPathFunction.xpath((String) message.get(OUTPUT_BODY_PAYLOAD_KEY), selector);
                 return ofNullable(result).isPresent();
@@ -192,7 +193,7 @@ public class KafkaBasicConsumeAction implements Action {
     }
 
     private Object extractPayload(ConsumerRecord<String, String> record) {
-        if (contentType.getSubtype().contains(APPLICATION_JSON.getSubtype())) {
+        if (recordContentType.getSubtype().contains(APPLICATION_JSON.getSubtype())) {
             try {
                 return OBJECT_MAPPER.readValue(record.value(), Map.class);
             } catch (IOException e) {
@@ -238,6 +239,7 @@ public class KafkaBasicConsumeAction implements Action {
     }
 
     private void checkContentTypeHeader(Map<String, Object> headers) {
+        recordContentType = this.contentType;
         try {
             Optional<MimeType> contentType = headers.entrySet().stream()
                 .filter(e -> e.getKey().replaceAll("[- ]", "").equalsIgnoreCase("contenttype"))
@@ -247,12 +249,9 @@ public class KafkaBasicConsumeAction implements Action {
                 .map(s -> s.replace("\"", ""))
                 .map(MimeTypeUtils::parseMimeType);
 
-            contentType.ifPresent(ct -> {
-                logger.info("Found content type header " + ct);
-                this.contentType = ct;
-            });
+            contentType.ifPresent(ct -> this.recordContentType = ct);
         } catch (Exception e) {
-            logger.error("Cannot retrieve content type from message received:  " + e.getMessage());
+            logger.error("Cannot parse content type from message received:  " + e.getMessage());
         }
     }
 
