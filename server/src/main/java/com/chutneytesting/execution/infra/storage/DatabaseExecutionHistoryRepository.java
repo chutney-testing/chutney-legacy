@@ -17,8 +17,11 @@ import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryR
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundException;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,8 +39,9 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     private final CampaignJpaRepository campaignJpaRepository;
     private final CampaignExecutionJpaRepository campaignExecutionJpaRepository;
     private final TestCaseRepository testCaseRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
-    DatabaseExecutionHistoryRepository(
+  DatabaseExecutionHistoryRepository(
         DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository,
         ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository,
         ScenarioJpaRepository scenarioJpaRepository,
@@ -177,14 +181,47 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
             .duration(executionSummary.duration())
             .info(executionSummary.info())
             .error("Execution was interrupted !")
-            .report("")
+            .report(getScenarioExecutionReportStringWithStoppedStatusIfRunning(executionSummary))
             .testCaseTitle(executionSummary.testCaseTitle())
             .environment(executionSummary.environment())
             .user(executionSummary.user())
             .build();
     }
 
-    private boolean invalidScenarioId(String scenarioId) {
+  private String getScenarioExecutionReportStringWithStoppedStatusIfRunning(ExecutionSummary executionSummary) {
+    return scenarioExecutionReportJpaRepository.findById(executionSummary.executionId()).map(ScenarioExecutionReport::toDomain).map(execution -> {
+      try {
+        com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport newScenarioExecutionReport = updateScenarioExecutionReportWithStoppedStatusIfRunning(execution);
+        return objectMapper.writeValueAsString(newScenarioExecutionReport);
+      } catch (JsonProcessingException exception) {
+        return "";
+      }
+    }).orElse("");
+  }
+
+  private com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport updateScenarioExecutionReportWithStoppedStatusIfRunning(Execution execution) throws JsonProcessingException {
+    com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport scenarioExecutionReport = objectMapper.readValue(execution.report(), com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport.class);
+    StepExecutionReportCore report = updateStepWithStoppedStatusIfRunning(scenarioExecutionReport.report);
+    return updateScenarioExecutionReport(scenarioExecutionReport, report);
+  }
+
+  private com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport updateScenarioExecutionReport(com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport scenarioExecutionReport, StepExecutionReportCore report) {
+    return new com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport(scenarioExecutionReport.executionId, scenarioExecutionReport.scenarioName, scenarioExecutionReport.environment, scenarioExecutionReport.user, report);
+  }
+
+  private List<StepExecutionReportCore> updateStepListWithStoppedStatusIfRunning(List<StepExecutionReportCore> steps) {
+    return steps.stream().map(this::updateStepWithStoppedStatusIfRunning).collect(Collectors.toList());
+  }
+
+  private boolean isExecutionRunning(ServerReportStatus status) {
+    return status.equals(ServerReportStatus.RUNNING);
+  }
+
+  private StepExecutionReportCore updateStepWithStoppedStatusIfRunning(StepExecutionReportCore step) {
+    return new StepExecutionReportCore(step.name, step.duration, step.startDate, isExecutionRunning(step.status) ? ServerReportStatus.STOPPED : step.status, step.information, step.errors, updateStepListWithStoppedStatusIfRunning(step.steps), step.type, step.targetName, step.targetUrl, step.strategy, step.evaluatedInputs, step.stepOutputs);
+  }
+
+  private boolean invalidScenarioId(String scenarioId) {
         return isNullOrEmpty(scenarioId);
     }
 }

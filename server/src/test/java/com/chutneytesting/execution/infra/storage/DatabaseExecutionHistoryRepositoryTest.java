@@ -1,5 +1,6 @@
 package com.chutneytesting.execution.infra.storage;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,11 +18,18 @@ import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.ExecutionSummary;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundException;
+import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +69,11 @@ public class DatabaseExecutionHistoryRepositoryTest {
         private DatabaseExecutionHistoryRepository sut;
         @Autowired
         private CampaignExecutionDBRepository campaignExecutionDBRepository;
+
+        private ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+
+        @Autowired
+        private ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository;
 
         @Test
         public void parallel_execution_does_not_lock_database() throws InterruptedException {
@@ -242,6 +255,31 @@ public class DatabaseExecutionHistoryRepositoryTest {
         }
 
         @Test
+        public void all_running_executions_are_set_to_KO_on_startup_check_report_status_update() throws JsonProcessingException {
+            // Given running executions
+            clearTables();
+            String scenarioIdOne = "123";
+            Long scenarioId = sut.store(scenarioIdOne, buildDetachedExecution(ServerReportStatus.RUNNING, "exec1", "")).summary().executionId();
+
+            // When
+            int nbOfAffectedExecutions = sut.setAllRunningExecutionsToKO();
+
+            // Then, these executions are KO
+            assertThat(nbOfAffectedExecutions).isEqualTo(1);
+            assertThat(sut.getExecutions(scenarioIdOne).get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
+            com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionReportJpaRepository.findById(scenarioId).orElseThrow();
+            com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport report = objectMapper.readValue(scenarioExecutionReport.getReport(), com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport.class);
+            assertThat(report.report.status).isEqualTo(ServerReportStatus.STOPPED);
+            assertThat(report.report.steps.size()).isEqualTo(1);
+            assertThat(report.report.steps.get(0).status).isEqualTo(ServerReportStatus.SUCCESS);
+            assertThat(report.report.steps.get(0).steps.size()).isEqualTo(1);
+            assertThat(report.report.steps.get(0).steps.get(0).status).isEqualTo(ServerReportStatus.STOPPED);
+
+            // And there is no more running execution
+            assertThat(sut.getExecutionsWithStatus(ServerReportStatus.RUNNING).size()).isEqualTo(0);
+        }
+
+        @Test
         public void getExecution_throws_when_not_found() {
             assertThatExceptionOfType(ReportNotFoundException.class)
                 .isThrownBy(() -> sut.getExecution("-1", 42L))
@@ -335,12 +373,44 @@ public class DatabaseExecutionHistoryRepositoryTest {
                 .status(status)
                 .info(info)
                 .error(error)
-                .report("report content")
+                .report(buildReport())
                 .testCaseTitle("Fake title")
                 .environment("")
                 .datasetId("fake dataset id")
                 .user("")
                 .build();
+        }
+
+        private String buildReport() {
+            StepExecutionReportCore successStepReport =
+                stepReport("root step Title", -1L, ServerReportStatus.RUNNING,
+                    stepReport("step 1", 24L, ServerReportStatus.SUCCESS,
+                        stepReport("step1.1", 23L, ServerReportStatus.RUNNING)));
+            try {
+                return objectMapper.writeValueAsString(new ScenarioExecutionReport(1L, "scenario name", "", "", successStepReport));
+            } catch (JsonProcessingException exception) {
+                return "";
+            }
+        }
+
+        private StepExecutionReportCore stepReport(String title, long duration, ServerReportStatus status, StepExecutionReportCore... subSteps) {
+            List<String> infos = ServerReportStatus.SUCCESS == status ? singletonList("test info") : emptyList();
+            List<String> errors = ServerReportStatus.FAILURE == status ? singletonList("test error") : emptyList();
+
+            return new StepExecutionReportCore(
+                title,
+                duration,
+                Instant.now(),
+                status,
+                infos,
+                errors,
+                Arrays.asList(subSteps),
+                "type",
+                "targetName",
+                "targetUrl",
+                "strategy",
+                Maps.newHashMap(),
+                Maps.newHashMap());
         }
     }
 }

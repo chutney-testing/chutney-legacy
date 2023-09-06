@@ -49,7 +49,11 @@ public class ScenarioExecutionReport {
         report = execution.report();
     }
 
-    public ExecutionHistory.Execution toDomain() {
+  public String getReport() {
+    return report;
+  }
+
+  public ExecutionHistory.Execution toDomain() {
         return ImmutableExecutionHistory.Execution.builder()
             .executionId(scenarioExecutionId)
             .time(Instant.ofEpochMilli(scenarioExecution.executionTime()).atZone(ZoneId.systemDefault()).toLocalDateTime())
