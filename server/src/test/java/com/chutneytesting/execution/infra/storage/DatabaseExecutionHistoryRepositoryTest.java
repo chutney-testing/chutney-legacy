@@ -10,7 +10,8 @@ import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
-import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionReportEntity;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.DetachedExecution;
@@ -267,7 +268,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             // Then, these executions are KO
             assertThat(nbOfAffectedExecutions).isEqualTo(1);
             assertThat(sut.getExecutions(scenarioIdOne).get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
-            com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionReportJpaRepository.findById(scenarioId).orElseThrow();
+            ScenarioExecutionReportEntity scenarioExecutionReport = scenarioExecutionReportJpaRepository.findById(scenarioId).orElseThrow();
             com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport report = objectMapper.readValue(scenarioExecutionReport.getReport(), com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport.class);
             assertThat(report.report.status).isEqualTo(ServerReportStatus.STOPPED);
             assertThat(report.report.steps.size()).isEqualTo(1);
@@ -318,9 +319,9 @@ public class DatabaseExecutionHistoryRepositoryTest {
             Scenario scenario = givenScenario();
             CampaignEntity campaign = givenCampaign(scenario);
 
-            ScenarioExecution scenarioExecutionOne = givenScenarioExecution(scenario.getId(), ServerReportStatus.FAILURE);
+            ScenarioExecutionEntity scenarioExecutionOne = givenScenarioExecution(scenario.getId(), ServerReportStatus.FAILURE);
             ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecutionOne.toDomain());
-            ScenarioExecution scenarioExecutionTwo = givenScenarioExecution(scenario.getId(), ServerReportStatus.SUCCESS);
+            ScenarioExecutionEntity scenarioExecutionTwo = givenScenarioExecution(scenario.getId(), ServerReportStatus.SUCCESS);
 
             Long campaignExecutionId = campaignExecutionDBRepository.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
@@ -346,7 +347,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             Scenario scenario = givenScenario();
             CampaignEntity campaign = givenCampaign(scenario);
 
-            ScenarioExecution scenarioExecutionOne = givenScenarioExecution(scenario.getId(), ServerReportStatus.FAILURE);
+            ScenarioExecutionEntity scenarioExecutionOne = givenScenarioExecution(scenario.getId(), ServerReportStatus.FAILURE);
             ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecutionOne.toDomain());
             givenScenarioExecution(scenario.getId(), ServerReportStatus.SUCCESS);
 

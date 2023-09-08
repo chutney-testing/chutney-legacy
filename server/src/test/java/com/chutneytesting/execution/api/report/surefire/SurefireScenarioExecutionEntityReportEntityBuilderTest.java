@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-public class SurefireScenarioExecutionReportBuilderTest {
+public class SurefireScenarioExecutionEntityReportEntityBuilderTest {
 
     private ExecutionHistoryRepository executionHistoryRepository = mock(ExecutionHistoryRepository.class);
     private ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();

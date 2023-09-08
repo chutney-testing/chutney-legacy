@@ -12,7 +12,7 @@ import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
-import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
@@ -169,7 +169,7 @@ public class DatabaseTestCaseRepositoryTest {
             Scenario scenario = givenScenario();
             CampaignEntity campaign = givenCampaign(scenario);
 
-            ScenarioExecution scenarioExecution = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
+            ScenarioExecutionEntity scenarioExecution = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
 
             // When: the scenarioTemplate is removed
             sut.removeById(scenario.getId().toString());

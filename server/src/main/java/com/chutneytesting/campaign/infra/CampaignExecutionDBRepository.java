@@ -6,7 +6,7 @@ import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
 import com.chutneytesting.execution.infra.storage.DatabaseExecutionJpaRepository;
-import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
@@ -56,7 +56,7 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
         CampaignExecution execution = campaignExecutionJpaRepository.findById(report.executionId).orElseThrow(
             () -> new CampaignExecutionNotFoundException(report.executionId)
         );
-        Iterable<ScenarioExecution> scenarioExecutions =
+        Iterable<ScenarioExecutionEntity> scenarioExecutions =
             scenarioExecutionJpaRepository.findAllById(report.scenarioExecutionReports().stream()
                 .map(serc -> serc.execution.executionId())
                 .toList());
@@ -92,8 +92,8 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
 
     public void clearAllExecutionHistory(Long campaignId) {
         List<CampaignExecution> campaignExecutions = campaignExecutionJpaRepository.findAllByCampaignId(campaignId);
-        List<ScenarioExecution> scenarioExecutions = campaignExecutions.stream().flatMap(ce -> ce.scenarioExecutions().stream()).toList();
-        scenarioExecutions.forEach(ScenarioExecution::clearCampaignExecution);
+        List<ScenarioExecutionEntity> scenarioExecutions = campaignExecutions.stream().flatMap(ce -> ce.scenarioExecutions().stream()).toList();
+        scenarioExecutions.forEach(ScenarioExecutionEntity::clearCampaignExecution);
         scenarioExecutionJpaRepository.saveAll(scenarioExecutions);
         campaignExecutionJpaRepository.deleteAll(campaignExecutions);
     }

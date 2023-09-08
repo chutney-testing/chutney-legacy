@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
 import com.chutneytesting.campaign.infra.jpa.CampaignParameter;
-import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
@@ -129,8 +129,8 @@ class LiquibaseChangelogTest {
             @Test
             @DisplayName("Set scenario executions sequence correctly")
             void set_scenario_executions_sequence_value_after_migration() {
-                ScenarioExecution execution = transactionTemplate.execute(status -> {
-                    ScenarioExecution e = new ScenarioExecution(null, "1", null, null, null, null, null, null, null, null, null, null, null, null);
+                ScenarioExecutionEntity execution = transactionTemplate.execute(status -> {
+                    ScenarioExecutionEntity e = new ScenarioExecutionEntity(null, "1", null, null, null, null, null, null, null, null, null, null, null, null);
                     entityManager.persist(e);
                     return e;
                 });

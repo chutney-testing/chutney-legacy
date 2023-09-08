@@ -3,7 +3,7 @@ package com.chutneytesting.campaign.infra.jpa;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
@@ -34,7 +34,7 @@ public class CampaignExecution {
     private Long campaignId;
 
     @OneToMany(mappedBy = "campaignExecution")
-    private List<ScenarioExecution> scenarioExecutions;
+    private List<ScenarioExecutionEntity> scenarioExecutions;
 
     @Column(name = "PARTIAL")
     private Boolean partial;
@@ -62,7 +62,7 @@ public class CampaignExecution {
         this(null, campaignId, null, null, null, null, null, null, null);
     }
 
-    public CampaignExecution(Long id, Long campaignId, List<ScenarioExecution> scenarioExecutions, Boolean partial, String environment, String userId, String datasetId, Integer datasetVersion, Integer version) {
+    public CampaignExecution(Long id, Long campaignId, List<ScenarioExecutionEntity> scenarioExecutions, Boolean partial, String environment, String userId, String datasetId, Integer datasetVersion, Integer version) {
         this.id = id;
         this.campaignId = campaignId;
         this.scenarioExecutions = scenarioExecutions;
@@ -82,11 +82,11 @@ public class CampaignExecution {
         return campaignId;
     }
 
-    public List<ScenarioExecution> scenarioExecutions() {
+    public List<ScenarioExecutionEntity> scenarioExecutions() {
         return scenarioExecutions;
     }
 
-    public void updateFromDomain(CampaignExecutionReport report, Iterable<ScenarioExecution> scenarioExecutions) {
+    public void updateFromDomain(CampaignExecutionReport report, Iterable<ScenarioExecutionEntity> scenarioExecutions) {
         //id = report.executionId;
         //campaignId = report.campaignId;
         partial = report.partialExecution;

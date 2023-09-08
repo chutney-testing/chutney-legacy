@@ -4,7 +4,7 @@ import static java.time.Instant.now;
 
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
-import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import jakarta.persistence.EntityManager;
@@ -101,8 +101,8 @@ public abstract class AbstractLocalDatabaseTest {
         });
     }
 
-    protected ScenarioExecution givenScenarioExecution(Long scenarioId, ServerReportStatus status) {
-        ScenarioExecution execution = new ScenarioExecution(null, scenarioId.toString(), null, now().toEpochMilli(), 0L, status, null, null, "", "", "", null, null, null);
+    protected ScenarioExecutionEntity givenScenarioExecution(Long scenarioId, ServerReportStatus status) {
+        ScenarioExecutionEntity execution = new ScenarioExecutionEntity(null, scenarioId.toString(), null, now().toEpochMilli(), 0L, status, null, null, "", "", "", null, null, null);
         return transactionTemplate.execute(ts -> {
             entityManager.persist(execution);
             return execution;
