@@ -205,7 +205,7 @@ public class KafkaBasicPublishActionTest {
     }
 
     @Test
-    public void should_reject_kafka_connection_as_producer_with_truststore_in_target() {
+    public void should_reject_kafka_connection_as_producer_with_truststore_in_target_and_not_in_consumer() {
       embeddedKafkaBroker.afterPropertiesSet();
       Consumer<Integer, String> consumer = configureConsumer();
 

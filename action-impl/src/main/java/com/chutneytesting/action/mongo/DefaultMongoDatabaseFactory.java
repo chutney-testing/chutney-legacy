@@ -23,9 +23,10 @@ public class DefaultMongoDatabaseFactory implements MongoDatabaseFactory {
         String connectionString = String.format("mongodb://%s:%d/", target.host(), target.port());
 
         final MongoClient mongoClient;
-        MongoClientSettings.Builder mongoClientSettings = MongoClientSettings
-            .builder()
-            .applyToSslSettings(builder -> {
+        MongoClientSettings.Builder mongoClientSettings = MongoClientSettings.builder().applyConnectionString(new ConnectionString(connectionString));
+        target.trustStore().ifPresent(trustStore -> {
+            target.trustStorePassword().orElseThrow(IllegalArgumentException::new);
+            mongoClientSettings.applyToSslSettings(builder -> {
               try {
                 builder
                   .enabled(true)
@@ -35,6 +36,7 @@ public class DefaultMongoDatabaseFactory implements MongoDatabaseFactory {
                 throw new IllegalArgumentException(e.getMessage(), e);
               }
             });
+        });
         if (target.user().isPresent()) {
             String user = target.user().get();
             String password = target.userPassword().orElse("");

@@ -72,8 +72,8 @@ public class HttpActionTest {
         .builder()
         .withTargetId("test target")
         .withUrl("https://localhost:" + wireMockServer.httpsPort() + "/")
-        .withProperty("trustStore", "C:\\Users\\AD13A0CL\\Downloads\\jdk-17.0.7\\lib\\security\\cacerts")
-        .withProperty("trustStorePassword", "changeit")
+        .withProperty("trustStore", KEYSTORE_JKS)
+        .withProperty("trustStorePassword", "server")
         .build();
 
     wireMockServer.stubFor(any(anyUrl())
