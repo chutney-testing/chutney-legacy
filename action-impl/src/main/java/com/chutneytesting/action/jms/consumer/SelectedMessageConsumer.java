@@ -2,11 +2,11 @@ package com.chutneytesting.action.jms.consumer;
 
 import com.chutneytesting.action.jms.consumer.bodySelector.BodySelector;
 import com.chutneytesting.tools.Streams;
-import java.util.Enumeration;
-import java.util.Optional;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.QueueBrowser;
+import java.util.Enumeration;
+import java.util.Optional;
 
 class SelectedMessageConsumer implements Consumer {
 

@@ -34,7 +34,7 @@ import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReportBuilder;
 import com.chutneytesting.engine.infrastructure.delegation.HttpClient;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;

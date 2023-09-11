@@ -4,7 +4,7 @@ import com.chutneytesting.ExecutionConfiguration;
 import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
 import com.chutneytesting.glacio.api.ExecutionRequestMapper;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 public class ChutneyEngineExecutionContext implements EngineExecutionContext {

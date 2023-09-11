@@ -1,8 +1,8 @@
 package com.chutneytesting.action.jms.consumer;
 
-import java.util.Optional;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import java.util.Optional;
 
 public interface Consumer {
 

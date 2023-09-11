@@ -1,16 +1,19 @@
 package com.chutneytesting.action.jms;
 
+import static com.chutneytesting.action.spi.ActionExecutionResult.Status.Success;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 import com.chutneytesting.action.TestTarget;
+import com.chutneytesting.action.jms.JmsListenerAction;
+import com.chutneytesting.action.jms.JmsSenderAction;
+import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Logger;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 public class JmsSenderActionWithActiveMqIntegrationTest extends ActiveMQTestSupport {
-
     @Test
     public void failedSSL2WayAskWithOneWayProvided() throws Exception {
 
@@ -33,4 +36,5 @@ public class JmsSenderActionWithActiveMqIntegrationTest extends ActiveMQTestSupp
 
         assertThat(needClientAuthConnector.getBrokerService().getTotalConnections()).isEqualTo(expectedTotalConnections.get());
     }
+
 }

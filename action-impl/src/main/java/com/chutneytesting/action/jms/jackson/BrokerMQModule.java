@@ -3,11 +3,11 @@ package com.chutneytesting.action.jms.jackson;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.activemq.broker.BrokerService;
 
-public class ActiveMQModule extends SimpleModule {
+public class BrokerMQModule extends SimpleModule {
 
-    private static final String NAME = "ChutneyActiveMQModule";
+    private static final String NAME = "ChutneyBrokerMQModule ";
 
-    public ActiveMQModule() {
+    public BrokerMQModule() {
         super(NAME);
         addSerializer(BrokerService.class, new BrokerServiceSerializer());
     }

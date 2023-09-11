@@ -1,6 +1,6 @@
 package com.chutneytesting.server.core.domain.execution;
 
-import static io.reactivex.schedulers.Schedulers.io;
+import static io.reactivex.rxjava3.schedulers.Schedulers.io;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 
@@ -18,8 +18,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Ascii;
 import com.google.common.base.Joiner;
-import io.reactivex.Completable;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;

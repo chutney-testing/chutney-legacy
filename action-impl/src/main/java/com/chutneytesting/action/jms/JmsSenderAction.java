@@ -10,10 +10,10 @@ import com.chutneytesting.action.spi.injectable.Input;
 import com.chutneytesting.action.spi.injectable.Logger;
 import com.chutneytesting.action.spi.injectable.Target;
 import com.chutneytesting.tools.CloseableResource;
+import javax.jms.JMSException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import javax.jms.JMSException;
 
 public class JmsSenderAction implements Action {
 

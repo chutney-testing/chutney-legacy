@@ -147,8 +147,8 @@
             <artifactId>jaxen</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
@@ -202,9 +202,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.gwenn</groupId>
-            <artifactId>sqlite-dialect</artifactId>
-            <scope>test</scope>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-community-dialects</artifactId>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -218,7 +217,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock-standalone</artifactId>
+            <artifactId>wiremock</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -229,10 +228,6 @@
         <dependency>
             <groupId>org.apache.activemq.tooling</groupId>
             <artifactId>activemq-junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.mockrunner</groupId>
-            <artifactId>mockrunner-jms</artifactId>
         </dependency>
         <dependency>
             <groupId>net.jqwik</groupId>
@@ -250,7 +245,7 @@
             <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-xjc-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>4.0.0</version>
                 <executions>
                     <execution>
                         <id>xjc</id>

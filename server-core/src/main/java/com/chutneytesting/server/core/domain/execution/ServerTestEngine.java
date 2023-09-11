@@ -1,7 +1,7 @@
 package com.chutneytesting.server.core.domain.execution;
 
 import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import org.apache.commons.lang3.tuple.Pair;
 
 public interface ServerTestEngine {

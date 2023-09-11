@@ -86,7 +86,7 @@
         <buildMetadataRequired>false</buildMetadataRequired>
 
         <!-- Runtime dependencies versions -->
-        <springboot.version>2.7.14</springboot.version>
+        <springboot.version>3.1.2</springboot.version>
         <guava.version>31.0.1-jre</guava.version> <!-- Divergence on dependencies checker-qual and error_prone_annotations --> <!-- Test on https://github.com/FasterXML/jackson-datatypes-collections/tree/2.14/guava -->
 
         <immutables.version>2.9.0</immutables.version>
@@ -96,9 +96,7 @@
         <hjson.version>3.0.1</hjson.version>
         <orientdb.version>3.2.12</orientdb.version> <!-- Divergence on dependencies istack-commons-runtime and asm-->
         <jsr305.version>3.0.2</jsr305.version>
-        <liquibase.version>4.18.0</liquibase.version>
-        <sqlite.version>3.40.1.0</sqlite.version>
-        <sqlite.hibernate.dialect.version>0.1.2</sqlite.hibernate.dialect.version>
+        <liquibase.version>4.23.0</liquibase.version>
 
         <!-- action-impl dependencies versions -->
         <sshj.version>0.34.0</sshj.version>
@@ -109,13 +107,12 @@
         <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version> <!-- Divergence on dependencies commons-logging and joda-time -->
 
         <!-- action-impl test dependencies versions -->
-        <mockrunner-jms.version>2.0.7</mockrunner-jms.version>
-        <activemq-junit.version>5.16.5</activemq-junit.version> <!-- = Follow spring boot version -->
+        <activemq-junit.version>5.18.2</activemq-junit.version> <!-- = Follow spring boot version -->
         <rabbitmq-mock.version>1.2.0</rabbitmq-mock.version>
 
         <!-- test dependencies versions -->
         <jqwik.version>1.7.4</jqwik.version>
-        <wire-mock.version>2.27.2</wire-mock.version>
+        <wire-mock.version>3.0.0-beta-10</wire-mock.version>
         <testcontainers.version>1.19.0</testcontainers.version>
     </properties>
 
@@ -162,11 +159,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -338,16 +330,6 @@
                 <artifactId>liquibase-core</artifactId>
                 <version>${liquibase.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.xerial</groupId>
-                <artifactId>sqlite-jdbc</artifactId>
-                <version>${sqlite.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.gwenn</groupId>
-                <artifactId>sqlite-dialect</artifactId>
-                <version>${sqlite.hibernate.dialect.version}</version>
-            </dependency>
             <!-- Test dependencies -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -360,6 +342,10 @@
                         <artifactId>junit</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>com.vaadin.external.google</groupId>
+                        <artifactId>android-json</artifactId>
+                    </exclusion>
+                    <exclusion>
                         <groupId>org.junit.vintage</groupId>
                         <artifactId>junit-vintage-engine</artifactId>
                     </exclusion>
@@ -367,18 +353,12 @@
             </dependency>
             <dependency>
                 <groupId>com.github.tomakehurst</groupId>
-                <artifactId>wiremock-standalone</artifactId>
+                <artifactId>wiremock</artifactId>
                 <version>${wire-mock.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mockrunner</groupId>
-                <artifactId>mockrunner-jms</artifactId>
-                <version>${mockrunner-jms.version}</version>
-                <scope>test</scope>
                 <exclusions>
                     <exclusion>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>*</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -410,26 +390,20 @@
             </dependency>
 
             <!-- Dependency Convergence -->
-            <!-- Component -->
+
+            <!-- Actions -->
             <dependency>
-                <groupId>com.sun.istack</groupId>
-                <artifactId>istack-commons-runtime</artifactId>
-                <version>4.0.1</version>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk-logs</artifactId>
+                <version>1.25.0-alpha</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>9.2</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.core</artifactId>
-                <version>4.3.1</version>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-semconv</artifactId>
+                <version>1.25.0-alpha</version>
                 <scope>runtime</scope>
             </dependency>
-            <!-- Actions -->
             <dependency>
                 <groupId>org.apache.santuario</groupId>
                 <artifactId>xmlsec</artifactId>
@@ -451,26 +425,49 @@
             <dependency>
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-library</artifactId>
-                <version>2.13.6</version>
+                <version>2.13.10</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-reflect</artifactId>
-                <version>2.13.6</version>
+                <version>2.13.10</version>
                 <scope>runtime</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>3.6.4</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- Jira -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient-cache</artifactId>
+                <version>4.5.13</version>
+                <scope>compile</scope>
+            </dependency>
+
             <!-- Server -->
             <dependency>
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker-qual</artifactId>
-                <version>3.19.0</version>
+                <version>3.33.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.errorprone</groupId>
                 <artifactId>error_prone_annotations</artifactId>
-                <version>2.10.0</version>
+                <version>2.18.0</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- Component -->
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>9.3</version>
                 <scope>compile</scope>
             </dependency>
         </dependencies>
@@ -525,12 +522,12 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>jaxb2-maven-plugin</artifactId>
-                    <version>2.5.0</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.2</version>
                     <configuration>
                         <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                     </configuration>

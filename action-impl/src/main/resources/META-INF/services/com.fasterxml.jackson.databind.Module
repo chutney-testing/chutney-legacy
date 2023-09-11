@@ -1,4 +1,5 @@
 com.chutneytesting.action.selenium.jackson.SeleniumModule
 com.chutneytesting.action.http.jackson.WiremockModule
-com.chutneytesting.action.jms.jackson.ActiveMQModule
+com.chutneytesting.action.jakarta.jackson.ActiveMQModule
+com.chutneytesting.action.jms.jackson.BrokerMQModule
 com.chutneytesting.action.kafka.jackson.KafkaModule

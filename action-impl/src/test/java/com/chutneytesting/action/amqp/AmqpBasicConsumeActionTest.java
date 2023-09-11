@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import wiremock.com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap;
 
 @SuppressWarnings("unchecked")
 public class AmqpBasicConsumeActionTest {

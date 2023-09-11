@@ -4,6 +4,7 @@ import static util.infra.AbstractLocalDatabaseTest.DB_CHANGELOG_DB_CHANGELOG_MAS
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import jakarta.persistence.EntityManagerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,7 +15,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.logging.Level;
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import liquibase.Liquibase;
 import liquibase.Scope;
@@ -122,7 +122,7 @@ class TestInfraConfiguration {
         public Properties jpaProperties() {
             Properties jpaProperties = new Properties();
             jpaProperties.putAll(Map.of(
-                "hibernate.dialect", "org.sqlite.hibernate.dialect.SQLiteDialect",
+                "hibernate.dialect", "org.hibernate.community.dialect.SQLiteDialect",
                 "hibernate.show_sql", "true",
                 "hibernate.use-new-id-generator-mappings", "false"
             ));

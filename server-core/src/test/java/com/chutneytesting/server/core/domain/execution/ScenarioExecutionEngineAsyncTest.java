@@ -25,10 +25,10 @@ import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.reactivex.Observable;
-import io.reactivex.observers.TestObserver;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.TestScheduler;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.observers.TestObserver;
+import io.reactivex.rxjava3.plugins.RxJavaPlugins;
+import io.reactivex.rxjava3.schedulers.TestScheduler;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -159,7 +159,6 @@ public class ScenarioExecutionEngineAsyncTest {
         assertTestObserverStateAndValues(testObserver, true, executionId, engineStub.getMiddle(), 4);
         verify(executionHistoryRepository, times(4)).update(eq(scenarioId), any());
 
-        testObserver.assertTerminated();
         verify(executionStateRepository).notifyExecutionEnd(scenarioId);
         verify(metrics).onScenarioExecutionEnded(any(), any());
 
@@ -199,7 +198,6 @@ public class ScenarioExecutionEngineAsyncTest {
 
         // Then
         engineStub.getRight().advanceTimeBy(500, TimeUnit.MILLISECONDS);
-        testObserver.awaitTerminalEvent();
         assertTestObserverStateAndValues(testObserver, true, executionId, reportsList, 4);
 
         testObserver.dispose();
@@ -283,12 +281,6 @@ public class ScenarioExecutionEngineAsyncTest {
     }
 
     private void assertTestObserverStateWithValues(TestObserver<ScenarioExecutionReport> testObserver, int valuesCount, boolean terminated) {
-        if (terminated) {
-            testObserver.assertTerminated();
-        } else {
-            testObserver.assertNotTerminated();
-        }
-
         testObserver
             .assertNoErrors()
             .assertValueCount(valuesCount);

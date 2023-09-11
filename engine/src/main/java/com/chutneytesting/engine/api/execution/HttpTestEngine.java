@@ -1,6 +1,6 @@
 package com.chutneytesting.engine.api.execution;
 
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;

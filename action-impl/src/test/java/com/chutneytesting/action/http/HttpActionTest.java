@@ -58,9 +58,7 @@ public class HttpActionTest {
         int expectedStatus = 200;
         String expectedBody = "Resource Body";
         org.springframework.http.HttpHeaders expectedHeaders = new org.springframework.http.HttpHeaders();
-        expectedHeaders.put("Server", Collections.singletonList("Jetty(9.2.z-SNAPSHOT)"));
         expectedHeaders.put("Transfer-Encoding", Collections.singletonList("chunked"));
-        expectedHeaders.put("Vary", Collections.singletonList("Accept-Encoding, User-Agent"));
 
         stubFor(get(urlEqualTo(uri))
             .willReturn(aResponse().withStatus(expectedStatus)

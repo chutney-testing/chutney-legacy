@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -69,7 +69,7 @@ class MicrometerMetrics implements ChutneyMetrics {
     }
 
     @Override
-    public void onHttpError(HttpStatus status) {
+    public void onHttpError(HttpStatusCode status) {
         final Counter httpErrorCount = this.meterRegistry.counter("http_error", List.of(of("status", String.valueOf(status.value()))));
         httpErrorCount.increment();
     }

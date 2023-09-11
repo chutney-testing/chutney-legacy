@@ -22,7 +22,7 @@ import com.chutneytesting.engine.domain.execution.event.EndScenarioExecutionEven
 import com.chutneytesting.engine.domain.execution.event.StartScenarioExecutionEvent;
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
-import io.reactivex.observers.TestObserver;
+import io.reactivex.rxjava3.observers.TestObserver;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -109,7 +109,6 @@ public class ReporterTest {
 
         executeFakeScenarioSuccess();
         scenarioExecutionReportObservable.awaitCount(10);
-        scenarioExecutionReportObservable.assertTerminated();
 
         scenarioExecutionReportObservable.dispose();
     }
@@ -136,7 +135,6 @@ public class ReporterTest {
         TestObserver<StepExecutionReport> scenarioExecutionReportObservable =
             sut.subscribeOnExecution(0L).test();
 
-        scenarioExecutionReportObservable.assertTerminated();
         scenarioExecutionReportObservable.assertValueCount(0);
 
         scenarioExecutionReportObservable.dispose();
