@@ -179,7 +179,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     private ImmutableExecutionHistory.Execution buildKnockoutExecutionFrom(ExecutionSummary executionSummary) {
-        String reportStoppedRunningStatus = stopRunningReport(executionSummary);
+        String reportStoppedRunningOrPausedStatus = stopRunningOrPausedReport(executionSummary);
         return ImmutableExecutionHistory.Execution.builder()
             .executionId(executionSummary.executionId())
             .status(ServerReportStatus.FAILURE)
@@ -187,17 +187,17 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
             .duration(executionSummary.duration())
             .info(executionSummary.info())
             .error("Execution was interrupted !")
-            .report(reportStoppedRunningStatus)
+            .report(reportStoppedRunningOrPausedStatus)
             .testCaseTitle(executionSummary.testCaseTitle())
             .environment(executionSummary.environment())
             .user(executionSummary.user())
             .build();
     }
 
-    private String stopRunningReport(ExecutionSummary executionSummary) {
+    private String stopRunningOrPausedReport(ExecutionSummary executionSummary) {
         return scenarioExecutionReportJpaRepository.findById(executionSummary.executionId()).map(ScenarioExecutionReportEntity::toDomain).map(execution -> {
             try {
-                ScenarioExecutionReport newScenarioExecutionReport = updateStatusInScenarioExecutionReportWithStoppedStatusIfRunning(execution);
+                ScenarioExecutionReport newScenarioExecutionReport = updateStatusInScenarioExecutionReportWithStoppedStatusIfRunningOrPaused(execution);
                 return objectMapper.writeValueAsString(newScenarioExecutionReport);
             } catch (JsonProcessingException exception) {
                 LOGGER.error("Unexpected error while deserializing report for execution id " + executionSummary.executionId(), exception);
@@ -209,9 +209,9 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         });
     }
 
-    private ScenarioExecutionReport updateStatusInScenarioExecutionReportWithStoppedStatusIfRunning(Execution execution) throws JsonProcessingException {
+    private ScenarioExecutionReport updateStatusInScenarioExecutionReportWithStoppedStatusIfRunningOrPaused(Execution execution) throws JsonProcessingException {
         ScenarioExecutionReport scenarioExecutionReport = objectMapper.readValue(execution.report(), ScenarioExecutionReport.class);
-        StepExecutionReportCore report = updateStepWithStoppedStatusIfRunning(scenarioExecutionReport.report);
+        StepExecutionReportCore report = updateStepWithStoppedStatusIfRunningOrPaused(scenarioExecutionReport.report);
         return updateScenarioExecutionReport(scenarioExecutionReport, report);
     }
 
@@ -224,17 +224,17 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
             report);
     }
 
-    private List<StepExecutionReportCore> updateStepListWithStoppedStatusIfRunning(List<StepExecutionReportCore> steps) {
-        return steps.stream().map(this::updateStepWithStoppedStatusIfRunning).collect(Collectors.toList());
+    private List<StepExecutionReportCore> updateStepListWithStoppedStatusIfRunningOrPaused(List<StepExecutionReportCore> steps) {
+        return steps.stream().map(this::updateStepWithStoppedStatusIfRunningOrPaused).collect(Collectors.toList());
     }
 
-    private boolean isExecutionRunning(ServerReportStatus status) {
-        return status.equals(ServerReportStatus.RUNNING);
+    private boolean isExecutionRunningOrPaused(ServerReportStatus status) {
+        return status.equals(ServerReportStatus.RUNNING) || status.equals(ServerReportStatus.PAUSED);
     }
 
-    private StepExecutionReportCore updateStepWithStoppedStatusIfRunning(StepExecutionReportCore step) {
-        ServerReportStatus status = isExecutionRunning(step.status) ? ServerReportStatus.STOPPED : step.status;
-        List<StepExecutionReportCore> steps = updateStepListWithStoppedStatusIfRunning(step.steps);
+    private StepExecutionReportCore updateStepWithStoppedStatusIfRunningOrPaused(StepExecutionReportCore step) {
+        ServerReportStatus status = isExecutionRunningOrPaused(step.status) ? ServerReportStatus.STOPPED : step.status;
+        List<StepExecutionReportCore> steps = updateStepListWithStoppedStatusIfRunningOrPaused(step.steps);
         return new StepExecutionReportCore(
             step.name,
             step.duration,

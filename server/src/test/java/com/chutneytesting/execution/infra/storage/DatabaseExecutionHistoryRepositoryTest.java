@@ -270,14 +270,39 @@ public class DatabaseExecutionHistoryRepositoryTest {
             assertThat(sut.getExecutions(scenarioIdOne).get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
             ScenarioExecutionReportEntity scenarioExecutionReport = scenarioExecutionReportJpaRepository.findById(scenarioId).orElseThrow();
             com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport report = objectMapper.readValue(scenarioExecutionReport.getReport(), com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport.class);
-            assertThat(report.report.status).isEqualTo(ServerReportStatus.STOPPED);
+            assertThat(report.report.status).isEqualTo(ServerReportStatus.SUCCESS);
             assertThat(report.report.steps.size()).isEqualTo(1);
-            assertThat(report.report.steps.get(0).status).isEqualTo(ServerReportStatus.SUCCESS);
+            assertThat(report.report.steps.get(0).status).isEqualTo(ServerReportStatus.STOPPED);
             assertThat(report.report.steps.get(0).steps.size()).isEqualTo(1);
             assertThat(report.report.steps.get(0).steps.get(0).status).isEqualTo(ServerReportStatus.STOPPED);
 
             // And there is no more running execution
             assertThat(sut.getExecutionsWithStatus(ServerReportStatus.RUNNING).size()).isEqualTo(0);
+        }
+
+        @Test
+        public void all_paused_executions_are_set_to_KO_on_startup_check_report_status_update() throws JsonProcessingException {
+            // Given running executions
+            clearTables();
+            String scenarioIdOne = "123";
+            Long scenarioId = sut.store(scenarioIdOne, buildDetachedExecution(ServerReportStatus.PAUSED, "exec1", "")).summary().executionId();
+
+            // When
+            int nbOfAffectedExecutions = sut.setAllRunningExecutionsToKO();
+
+            // Then, these executions are KO
+            assertThat(nbOfAffectedExecutions).isEqualTo(1);
+            assertThat(sut.getExecutions(scenarioIdOne).get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
+            ScenarioExecutionReportEntity scenarioExecutionReport = scenarioExecutionReportJpaRepository.findById(scenarioId).orElseThrow();
+            com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport report = objectMapper.readValue(scenarioExecutionReport.getReport(), com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport.class);
+            assertThat(report.report.status).isEqualTo(ServerReportStatus.SUCCESS);
+            assertThat(report.report.steps.size()).isEqualTo(1);
+            assertThat(report.report.steps.get(0).status).isEqualTo(ServerReportStatus.STOPPED);
+            assertThat(report.report.steps.get(0).steps.size()).isEqualTo(1);
+            assertThat(report.report.steps.get(0).steps.get(0).status).isEqualTo(ServerReportStatus.STOPPED);
+
+            // And there is no more running execution
+            assertThat(sut.getExecutionsWithStatus(ServerReportStatus.PAUSED).size()).isEqualTo(0);
         }
 
         @Test
@@ -384,8 +409,8 @@ public class DatabaseExecutionHistoryRepositoryTest {
 
         private String buildReport() {
             StepExecutionReportCore successStepReport =
-                stepReport("root step Title", -1L, ServerReportStatus.RUNNING,
-                    stepReport("step 1", 24L, ServerReportStatus.SUCCESS,
+                stepReport("root step Title", -1L, ServerReportStatus.SUCCESS,
+                    stepReport("step 1", 24L, ServerReportStatus.PAUSED,
                         stepReport("step1.1", 23L, ServerReportStatus.RUNNING)));
             try {
                 return objectMapper.writeValueAsString(new ScenarioExecutionReport(1L, "scenario name", "", "", successStepReport));
