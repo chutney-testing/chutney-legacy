@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
-import com.chutneytesting.campaign.infra.jpa.Campaign;
+import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
@@ -278,7 +278,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
         public void should_map_campaign_only_when_executing_from_campaign() {
             // Given
             Scenario scenario = givenScenario();
-            Campaign campaign = givenCampaign(scenario);
+            CampaignEntity campaign = givenCampaign(scenario);
 
             ScenarioExecution scenarioExecutionOne = givenScenarioExecution(scenario.getId(), ServerReportStatus.FAILURE);
             ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecutionOne.toDomain());
@@ -306,7 +306,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
         public void should_retrieve_scenario_execution_summary() {
             // Given
             Scenario scenario = givenScenario();
-            Campaign campaign = givenCampaign(scenario);
+            CampaignEntity campaign = givenCampaign(scenario);
 
             ScenarioExecution scenarioExecutionOne = givenScenarioExecution(scenario.getId(), ServerReportStatus.FAILURE);
             ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecutionOne.toDomain());

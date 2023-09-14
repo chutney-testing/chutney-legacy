@@ -1,5 +1,7 @@
 package com.chutneytesting.campaign.domain;
 
+import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.FAILURE;
+import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.SUCCESS;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -9,10 +11,12 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
+import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReportBuilder;
 import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -86,12 +90,12 @@ public class CampaignExecutionReportTest {
         ScenarioExecutionReportCampaign scenarioReport_SUCCESS = new ScenarioExecutionReportCampaign("1", "...", execution_SUCESS);
 
         ExecutionHistory.ExecutionSummary execution_FAILURE = mock(ExecutionHistory.ExecutionSummary.class);
-        when(execution_FAILURE.status()).thenReturn(ServerReportStatus.FAILURE);
+        when(execution_FAILURE.status()).thenReturn(FAILURE);
         ScenarioExecutionReportCampaign scenarioReport_FAILURE = new ScenarioExecutionReportCampaign("1", "...", execution_FAILURE);
         // When
         CampaignExecutionReport campaignReport = new CampaignExecutionReport(1L, 1L, Lists.list(execution_noStatus, scenarioReport_SUCCESS, scenarioReport_FAILURE), "...", false, "", null, null, "");
         // Then
-        assertThat(campaignReport.status()).isEqualTo(ServerReportStatus.FAILURE);
+        assertThat(campaignReport.status()).isEqualTo(FAILURE);
     }
 
     @Test
@@ -157,14 +161,14 @@ public class CampaignExecutionReportTest {
         // Given
         CampaignExecutionReport campaignReport = new CampaignExecutionReport(1L, "...", false, "", null, null, "");
         addScenarioExecutions(campaignReport, "1", "title1", ServerReportStatus.SUCCESS);
-        addScenarioExecutions(campaignReport, "2", "title2", ServerReportStatus.FAILURE);
+        addScenarioExecutions(campaignReport, "2", "title2", FAILURE);
 
         // When
         campaignReport.endCampaignExecution();
 
         // Then
         assertThat(campaignReport.scenarioExecutionReports()).hasSize(2);
-        assertThat(campaignReport.status()).isEqualTo(ServerReportStatus.FAILURE);
+        assertThat(campaignReport.status()).isEqualTo(FAILURE);
     }
 
     @Test
@@ -180,6 +184,44 @@ public class CampaignExecutionReportTest {
         // Then
         assertThat(campaignReport.scenarioExecutionReports()).hasSize(2);
         assertThat(campaignReport.status()).isEqualTo(ServerReportStatus.STOPPED);
+    }
+
+    /**
+     *
+     */
+    @Test
+    public void should_calculate_filter_retry_scenario_in_status_calculation() {
+        // Given
+        String scenarioId = "1";
+        ExecutionHistory.ExecutionSummary firstExecution = ImmutableExecutionHistory.ExecutionSummary.builder()
+            .executionId(1L)
+            .testCaseTitle("")
+            .time(LocalDateTime.now().minusMinutes(1l))
+            .duration(0l)
+            .environment("")
+            .user("")
+            .status(FAILURE)
+            .build();
+        ScenarioExecutionReportCampaign firstReport = new ScenarioExecutionReportCampaign(scenarioId, "", firstExecution);
+        ExecutionHistory.ExecutionSummary retryExecution = ImmutableExecutionHistory.ExecutionSummary.builder()
+            .executionId(2L)
+            .testCaseTitle("")
+            .time(LocalDateTime.now())
+            .duration(0l)
+            .environment("")
+            .user("")
+            .status(SUCCESS)
+            .build();
+        ScenarioExecutionReportCampaign retryReport = new ScenarioExecutionReportCampaign(scenarioId, "", retryExecution);
+        CampaignExecutionReport campaignReport = CampaignExecutionReportBuilder.builder()
+            .addScenarioExecutionReport(firstReport)
+            .addScenarioExecutionReport(retryReport)
+            .build();
+        // When
+        ServerReportStatus status = campaignReport.status();
+
+        // Then
+        assertThat(status).isEqualTo(ServerReportStatus.SUCCESS);
     }
 
     @Test

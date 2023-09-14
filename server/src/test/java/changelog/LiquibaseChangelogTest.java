@@ -3,7 +3,7 @@ package changelog;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import com.chutneytesting.campaign.infra.jpa.Campaign;
+import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
 import com.chutneytesting.campaign.infra.jpa.CampaignParameter;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
@@ -114,11 +114,11 @@ class LiquibaseChangelogTest {
             @Test
             @DisplayName("Set campaign sequences correctly")
             void set_campaign_sequence_value_after_migration() {
-                Campaign campaign = transactionTemplate.execute(status -> {
+                CampaignEntity campaign = transactionTemplate.execute(status -> {
                     Set<CampaignParameter> parameters = Set.of(
                         new CampaignParameter("param1", "val1")
                     );
-                    Campaign c = new Campaign(null, "title", "", null, false, false, null, null, null, null, parameters);
+                    CampaignEntity c = new CampaignEntity(null, "title", "", null, false, false, null, null, null, null, parameters);
                     entityManager.persist(c);
                     return c;
                 });

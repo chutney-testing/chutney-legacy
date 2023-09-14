@@ -2,7 +2,7 @@ package util.infra;
 
 import static java.time.Instant.now;
 
-import com.chutneytesting.campaign.infra.jpa.Campaign;
+import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
@@ -87,9 +87,9 @@ public abstract class AbstractLocalDatabaseTest {
         return componentId ? clusterId + "-" + objectId : String.valueOf(objectId);
     }
 
-    protected Campaign givenCampaign(Scenario... scenarios) {
+    protected CampaignEntity givenCampaign(Scenario... scenarios) {
         ArrayList<CampaignScenario> campaignScenarios = new ArrayList<>();
-        Campaign campaign = new Campaign("", campaignScenarios);
+        CampaignEntity campaign = new CampaignEntity("", campaignScenarios);
         return transactionTemplate.execute(ts -> {
             for (int i = 0; i < scenarios.length; i++) {
                 Scenario scenario = scenarios[i];

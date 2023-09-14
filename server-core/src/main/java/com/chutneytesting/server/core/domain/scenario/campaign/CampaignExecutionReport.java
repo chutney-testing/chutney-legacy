@@ -11,7 +11,9 @@ import com.chutneytesting.server.core.domain.scenario.TestCase;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -167,7 +169,10 @@ public class CampaignExecutionReport {
     }
 
     private ServerReportStatus findStatus(List<ScenarioExecutionReportCampaign> scenarioExecutionReports) {
-        ServerReportStatus foundStatus = scenarioExecutionReports.stream()
+
+        List<ScenarioExecutionReportCampaign> filteredReports = filterRetry(scenarioExecutionReports);
+
+        ServerReportStatus foundStatus = filteredReports.stream()
             .filter(Objects::nonNull)
             .map(report -> report.execution)
             .filter(Objects::nonNull)
@@ -177,6 +182,13 @@ public class CampaignExecutionReport {
             return ServerReportStatus.STOPPED;
         }
         return foundStatus;
+    }
+
+    private List<ScenarioExecutionReportCampaign> filterRetry(List<ScenarioExecutionReportCampaign> scenarioExecutionReports) {
+        return scenarioExecutionReports.stream().collect(Collectors.groupingBy(s -> s.scenarioId))
+            .values().stream()
+            .map(list -> list.stream().max(Comparator.comparing(objet -> objet.execution.time())).get())
+            .toList();
     }
 
     @Override

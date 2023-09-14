@@ -101,11 +101,11 @@ public class CampaignExecution {
         });
     }
 
-    public CampaignExecutionReport toDomain(Campaign campaign, boolean isRunning, Function<String, String> titleSupplier) {
+    public CampaignExecutionReport toDomain(CampaignEntity campaign, boolean isRunning, Function<String, String> titleSupplier) {
         return toDomain(campaign, true, isRunning, titleSupplier);
     }
 
-    public CampaignExecutionReport toDomain(Campaign campaign, boolean withScenariosExecutions, boolean isRunning, Function<String, String> scenarioTitleSupplier) {
+    public CampaignExecutionReport toDomain(CampaignEntity campaign, boolean withScenariosExecutions, boolean isRunning, Function<String, String> scenarioTitleSupplier) {
         List<ScenarioExecutionReportCampaign> scenarioExecutionReportCampaigns = emptyList();
         if (withScenariosExecutions) {
             if (isRunning) {

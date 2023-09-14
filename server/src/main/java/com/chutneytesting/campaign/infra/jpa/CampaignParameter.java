@@ -22,7 +22,7 @@ public class CampaignParameter {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CAMPAIGN_ID")
-    private Campaign campaign;
+    private CampaignEntity campaign;
 
     @Column(name = "PARAMETER")
     private String parameter;
@@ -37,7 +37,7 @@ public class CampaignParameter {
         this(null, parameter, value);
     }
 
-    public CampaignParameter(Campaign campaign, String parameter, String value) {
+    public CampaignParameter(CampaignEntity campaign, String parameter, String value) {
         this.campaign = campaign;
         this.parameter = parameter;
         this.value = value;
@@ -51,7 +51,7 @@ public class CampaignParameter {
         return value;
     }
 
-    public void forCampaign(Campaign campaign) {
+    public void forCampaign(CampaignEntity campaign) {
         this.campaign = campaign;
     }
 
