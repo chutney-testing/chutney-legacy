@@ -50,6 +50,7 @@ public class HttpActionTest {
         .keyManagerPassword("server"));
 
     private static final String KEYSTORE_JKS = HttpsServerStartActionTest.class.getResource("/security/server.jks").getPath();
+    private static final String CACERTS = HttpsServerStartActionTest.class.getResource("/security/cacerts").getPath();
 
   @BeforeEach
     public void setUp() {
@@ -72,8 +73,8 @@ public class HttpActionTest {
         .builder()
         .withTargetId("test target")
         .withUrl("https://localhost:" + wireMockServer.httpsPort() + "/")
-        .withProperty("trustStore", KEYSTORE_JKS)
-        .withProperty("trustStorePassword", "server")
+        .withProperty("trustStore", CACERTS)
+        .withProperty("trustStorePassword", "changeit")
         .build();
 
     wireMockServer.stubFor(any(anyUrl())

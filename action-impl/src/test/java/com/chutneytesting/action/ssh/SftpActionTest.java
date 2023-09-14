@@ -47,6 +47,9 @@ public class SftpActionTest {
         String directory = SftpActionTest.class.getResource("/security").getPath();
         List<String> expectedFiles = Lists.newArrayList(
             "client_rsa.pub",
+            "cacerts",
+            "server.pem",
+            "mongod.conf",
             "authorized_keys",
             "client_ecdsa.pub",
             "keystore-with-keypwd.jks",

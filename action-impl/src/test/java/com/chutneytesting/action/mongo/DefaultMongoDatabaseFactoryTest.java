@@ -1,55 +1,70 @@
 package com.chutneytesting.action.mongo;
 
+import com.chutneytesting.action.TestLogger;
 import com.chutneytesting.action.TestTarget;
+import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Target;
-import com.chutneytesting.tools.CloseableResource;
-import com.mongodb.client.MongoDatabase;
-import org.junit.Test;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.assertj.core.api.InstanceOfAssertFactories;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Testcontainers
 public class DefaultMongoDatabaseFactoryTest {
 
-    @Container
-  final MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:4.4.0"))
-      .withExposedPorts(27017)
-      .withEnv("MONGO_INITDB_DATABASE", "toto")
-      .withEnv("MONGO_INITDB_USERNAME", "toto")
-      .withEnv("MONGO_INITDB_PASSWORD", "totoTutu")
-      .withEnv("MONGO_INITDB_SSL_MODE", "requireSSL")
-      .withEnv("MONGO_INITDB_SSL_CA_FILE", "/etc/ssl/server.jks")
-      .withCopyFileToContainer(MountableFile.forClasspathResource("/security/server.jks"), "/etc/ssl/server.jks");
-  private final DefaultMongoDatabaseFactory mongoDatabaseFactory = new DefaultMongoDatabaseFactory();
-
-  private static final String KEYSTORE_JKS = DefaultMongoDatabaseFactoryTest.class.getResource("/security/server.jks").getPath();
+    private static final TestLogger logger = new TestLogger();
+    private static final String TRUSTSTORE_JKS = DefaultMongoDatabaseFactoryTest.class.getResource("/security/truststore.jks").getPath();
+    private static final String KEYSTORE_JKS = DefaultMongoDatabaseFactoryTest.class.getResource("/security/server.jks").getPath();
 
     @Test
-  public void should_enable_ssl_connection_according_to_target_properties() {
+    public void should_accept_ssl_connection_when_truststore_in_target_properties() {
+        GenericContainer mongoContainer = new GenericContainer(DockerImageName.parse("mongo:4.4.24"))
+            .withExposedPorts(27017)
+            .withCommand("--config /etc/mongod.conf")
+            .withCopyFileToContainer(MountableFile.forClasspathResource("/security/mongod.conf"), "/etc/mongod.conf")
+            .withCopyFileToContainer(MountableFile.forClasspathResource("/security/server.pem"), "/etc/ssl/server.pem");
+        mongoContainer.start();
 
-    // Given
-      mongoDBContainer.start();
-      Target target =  TestTarget.TestTargetBuilder
-          .builder()
-          .withTargetId("target name")
-          .withUrl(mongoDBContainer.getConnectionString())
-          .withProperty("trustStore", KEYSTORE_JKS)
-          .withProperty("trustStorePassword", "server")
-          .withProperty("databaseName", "toto")
-          .withProperty("username", "toto")
-          .withProperty("userPassword", "totoTutu")
-          .build();
 
-    // When
-    assertDoesNotThrow(() ->  {
-        CloseableResource<MongoDatabase> db = mongoDatabaseFactory.create(target);
-        db.getResource().createCollection("titi");
-        db.close();
-    });
-  }
+        final Target mongoTarget = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("mongo")
+            .withUrl("mongodb://" + mongoContainer.getHost() + ":" + mongoContainer.getMappedPort(27017))
+            .withProperty("databaseName", "local")
+            .withProperty("keyStore", KEYSTORE_JKS)
+            .withProperty("trustStore", TRUSTSTORE_JKS)
+            .withProperty("trustStorePassword", "truststore")
+            .withProperty("keyStorePassword", "server")
+            .build();
+
+        MongoListAction action = new MongoListAction(mongoTarget, logger);
+        ActionExecutionResult result = action.execute();
+
+
+        assertThat(result.outputs)
+            .extractingByKey("collectionNames")
+            .asInstanceOf(InstanceOfAssertFactories.list(String.class))
+            .isNotEmpty();
+    }
+
+    @Test
+    public void should_reject_ssl_connection_when_no_truststore_in_target() {
+
+        GenericContainer mongoContainer = new GenericContainer(DockerImageName.parse("mongo:4.4.24"))
+            .withExposedPorts(27017)
+            .withCommand("--config /etc/mongod.conf")
+            .withCopyFileToContainer(MountableFile.forClasspathResource("/security/mongod.conf"), "/etc/mongod.conf")
+            .withCopyFileToContainer(MountableFile.forClasspathResource("/security/server.pem"), "/etc/ssl/server.pem");
+        mongoContainer.start();
+        final Target mongoTarget = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("mongo")
+            .withUrl("mongodb://" + mongoContainer.getHost() + ":" + mongoContainer.getFirstMappedPort())
+            .withProperty("databaseName", "local")
+            .build();
+
+        MongoListAction action = new MongoListAction(mongoTarget, logger);
+        assertThatThrownBy(() -> action.execute());
+    }
 }

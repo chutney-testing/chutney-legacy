@@ -24,11 +24,12 @@ public class DefaultMongoDatabaseFactory implements MongoDatabaseFactory {
 
         final MongoClient mongoClient;
         MongoClientSettings.Builder mongoClientSettings = MongoClientSettings.builder().applyConnectionString(new ConnectionString(connectionString));
-        target.trustStore().ifPresent(trustStore -> {
-            target.trustStorePassword().orElseThrow(IllegalArgumentException::new);
+        target.keyStore().ifPresent(trustStore -> {
+            target.keyStorePassword().orElseThrow(IllegalArgumentException::new);
             mongoClientSettings.applyToSslSettings(builder -> {
               try {
                 builder
+                  .invalidHostNameAllowed(true)
                   .enabled(true)
                   .context(SecurityUtils.buildSslContext(target).build())
                   .applyConnectionString(new ConnectionString(connectionString));
