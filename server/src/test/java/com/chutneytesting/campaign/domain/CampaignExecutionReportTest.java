@@ -36,11 +36,11 @@ public class CampaignExecutionReportTest {
 
         ExecutionHistory.ExecutionSummary execution_5mn = mock(ExecutionHistory.ExecutionSummary.class);
         when(execution_5mn.time()).thenReturn(LocalDateTime.now().minusMinutes(5));
-        ScenarioExecutionReportCampaign scenarioReport_5mn = new ScenarioExecutionReportCampaign("1", "...", execution_5mn);
+        ScenarioExecutionReportCampaign scenarioReport_5mn = new ScenarioExecutionReportCampaign("2", "...", execution_5mn);
 
         ExecutionHistory.ExecutionSummary execution_2mn = mock(ExecutionHistory.ExecutionSummary.class);
         when(execution_2mn.time()).thenReturn(LocalDateTime.now().minusMinutes(2));
-        ScenarioExecutionReportCampaign scenarioReport_2mn = new ScenarioExecutionReportCampaign("1", "...", execution_2mn);
+        ScenarioExecutionReportCampaign scenarioReport_2mn = new ScenarioExecutionReportCampaign("3", "...", execution_2mn);
 
         // When
         CampaignExecutionReport campaignReport = new CampaignExecutionReport(1L, 1L, Lists.list(execution_noTime, scenarioReport_5mn, scenarioReport_2mn), "...", false, "", null, null, "");
@@ -53,7 +53,7 @@ public class CampaignExecutionReportTest {
     public void should_set_start_date_as_min_possible_date_when_no_scenario_times_are_available() {
         // Given
         ScenarioExecutionReportCampaign scenarioReport1 = new ScenarioExecutionReportCampaign("1", "...", mock(ExecutionHistory.ExecutionSummary.class));
-        ScenarioExecutionReportCampaign scenarioReport2 = new ScenarioExecutionReportCampaign("1", "...", mock(ExecutionHistory.ExecutionSummary.class));
+        ScenarioExecutionReportCampaign scenarioReport2 = new ScenarioExecutionReportCampaign("2", "...", mock(ExecutionHistory.ExecutionSummary.class));
 
         // When
         CampaignExecutionReport campaignReport = new CampaignExecutionReport(1L, 1L, Lists.list(scenarioReport1, scenarioReport2), "...", false, "", null, null, "");
@@ -87,11 +87,11 @@ public class CampaignExecutionReportTest {
 
         ExecutionHistory.ExecutionSummary execution_SUCESS = mock(ExecutionHistory.ExecutionSummary.class);
         when(execution_SUCESS.status()).thenReturn(ServerReportStatus.SUCCESS);
-        ScenarioExecutionReportCampaign scenarioReport_SUCCESS = new ScenarioExecutionReportCampaign("1", "...", execution_SUCESS);
+        ScenarioExecutionReportCampaign scenarioReport_SUCCESS = new ScenarioExecutionReportCampaign("2", "...", execution_SUCESS);
 
         ExecutionHistory.ExecutionSummary execution_FAILURE = mock(ExecutionHistory.ExecutionSummary.class);
         when(execution_FAILURE.status()).thenReturn(FAILURE);
-        ScenarioExecutionReportCampaign scenarioReport_FAILURE = new ScenarioExecutionReportCampaign("1", "...", execution_FAILURE);
+        ScenarioExecutionReportCampaign scenarioReport_FAILURE = new ScenarioExecutionReportCampaign("3", "...", execution_FAILURE);
         // When
         CampaignExecutionReport campaignReport = new CampaignExecutionReport(1L, 1L, Lists.list(execution_noStatus, scenarioReport_SUCCESS, scenarioReport_FAILURE), "...", false, "", null, null, "");
         // Then

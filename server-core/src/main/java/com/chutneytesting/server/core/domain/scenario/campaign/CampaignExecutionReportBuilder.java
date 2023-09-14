@@ -1,5 +1,9 @@
 package com.chutneytesting.server.core.domain.scenario.campaign;
 
+import static java.util.Optional.ofNullable;
+
+import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +20,8 @@ public class CampaignExecutionReportBuilder {
     // Optional fields
     private List<ScenarioExecutionReportCampaign> scenarioExecutionReports = new ArrayList<>();
     private Long campaignId;
+    private LocalDateTime startDate;
+    private ServerReportStatus status;
 
     public static CampaignExecutionReportBuilder builder() {
         return new CampaignExecutionReportBuilder();
@@ -45,6 +51,16 @@ public class CampaignExecutionReportBuilder {
         return this;
     }
 
+    public CampaignExecutionReportBuilder setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+        return this;
+    }
+
+    public CampaignExecutionReportBuilder setStatus(ServerReportStatus status) {
+        this.status = status;
+        return this;
+    }
+
     public CampaignExecutionReportBuilder setDataSetId(String dataSetId) {
         this.dataSetId = dataSetId;
         return this;
@@ -65,6 +81,11 @@ public class CampaignExecutionReportBuilder {
         return this;
     }
 
+    public CampaignExecutionReportBuilder setScenarioExecutionReport(List<ScenarioExecutionReportCampaign> scenarioExecutionsReports) {
+        this.scenarioExecutionReports = new ArrayList<>(scenarioExecutionsReports);
+        return this;
+    }
+
     public CampaignExecutionReportBuilder setCampaignId(Long campaignId) {
         this.campaignId = campaignId;
         return this;
@@ -74,13 +95,15 @@ public class CampaignExecutionReportBuilder {
         return new CampaignExecutionReport(
             executionId,
             campaignId,
-            scenarioExecutionReports,
             campaignName,
             partialExecution,
             executionEnvironment,
-            dataSetId,
-            dataSetVersion,
-            userId
+            userId,
+            ofNullable(dataSetId),
+            ofNullable(dataSetVersion),
+            startDate,
+            status,
+            scenarioExecutionReports
         );
     }
 }
