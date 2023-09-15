@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.2.1](https://github.com/chutney-testing/chutney/tree/2.2.1)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/2.2.0...2.2.1)
+
+## What's Changed
+### 🐛 Fixed bugs:
+* fix(action-impl): kafka action - filter by content type by @rbenyoussef in https://github.com/chutney-testing/chutney/pull/1070
+* Campaign retry by @boddissattva in https://github.com/chutney-testing/chutney/pull/1132
+
+### 🔧 Technical enhancements:
+* chore: Bump SpringBoot version from 2.7.5 to 3.1.2 by @bessonm in https://github.com/chutney-testing/chutney/pull/1107
+### 👒 Dependencies:
+* chore(deps): Bump org.testcontainers:testcontainers-bom from 1.18.3 to 1.19.0 by @dependabot in https://github.com/chutney-testing/chutney/pull/1122
+* chore(deps): Bump org.hjson:hjson from 3.0.0 to 3.0.1 by @dependabot in https://github.com/chutney-testing/chutney/pull/1128
+* chore(deps): Bump com.github.eirslett:frontend-maven-plugin from 1.12.1 to 1.13.4 by @dependabot in https://github.com/chutney-testing/chutney/pull/1124
+
+
 ## [2.2.0](https://github.com/chutney-testing/chutney/tree/2.2.0)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/2.1.0...2.2.0)
@@ -10,7 +27,7 @@
 * feat(scenario): Allow creation of scenario in database with explicit id by @DelaunayAlex in [\#1112](https://github.com/chutney-testing/chutney/pull/1112)
 * feat(ui): Add filter by status for scenarios list by @rbenyoussef in [\#1115](https://github.com/chutney-testing/chutney/pull/1115)
 
-### 🐛 Fixed bugs:
+
 * fix(ui): Fix navigation in empty dataset by @KarimGl in [\#1113](https://github.com/chutney-testing/chutney/pull/1113)
 * fix(engine): Evaluate dataset content by @bessonm in [\#1114](https://github.com/chutney-testing/chutney/pull/1114)
 * fix(engine): Indexing iteration preserves input types by @bessonm in [\#1116](https://github.com/chutney-testing/chutney/pull/1116)
