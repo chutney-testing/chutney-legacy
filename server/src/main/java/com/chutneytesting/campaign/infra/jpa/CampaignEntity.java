@@ -4,6 +4,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 
 import com.chutneytesting.scenario.infra.raw.TagListMapper;
+import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,7 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity(name = "CAMPAIGN")
-public class Campaign implements Serializable {
+public class CampaignEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
@@ -60,18 +61,18 @@ public class Campaign implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "campaign")
     private Set<CampaignParameter> parameters;
 
-    public Campaign() {
+    public CampaignEntity() {
     }
 
-    public Campaign(String title) {
+    public CampaignEntity(String title) {
         this(null, title, "", null, false, false, null, null, null, null, null);
     }
 
-    public Campaign(String title, List<CampaignScenario> scenarios) {
+    public CampaignEntity(String title, List<CampaignScenario> scenarios) {
         this(null, title, "", null, false, false, null, null, null, scenarios, null);
     }
 
-    public Campaign(Long id, String title, String description, String environment, boolean parallelRun, boolean retryAuto, String datasetId, List<String> tags, Integer version, List<CampaignScenario> campaignScenarios, Set<CampaignParameter> parameters) {
+    public CampaignEntity(Long id, String title, String description, String environment, boolean parallelRun, boolean retryAuto, String datasetId, List<String> tags, Integer version, List<CampaignScenario> campaignScenarios, Set<CampaignParameter> parameters) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -85,8 +86,8 @@ public class Campaign implements Serializable {
         fromCampaignParameters(parameters);
     }
 
-    public static Campaign fromDomain(com.chutneytesting.server.core.domain.scenario.campaign.Campaign campaign, Integer version) {
-        return new Campaign(
+    public static CampaignEntity fromDomain(Campaign campaign, Integer version) {
+        return new CampaignEntity(
             campaign.id,
             campaign.title,
             campaign.description,
@@ -119,8 +120,8 @@ public class Campaign implements Serializable {
         }
     }
 
-    public com.chutneytesting.server.core.domain.scenario.campaign.Campaign toDomain() {
-        return new com.chutneytesting.server.core.domain.scenario.campaign.Campaign(
+    public Campaign toDomain() {
+        return new Campaign(
             id,
             title,
             description,

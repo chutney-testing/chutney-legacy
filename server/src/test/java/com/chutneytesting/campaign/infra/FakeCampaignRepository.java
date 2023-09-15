@@ -1,6 +1,7 @@
 package com.chutneytesting.campaign.infra;
 
 import static java.util.Collections.emptyMap;
+import static java.util.Optional.ofNullable;
 import static org.assertj.core.util.Lists.newArrayList;
 
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
@@ -13,7 +14,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -43,7 +43,7 @@ public class FakeCampaignRepository implements CampaignRepository {
 
     @Override
     public void saveReport(Long campaignId, CampaignExecutionReport report) {
-        Optional.ofNullable(campaignsById.get(campaignId)).ifPresent(campaign -> {
+        ofNullable(campaignsById.get(campaignId)).ifPresent(campaign -> {
             Campaign c = new Campaign(campaign.id, campaign.title, campaign.title, campaign.scenarioIds, campaign.executionParameters, campaign.executionEnvironment(), false, false, null, null);
             createOrUpdate(c);
         });
@@ -82,7 +82,7 @@ public class FakeCampaignRepository implements CampaignRepository {
 
     @Override
     public List<CampaignExecutionReport> findExecutionsById(Long campaignId) {
-        return campaignsExecutionById.get(campaignId);
+        return ofNullable(campaignsExecutionById.get(campaignId)).orElse(newArrayList());
     }
 
     @Override

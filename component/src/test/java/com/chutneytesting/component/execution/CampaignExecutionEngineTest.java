@@ -30,6 +30,7 @@ import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -125,6 +126,17 @@ public class CampaignExecutionEngineTest {
     }
 
     private Campaign createCampaign(Map<String, String> dataSet, String dataSetId, TestCase... testCases) {
-        return new Campaign(generateId(), "...", null, stream(testCases).map(TestCase::id).collect(toList()), dataSet, "campaignEnv", false, false, dataSetId, null);
+        return new CampaignBuilder()
+            .setId(generateId())
+            .setTitle("...")
+            .setDescription(null)
+            .setScenarioIds(stream(testCases).map(TestCase::id).collect(toList()))
+            .setExecutionParameters(dataSet)
+            .setEnvironment("campaignEnv")
+            .setParallelRun(false)
+            .setRetryAuto(false)
+            .setExternalDatasetId(dataSetId)
+            .setTags(null)
+            .build();
     }
 }

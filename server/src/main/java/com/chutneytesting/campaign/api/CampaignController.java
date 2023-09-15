@@ -9,6 +9,7 @@ import com.chutneytesting.campaign.api.dto.CampaignExecutionReportDto;
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportMapper;
 import com.chutneytesting.campaign.api.dto.CampaignMapper;
 import com.chutneytesting.campaign.domain.CampaignRepository;
+import com.chutneytesting.campaign.domain.CampaignService;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
 import com.chutneytesting.scenario.infra.TestCaseRepositoryAggregator;
@@ -39,14 +40,17 @@ public class CampaignController {
     private final TestCaseRepositoryAggregator repositoryAggregator;
     private final CampaignRepository campaignRepository;
     private final CampaignExecutionEngine campaignExecutionEngine;
+    private final CampaignService campaignService;
 
     public CampaignController(TestCaseRepositoryAggregator repositoryAggregator,
                               CampaignRepository campaignRepository,
-                              CampaignExecutionEngine campaignExecutionEngine) {
+                              CampaignExecutionEngine campaignExecutionEngine,
+                              CampaignService campaignService) {
 
         this.repositoryAggregator = repositoryAggregator;
         this.campaignRepository = campaignRepository;
         this.campaignExecutionEngine = campaignExecutionEngine;
+        this.campaignService = campaignService;
     }
 
     @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
@@ -71,7 +75,7 @@ public class CampaignController {
     @GetMapping(path = "/{campaignId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignDto getCampaignById(@PathVariable("campaignId") Long campaignId) {
         Campaign campaign = campaignRepository.findById(campaignId);
-        List<CampaignExecutionReport> reports = campaignRepository.findExecutionsById(campaignId);
+        List<CampaignExecutionReport> reports = campaignService.findExecutionsById(campaignId);
         campaignExecutionEngine.currentExecution(campaignId)
             .ifPresent(report -> addCurrentExecution(reports, report));
         return toDto(campaign, reports);

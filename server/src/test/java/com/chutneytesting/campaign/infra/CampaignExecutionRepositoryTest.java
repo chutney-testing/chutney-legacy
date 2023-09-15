@@ -3,6 +3,7 @@ package com.chutneytesting.campaign.infra;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
@@ -44,7 +45,7 @@ public class CampaignExecutionRepositoryTest {
         @Test
         public void should_persist_1_execution_when_saving_1_campaign_execution_report() {
             Scenario scenario = givenScenario();
-            com.chutneytesting.campaign.infra.jpa.Campaign campaign = givenCampaign(scenario);
+            CampaignEntity campaign = givenCampaign(scenario);
 
             ScenarioExecution scenarioExecution = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
             ScenarioExecutionReportCampaign scenarioExecutionReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecution.toDomain());
@@ -82,7 +83,7 @@ public class CampaignExecutionRepositoryTest {
         public void should_persist_2_executions_when_saving_2_campaign_execution_report() {
             Scenario scenarioOne = givenScenario();
             Scenario scenarioTwo = givenScenario();
-            com.chutneytesting.campaign.infra.jpa.Campaign campaign = givenCampaign(scenarioOne, scenarioTwo);
+            CampaignEntity campaign = givenCampaign(scenarioOne, scenarioTwo);
 
             ScenarioExecution scenarioOneExecution = givenScenarioExecution(scenarioOne.getId(), ServerReportStatus.SUCCESS);
             ScenarioExecutionReportCampaign scenarioOneExecutionReport = new ScenarioExecutionReportCampaign(scenarioOne.getId().toString(), scenarioOne.getTitle(), scenarioOneExecution.toDomain());
@@ -139,7 +140,7 @@ public class CampaignExecutionRepositoryTest {
         public void campaign_execution_history_should_list_not_executed_scenarios() {
             Scenario scenarioOne = givenScenario();
             Scenario scenarioTwo = givenScenario();
-            com.chutneytesting.campaign.infra.jpa.Campaign campaign = givenCampaign(scenarioOne, scenarioTwo);
+            CampaignEntity campaign = givenCampaign(scenarioOne, scenarioTwo);
 
             ScenarioExecution scenarioOneExecution = givenScenarioExecution(scenarioOne.getId(), ServerReportStatus.SUCCESS);
             ScenarioExecutionReportCampaign scenarioOneExecutionReport = new ScenarioExecutionReportCampaign(scenarioOne.getId().toString(), scenarioOne.getTitle(), scenarioOneExecution.toDomain());
@@ -182,7 +183,7 @@ public class CampaignExecutionRepositoryTest {
         @Test
         public void should_remove_all_campaign_executions_when_removing_campaign_execution_report() {
             Scenario scenario = givenScenario();
-            com.chutneytesting.campaign.infra.jpa.Campaign campaign = givenCampaign(scenario);
+            CampaignEntity campaign = givenCampaign(scenario);
 
             ScenarioExecution scenarioExecution = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
             ScenarioExecutionReportCampaign scenarioExecutionReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecution.toDomain());
@@ -206,7 +207,7 @@ public class CampaignExecutionRepositoryTest {
         public void should_get_2_last_campaign_report_created() {
             clearTables();
             Scenario scenario = givenScenario();
-            com.chutneytesting.campaign.infra.jpa.Campaign campaign = givenCampaign(scenario);
+            CampaignEntity campaign = givenCampaign(scenario);
 
             ScenarioExecution scenarioExecutionOne = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
             ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecutionOne.toDomain());

@@ -5,6 +5,7 @@ import static com.chutneytesting.action.sql.SqlAction.CONFIGURABLE_NB_LOGGED_ROW
 import com.chutneytesting.action.api.EmbeddedActionEngine;
 import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignRepository;
+import com.chutneytesting.campaign.domain.CampaignService;
 import com.chutneytesting.dataset.domain.DataSetRepository;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditionsService;
@@ -277,5 +278,10 @@ public class ServerConfiguration implements AsyncConfigurer {
     @Bean
     Clock clock() {
         return Clock.systemDefaultZone();
+    }
+
+    @Bean
+    CampaignService campaignService(CampaignRepository campaignRepository) {
+        return new CampaignService(campaignRepository);
     }
 }

@@ -6,6 +6,7 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
+import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
@@ -35,13 +36,13 @@ public class DatabaseCampaignRepository implements CampaignRepository {
 
     @Override
     public Campaign createOrUpdate(Campaign campaign) {
-        com.chutneytesting.campaign.infra.jpa.Campaign campaignJpa =
-            campaignJpaRepository.save(com.chutneytesting.campaign.infra.jpa.Campaign.fromDomain(campaign, lastCampaignVersion(campaign.id)));
+        CampaignEntity campaignJpa =
+            campaignJpaRepository.save(CampaignEntity.fromDomain(campaign, lastCampaignVersion(campaign.id)));
         return campaignJpa.toDomain();
     }
 
     private Integer lastCampaignVersion(Long id) {
-        return ofNullable(id).flatMap(campaignJpaRepository::findById).map(com.chutneytesting.campaign.infra.jpa.Campaign::version).orElse(null);
+        return ofNullable(id).flatMap(campaignJpaRepository::findById).map(CampaignEntity::version).orElse(null);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     @Transactional(readOnly = true)
     public Campaign findById(Long campaignId) throws CampaignNotFoundException {
         return campaignJpaRepository.findById(campaignId)
-            .map(com.chutneytesting.campaign.infra.jpa.Campaign::toDomain)
+            .map(CampaignEntity::toDomain)
             .orElseThrow(() -> new CampaignNotFoundException(campaignId));
     }
 
@@ -73,7 +74,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
         return campaignJpaRepository.findAll((root, query, criteriaBuilder) ->
                 criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), campaignName.toLowerCase()))
             .stream()
-            .map(com.chutneytesting.campaign.infra.jpa.Campaign::toDomain)
+            .map(CampaignEntity::toDomain)
             .toList();
     }
 
@@ -103,7 +104,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     @Transactional(readOnly = true)
     public List<Campaign> findAll() {
         return StreamSupport.stream(campaignJpaRepository.findAll().spliterator(), false)
-            .map(com.chutneytesting.campaign.infra.jpa.Campaign::toDomain)
+            .map(CampaignEntity::toDomain)
             .toList();
     }
 
@@ -122,7 +123,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
 
         return campaignScenarioJpaRepository.findAllByScenarioId(scenarioId).stream()
             .map(CampaignScenario::campaign)
-            .map(com.chutneytesting.campaign.infra.jpa.Campaign::toDomain)
+            .map(CampaignEntity::toDomain)
             .toList();
     }
 

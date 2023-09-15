@@ -2,7 +2,7 @@ package com.chutneytesting.campaign.infra;
 
 import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
-import com.chutneytesting.campaign.infra.jpa.Campaign;
+import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
 import com.chutneytesting.execution.infra.storage.DatabaseExecutionJpaRepository;
@@ -45,7 +45,7 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
 
     @Transactional(readOnly = true)
     public List<CampaignExecutionReport> findExecutionHistory(Long campaignId) {
-        Campaign campaign = campaignJpaRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
+        CampaignEntity campaign = campaignJpaRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         return campaignExecutionJpaRepository.findFirst20ByCampaignIdOrderByIdDesc(campaignId).stream()
             .map(ce -> toDomain(campaign, ce, false))
             .filter(Objects::nonNull)
@@ -85,7 +85,7 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
         return toDomain(campaignJpaRepository.findById(campaignExecution.campaignId()).get(), campaignExecution, withRunning);
     }
 
-    private CampaignExecutionReport toDomain(Campaign campaign, CampaignExecution campaignExecution, boolean withRunning) {
+    private CampaignExecutionReport toDomain(CampaignEntity campaign, CampaignExecution campaignExecution, boolean withRunning) {
         if (!withRunning && isCampaignExecutionRunning(campaignExecution)) return null;
         return campaignExecution.toDomain(campaign, isCampaignExecutionRunning(campaignExecution), this::title);
     }

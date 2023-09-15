@@ -21,7 +21,7 @@ public class CampaignScenario {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CAMPAIGN_ID")
-    private Campaign campaign;
+    private CampaignEntity campaign;
 
     @Column(name = "SCENARIO_ID")
     private String scenarioId;
@@ -36,7 +36,7 @@ public class CampaignScenario {
         this(null, scenarioId, rank);
     }
 
-    public CampaignScenario(Campaign campaign, String scenarioId, Integer rank) {
+    public CampaignScenario(CampaignEntity campaign, String scenarioId, Integer rank) {
         this.campaign = campaign;
         this.scenarioId = scenarioId;
         this.rank = rank;
@@ -46,7 +46,7 @@ public class CampaignScenario {
         return scenarioId;
     }
 
-    public Campaign campaign() {
+    public CampaignEntity campaign() {
         return campaign;
     }
 
@@ -54,7 +54,7 @@ public class CampaignScenario {
         return rank;
     }
 
-    public void forCampaign(Campaign campaign) {
+    public void forCampaign(CampaignEntity campaign) {
         this.campaign = campaign;
     }
 

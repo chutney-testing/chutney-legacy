@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.within;
 import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
-import com.chutneytesting.campaign.infra.jpa.Campaign;
+import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
@@ -167,7 +167,7 @@ public class DatabaseTestCaseRepositoryTest {
         public void should_not_find_removed_scenario_used_in_campaign() {
             // Given: a scenarioTemplate in the repository with campaign association and existing execution
             Scenario scenario = givenScenario();
-            Campaign campaign = givenCampaign(scenario);
+            CampaignEntity campaign = givenCampaign(scenario);
 
             ScenarioExecution scenarioExecution = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
 

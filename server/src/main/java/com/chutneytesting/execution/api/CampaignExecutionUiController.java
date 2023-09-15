@@ -5,6 +5,7 @@ import static com.chutneytesting.campaign.api.dto.CampaignExecutionReportMapper.
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportDto;
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportMapper;
 import com.chutneytesting.campaign.domain.CampaignRepository;
+import com.chutneytesting.campaign.domain.CampaignService;
 import com.chutneytesting.execution.api.report.surefire.SurefireCampaignExecutionReportBuilder;
 import com.chutneytesting.execution.api.report.surefire.SurefireScenarioExecutionReportBuilder;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
@@ -41,12 +42,20 @@ public class CampaignExecutionUiController {
     private final SurefireCampaignExecutionReportBuilder surefireCampaignExecutionReportBuilder;
     private final CampaignRepository campaignRepository;
     private final SpringUserService userService;
+    private final CampaignService campaignService;
 
-    public CampaignExecutionUiController(CampaignExecutionEngine campaignExecutionEngine, SurefireScenarioExecutionReportBuilder surefireScenarioExecutionReportBuilder, CampaignRepository campaignRepository, SpringUserService userService) {
+    public CampaignExecutionUiController(
+        CampaignExecutionEngine campaignExecutionEngine,
+        SurefireScenarioExecutionReportBuilder surefireScenarioExecutionReportBuilder,
+        CampaignRepository campaignRepository,
+        SpringUserService userService,
+        CampaignService campaignService
+    ) {
         this.campaignExecutionEngine = campaignExecutionEngine;
         this.surefireCampaignExecutionReportBuilder = new SurefireCampaignExecutionReportBuilder(surefireScenarioExecutionReportBuilder);
         this.campaignRepository = campaignRepository;
         this.userService = userService;
+        this.campaignService = campaignService;
     }
 
     @PreAuthorize("hasAuthority('CAMPAIGN_EXECUTE')")
@@ -67,7 +76,7 @@ public class CampaignExecutionUiController {
     @PreAuthorize("hasAuthority('CAMPAIGN_EXECUTE')")
     @PostMapping(path = {"/replay/{campaignExecutionId}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignExecutionReportDto replayFailedScenario(@PathVariable("campaignExecutionId") Long campaignExecutionId) {
-        CampaignExecutionReport campaignExecutionReport = campaignRepository.findByExecutionId(campaignExecutionId);
+        CampaignExecutionReport campaignExecutionReport = campaignService.findByExecutionId(campaignExecutionId);
         String userId = userService.currentUser().getId();
         List<String> failedIds = campaignExecutionReport.scenarioExecutionReports().stream().filter(s -> !ServerReportStatus.SUCCESS.equals(s.execution.status())).map(s -> s.scenarioId).collect(Collectors.toList());
         Campaign campaign = campaignRepository.findById(campaignExecutionReport.campaignId);

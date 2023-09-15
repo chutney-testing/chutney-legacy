@@ -18,6 +18,7 @@ import com.chutneytesting.RestExceptionHandler;
 import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.campaign.api.dto.CampaignDto;
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportDto;
+import com.chutneytesting.campaign.domain.CampaignService;
 import com.chutneytesting.campaign.infra.FakeCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.scenario.api.raw.dto.ImmutableTestCaseIndexDto;
@@ -71,7 +72,7 @@ public class CampaignControllerTest {
         resultExtractor = new ResultExtractor();
 
         repositoryAggregator = mock(TestCaseRepositoryAggregator.class);
-        CampaignController campaignController = new CampaignController(repositoryAggregator, repository, campaignExecutionEngine);
+        CampaignController campaignController = new CampaignController(repositoryAggregator, repository, campaignExecutionEngine, new CampaignService(repository));
         mockMvc = MockMvcBuilders.standaloneSetup(campaignController)
             .setControllerAdvice(new RestExceptionHandler(Mockito.mock(ChutneyMetrics.class)))
             .build();
@@ -265,6 +266,7 @@ public class CampaignControllerTest {
         repository.saveReport(existingCampaign.getId(), report2);
         repository.saveReport(existingCampaign.getId(), report3);
         repository.saveReport(existingCampaign.getId(), report4);
+
 
         // When
         execute(MockMvcRequestBuilders.get(urlTemplate + existingCampaign.getId()))
