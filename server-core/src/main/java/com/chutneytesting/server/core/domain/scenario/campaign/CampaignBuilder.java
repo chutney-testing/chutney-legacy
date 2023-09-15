@@ -19,7 +19,7 @@ public class CampaignBuilder {
         return new CampaignBuilder();
     }
 
-    private CampaignBuilder(){
+    public CampaignBuilder(){
 
     }
     public CampaignBuilder setId(Long id) {

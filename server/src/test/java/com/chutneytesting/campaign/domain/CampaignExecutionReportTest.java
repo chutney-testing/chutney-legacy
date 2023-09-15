@@ -221,7 +221,7 @@ public class CampaignExecutionReportTest {
         ServerReportStatus status = campaignReport.status();
 
         // Then
-        assertThat(status).isEqualTo(ServerReportStatus.SUCCESS);
+        assertThat(status).isEqualTo(SUCCESS);
     }
 
     @Test

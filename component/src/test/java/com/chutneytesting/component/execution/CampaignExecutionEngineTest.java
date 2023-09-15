@@ -126,6 +126,17 @@ public class CampaignExecutionEngineTest {
     }
 
     private Campaign createCampaign(Map<String, String> dataSet, String dataSetId, TestCase... testCases) {
-        return new CampaignBuilder().setId(generateId()).setTitle("...").setDescription(null).setScenarioIds(stream(testCases).map(TestCase::id).collect(toList())).setExecutionParameters(dataSet).setEnvironment("campaignEnv").setParallelRun(false).setRetryAuto(false).setExternalDatasetId(dataSetId).setTags(null).createCampaign();
+        return new CampaignBuilder()
+            .setId(generateId())
+            .setTitle("...")
+            .setDescription(null)
+            .setScenarioIds(stream(testCases).map(TestCase::id).collect(toList()))
+            .setExecutionParameters(dataSet)
+            .setEnvironment("campaignEnv")
+            .setParallelRun(false)
+            .setRetryAuto(false)
+            .setExternalDatasetId(dataSetId)
+            .setTags(null)
+            .build();
     }
 }
