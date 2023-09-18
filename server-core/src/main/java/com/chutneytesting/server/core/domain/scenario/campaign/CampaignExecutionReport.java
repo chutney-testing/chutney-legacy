@@ -229,6 +229,7 @@ public class CampaignExecutionReport {
         return CampaignExecutionReportBuilder.builder()
             .setExecutionId(executionId)
             .setCampaignId(campaignId)
+            .setPartialExecution(partialExecution)
             .setCampaignName(campaignName)
             .setExecutionEnvironment(executionEnvironment)
             .setDataSetId(dataSetId.orElse(null))

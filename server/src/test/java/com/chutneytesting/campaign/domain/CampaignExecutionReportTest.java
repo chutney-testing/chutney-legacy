@@ -186,9 +186,6 @@ public class CampaignExecutionReportTest {
         assertThat(campaignReport.status()).isEqualTo(ServerReportStatus.STOPPED);
     }
 
-    /**
-     *
-     */
     @Test
     public void should_calculate_filter_retry_scenario_in_status_calculation() {
         // Given
