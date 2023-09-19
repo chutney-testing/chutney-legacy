@@ -269,7 +269,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             assertThat(nbOfAffectedExecutions).isEqualTo(1);
             assertThat(sut.getExecutions(scenarioIdOne).get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
             ScenarioExecutionReportEntity scenarioExecutionReport = scenarioExecutionReportJpaRepository.findById(scenarioId).orElseThrow();
-            com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport report = objectMapper.readValue(scenarioExecutionReport.getReport(), com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport.class);
+            ScenarioExecutionReport report = objectMapper.readValue(scenarioExecutionReport.getReport(), ScenarioExecutionReport.class);
             assertThat(report.report.status).isEqualTo(ServerReportStatus.SUCCESS);
             assertThat(report.report.steps.size()).isEqualTo(1);
             assertThat(report.report.steps.get(0).status).isEqualTo(ServerReportStatus.STOPPED);
@@ -294,7 +294,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             assertThat(nbOfAffectedExecutions).isEqualTo(1);
             assertThat(sut.getExecutions(scenarioIdOne).get(0).status()).isEqualTo(ServerReportStatus.FAILURE);
             ScenarioExecutionReportEntity scenarioExecutionReport = scenarioExecutionReportJpaRepository.findById(scenarioId).orElseThrow();
-            com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport report = objectMapper.readValue(scenarioExecutionReport.getReport(), com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport.class);
+            ScenarioExecutionReport report = objectMapper.readValue(scenarioExecutionReport.getReport(), ScenarioExecutionReport.class);
             assertThat(report.report.status).isEqualTo(ServerReportStatus.SUCCESS);
             assertThat(report.report.steps.size()).isEqualTo(1);
             assertThat(report.report.steps.get(0).status).isEqualTo(ServerReportStatus.STOPPED);
