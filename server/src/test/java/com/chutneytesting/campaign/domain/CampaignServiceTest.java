@@ -45,6 +45,14 @@ class CampaignServiceTest {
             .build();
         ScenarioExecutionReportCampaign scenarioExecutionReport2 = new ScenarioExecutionReportCampaign("scenario 2", "", execution2);
         CampaignExecutionReport campaignReport = CampaignExecutionReportBuilder.builder()
+            .setCampaignId(42L)
+            .setExecutionEnvironment("test env")
+            .setPartialExecution(true)
+            .setCampaignName("test name")
+            .setExecutionId(43L)
+            .setDataSetId("dataset id test")
+            .setDataSetVersion(44)
+            .setStartDate(LocalDateTime.MAX)
             .addScenarioExecutionReport(scenarioExecutionReport1)
             .addScenarioExecutionReport(scenarioExecutionReport2)
             .build();
@@ -56,6 +64,9 @@ class CampaignServiceTest {
         // T
         assertThat(report.scenarioExecutionReports()).hasSize(2);
         assertThat(report.status()).isEqualTo(SUCCESS);
+        assertThat(report).usingRecursiveComparison()
+            .isEqualTo(campaignReport);
+
     }
 
     @Test
