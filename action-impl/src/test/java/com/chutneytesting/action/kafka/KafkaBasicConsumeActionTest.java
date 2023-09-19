@@ -177,60 +177,62 @@ public class KafkaBasicConsumeActionTest {
 
   @Test
   public void should_accept_kafka_connection_as_consumer_without_truststore_in_target() {
-    embeddedKafkaBroker.afterPropertiesSet();
-    Producer<Integer, String> producer = configureProducer();
+      embeddedKafkaBroker.afterPropertiesSet();
+      Producer<Integer, String> producer = configureProducer();
+      try {
+          Target target = TestTarget.TestTargetBuilder.builder()
+              .withTargetId("kafka")
+              .withUrl("tcp://" + embeddedKafkaBroker.getBrokersAsString())
+              .build();
 
-    Target target = TestTarget.TestTargetBuilder.builder()
-        .withTargetId("kafka")
-        .withUrl("tcp://" + embeddedKafkaBroker.getBrokersAsString())
-        .build();
+          Map<String, String> props = new HashMap<>();
+          props.put("group.id", GROUP);
+          props.put("auto.commit.interval.ms", "10");
+          props.put("session.timeout.ms", "60000");
+          props.put("auto.offset.reset", "earliest");
 
-    Map<String, String> props = new HashMap<>();
-    props.put("group.id", GROUP);
-    props.put("auto.commit.interval.ms", "10");
-    props.put("session.timeout.ms", "60000");
-    props.put("auto.offset.reset", "earliest");
+          Action sut = new KafkaBasicConsumeAction(target, TOPIC, GROUP, props, 1, null, null, TEXT_PLAIN_VALUE, "3000 ms", null, logger);
 
-    Action sut = new KafkaBasicConsumeAction(target, TOPIC, GROUP, props, 1, null, null, TEXT_PLAIN_VALUE, "3000 ms", null, logger);
+          producer.send(new ProducerRecord<>(TOPIC, 123, "my-test-value"));
 
-    producer.send(new ProducerRecord<>(TOPIC, 123, "my-test-value"));
+          ActionExecutionResult actionExecutionResult = sut.execute();
 
-    ActionExecutionResult actionExecutionResult = sut.execute();
-
-    assertThat(actionExecutionResult.status).isEqualTo(Success);
-    List<Map<String, Object>> body = assertActionOutputsSize(actionExecutionResult, 1);
-    assertThat(body.get(0).get("payload")).isEqualTo("my-test-value");
-
-    producer.close();
+          assertThat(actionExecutionResult.status).isEqualTo(Success);
+          List<Map<String, Object>> body = assertActionOutputsSize(actionExecutionResult, 1);
+          assertThat(body.get(0).get("payload")).isEqualTo("my-test-value");
+      } finally {
+          producer.close();
+      }
   }
 
   @Test
-  public void should_reject_kafka_connection_as_consumer_with_truststore_in_target_and_not_truststore_in_producer() {
+  public void consumer_from_target_with_truststore_should_reject_ssl_connection_with_producer_without_truststore_configured() {
     embeddedKafkaBroker.afterPropertiesSet();
     Producer<Integer, String> producer = configureProducer();
+    try {
+        Target target = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("kafka")
+            .withUrl("tcp://" + embeddedKafkaBroker.getBrokersAsString())
+            .withProperty("trustStore", KEYSTORE_JKS)
+            .withProperty("trustStorePassword", "server")
+            .build();
 
-    Target target = TestTarget.TestTargetBuilder.builder()
-        .withTargetId("kafka")
-        .withUrl("tcp://" + embeddedKafkaBroker.getBrokersAsString())
-        .withProperty("trustStore", KEYSTORE_JKS)
-        .withProperty("trustStorePassword", "server")
-        .build();
+        Map<String, String> props = new HashMap<>();
+        props.put("group.id", GROUP);
+        props.put("auto.commit.interval.ms", "10");
+        props.put("session.timeout.ms", "60000");
+        props.put("auto.offset.reset", "earliest");
 
-    Map<String, String> props = new HashMap<>();
-    props.put("group.id", GROUP);
-    props.put("auto.commit.interval.ms", "10");
-    props.put("session.timeout.ms", "60000");
-    props.put("auto.offset.reset", "earliest");
+        Action sut = new KafkaBasicConsumeAction(target, TOPIC, GROUP, props, 1, null, null, TEXT_PLAIN_VALUE, "3000 ms", null, logger);
 
-    Action sut = new KafkaBasicConsumeAction(target, TOPIC, GROUP, props, 1, null, null, TEXT_PLAIN_VALUE, "3000 ms", null, logger);
+        producer.send(new ProducerRecord<>(TOPIC, 123, "my-test-value"));
 
-    producer.send(new ProducerRecord<>(TOPIC, 123, "my-test-value"));
+        ActionExecutionResult actionExecutionResult = sut.execute();
 
-    ActionExecutionResult actionExecutionResult = sut.execute();
-
-    assertThat(actionExecutionResult.status).isEqualTo(Failure);
-
-    producer.close();
+        assertThat(actionExecutionResult.status).isEqualTo(Failure);
+    } finally {
+        producer.close();
+    }
   }
 
     @Test

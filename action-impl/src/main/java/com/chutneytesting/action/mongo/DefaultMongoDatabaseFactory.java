@@ -24,8 +24,7 @@ public class DefaultMongoDatabaseFactory implements MongoDatabaseFactory {
 
         final MongoClient mongoClient;
         MongoClientSettings.Builder mongoClientSettings = MongoClientSettings.builder().applyConnectionString(new ConnectionString(connectionString));
-        target.keyStore().ifPresent(trustStore -> {
-            target.keyStorePassword().orElseThrow(IllegalArgumentException::new);
+        target.keyStore().ifPresent(keystore ->
             mongoClientSettings.applyToSslSettings(builder -> {
               try {
                 builder
@@ -36,8 +35,8 @@ public class DefaultMongoDatabaseFactory implements MongoDatabaseFactory {
               } catch (GeneralSecurityException e) {
                 throw new IllegalArgumentException(e.getMessage(), e);
               }
-            });
-        });
+            })
+        );
         if (target.user().isPresent()) {
             String user = target.user().get();
             String password = target.userPassword().orElse("");

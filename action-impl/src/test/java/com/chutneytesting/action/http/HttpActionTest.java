@@ -65,7 +65,7 @@ public class HttpActionTest {
     }
 
   @Test
-  public void should_accept_requests_when_truststore_is_defined_in_target() {
+  public void client_from_target_with_truststore_should_reject_connection_when_truststore_is_not_defined_in_server() {
 
     // Given
     Target target = TestTarget
@@ -91,7 +91,7 @@ public class HttpActionTest {
   }
 
   @Test
-  public void should_reject_requests_when_truststore_is_not_defined_in_target() {
+  public void client_from_target_without_truststore_should_accept_connection_when_truststore_is_not_defined_in_server() {
 
     // Given
     Target target = TestTarget
