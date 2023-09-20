@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +43,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     private final CampaignJpaRepository campaignJpaRepository;
     private final CampaignExecutionJpaRepository campaignExecutionJpaRepository;
     private final TestCaseRepository testCaseRepository;
-    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+    private final ObjectMapper objectMapper;
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseExecutionHistoryRepository.class);
 
 
@@ -51,12 +52,14 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository,
         ScenarioJpaRepository scenarioJpaRepository,
         CampaignJpaRepository campaignJpaRepository, TestCaseRepository testCaseRepository,
-        CampaignExecutionJpaRepository campaignExecutionJpaRepository) {
+        CampaignExecutionJpaRepository campaignExecutionJpaRepository,
+        @Qualifier("reportObjectMapper") ObjectMapper objectMapper) {
         this.scenarioExecutionsJpaRepository = scenarioExecutionsJpaRepository;
         this.scenarioExecutionReportJpaRepository = scenarioExecutionReportJpaRepository;
         this.campaignJpaRepository = campaignJpaRepository;
         this.testCaseRepository = testCaseRepository;
         this.campaignExecutionJpaRepository = campaignExecutionJpaRepository;
+        this.objectMapper = objectMapper;
     }
 
     @Override

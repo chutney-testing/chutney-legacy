@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Assertions.within;
 import static util.WaitUtils.awaitDuring;
 
+import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
@@ -37,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 import util.infra.AbstractLocalDatabaseTest;
 import util.infra.EnableH2MemTestInfra;
 import util.infra.EnablePostgreSQLTestInfra;
@@ -59,6 +61,7 @@ public class DatabaseTestCaseRepositoryTest {
     class PostreSQL extends AllTests {
     }
 
+    @ContextConfiguration(classes = { WebConfiguration.class })
     abstract class AllTests extends AbstractLocalDatabaseTest {
         @Autowired
         private DatabaseTestCaseRepository sut;

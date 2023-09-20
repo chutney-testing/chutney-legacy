@@ -3,6 +3,7 @@ package com.chutneytesting.campaign.infra;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 import util.infra.AbstractLocalDatabaseTest;
 import util.infra.EnableH2MemTestInfra;
 import util.infra.EnablePostgreSQLTestInfra;
@@ -37,6 +39,7 @@ public class CampaignExecutionRepositoryTest {
     class PostreSQL extends AllTests {
     }
 
+    @ContextConfiguration(classes = { WebConfiguration.class })
     abstract class AllTests extends AbstractLocalDatabaseTest {
 
         @Autowired
