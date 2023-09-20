@@ -23,20 +23,20 @@ public class DefaultMongoDatabaseFactory implements MongoDatabaseFactory {
         String connectionString = String.format("mongodb://%s:%d/", target.host(), target.port());
 
         final MongoClient mongoClient;
-        MongoClientSettings.Builder mongoClientSettings = MongoClientSettings.builder().applyConnectionString(new ConnectionString(connectionString));
+        MongoClientSettings.Builder mongoClientSettings = MongoClientSettings.builder();
         target.keyStore().ifPresent(keystore ->
             mongoClientSettings.applyToSslSettings(builder -> {
               try {
                 builder
                   .invalidHostNameAllowed(true)
                   .enabled(true)
-                  .context(SecurityUtils.buildSslContext(target).build())
-                  .applyConnectionString(new ConnectionString(connectionString));
+                  .context(SecurityUtils.buildSslContext(target).build());
               } catch (GeneralSecurityException e) {
                 throw new IllegalArgumentException(e.getMessage(), e);
               }
             })
         );
+        mongoClientSettings.applyConnectionString(new ConnectionString(connectionString));
         if (target.user().isPresent()) {
             String user = target.user().get();
             String password = target.userPassword().orElse("");

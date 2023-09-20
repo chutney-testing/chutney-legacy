@@ -20,7 +20,6 @@ public class KafkaConsumerFactoryFactory {
         consumerConfig.put(BOOTSTRAP_SERVERS_CONFIG, resolveBootStrapServerConfig(target));
         consumerConfig.put(GROUP_ID_CONFIG, group);
         target.trustStore().ifPresent(trustStore -> {
-          consumerConfig.put("security.protocol", "SSL");
           consumerConfig.put("ssl.truststore.location", trustStore);
           consumerConfig.put("ssl.truststore.password", target.trustStorePassword().orElseThrow(IllegalArgumentException::new));
         });

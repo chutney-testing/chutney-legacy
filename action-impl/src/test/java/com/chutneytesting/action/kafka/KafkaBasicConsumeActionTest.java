@@ -176,7 +176,7 @@ public class KafkaBasicConsumeActionTest {
     }
 
   @Test
-  public void should_accept_kafka_connection_as_consumer_without_truststore_in_target() {
+  public void should_consume_message_from_broker_without_truststore() {
       embeddedKafkaBroker.afterPropertiesSet();
       Producer<Integer, String> producer = configureProducer();
       try {
@@ -206,7 +206,7 @@ public class KafkaBasicConsumeActionTest {
   }
 
   @Test
-  public void consumer_from_target_with_truststore_should_reject_ssl_connection_with_producer_without_truststore_configured() {
+  public void consumer_from_target_with_truststore_should_reject_ssl_connection_with_broker_without_truststore_configured() {
     embeddedKafkaBroker.afterPropertiesSet();
     Producer<Integer, String> producer = configureProducer();
     try {
@@ -215,6 +215,7 @@ public class KafkaBasicConsumeActionTest {
             .withUrl("tcp://" + embeddedKafkaBroker.getBrokersAsString())
             .withProperty("trustStore", KEYSTORE_JKS)
             .withProperty("trustStorePassword", "server")
+            .withProperty("security.protocol", "SSL")
             .build();
 
         Map<String, String> props = new HashMap<>();
