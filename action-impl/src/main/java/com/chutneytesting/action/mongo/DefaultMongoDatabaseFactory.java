@@ -1,5 +1,6 @@
 package com.chutneytesting.action.mongo;
 
+import com.chutneytesting.action.common.SecurityUtils;
 import com.chutneytesting.action.spi.injectable.Target;
 import com.chutneytesting.tools.CloseableResource;
 import com.mongodb.ConnectionString;
@@ -8,6 +9,7 @@ import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import java.security.GeneralSecurityException;
 import org.apache.commons.lang3.StringUtils;
 
 public class DefaultMongoDatabaseFactory implements MongoDatabaseFactory {
@@ -21,9 +23,20 @@ public class DefaultMongoDatabaseFactory implements MongoDatabaseFactory {
         String connectionString = String.format("mongodb://%s:%d/", target.host(), target.port());
 
         final MongoClient mongoClient;
-        MongoClientSettings.Builder mongoClientSettings = MongoClientSettings.builder()
-            .applyConnectionString(new ConnectionString(connectionString));
-
+        MongoClientSettings.Builder mongoClientSettings = MongoClientSettings.builder();
+        target.keyStore().ifPresent(keystore ->
+            mongoClientSettings.applyToSslSettings(builder -> {
+              try {
+                builder
+                  .invalidHostNameAllowed(true)
+                  .enabled(true)
+                  .context(SecurityUtils.buildSslContext(target).build());
+              } catch (GeneralSecurityException e) {
+                throw new IllegalArgumentException(e.getMessage(), e);
+              }
+            })
+        );
+        mongoClientSettings.applyConnectionString(new ConnectionString(connectionString));
         if (target.user().isPresent()) {
             String user = target.user().get();
             String password = target.userPassword().orElse("");

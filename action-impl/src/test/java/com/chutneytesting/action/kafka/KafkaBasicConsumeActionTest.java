@@ -24,16 +24,20 @@ import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE;
 
 import com.chutneytesting.action.TestLogger;
 import com.chutneytesting.action.TestTarget;
+import com.chutneytesting.action.http.HttpsServerStartActionTest;
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Target;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.header.internals.RecordHeaders;
@@ -45,14 +49,19 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.MessageListener;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.MimeType;
 import com.google.common.collect.ImmutableMap;
 
 @SuppressWarnings("unchecked")
+@EmbeddedKafka(partitions = 1, topics = { "topic" })
 public class KafkaBasicConsumeActionTest {
 
     private static final String TOPIC = "topic";
@@ -61,8 +70,10 @@ public class KafkaBasicConsumeActionTest {
     private static final TimestampType TIMESTAMP_TYPE = TimestampType.CREATE_TIME;
     private static final long FIRST_OFFSET = 0L;
     private static final int PARTITION = 0;
+    private static final String KEYSTORE_JKS = HttpsServerStartActionTest.class.getResource("/security/server.jks").getPath();
+    private final EmbeddedKafkaBroker embeddedKafkaBroker = new EmbeddedKafkaBroker(1, true, 1, TOPIC);
 
-    private static final Target TARGET_STUB = TestTarget.TestTargetBuilder.builder()
+  private static final Target TARGET_STUB = TestTarget.TestTargetBuilder.builder()
         .withTargetId("kafka")
         .withUrl("tcp://127.0.0.1:5555")
         .build();
@@ -163,6 +174,67 @@ public class KafkaBasicConsumeActionTest {
             .hasFieldOrPropertyWithValue("properties", expectedConfig)
         ;
     }
+
+  @Test
+  public void should_consume_message_from_broker_without_truststore() {
+      embeddedKafkaBroker.afterPropertiesSet();
+      Producer<Integer, String> producer = configureProducer();
+      try {
+          Target target = TestTarget.TestTargetBuilder.builder()
+              .withTargetId("kafka")
+              .withUrl("tcp://" + embeddedKafkaBroker.getBrokersAsString())
+              .build();
+
+          Map<String, String> props = new HashMap<>();
+          props.put("group.id", GROUP);
+          props.put("auto.commit.interval.ms", "10");
+          props.put("session.timeout.ms", "60000");
+          props.put("auto.offset.reset", "earliest");
+
+          Action sut = new KafkaBasicConsumeAction(target, TOPIC, GROUP, props, 1, null, null, TEXT_PLAIN_VALUE, "3000 ms", null, logger);
+
+          producer.send(new ProducerRecord<>(TOPIC, 123, "my-test-value"));
+
+          ActionExecutionResult actionExecutionResult = sut.execute();
+
+          assertThat(actionExecutionResult.status).isEqualTo(Success);
+          List<Map<String, Object>> body = assertActionOutputsSize(actionExecutionResult, 1);
+          assertThat(body.get(0).get("payload")).isEqualTo("my-test-value");
+      } finally {
+          producer.close();
+      }
+  }
+
+  @Test
+  public void consumer_from_target_with_truststore_should_reject_ssl_connection_with_broker_without_truststore_configured() {
+    embeddedKafkaBroker.afterPropertiesSet();
+    Producer<Integer, String> producer = configureProducer();
+    try {
+        Target target = TestTarget.TestTargetBuilder.builder()
+            .withTargetId("kafka")
+            .withUrl("tcp://" + embeddedKafkaBroker.getBrokersAsString())
+            .withProperty("trustStore", KEYSTORE_JKS)
+            .withProperty("trustStorePassword", "server")
+            .withProperty("security.protocol", "SSL")
+            .build();
+
+        Map<String, String> props = new HashMap<>();
+        props.put("group.id", GROUP);
+        props.put("auto.commit.interval.ms", "10");
+        props.put("session.timeout.ms", "60000");
+        props.put("auto.offset.reset", "earliest");
+
+        Action sut = new KafkaBasicConsumeAction(target, TOPIC, GROUP, props, 1, null, null, TEXT_PLAIN_VALUE, "3000 ms", null, logger);
+
+        producer.send(new ProducerRecord<>(TOPIC, 123, "my-test-value"));
+
+        ActionExecutionResult actionExecutionResult = sut.execute();
+
+        assertThat(actionExecutionResult.status).isEqualTo(Failure);
+    } finally {
+        producer.close();
+    }
+  }
 
     @Test
     public void should_consume_simple_text_message() {
@@ -506,4 +578,10 @@ public class KafkaBasicConsumeActionTest {
 
         return body;
     }
+
+  private Producer<Integer, String> configureProducer() {
+    Map<String, Object> producerProps = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafkaBroker));
+    producerProps.put("bootstrap.servers", embeddedKafkaBroker.getBrokersAsString());
+    return new DefaultKafkaProducerFactory<Integer, String>(producerProps).createProducer();
+  }
 }

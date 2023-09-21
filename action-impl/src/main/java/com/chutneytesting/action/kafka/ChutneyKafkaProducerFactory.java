@@ -6,6 +6,7 @@ import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS
 import com.chutneytesting.action.spi.injectable.Target;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -19,6 +20,10 @@ final class ChutneyKafkaProducerFactory {
         Map<String, Object> producerConfig = new HashMap<>();
         producerConfig.put(BOOTSTRAP_SERVERS_CONFIG, resolveBootStrapServerConfig(target));
         producerConfig.putAll(config);
+        target.trustStore().ifPresent(trustStore -> {
+          producerConfig.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStore);
+          producerConfig.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, target.trustStorePassword().orElseThrow(IllegalArgumentException::new));
+        });
 
         this.factory = new DefaultKafkaProducerFactory<>(
             producerConfig,

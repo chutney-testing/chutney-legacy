@@ -1,6 +1,8 @@
 package com.chutneytesting.action.http;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.any;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.patch;
@@ -16,10 +18,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.action.TestTarget;
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Logger;
 import com.chutneytesting.action.spi.injectable.Target;
+import com.chutneytesting.tools.SocketUtils;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
@@ -37,9 +41,18 @@ import org.springframework.http.HttpHeaders;
 
 public class HttpActionTest {
 
-    private final WireMockServer wireMockServer = new WireMockServer(wireMockConfig().dynamicPort().dynamicHttpsPort());
 
-    @BeforeEach
+  private final WireMockServer wireMockServer = new WireMockServer(wireMockConfig()
+        .dynamicPort()
+        .httpsPort(SocketUtils.findAvailableTcpPort())
+        .keystorePath(KEYSTORE_JKS)
+        .keystorePassword("server")
+        .keyManagerPassword("server"));
+
+    private static final String KEYSTORE_JKS = HttpsServerStartActionTest.class.getResource("/security/server.jks").getPath();
+    private static final String CACERTS = HttpsServerStartActionTest.class.getResource("/security/cacerts").getPath();
+
+  @BeforeEach
     public void setUp() {
         wireMockServer.start();
         configureFor("localhost", wireMockServer.port());
@@ -50,6 +63,56 @@ public class HttpActionTest {
         wireMockServer.stop();
         wireMockServer.resetAll();
     }
+
+  @Test
+  public void client_from_target_with_truststore_should_reject_connection_when_truststore_is_not_defined_in_server() {
+
+    // Given
+    Target target = TestTarget
+        .TestTargetBuilder
+        .builder()
+        .withTargetId("test target")
+        .withUrl("https://localhost:" + wireMockServer.httpsPort() + "/")
+        .withProperty("trustStore", CACERTS)
+        .withProperty("trustStorePassword", "changeit")
+        .build();
+
+    wireMockServer.stubFor(any(anyUrl())
+        .willReturn(aResponse().withStatus(200))
+    );
+    Logger logger = mock(Logger.class);
+    Action httpGetAction = new HttpGetAction(target, logger,  "/some/thing", null, "3000 ms");
+
+    // When
+    ActionExecutionResult executionResult = httpGetAction.execute();
+
+    // Then
+    assertThat(executionResult.status).isEqualTo(ActionExecutionResult.Status.Failure);
+  }
+
+  @Test
+  public void client_from_target_without_truststore_should_accept_connection_when_truststore_is_not_defined_in_server() {
+
+    // Given
+    Target target = TestTarget
+        .TestTargetBuilder
+        .builder()
+        .withTargetId("test target")
+        .withUrl("https://localhost:" + wireMockServer.httpsPort() + "/")
+        .build();
+
+    wireMockServer.stubFor(any(anyUrl())
+        .willReturn(aResponse().withStatus(200))
+    );
+    Logger logger = mock(Logger.class);
+    Action httpGetAction = new HttpGetAction(target, logger,  "/some/thing", null, "3000 ms");
+
+    // When
+    ActionExecutionResult executionResult = httpGetAction.execute();
+
+    // Then
+    assertThat(executionResult.status).isEqualTo(ActionExecutionResult.Status.Success);
+  }
 
     @Test
     public void should_succeed_with_status_200_when_requesting_existing_resource() {
