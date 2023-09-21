@@ -1,7 +1,6 @@
 package com.chutneytesting.action.common;
 
 import com.chutneytesting.action.spi.injectable.Target;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
