@@ -3,8 +3,9 @@ package com.chutneytesting.campaign.infra;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.chutneytesting.WebConfiguration;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
-import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 import util.infra.AbstractLocalDatabaseTest;
 import util.infra.EnableH2MemTestInfra;
 import util.infra.EnablePostgreSQLTestInfra;
@@ -37,6 +39,7 @@ public class CampaignExecutionRepositoryTest {
     class PostreSQL extends AllTests {
     }
 
+    @ContextConfiguration(classes = { WebConfiguration.class })
     abstract class AllTests extends AbstractLocalDatabaseTest {
 
         @Autowired
@@ -47,7 +50,7 @@ public class CampaignExecutionRepositoryTest {
             Scenario scenario = givenScenario();
             CampaignEntity campaign = givenCampaign(scenario);
 
-            ScenarioExecution scenarioExecution = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
+            ScenarioExecutionEntity scenarioExecution = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
             ScenarioExecutionReportCampaign scenarioExecutionReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecution.toDomain());
             Long campaignExecutionId = sut.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionReport), campaign.title(), true, "env", "#2:87", 5, "user");
@@ -85,9 +88,9 @@ public class CampaignExecutionRepositoryTest {
             Scenario scenarioTwo = givenScenario();
             CampaignEntity campaign = givenCampaign(scenarioOne, scenarioTwo);
 
-            ScenarioExecution scenarioOneExecution = givenScenarioExecution(scenarioOne.getId(), ServerReportStatus.SUCCESS);
+            ScenarioExecutionEntity scenarioOneExecution = givenScenarioExecution(scenarioOne.getId(), ServerReportStatus.SUCCESS);
             ScenarioExecutionReportCampaign scenarioOneExecutionReport = new ScenarioExecutionReportCampaign(scenarioOne.getId().toString(), scenarioOne.getTitle(), scenarioOneExecution.toDomain());
-            ScenarioExecution scenarioTwoExecution = givenScenarioExecution(scenarioTwo.getId(), ServerReportStatus.FAILURE);
+            ScenarioExecutionEntity scenarioTwoExecution = givenScenarioExecution(scenarioTwo.getId(), ServerReportStatus.FAILURE);
             ScenarioExecutionReportCampaign scenarioTwoExecutionReport = new ScenarioExecutionReportCampaign(scenarioTwo.getId().toString(), scenarioTwo.getTitle(), scenarioTwoExecution.toDomain());
             Long campaignExecutionId = sut.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), new ArrayList<>(List.of(scenarioOneExecutionReport, scenarioTwoExecutionReport)), campaign.title(), true, "env", "#2:87", 5, "user");
@@ -142,7 +145,7 @@ public class CampaignExecutionRepositoryTest {
             Scenario scenarioTwo = givenScenario();
             CampaignEntity campaign = givenCampaign(scenarioOne, scenarioTwo);
 
-            ScenarioExecution scenarioOneExecution = givenScenarioExecution(scenarioOne.getId(), ServerReportStatus.SUCCESS);
+            ScenarioExecutionEntity scenarioOneExecution = givenScenarioExecution(scenarioOne.getId(), ServerReportStatus.SUCCESS);
             ScenarioExecutionReportCampaign scenarioOneExecutionReport = new ScenarioExecutionReportCampaign(scenarioOne.getId().toString(), scenarioOne.getTitle(), scenarioOneExecution.toDomain());
             Long campaignExecutionId = sut.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioOneExecutionReport), campaign.title(), true, "env", "#2:87", 5, "user");
@@ -185,7 +188,7 @@ public class CampaignExecutionRepositoryTest {
             Scenario scenario = givenScenario();
             CampaignEntity campaign = givenCampaign(scenario);
 
-            ScenarioExecution scenarioExecution = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
+            ScenarioExecutionEntity scenarioExecution = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
             ScenarioExecutionReportCampaign scenarioExecutionReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecution.toDomain());
             Long campaignExecutionId = sut.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionReport), campaign.title(), true, "env", "#2:87", 5, "user");
@@ -197,7 +200,7 @@ public class CampaignExecutionRepositoryTest {
             assertThat(executionHistory).isEmpty();
 
             List<?> scenarioExecutions =
-                entityManager.createNativeQuery("select * from scenario_executions where id = :id", ScenarioExecution.class)
+                entityManager.createNativeQuery("select * from scenario_executions where id = :id", ScenarioExecutionEntity.class)
                     .setParameter("id", scenarioExecution.id())
                     .getResultList();
             assertThat(scenarioExecutions).hasSize(1);
@@ -209,25 +212,25 @@ public class CampaignExecutionRepositoryTest {
             Scenario scenario = givenScenario();
             CampaignEntity campaign = givenCampaign(scenario);
 
-            ScenarioExecution scenarioExecutionOne = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
+            ScenarioExecutionEntity scenarioExecutionOne = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
             ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecutionOne.toDomain());
             Long campaignExecutionOneId = sut.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionOneReport = new CampaignExecutionReport(campaignExecutionOneId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
             sut.saveCampaignReport(campaign.id(), campaignExecutionOneReport);
 
-            ScenarioExecution scenarioExecutionTwo = givenScenarioExecution(scenario.getId(), ServerReportStatus.SUCCESS);
+            ScenarioExecutionEntity scenarioExecutionTwo = givenScenarioExecution(scenario.getId(), ServerReportStatus.SUCCESS);
             ScenarioExecutionReportCampaign scenarioExecutionTwoReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecutionTwo.toDomain());
             Long campaignExecutionTwoId = sut.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionTwoReport = new CampaignExecutionReport(campaignExecutionTwoId, campaign.id(), singletonList(scenarioExecutionTwoReport), campaign.title(), true, "env", "#2:87", 5, "user");
             sut.saveCampaignReport(campaign.id(), campaignExecutionTwoReport);
 
-            ScenarioExecution scenarioExecutionThree = givenScenarioExecution(scenario.getId(), ServerReportStatus.FAILURE);
+            ScenarioExecutionEntity scenarioExecutionThree = givenScenarioExecution(scenario.getId(), ServerReportStatus.FAILURE);
             ScenarioExecutionReportCampaign scenarioExecutionThreeReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecutionThree.toDomain());
             Long campaignExecutionThreeId = sut.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionThreeReport = new CampaignExecutionReport(campaignExecutionThreeId, campaign.id(), singletonList(scenarioExecutionThreeReport), campaign.title(), true, "env", "#2:87", 5, "user");
             sut.saveCampaignReport(campaign.id(), campaignExecutionThreeReport);
 
-            ScenarioExecution scenarioExecutionFour = givenScenarioExecution(scenario.getId(), ServerReportStatus.RUNNING);
+            ScenarioExecutionEntity scenarioExecutionFour = givenScenarioExecution(scenario.getId(), ServerReportStatus.RUNNING);
             ScenarioExecutionReportCampaign scenarioExecutionFourReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecutionFour.toDomain());
             Long campaignExecutionFourId = sut.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionFourReport = new CampaignExecutionReport(campaignExecutionFourId, campaign.id(), singletonList(scenarioExecutionFourReport), campaign.title(), true, "env", "#2:87", 5, "user");

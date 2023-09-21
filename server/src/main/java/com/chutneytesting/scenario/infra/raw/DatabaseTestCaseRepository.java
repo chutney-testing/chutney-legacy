@@ -9,7 +9,7 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
 import com.chutneytesting.campaign.infra.CampaignScenarioJpaRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
 import com.chutneytesting.execution.infra.storage.DatabaseExecutionJpaRepository;
-import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
@@ -109,7 +109,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         }
         scenarioJpaRepository.findByIdAndActivated(valueOf(scenarioId), true)
             .ifPresent(scenarioJpa -> {
-                List<ScenarioExecution> allExecutions = scenarioExecutionsJpaRepository.findAllByScenarioId(scenarioId);
+                List<ScenarioExecutionEntity> allExecutions = scenarioExecutionsJpaRepository.findAllByScenarioId(scenarioId);
                 allExecutions.forEach(e -> {
                     e.forCampaignExecution(null);
                     scenarioExecutionsJpaRepository.save(e);

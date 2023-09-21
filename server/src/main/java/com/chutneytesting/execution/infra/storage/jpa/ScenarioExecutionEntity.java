@@ -22,7 +22,7 @@ import java.time.ZoneId;
 import org.apache.commons.lang3.StringUtils;
 
 @Entity(name = "SCENARIO_EXECUTIONS")
-public class ScenarioExecution {
+public class ScenarioExecutionEntity {
 
     @Id
     @Column(name = "ID")
@@ -71,10 +71,10 @@ public class ScenarioExecution {
     @Version
     private Integer version;
 
-    public ScenarioExecution() {
+    public ScenarioExecutionEntity() {
     }
 
-    public ScenarioExecution(Long id, String scenarioId, CampaignExecution campaignExecution, Long executionTime, Long duration, ServerReportStatus status, String information, String error, String scenarioTitle, String environment, String userId, String datasetId, Integer datasetVersion, Integer version) {
+    public ScenarioExecutionEntity(Long id, String scenarioId, CampaignExecution campaignExecution, Long executionTime, Long duration, ServerReportStatus status, String information, String error, String scenarioTitle, String environment, String userId, String datasetId, Integer datasetVersion, Integer version) {
         this.id = id;
         this.scenarioId = scenarioId;
         this.campaignExecution = campaignExecution;
@@ -155,12 +155,12 @@ public class ScenarioExecution {
         return datasetVersion;
     }
 
-    public static ScenarioExecution fromDomain(String scenarioId, ExecutionHistory.ExecutionProperties execution) {
+    public static ScenarioExecutionEntity fromDomain(String scenarioId, ExecutionHistory.ExecutionProperties execution) {
         return fromDomain(scenarioId, null, null, execution);
     }
 
-    public static ScenarioExecution fromDomain(String scenarioId, Long id, Integer version, ExecutionHistory.ExecutionProperties execution) {
-        return new ScenarioExecution(
+    public static ScenarioExecutionEntity fromDomain(String scenarioId, Long id, Integer version, ExecutionHistory.ExecutionProperties execution) {
+        return new ScenarioExecutionEntity(
             id,
             scenarioId,
             null,

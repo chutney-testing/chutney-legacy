@@ -7,8 +7,8 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.campaign.infra.CampaignExecutionJpaRepository;
 import com.chutneytesting.campaign.infra.CampaignJpaRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
-import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecution;
-import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionReport;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionReportEntity;
 import com.chutneytesting.scenario.infra.raw.ScenarioJpaRepository;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.Execution;
@@ -16,14 +16,21 @@ import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundException;
+import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
+import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,30 +43,35 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     private final CampaignJpaRepository campaignJpaRepository;
     private final CampaignExecutionJpaRepository campaignExecutionJpaRepository;
     private final TestCaseRepository testCaseRepository;
+    private final ObjectMapper objectMapper;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseExecutionHistoryRepository.class);
+
 
     DatabaseExecutionHistoryRepository(
         DatabaseExecutionJpaRepository scenarioExecutionsJpaRepository,
         ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository,
         ScenarioJpaRepository scenarioJpaRepository,
         CampaignJpaRepository campaignJpaRepository, TestCaseRepository testCaseRepository,
-        CampaignExecutionJpaRepository campaignExecutionJpaRepository) {
+        CampaignExecutionJpaRepository campaignExecutionJpaRepository,
+        @Qualifier("reportObjectMapper") ObjectMapper objectMapper) {
         this.scenarioExecutionsJpaRepository = scenarioExecutionsJpaRepository;
         this.scenarioExecutionReportJpaRepository = scenarioExecutionReportJpaRepository;
         this.campaignJpaRepository = campaignJpaRepository;
         this.testCaseRepository = testCaseRepository;
         this.campaignExecutionJpaRepository = campaignExecutionJpaRepository;
+        this.objectMapper = objectMapper;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Map<String, ExecutionSummary> getLastExecutions(List<String> scenarioIds) {
         List<String> scenarioIdL = scenarioIds.stream().filter(id -> !invalidScenarioId(id)).toList();
-        Iterable<ScenarioExecution> lastExecutions = scenarioExecutionsJpaRepository.findAllById(
+        Iterable<ScenarioExecutionEntity> lastExecutions = scenarioExecutionsJpaRepository.findAllById(
             scenarioExecutionsJpaRepository.findLastExecutionsByScenarioId(scenarioIdL)
                 .stream().map(t -> t.get(0, Long.class)).toList()
         );
         return StreamSupport.stream(lastExecutions.spliterator(), true)
-            .collect(Collectors.toMap(ScenarioExecution::scenarioId, ScenarioExecution::toDomain));
+            .collect(Collectors.toMap(ScenarioExecutionEntity::scenarioId, ScenarioExecutionEntity::toDomain));
     }
 
     @Override
@@ -68,7 +80,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         if (invalidScenarioId(scenarioId)) {
             return emptyList();
         }
-        List<ScenarioExecution> scenarioExecutions = scenarioExecutionsJpaRepository.findFirst20ByScenarioIdOrderByIdDesc(scenarioId);
+        List<ScenarioExecutionEntity> scenarioExecutions = scenarioExecutionsJpaRepository.findFirst20ByScenarioIdOrderByIdDesc(scenarioId);
         return scenarioExecutions.stream()
             .map(this::scenarioExecutionToExecutionSummary)
             .toList();
@@ -84,7 +96,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
             );
     }
 
-    private ExecutionSummary scenarioExecutionToExecutionSummary(ScenarioExecution scenarioExecution) {
+    private ExecutionSummary scenarioExecutionToExecutionSummary(ScenarioExecutionEntity scenarioExecution) {
         CampaignExecutionReport campaignExecutionReport = ofNullable(scenarioExecution.campaignExecution())
             .map(ce -> ce.toDomain(campaignJpaRepository.findById(ce.campaignId()).get(), false, null))
             .orElse(null);
@@ -96,13 +108,13 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         if (invalidScenarioId(scenarioId)) {
             throw new IllegalStateException("Scenario id is null or empty");
         }
-        ScenarioExecution scenarioExecution = ScenarioExecution.fromDomain(scenarioId, detachedExecution);
+        ScenarioExecutionEntity scenarioExecution = ScenarioExecutionEntity.fromDomain(scenarioId, detachedExecution);
         if (detachedExecution.campaignReport().isPresent()) {
             Optional<CampaignExecution> campaignExecution = campaignExecutionJpaRepository.findById(detachedExecution.campaignReport().get().executionId.longValue());
             scenarioExecution.forCampaignExecution(campaignExecution.get());
         }
         scenarioExecution = scenarioExecutionsJpaRepository.save(scenarioExecution);
-        scenarioExecutionReportJpaRepository.save(new ScenarioExecutionReport(scenarioExecution, detachedExecution.report()));
+        scenarioExecutionReportJpaRepository.save(new ScenarioExecutionReportEntity(scenarioExecution, detachedExecution.report()));
         Execution execution = detachedExecution.attach(scenarioExecution.id());
         return ImmutableExecutionHistory.Execution.builder().from(execution).build();
     }
@@ -114,7 +126,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         if (invalidScenarioId(scenarioId) || testCaseRepository.findById(scenarioId).isEmpty()) {
             throw new ReportNotFoundException(scenarioId, reportId);
         }
-        return scenarioExecutionReportJpaRepository.findById(reportId).map(ScenarioExecutionReport::toDomain)
+        return scenarioExecutionReportJpaRepository.findById(reportId).map(ScenarioExecutionReportEntity::toDomain)
             .orElseThrow(
                 () -> new ReportNotFoundException(scenarioId, reportId)
             );
@@ -129,7 +141,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     private void update(Execution updatedExecution) throws ReportNotFoundException {
-        ScenarioExecution execution = scenarioExecutionsJpaRepository.findById(updatedExecution.executionId()).orElseThrow(
+        ScenarioExecutionEntity execution = scenarioExecutionsJpaRepository.findById(updatedExecution.executionId()).orElseThrow(
             () -> new ReportNotFoundException(updatedExecution.executionId())
         );
 
@@ -139,7 +151,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     private void updateReport(Execution execution) throws ReportNotFoundException {
-        ScenarioExecutionReport scenarioExecutionReport = scenarioExecutionReportJpaRepository.findById(execution.executionId()).orElseThrow(
+        ScenarioExecutionReportEntity scenarioExecutionReport = scenarioExecutionReportJpaRepository.findById(execution.executionId()).orElseThrow(
             () -> new ReportNotFoundException(execution.executionId())
         );
         scenarioExecutionReport.updateReport(execution);
@@ -160,7 +172,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     @Override
     @Transactional(readOnly = true)
     public List<ExecutionSummary> getExecutionsWithStatus(ServerReportStatus status) {
-        return scenarioExecutionsJpaRepository.findByStatus(status).stream().map(ScenarioExecution::toDomain).toList();
+        return scenarioExecutionsJpaRepository.findByStatus(status).stream().map(ScenarioExecutionEntity::toDomain).toList();
     }
 
     private void updateExecutionsToKO(List<ExecutionSummary> executions) {
@@ -170,6 +182,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     private ImmutableExecutionHistory.Execution buildKnockoutExecutionFrom(ExecutionSummary executionSummary) {
+        String reportStoppedRunningOrPausedStatus = stopRunningOrPausedReport(executionSummary);
         return ImmutableExecutionHistory.Execution.builder()
             .executionId(executionSummary.executionId())
             .status(ServerReportStatus.FAILURE)
@@ -177,11 +190,69 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
             .duration(executionSummary.duration())
             .info(executionSummary.info())
             .error("Execution was interrupted !")
-            .report("")
+            .report(reportStoppedRunningOrPausedStatus)
             .testCaseTitle(executionSummary.testCaseTitle())
             .environment(executionSummary.environment())
             .user(executionSummary.user())
             .build();
+    }
+
+    private String stopRunningOrPausedReport(ExecutionSummary executionSummary) {
+        return scenarioExecutionReportJpaRepository.findById(executionSummary.executionId()).map(ScenarioExecutionReportEntity::toDomain).map(execution -> {
+            try {
+                ScenarioExecutionReport newScenarioExecutionReport = updateStatusInScenarioExecutionReportWithStoppedStatusIfRunningOrPaused(execution);
+                return objectMapper.writeValueAsString(newScenarioExecutionReport);
+            } catch (JsonProcessingException exception) {
+                LOGGER.error("Unexpected error while deserializing report for execution id " + executionSummary.executionId(), exception);
+                return "";
+            }
+          }).orElseGet(() -> {
+            LOGGER.warn("Report not found for execution id {}", executionSummary.executionId());
+            return "";
+        });
+    }
+
+    private ScenarioExecutionReport updateStatusInScenarioExecutionReportWithStoppedStatusIfRunningOrPaused(Execution execution) throws JsonProcessingException {
+        ScenarioExecutionReport scenarioExecutionReport = objectMapper.readValue(execution.report(), ScenarioExecutionReport.class);
+        StepExecutionReportCore report = updateStepWithStoppedStatusIfRunningOrPaused(scenarioExecutionReport.report);
+        return updateScenarioExecutionReport(scenarioExecutionReport, report);
+    }
+
+    private ScenarioExecutionReport updateScenarioExecutionReport(ScenarioExecutionReport scenarioExecutionReport, StepExecutionReportCore report) {
+        return new ScenarioExecutionReport(
+            scenarioExecutionReport.executionId,
+            scenarioExecutionReport.scenarioName,
+            scenarioExecutionReport.environment,
+            scenarioExecutionReport.user,
+            report);
+    }
+
+    private List<StepExecutionReportCore> updateStepListWithStoppedStatusIfRunningOrPaused(List<StepExecutionReportCore> steps) {
+        return steps.stream().map(this::updateStepWithStoppedStatusIfRunningOrPaused).collect(Collectors.toList());
+    }
+
+    private boolean isExecutionRunningOrPaused(ServerReportStatus status) {
+        return status.equals(ServerReportStatus.RUNNING) || status.equals(ServerReportStatus.PAUSED);
+    }
+
+    private StepExecutionReportCore updateStepWithStoppedStatusIfRunningOrPaused(StepExecutionReportCore step) {
+        ServerReportStatus status = isExecutionRunningOrPaused(step.status) ? ServerReportStatus.STOPPED : step.status;
+        List<StepExecutionReportCore> steps = updateStepListWithStoppedStatusIfRunningOrPaused(step.steps);
+        return new StepExecutionReportCore(
+            step.name,
+            step.duration,
+            step.startDate,
+            status,
+            step.information,
+            step.errors,
+            steps,
+            step.type,
+            step.targetName,
+            step.targetUrl,
+            step.strategy,
+            step.evaluatedInputs,
+            step.stepOutputs
+        );
     }
 
     private boolean invalidScenarioId(String scenarioId) {

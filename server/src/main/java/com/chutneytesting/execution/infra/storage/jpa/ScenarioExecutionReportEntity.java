@@ -17,7 +17,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 
 @Entity(name = "SCENARIO_EXECUTIONS_REPORTS")
-public class ScenarioExecutionReport {
+public class ScenarioExecutionReportEntity {
 
     @Id
     @Column(name = "SCENARIO_EXECUTION_ID")
@@ -26,7 +26,7 @@ public class ScenarioExecutionReport {
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "SCENARIO_EXECUTION_ID")
-    private ScenarioExecution scenarioExecution;
+    private ScenarioExecutionEntity scenarioExecution;
 
     @Column(name = "REPORT")
     @Basic(fetch = FetchType.LAZY)
@@ -36,10 +36,10 @@ public class ScenarioExecutionReport {
     @Version
     private Integer version;
 
-    public ScenarioExecutionReport() {
+    public ScenarioExecutionReportEntity() {
     }
 
-    public ScenarioExecutionReport(ScenarioExecution scenarioExecution, String report) {
+    public ScenarioExecutionReportEntity(ScenarioExecutionEntity scenarioExecution, String report) {
         this.scenarioExecutionId = scenarioExecution.id();
         this.scenarioExecution = scenarioExecution;
         this.report = report;
@@ -48,7 +48,9 @@ public class ScenarioExecutionReport {
     public void updateReport(ExecutionHistory.Execution execution) {
         report = execution.report();
     }
-
+    public String getReport() {
+        return report;
+    }
     public ExecutionHistory.Execution toDomain() {
         return ImmutableExecutionHistory.Execution.builder()
             .executionId(scenarioExecutionId)
