@@ -22,6 +22,7 @@
     <logger name="org.apache.maven.surefire.booter" level="WARN"/>
     <logger name="org.eclipse" level="WARN"/>
     <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.mongodb" level="INFO"/>
     <logger name="org.jboss" level="WARN"/>
     <logger name="qpid" level="WARN"/>
     <logger name="org.springframework" level="WARN" />
