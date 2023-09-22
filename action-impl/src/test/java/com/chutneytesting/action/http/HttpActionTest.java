@@ -28,6 +28,8 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,9 +52,17 @@ public class HttpActionTest {
         .keyManagerPassword("server"));
 
     private static final String KEYSTORE_JKS = HttpsServerStartActionTest.class.getResource("/security/server.jks").getPath();
-    private static final String CACERTS = HttpsServerStartActionTest.class.getResource("/security/cacerts").getPath();
+    private static final String CACERTS;
 
-  @BeforeEach
+    static {
+        try {
+            CACERTS = Paths.get(HttpsServerStartActionTest.class.getResource("/security/cacerts").toURI()).toString();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @BeforeEach
     public void setUp() {
         wireMockServer.start();
         configureFor("localhost", wireMockServer.port());
