@@ -9,19 +9,19 @@ import { map } from 'rxjs/operators';
 })
 export class GlobalVariableService {
 
-    private url = '/api/ui/globalvar/v1/';
+    private url = '/api/ui/globalvar/v1';
 
     constructor(private http: HttpClient) {
     }
 
     public get(fileName: string): Observable<string> {
-        return this.http.get<Object>(environment.backend + this.url + fileName).pipe(map((res: Object) => {
+        return this.http.get<Object>(environment.backend + this.url + '/' + fileName).pipe(map((res: Object) => {
             return res['message'];
         }));
     }
 
     public save(fileName: string, content: string): Observable<Object> {
-        return this.http.post(environment.backend + this.url + fileName, {message: content}, {responseType: 'text'});
+        return this.http.post(environment.backend + this.url + '/' + fileName, {message: content}, {responseType: 'text'});
     }
 
     public list() {
@@ -31,6 +31,6 @@ export class GlobalVariableService {
     }
 
     delete(fileName: string) {
-        return this.http.delete<Object>(environment.backend + this.url + fileName);
+        return this.http.delete<Object>(environment.backend + this.url + '/' + fileName);
     }
 }
