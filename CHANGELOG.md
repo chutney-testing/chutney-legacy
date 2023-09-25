@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.2.2](https://github.com/chutney-testing/chutney/tree/2.2.2)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/2.2.1...2.2.2)
+
+## What's Changed
+### 🚀 Implemented enhancements:
+* feat(server): Stop running scenario executions reports by @DelaunayAlex in https://github.com/chutney-testing/chutney/pull/1130
+* feat(action): Use target security properties whenever it's possible (Mongo, Kafka, http) by @DelaunayAlex in https://github.com/chutney-testing/chutney/pull/1129
+
+### 🐛 Fixed bugs:
+* fix(server): Add partialExecution in mapper by @nbrouand in https://github.com/chutney-testing/chutney/pull/1135
+* fix(): Include UriBuilder from javax.ws.rs.core for jira and Chutney 2.2.1 with SpringBoot 3 by @nbrouand in https://github.com/chutney-testing/chutney/pull/1136
+* fix(ui): fix global var root url by rbenyoussef in https://github.com/chutney-testing/chutney/pull/1137
+
+
 ## [2.2.1](https://github.com/chutney-testing/chutney/tree/2.2.1)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/2.2.0...2.2.1)
