@@ -1,0 +1,16 @@
+chutney:
+  db-server:
+    port: 9360
+    base-dir: ./.chutney
+
+spring:
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.H2Dialect
+      hibernate.id.new_generator_mappings: false
+  datasource:
+    url: jdbc:h2:tcp://localhost:${chutney.db-server.port}/chutney-ui;SCHEMA=PUBLIC
+    username:
+    password:
+    configuration:
+      maximum-pool-size: 5

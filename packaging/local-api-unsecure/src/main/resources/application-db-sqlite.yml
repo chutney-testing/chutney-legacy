@@ -1,0 +1,11 @@
+chutney:
+  db-server:
+    base-dir: ./.chutney
+
+spring:
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.community.dialect.SQLiteDialect
+      hibernate.id.new_generator_mappings: false
+  datasource:
+    url: jdbc:sqlite:${chutney.db-server.base-dir}/sqlitesample.db

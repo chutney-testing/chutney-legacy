@@ -1,0 +1,87 @@
+server:
+  instance-name: local api unsecure
+  port: 8350
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+  servlet:
+    session:
+      timeout: 240m
+      cookie:
+        http-only: true
+        secure: true
+        same-site: lax
+      tracking-modes: cookie
+
+management:
+  server:
+    port: -1
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        exclude: "*"
+    jmx:
+      exposure:
+        exclude: "*"
+
+spring:
+  application:
+    name: chutney-server
+  liquibase:
+    change-log: classpath:/changelog/db.changelog-master.xml
+  jpa:
+    open-in-view: false
+    show_sql: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+  profiles:
+    active:
+      - db-h2
+
+chutney:
+  configuration-folder: .chutney/conf
+  environment:
+    configuration-folder: ${chutney.configuration-folder}/environment
+  jira:
+    configuration-folder: ${chutney.configuration-folder}/jira
+
+  server:
+    editions:
+      ttl:
+        value: 2
+        unit: SECONDS
+    execution:
+      async:
+        publisher:
+          ttl: 5
+          debounce: 250
+    campaigns:
+      executor:
+        pool-size: 20
+    scheduled-campaigns:
+      fixed-rate: 60000
+      executor:
+        pool-size: 20
+    agent:
+#      name:
+#      hostname:
+      network:
+        connection-checker-timeout: 1000
+
+  engine:
+    executor:
+      pool-size: 20
+    reporter:
+      publisher:
+        ttl: 5
+#    delegation:
+#      user:
+#      password:
+
+  actions:
+    sql:
+      max-logged-rows: 20
+

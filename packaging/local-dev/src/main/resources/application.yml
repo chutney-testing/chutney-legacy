@@ -1,9 +1,8 @@
-agent-name: chutney-server-agent-0
 server:
-  instance-name: Local instance
+  instance-name: local dev
   port: 8443
   http:
-    port: 9350
+    port: 8080
     interface: localhost
   compression:
     enabled: true
@@ -37,6 +36,8 @@ management:
       show-details: always
 
 spring:
+  application:
+    name: chutney-server
   liquibase:
     change-log: classpath:/changelog/db.changelog-master.xml
   jpa:
