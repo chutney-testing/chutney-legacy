@@ -38,6 +38,7 @@ public class StepExecutionReportCore implements ServerReportStatus.HavingStatus 
         this(name, duration, startDate, status, information, errors, steps, type, targetName, targetUrl, strategy, null, null);
     }
 
+
     public StepExecutionReportCore(String name,
                                    Long duration,
                                    Instant startDate,

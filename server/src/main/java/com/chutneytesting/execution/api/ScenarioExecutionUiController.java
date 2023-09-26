@@ -53,6 +53,7 @@ public class ScenarioExecutionUiController {
     private final ObjectMapper reportObjectMapper;
     private final SpringUserService userService;
     private final DataSetRepository datasetRepository;
+    private final ScenarioExecutionReportMapper scenarioExecutionReportMapper;
 
     ScenarioExecutionUiController(
         ScenarioExecutionEngine executionEngine,
@@ -61,7 +62,8 @@ public class ScenarioExecutionUiController {
         ObjectMapper objectMapper,
         @Qualifier("reportObjectMapper") ObjectMapper reportObjectMapper,
         SpringUserService userService,
-        DataSetRepository datasetRepository) {
+        DataSetRepository datasetRepository,
+        ScenarioExecutionReportMapper scenarioExecutionReportMapper) {
         this.executionEngine = executionEngine;
         this.executionEngineAsync = executionEngineAsync;
         this.testCaseRepository = testCaseRepository;
@@ -69,6 +71,7 @@ public class ScenarioExecutionUiController {
         this.reportObjectMapper = reportObjectMapper;
         this.userService = userService;
         this.datasetRepository = datasetRepository;
+        this.scenarioExecutionReportMapper = scenarioExecutionReportMapper;
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
@@ -76,7 +79,6 @@ public class ScenarioExecutionUiController {
     public String executeScenarioWitRawContent(@RequestBody IdeaRequest ideaRequest, @PathVariable("env") String env) throws IOException {
         LOGGER.debug("execute Scenario v2 for content='{}' with parameters '{}'", ideaRequest.getContent(), ideaRequest.getParams());
         String userId = userService.currentUser().getId();
-
         GwtScenario gwtScenario = marshaller.deserialize("test title for idea", "test description for idea", ideaRequest.getContent());
 
         TestCase testCase = GwtTestCase.builder()
@@ -114,7 +116,8 @@ public class ScenarioExecutionUiController {
         String userId = userService.currentUserId();
         DataSet dataset = getDataSet(testCase);
         ScenarioExecutionReport report = executionEngine.simpleSyncExecution(new ExecutionRequest(testCase, env, userId, dataset));
-        return reportObjectMapper.writeValueAsString(report);
+
+        return reportObjectMapper.writeValueAsString(this.scenarioExecutionReportMapper.toDto(report));
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
