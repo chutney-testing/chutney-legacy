@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class Backup {
@@ -15,7 +14,7 @@ public class Backup {
     public final List<String> backupables;
 
     public Backup(List<String> backupables) {
-        if (CollectionUtils.isEmpty(backupables)) {
+        if (backupables == null || backupables.isEmpty()) {
             throw new IllegalArgumentException("Nothing to backup !!");
         }
 

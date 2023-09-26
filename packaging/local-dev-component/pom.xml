@@ -25,6 +25,10 @@
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
+            <artifactId>action-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.chutneytesting</groupId>
             <artifactId>ui</artifactId>
             <scope>runtime</scope>
         </dependency>

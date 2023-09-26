@@ -2,9 +2,9 @@ package com.chutneytesting.scenario.infra.raw;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.ofNullable;
-import static org.apache.commons.collections.ListUtils.unmodifiableList;
 
 import com.chutneytesting.server.core.domain.security.User;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

@@ -112,7 +112,7 @@
 
         <!-- test dependencies versions -->
         <jqwik.version>1.7.4</jqwik.version>
-        <wire-mock.version>3.0.0-beta-10</wire-mock.version>
+        <wiremock.version>3.0.1</wiremock.version>
         <testcontainers.version>1.19.0</testcontainers.version>
     </properties>
 
@@ -214,6 +214,16 @@
                 <groupId>com.chutneytesting</groupId>
                 <artifactId>action-impl</artifactId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.module</groupId>
+                        <artifactId>jackson-module-scala_2.13</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.chutneytesting</groupId>
@@ -258,8 +268,8 @@
                 <scope>import</scope>
                 <exclusions>
                     <exclusion>
-                        <artifactId>commons-logging</artifactId>
                         <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -354,7 +364,7 @@
             <dependency>
                 <groupId>com.github.tomakehurst</groupId>
                 <artifactId>wiremock</artifactId>
-                <version>${wire-mock.version}</version>
+                <version>${wiremock.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -414,7 +424,7 @@
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>1.2</version>
-                <scope>compile</scope>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>

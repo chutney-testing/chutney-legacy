@@ -1,23 +1,34 @@
 package com.chutneytesting.action.mongo;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import com.chutneytesting.action.TestLogger;
 import com.chutneytesting.action.TestTarget;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Target;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 public class DefaultMongoDatabaseFactoryTest {
 
     private static final TestLogger logger = new TestLogger();
-    private static final String TRUSTSTORE_JKS = DefaultMongoDatabaseFactoryTest.class.getResource("/security/truststore.jks").getPath();
-    private static final String KEYSTORE_JKS = DefaultMongoDatabaseFactoryTest.class.getResource("/security/server.jks").getPath();
+    private static final String TRUSTSTORE_JKS;
+    private static final String KEYSTORE_JKS;
+
+    static {
+        try {
+            TRUSTSTORE_JKS = Paths.get(DefaultMongoDatabaseFactoryTest.class.getResource("/security/truststore.jks").toURI()).toString();
+            KEYSTORE_JKS = Paths.get(DefaultMongoDatabaseFactoryTest.class.getResource("/security/server.jks").toURI()).toString();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     public void should_accept_ssl_connection_when_truststore_in_target_properties() {
@@ -65,6 +76,6 @@ public class DefaultMongoDatabaseFactoryTest {
             .build();
 
         MongoListAction action = new MongoListAction(mongoTarget, logger);
-        assertThatThrownBy(() -> action.execute());
+        assertThatThrownBy(action::execute);
     }
 }

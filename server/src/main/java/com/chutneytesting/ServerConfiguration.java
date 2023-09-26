@@ -1,7 +1,5 @@
 package com.chutneytesting;
 
-import static com.chutneytesting.action.sql.SqlAction.CONFIGURABLE_NB_LOGGED_ROW;
-
 import com.chutneytesting.action.api.EmbeddedActionEngine;
 import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignRepository;
@@ -86,7 +84,8 @@ public class ServerConfiguration implements AsyncConfigurer {
     public static final String EDITIONS_TTL_VALUE_SPRING_VALUE = "${chutney.server.editions.ttl.value:6}";
     public static final String EDITIONS_TTL_UNIT_SPRING_VALUE = "${chutney.server.editions.ttl.unit:HOURS}";
 
-    public static final String TASK_SQL_NB_LOGGED_ROW = "${" + CONFIGURABLE_NB_LOGGED_ROW + ":30}";
+    private static final String TASK_SQL_NB_LOGGED_ROW = "chutney.actions.sql.max-logged-rows";
+    public static final String TASK_SQL_NB_LOGGED_ROW_SPRING_VALUE = "${" + TASK_SQL_NB_LOGGED_ROW + ":30}";
 
     @Value(SERVER_PORT_SPRING_VALUE)
     int port;
@@ -175,12 +174,12 @@ public class ServerConfiguration implements AsyncConfigurer {
     public ExecutionConfiguration executionConfiguration(
         @Value(ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE) Long reporterTTL,
         @Qualifier("engineExecutor") TaskExecutor engineExecutor,
-        @Value(TASK_SQL_NB_LOGGED_ROW) String nbLoggedRow,
+        @Value(TASK_SQL_NB_LOGGED_ROW_SPRING_VALUE) String nbLoggedRow,
         @Value(ENGINE_DELEGATION_USER_SPRING_VALUE) String delegateUser,
         @Value(ENGINE_DELEGATION_PASSWORD_SPRING_VALUE) String delegatePassword
     ) {
         Map<String, String> actionsConfiguration = new HashMap<>();
-        actionsConfiguration.put(CONFIGURABLE_NB_LOGGED_ROW, nbLoggedRow);
+        actionsConfiguration.put(TASK_SQL_NB_LOGGED_ROW, nbLoggedRow);
         return new ExecutionConfiguration(reporterTTL, engineExecutor, actionsConfiguration, delegateUser, delegatePassword);
     }
 

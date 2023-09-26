@@ -23,16 +23,6 @@
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
-            <artifactId>action-impl</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.module</groupId>
-                    <artifactId>jackson-module-scala_2.13</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.chutneytesting</groupId>
             <artifactId>environment</artifactId>
         </dependency>
         <dependency>
@@ -174,6 +164,10 @@
 
         <!-- Test dependencies -->
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
         </dependency>
@@ -184,12 +178,13 @@
         </dependency>
         <dependency>
             <groupId>com.chutneytesting</groupId>
-            <artifactId>ui</artifactId>
+            <artifactId>action-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <groupId>com.chutneytesting</groupId>
+            <artifactId>ui</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -204,6 +199,7 @@
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-community-dialects</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
