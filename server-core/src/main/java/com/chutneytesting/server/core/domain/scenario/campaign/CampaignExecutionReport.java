@@ -163,6 +163,10 @@ public class CampaignExecutionReport {
         }
     }
 
+    public ServerReportStatus getStatus() {
+        return status;
+    }
+
     public List<ScenarioExecutionReportCampaign> scenarioExecutionReports() {
         if (findStatus(scenarioExecutionReports).isFinal()) {
             scenarioExecutionReports.sort(ScenarioExecutionReportCampaign.executionIdComparator());

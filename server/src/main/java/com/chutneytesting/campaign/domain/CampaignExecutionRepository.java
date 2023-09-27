@@ -12,4 +12,6 @@ public interface CampaignExecutionRepository {
     void startExecution(Long campaignId, CampaignExecutionReport campaignExecutionReport);
 
     void stopExecution(Long campaignId);
+
+    CampaignExecutionReport getLastExecutionReport(Long campaignId);
 }

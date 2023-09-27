@@ -11,6 +11,7 @@ import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,6 +77,13 @@ public class DatabaseCampaignRepository implements CampaignRepository {
             .stream()
             .map(CampaignEntity::toDomain)
             .toList();
+    }
+
+    @Override
+    public Optional<Campaign> findByNameAndEnvironment(String campaignName, String environment) {
+        return campaignJpaRepository
+            .findByTitleAndEnvironment(campaignName, environment)
+            .map(CampaignEntity::toDomain);
     }
 
     @Override

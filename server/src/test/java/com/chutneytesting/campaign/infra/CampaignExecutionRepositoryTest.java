@@ -2,10 +2,11 @@ package com.chutneytesting.campaign.infra;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.WebConfiguration;
-import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
+import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.scenario.infra.jpa.Scenario;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
@@ -44,6 +45,40 @@ public class CampaignExecutionRepositoryTest {
 
         @Autowired
         private CampaignExecutionDBRepository sut;
+
+
+        @Test
+        public void should_return_the_last_campaign_execution() {
+            Scenario scenario = givenScenario();
+            CampaignEntity campaign = givenCampaign(scenario);
+
+            ScenarioExecutionEntity scenarioExecution = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
+            ScenarioExecutionReportCampaign scenarioExecutionReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecution.toDomain());
+
+            Long campaignExecutionId1 = sut.generateCampaignExecutionId(campaign.id());
+            Long campaignExecutionId2 = sut.generateCampaignExecutionId(campaign.id());
+            Long campaignExecutionId3 = sut.generateCampaignExecutionId(campaign.id());
+
+            CampaignExecutionReport campaignExecutionReport1 = new CampaignExecutionReport(campaignExecutionId1, campaign.id(), singletonList(scenarioExecutionReport), campaign.title(), true, "env", "#2:87", 5, "user");
+            CampaignExecutionReport campaignExecutionReport2 = new CampaignExecutionReport(campaignExecutionId2, campaign.id(), singletonList(scenarioExecutionReport), campaign.title(), true, "env", "#2:87", 5, "user");
+            CampaignExecutionReport campaignExecutionReport3 = new CampaignExecutionReport(campaignExecutionId3, campaign.id(), singletonList(scenarioExecutionReport), campaign.title(), true, "env", "#2:87", 5, "user");
+
+            sut.saveCampaignReport(campaign.id(), campaignExecutionReport1);
+            sut.saveCampaignReport(campaign.id(), campaignExecutionReport2);
+            sut.saveCampaignReport(campaign.id(), campaignExecutionReport3);
+
+            CampaignExecutionReport report = sut.getLastExecutionReport(campaign.id());
+
+            assertThat(report).isEqualTo(campaignExecutionReport3);
+        }
+        
+        @Test
+        public void should_throw_exception_when_no_last_campaign_execution() {
+            Scenario scenario = givenScenario();
+            CampaignEntity campaign = givenCampaign(scenario);
+
+            assertThatThrownBy(() -> sut.getLastExecutionReport(campaign.id()));
+        }
 
         @Test
         public void should_persist_1_execution_when_saving_1_campaign_execution_report() {

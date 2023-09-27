@@ -4,6 +4,7 @@ import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Right-side port for secondary actors of the business domain. See {@link CampaignExecutionEngine}
@@ -23,6 +24,8 @@ public interface CampaignRepository {
     List<Campaign> findAll();
 
     List<Campaign> findByName(String campaignName);
+
+    Optional<Campaign> findByNameAndEnvironment(String campaignName, String environment);
 
     List<CampaignExecutionReport> findExecutionsById(Long campaignId);
 

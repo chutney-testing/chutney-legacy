@@ -120,6 +120,10 @@
             <artifactId>jackson-module-paranamer</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.hjson</groupId>
             <artifactId>hjson</artifactId>
         </dependency>

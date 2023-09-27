@@ -13,6 +13,7 @@ import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -133,5 +134,13 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
     @Override
     public void stopExecution(Long campaignId) {
         currentCampaignExecutions.remove(campaignId);
+    }
+
+    @Override
+    public CampaignExecutionReport getLastExecutionReport(Long campaignId) {
+        return campaignExecutionJpaRepository
+            .findLastByCampaignId(campaignId)
+            .map(campaignExecution -> toDomain(campaignExecution, true))
+            .orElseThrow(() -> new NoSuchElementException("Campaign execution not found for campaign id [" + campaignId + "]"));
     }
 }
