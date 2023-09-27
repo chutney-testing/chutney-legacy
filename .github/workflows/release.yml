@@ -62,8 +62,8 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload fatjar to github release
-        id: upload-release-asset-fatjar
+      - name: Upload local-dev fatjar to github release
+        id: upload-release-asset-fatjar-local-dev
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -73,8 +73,8 @@ jobs:
           asset_name: chutney-local-dev-${{ env.RELEASE_VERSION }}.jar
           asset_content_type: application/jar
 
-      - name: Upload signature to github release
-        id: upload-release-asset-fatjar-sig
+      - name: Upload local-dev signature to github release
+        id: upload-release-asset-fatjar-sig-local-dev
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,6 +82,28 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ github.workspace }}/packaging/local-dev/target/chutney-local-dev-${{ env.RELEASE_VERSION }}.jar.asc
           asset_name: chutney-local-dev-${{ env.RELEASE_VERSION }}.jar.asc
+          asset_content_type: application/pgp-signature
+
+      - name: Upload local-api-unsecure fatjar to github release
+        id: upload-release-asset-fatjar-local-api-unsecure
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ github.workspace }}/packaging/local-api-unsecure/target/chutney-local-api-unsecure-${{ env.RELEASE_VERSION }}.jar
+          asset_name: chutney-local-api-unsecure-${{ env.RELEASE_VERSION }}.jar
+          asset_content_type: application/jar
+
+      - name: Upload local-api-unsecure signature to github release
+        id: upload-release-asset-fatjar-sig-local-api-unsecure
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ github.workspace }}/packaging/local-api-unsecure/target/chutney-local-api-unsecure-${{ env.RELEASE_VERSION }}.jar.asc
+          asset_name: chutney-local-api-unsecure-${{ env.RELEASE_VERSION }}.jar.asc
           asset_content_type: application/pgp-signature
     outputs:
       RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
