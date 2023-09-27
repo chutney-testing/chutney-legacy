@@ -527,6 +527,7 @@
                     <version>3.10.1</version>
                     <configuration>
                         <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                        <parameters>true</parameters>
                     </configuration>
                 </plugin>
                 <plugin>
