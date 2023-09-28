@@ -114,6 +114,7 @@
         <jqwik.version>1.7.4</jqwik.version>
         <wiremock.version>3.0.1</wiremock.version>
         <testcontainers.version>1.19.0</testcontainers.version>
+        <archunit.version>1.1.0</archunit.version>
     </properties>
 
     <dependencies>
@@ -397,6 +398,12 @@
                 <version>${testcontainers.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.tngtech.archunit</groupId>
+                <artifactId>archunit-junit5</artifactId>
+                <version>${archunit.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- Dependency Convergence -->
