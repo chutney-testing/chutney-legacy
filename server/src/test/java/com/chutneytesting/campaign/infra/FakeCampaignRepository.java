@@ -14,7 +14,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -79,15 +78,6 @@ public class FakeCampaignRepository implements CampaignRepository {
     @Override
     public List<Campaign> findByName(String campaignName) {
         return newArrayList(campaignsByName.get(campaignName));
-    }
-
-    @Override
-    public Optional<Campaign> findByNameAndEnvironment(String campaignName, String environment) {
-        return campaignsByName
-            .get(campaignName)
-            .stream()
-            .filter(campaign -> campaign.executionEnvironment().equals(environment))
-            .findFirst();
     }
 
     @Override

@@ -13,7 +13,6 @@ import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,7 +54,7 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
 
     public void saveCampaignReport(Long campaignId, CampaignExecutionReport report) {
         CampaignExecution execution = campaignExecutionJpaRepository.findById(report.executionId).orElseThrow(
-            () -> new CampaignExecutionNotFoundException(report.executionId)
+            () -> new CampaignExecutionNotFoundException(report.executionId, Optional.of(campaignId))
         );
         Iterable<ScenarioExecutionEntity> scenarioExecutions =
             scenarioExecutionJpaRepository.findAllById(report.scenarioExecutionReports().stream()
@@ -79,7 +78,7 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
     public CampaignExecutionReport getCampaignExecutionReportsById(Long campaignExecId) {
         return campaignExecutionJpaRepository.findById(campaignExecId)
             .map(ce -> toDomain(ce, true))
-            .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignExecId));
+            .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignExecId, Optional.empty()));
     }
 
     private CampaignExecutionReport toDomain(CampaignExecution campaignExecution, boolean withRunning) {
@@ -139,8 +138,8 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
     @Override
     public CampaignExecutionReport getLastExecutionReport(Long campaignId) {
         return campaignExecutionJpaRepository
-            .findLastByCampaignId(campaignId)
+            .findFirstByCampaignIdOrderByIdDesc(campaignId)
             .map(campaignExecution -> toDomain(campaignExecution, true))
-            .orElseThrow(() -> new NoSuchElementException("Campaign execution not found for campaign id [" + campaignId + "]"));
+            .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignId));
     }
 }

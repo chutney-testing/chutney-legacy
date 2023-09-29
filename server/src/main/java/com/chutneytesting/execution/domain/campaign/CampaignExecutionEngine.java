@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -90,9 +89,9 @@ public class CampaignExecutionEngine {
         this.objectMapper = objectMapper;
     }
 
-    public CampaignExecutionReport getLastCampaignExecutionReport(String campaignName, Optional<String> environment) {
-        Long campaignId = getCampaignIdFromNameAndEnv(campaignName, environment);
-        return campaignExecutionRepository.getLastExecutionReport(campaignId);
+    public CampaignExecutionReport getLastCampaignExecutionReport(Long campaignId) {
+        Campaign campaign = campaignRepository.findById(campaignId);
+        return campaignExecutionRepository.getLastExecutionReport(campaign.id);
     }
 
     public List<CampaignExecutionReport> executeByName(String campaignName, String userId) {
@@ -129,7 +128,7 @@ public class CampaignExecutionEngine {
     public void stopExecution(Long executionId) {
         LOGGER.trace("Stop requested for " + executionId);
         ofNullable(currentCampaignExecutionsStopRequests.computeIfPresent(executionId, (aLong, aBoolean) -> Boolean.TRUE))
-            .orElseThrow(() -> new CampaignExecutionNotFoundException(executionId));
+            .orElseThrow(() -> new CampaignExecutionNotFoundException(executionId, Optional.empty()));
     }
 
     public CampaignExecutionReport executeScenarioInCampaign(List<String> failedIds, Campaign campaign, String userId) {
@@ -302,13 +301,5 @@ public class CampaignExecutionEngine {
     private Campaign selectExecutionEnvironment(Campaign campaign, String environment) {
         ofNullable(environment).ifPresent(campaign::executionEnvironment);
         return campaign;
-    }
-
-    private Long getCampaignIdFromNameAndEnv(String campaignName, Optional<String> environment) {
-        return environment
-            .map(env -> campaignRepository.findByNameAndEnvironment(campaignName, env))
-            .orElse(campaignRepository.findByName(campaignName).stream().findFirst())
-            .map(campaign -> campaign.id)
-            .orElseThrow(() -> new NoSuchElementException("Campaign not found for name [" + campaignName + "] and environment [" + environment + "]"));
     }
 }

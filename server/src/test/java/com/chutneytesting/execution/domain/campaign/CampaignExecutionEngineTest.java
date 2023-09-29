@@ -286,7 +286,7 @@ public class CampaignExecutionEngineTest {
 
 
     @Test
-    public void should_return_last_existing_campaign_execution_for_existing_campaign_without_specified_env() {
+    public void should_return_last_existing_campaign_execution_for_existing_campaign() {
         // Given
         Campaign campaign = createCampaign();
         CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(123L, campaign.id, emptyList(), "", false, campaign.executionEnvironment(), null, null, "");
@@ -296,30 +296,10 @@ public class CampaignExecutionEngineTest {
         when(campaignExecutionRepository.getLastExecutionReport(campaign.id)).thenReturn(campaignExecutionReport);
 
         // When
-        CampaignExecutionReport result = sut.getLastCampaignExecutionReport(campaign.title, Optional.empty());
+        CampaignExecutionReport result = sut.getLastCampaignExecutionReport(campaign.id);
 
         // Then
         verify(campaignRepository, times(1)).findByName(campaign.title);
-        verify(campaignExecutionRepository, times(1)).getLastExecutionReport(campaign.id);
-
-        assertThat(result).isEqualTo(campaignExecutionReport);
-    }
-
-    @Test
-    public void should_return_last_existing_campaign_execution_for_existing_campaign_with_specified_env() {
-        // Given
-        Campaign campaign = createCampaign();
-        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(123L, campaign.id, emptyList(), "", false, campaign.executionEnvironment(), null, null, "");
-
-
-        when(campaignRepository.findByNameAndEnvironment(campaign.title, campaign.executionEnvironment())).thenReturn(Optional.of(campaign));
-        when(campaignExecutionRepository.getLastExecutionReport(campaign.id)).thenReturn(campaignExecutionReport);
-
-        // When
-        CampaignExecutionReport result = sut.getLastCampaignExecutionReport(campaign.title, Optional.of("campaignEnv"));
-
-        // Then
-        verify(campaignRepository, times(1)).findByNameAndEnvironment(campaign.title, campaign.executionEnvironment());
         verify(campaignExecutionRepository, times(1)).getLastExecutionReport(campaign.id);
 
         assertThat(result).isEqualTo(campaignExecutionReport);
@@ -330,15 +310,15 @@ public class CampaignExecutionEngineTest {
         // Given
         Campaign campaign = createCampaign();
 
-        when(campaignRepository.findByNameAndEnvironment(campaign.title, campaign.executionEnvironment())).thenReturn(Optional.empty());
+        when(campaignRepository.findById(campaign.id)).thenReturn(null);
 
         // When
         assertThatThrownBy(() -> {
-            sut.getLastCampaignExecutionReport(campaign.title, Optional.of(campaign.executionEnvironment()));
+            sut.getLastCampaignExecutionReport(campaign.id);
         });
 
         // Then
-        verify(campaignRepository, times(1)).findByNameAndEnvironment(campaign.title, campaign.executionEnvironment());
+        verify(campaignRepository, times(1)).findById(campaign.id);
     }
 
     @Test
