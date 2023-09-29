@@ -101,16 +101,4 @@ public class DBConfiguration {
                 .type(HikariDataSource.class).build();
         }
     }
-
-    @Configuration
-    @Profile("db-pg")
-    static class PGConfiguration {
-
-        @Bean
-        public DataSource dataSource(DataSourceProperties internalDataSourceProperties) {
-            return internalDataSourceProperties.initializeDataSourceBuilder()
-                .type(HikariDataSource.class).build();
-        }
-
-    }
 }

@@ -19,10 +19,13 @@
         <mainClass>com.chutneytesting.ServerBootstrap</mainClass>
         <spring-boot-maven.version>3.1.2</spring-boot-maven.version>
         <jasypt-spring-boot.version>3.0.5</jasypt-spring-boot.version>
+
+        <chutney.package.file>chutney-${project.artifactId}-${chutney.version}</chutney.package.file>
     </properties>
 
     <modules>
         <module>local-dev</module>
+        <module>local-api-unsecure</module>
         <module>local-dev-component</module>
     </modules>
 
@@ -53,12 +56,6 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>3.3.0</version>
@@ -88,6 +85,17 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${spring-boot-maven.version}</version>
@@ -95,21 +103,31 @@
                         <executable>true</executable>
                         <layout>ZIP</layout>
                         <mainClass>${mainClass}</mainClass>
-                        <finalName>chutney-${project.artifactId}-${chutney.version}</finalName>
+                        <finalName>${chutney.package.file}</finalName>
+                        <wait>1000</wait>
+                        <jmxPort>54321</jmxPort>
                     </configuration>
                     <executions>
+                        <!-- Create packaging archive -->
                         <execution>
                             <goals>
                                 <goal>repackage</goal>
                             </goals>
-                            <configuration>
-                                <excludes>
-                                    <exclude>
-                                        <groupId>commons-logging</groupId>
-                                        <artifactId>commons-logging</artifactId>
-                                    </exclude>
-                                </excludes>
-                            </configuration>
+                        </execution>
+                        <!-- Test start of packaging -->
+                        <execution>
+                            <id>before-it</id>
+                            <phase>pre-integration-test</phase>
+                            <goals>
+                                <goal>start</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>after-it</id>
+                            <phase>post-integration-test</phase>
+                            <goals>
+                                <goal>stop</goal>
+                            </goals>
                         </execution>
                     </executions>
                 </plugin>

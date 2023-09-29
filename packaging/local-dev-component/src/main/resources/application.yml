@@ -3,7 +3,7 @@ server:
   instance-name: Local instance
   port: 8443
   http:
-    port: 9350
+    port: 8080
     interface: localhost
   compression:
     enabled: true
