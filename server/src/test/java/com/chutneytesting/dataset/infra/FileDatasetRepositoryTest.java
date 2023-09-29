@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.chutneytesting.dataset.domain.DataSetRepository;
 import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.tools.file.FileUtils;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.Test;
 public class FileDatasetRepositoryTest {
 
     private static final String TMP_PATH = org.assertj.core.util.Files.temporaryFolderPath();
-    private static final String STORE_PATH = TMP_PATH + "/" + FileDatasetRepository.ROOT_DIRECTORY_NAME;
+    private static final String STORE_PATH = TMP_PATH + File.separator + FileDatasetRepository.ROOT_DIRECTORY_NAME;
     private final DataSetRepository sut = new FileDatasetRepository(TMP_PATH);
 
     @AfterEach
@@ -24,10 +25,10 @@ public class FileDatasetRepositoryTest {
 
     @Test
     void should_save_dataset() {
-        DataSet dataset = DataSet.builder().build();
+        DataSet dataset = DataSet.builder().withName("name").build();
 
-        String actualFilePath = sut.save(dataset);
+        String id = sut.save(dataset);
 
-        assertThat(Files.exists(Paths.get(actualFilePath))).isTrue();
+        assertThat(Files.exists(Paths.get(STORE_PATH + File.separator + id + ".json"))).isTrue();
     }
 }

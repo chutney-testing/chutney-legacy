@@ -21,11 +21,11 @@ public class ExecutionRequest {
     }
 
     public ExecutionRequest(TestCase testCase, String environment, String userId, DataSet dataset) {
-        this(testCase, environment, userId,dataset, null);
+        this(testCase, environment, userId, dataset, null);
     }
 
     public ExecutionRequest(TestCase testCase, String environment, String userId) {
-        this(testCase, environment, userId,DataSet.NO_DATASET, null);
+        this(testCase, environment, userId, DataSet.NO_DATASET, null);
     }
 
 }
