@@ -22,9 +22,7 @@ import { ScenariosComponent } from './components/search-list/scenarios.component
 import { ScenarioExecutionsHistoryComponent } from './components/execution/history/scenario-executions-history.component';
 import { MoleculesModule } from '../../molecules/molecules.module';
 import { RawEditionComponent } from './components/edition/raw/raw-edition.component';
-import { ComponentEditionComponent } from './components/edition/component-edition/component-edition.component';
 import { DragulaModule } from 'ng2-dragula';
-import { ExecuteComponent } from './components/execute/execute.component';
 import {
     ScenarioCampaignsComponent
 } from '@modules/scenarios/components/sub/scenario-campaigns/scenario-campaigns.component';
@@ -34,9 +32,6 @@ import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-e
 import { ScenarioExecutionComponent } from '@modules/scenarios/components/execution/detail/execution.component';
 import { StepReportComponent } from '@modules/scenarios/components/execution/detail/step-report/step-report.component';
 import { StepComponent } from '@modules/scenarios/components/execution/detail/step/step.component';
-import {
-    ComponentReadComponent
-} from '@modules/scenarios/components/execution/detail/component-read/component-read.component';
 import { GwtReadComponent } from '@modules/scenarios/components/execution/detail/gwt-read/gwt-read.component';
 import {
     ScenarioExecutionsComponent
@@ -81,10 +76,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         ScenarioCampaignsComponent,
         ScenarioExecutionsHistoryComponent,
         RawEditionComponent,
-        ComponentEditionComponent,
-        ExecuteComponent,
         ScenarioExecutionMenuComponent,
-        ComponentReadComponent,
         GwtReadComponent,
         AuthoringInfoComponent,
         EditionInfoComponent,

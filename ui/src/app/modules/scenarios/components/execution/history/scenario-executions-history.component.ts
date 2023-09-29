@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { catchError, delay, switchMap, tap } from 'rxjs/operators';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Execution, GwtTestCase, ScenarioComponent, TestCase } from '@model';
+import { Execution, GwtTestCase, TestCase } from '@model';
 import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { EMPTY, Observable, of, Subscription, zip } from 'rxjs';
-import { ComponentService, ScenarioService } from '@core/services';
+import { ScenarioService } from '@core/services';
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
 import { AlertService, EventManagerService } from '@shared';
 
@@ -23,7 +23,7 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
     private _executionsFilters: Params = {};
     private tabFilters: Params = {};
     private hasParameters: boolean = null;
-    scenario: ScenarioComponent | GwtTestCase;
+    scenario: GwtTestCase;
     error: string;
     private scenarioExecution$: Subscription;
     private readonly LAST_ID = 'last';
@@ -32,7 +32,6 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
                 private router: Router,
                 private scenarioExecutionService: ScenarioExecutionService,
                 private scenarioService: ScenarioService,
-                private componentService: ComponentService,
                 private eventManagerService: EventManagerService,
                 private alertService: AlertService) {
     }
@@ -115,16 +114,9 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
         execution.error = update.error;
     }
 
-    private loadScenario(): Observable<ScenarioComponent | GwtTestCase> {
-        let scenario$: Observable<ScenarioComponent | GwtTestCase>;
-        let hasParameter: (scenario: ScenarioComponent | GwtTestCase) => boolean;
-        if (TestCase.isComposed(this.scenarioId)) {
-            scenario$ = this.componentService.findComponentTestCaseWithoutDeserializeImpl(this.scenarioId);
-            hasParameter = (scenario: ScenarioComponent) => !!scenario.computedParameters?.length;
-        } else {
-            scenario$ = this.scenarioService.findTestCase(this.scenarioId);
-            hasParameter = (scenario: GwtTestCase) => !!scenario.wrappedParams?.params?.length;
-        }
+    private loadScenario(): Observable<GwtTestCase> {
+        let scenario$ = this.scenarioService.findTestCase(this.scenarioId);
+        let hasParameter = (scenario: GwtTestCase) => !!scenario.wrappedParams?.params?.length;
         return scenario$.pipe(
             tap(scenario => {
                 this.hasParameters = hasParameter(scenario);

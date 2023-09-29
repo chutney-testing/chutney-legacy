@@ -33,8 +33,7 @@
                 [disabled]="null"
                 (deleteEvent)="deleteDataset()">
             </chutney-delete-confirm-dialog>
-            <span *ngIf="componentsActive" class="ms-4">v{{dataset.version}} - {{ dataset.lastUpdated.toString() | amLocale:'fr' | amTimeAgo }}</span>
-            <span *ngIf="!componentsActive" class="ms-4">{{ dataset.lastUpdated.toString() | amLocale:'fr' | amTimeAgo }}</span>
+             <span class="ms-4">{{ dataset.lastUpdated.toString() | amLocale:'fr' | amTimeAgo }}</span>
         </div>
 
         <div>

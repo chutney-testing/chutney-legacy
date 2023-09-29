@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ChutneyState, ScenarioType } from '@model';
+import { ChutneyState } from '@model';
 
 @Injectable()
 export class StateService {
@@ -33,15 +33,6 @@ export class StateService {
 
     public getCampaignTags(): Array<String> {
         return this.state.campaignTags;
-    }
-
-    public getScenarioType() {
-        return this.state.scenarioTypes;
-    }
-
-    public changeScenarioType(scenarioTypes: Array<ScenarioType>)  {
-        this.state.scenarioTypes = scenarioTypes;
-        this.save();
     }
 
     public changeNoTag(noTag) {

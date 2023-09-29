@@ -27,8 +27,7 @@
     "scenarios": {
         "search": {
             "create": {
-                "form": "Ecrire un cas de test",
-                "component": "Composer un cas de test"
+                "form": "Ecrire un cas de test"
             },
             "placeholder": "Rechercher un scénario (id ou titre ou jira ou tags)",
             "placeholder-fulltext": "Rechercher dans le contenu du scénario (scénario json seulement)",
@@ -326,83 +325,6 @@
                 "orient.title": "Composants",
                 "globalvars.title": "Variables globales",
                 "jiralinks.title": "Liens Jira"
-            }
-        }
-    },
-    "components": {
-        "menu": {
-            "components": "Composants",
-            "actions": "Actions"
-        },
-        "shared": {
-            "list": {
-                "filter.placeholder": "Chercher un composant"
-            },
-            "edition": {
-                "draganddrop": "Glisser/Déposer ici",
-                "existTitle": "Utilisations",
-                "existInStep": "Composant",
-                "existInScenario": "Scénario",
-                "seeParents": "Voir/cacher parents",
-                "blocks": {
-                    "global": "Générale",
-                    "parameters": "Paramètres",
-                    "inputs": "Entrées",
-                    "outputs": "Sorties",
-                    "validations": "Validations"
-                },
-                "fields": {
-                    "intention.placeholder": "Ecrivez votre intention",
-                    "strategy": {
-                        "name": "Stratégie",
-                        "retry": {
-                            "name": "retry",
-                            "timeout": "Time out",
-                            "delay": "Délai"
-                        },
-                        "loop": {
-                            "name": "for",
-                            "data": "Data"
-                        }
-                    },
-                    "target.name": "Cible"
-                }
-            }
-        },
-        "action": {
-            "list": {
-                "filter.placeholder": "Chercher une action"
-            },
-            "edition": {
-                "select": "Sélectionner une action pour créer un composant"
-            },
-            "refvar" : {
-                "label": "var",
-                "switchTo.tooltip": "Remplacer les éléments d'une Liste ou d'une Map par une variable contextuelle",
-                "backTo.tooltip": "Remplacer la variable contextuelle par une Liste ou une Map"
-            }
-        },
-        "component": {
-            "edition": {
-                "blocks": {
-                    "steps": "Etapes"
-                }
-            },
-            "create": "Créer un composant",
-            "messages": {
-                "empty": "Composant vide"
-            }
-        },
-        "testcase": {
-            "edition": {
-                "blocks": {
-                    "steps": "Etapes"
-                }
-            }
-        },
-        "dataset": {
-            "error": {
-                "duplicatedHeader": "Une ou plusieurs colonnes ont le même header"
             }
         }
     },

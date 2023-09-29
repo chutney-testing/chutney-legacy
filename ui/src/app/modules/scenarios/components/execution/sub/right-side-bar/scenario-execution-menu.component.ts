@@ -9,7 +9,6 @@ import {
 
 import { Authorization, ScenarioIndex, TestCase } from '@model';
 import {
-    ComponentService,
     JiraPluginService,
     LoginService,
     ScenarioService
@@ -34,8 +33,6 @@ export class ScenarioExecutionMenuComponent implements OnInit {
     testCaseId: string;
     canExecute = true;
 
-    isComposed = TestCase.isComposed;
-
     environments: Array<string>;
     testCaseMetadata: ScenarioIndex;
 
@@ -48,8 +45,7 @@ export class ScenarioExecutionMenuComponent implements OnInit {
     modalRef: BsModalRef;
     rightMenuItems: MenuItem[];
 
-    constructor(private componentService: ComponentService,
-                private environmentService: EnvironmentService,
+    constructor(private environmentService: EnvironmentService,
                 private fileSaverService: FileSaverService,
                 private jiraLinkService: JiraPluginService,
                 private router: Router,
@@ -82,12 +78,8 @@ export class ScenarioExecutionMenuComponent implements OnInit {
     }
 
     deleteScenario(id: string) {
-        let delete$: Observable<any>;
-        if (TestCase.isComposed(this.testCaseId)) {
-            delete$ = this.componentService.deleteComponentTestCase(id);
-        } else {
-            delete$ = this.scenarioService.delete(id);
-        }
+        let delete$ = this.scenarioService.delete(id);
+
         delete$.subscribe(() => {
             this.removeJiraLink(id);
             this.router.navigateByUrl('/scenario')
@@ -96,8 +88,7 @@ export class ScenarioExecutionMenuComponent implements OnInit {
     }
 
     duplicateScenario() {
-        const editionPath = TestCase.isComposed(this.testCaseId) ? '/component-edition' : '/raw-edition';
-        this.router.navigateByUrl('/scenario/' + this.testCaseId + editionPath + '?duplicate=true');
+        this.router.navigateByUrl('/scenario/' + this.testCaseId + '/raw-edition' + '?duplicate=true');
     }
 
     exportScenario() {
@@ -142,7 +133,7 @@ export class ScenarioExecutionMenuComponent implements OnInit {
             },
             {
                 label: 'global.actions.edit',
-                link: TestCase.isComposed(this.testCaseId) ? '/scenario/' + this.testCaseId + '/component-edition' : '/scenario/' + this.testCaseId + '/raw-edition',
+                link: '/scenario/' + this.testCaseId + '/raw-edition',
                 iconClass: 'fa fa-pencil-alt',
                 authorizations: [Authorization.SCENARIO_WRITE]
             },
@@ -158,15 +149,13 @@ export class ScenarioExecutionMenuComponent implements OnInit {
                 iconClass: 'fa fa-clone',
                 authorizations: [Authorization.SCENARIO_WRITE]
             },
-        ];
-
-        if (!TestCase.isComposed(this.testCaseId)) {
-            rightMenuItems.push({
+            {
                 label: 'global.actions.export',
                 click: this.exportScenario.bind(this),
                 iconClass: 'fa fa-file-code'
-            });
-        }
+            }
+        ];
+        
         this.rightMenuItems = rightMenuItems;
     }
 

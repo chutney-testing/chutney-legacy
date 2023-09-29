@@ -9,7 +9,6 @@ import {
     Authorization,
     Execution,
     GwtTestCase,
-    ScenarioComponent,
     ScenarioExecutionReport,
     StepExecutionReport
 } from '@model';
@@ -25,7 +24,7 @@ import { ObjectAsEntryListPipe } from '@shared/pipes';
 })
 export class ScenarioExecutionComponent implements OnInit, OnDestroy {
     @Input() execution: Execution;
-    @Input() scenario: ScenarioComponent | GwtTestCase;
+    @Input() scenario: GwtTestCase;
     @Output() onExecutionStatusUpdate = new EventEmitter<{status: ExecutionStatus, error: string}>() ;
 
     ExecutionStatus = ExecutionStatus;
@@ -135,10 +134,6 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                     this.executionError = 'Cannot resume scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
                 }
             );
-    }
-
-    isComponentScenario() {
-        return this.scenario instanceof ScenarioComponent;
     }
 
     isRunning() {

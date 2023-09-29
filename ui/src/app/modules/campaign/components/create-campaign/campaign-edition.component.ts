@@ -1,13 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { DragulaService } from 'ng2-dragula';
 
 import { Campaign, JiraScenario, KeyValue, ScenarioIndex, TestCase } from '@model';
 import {
     CampaignService,
-    ComponentService,
     EnvironmentService,
     JiraPluginConfigurationService,
     JiraPluginService,
@@ -16,8 +15,6 @@ import {
 import { distinct, flatMap, newInstance } from '@shared/tools/array-utils';
 import { isNotEmpty } from '@shared';
 import { TranslateService } from '@ngx-translate/core';
-import { FeatureService } from '@core/feature/feature.service';
-import { FeatureName } from '@core/feature/feature.model';
 
 @Component({
     selector: 'chutney-campaign-edition',
@@ -36,8 +33,6 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     scenariosFilter: string;
     subscription = new Subscription();
 
-    hasParam = false;
-    collapseParam = true;
 
     private routeParamsSubscription: Subscription;
 
@@ -58,12 +53,10 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     jiraUrl = '';
     jiraScenarios: JiraScenario[] = [];
     jiraScenariosToExclude: Array<ScenarioIndex> = [];
-    componentsActive = false;
 
     constructor(
         private campaignService: CampaignService,
         private scenarioService: ScenarioService,
-        private componentService: ComponentService,
         private jiraLinkService: JiraPluginService,
         private jiraPluginConfigurationService: JiraPluginConfigurationService,
         private formBuilder: FormBuilder,
@@ -72,7 +65,6 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         private dragulaService: DragulaService,
         private environmentService: EnvironmentService,
         private translate: TranslateService,
-        private featureService: FeatureService,
     ) {
         this.campaignForm = this.formBuilder.group({
             title: ['', Validators.required],
@@ -90,7 +82,6 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.componentsActive = this.featureService.active(FeatureName.COMPONENT);
         this.initMultiSelectSettings();
         this.submitted = false;
         this.loadEnvironment();
@@ -162,7 +153,6 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
                     this.campaignForm.controls['campaignTags'].setValue(this.campaign.tags);
                     this.selectedEnvironment = this.campaign.environment;
                     this.setCampaignScenarios();
-                    this.updateCampaignParameters();
                     this.datasetId = this.campaign.datasetId;
                     this.initJiraPlugin();
                 },
@@ -365,36 +355,6 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
         }
     }
 
-    updateCampaignParameters() {
-        const params = this.campaignForm.controls['parameters'] as FormArray;
-        const addedParams = new Set();
-
-        while (params.length !== 0) {
-            params.removeAt(0);
-        }
-
-        for (const scenario of this.scenariosToAdd) {
-            if (TestCase.isComposed(scenario.id)) {
-                this.componentService.findComponentTestCaseExecutableParameters(scenario.id)
-                    .subscribe((computedParameters: Array<KeyValue>) => {
-                        computedParameters.forEach((keyValue: KeyValue) => {
-                            if (!addedParams.has(keyValue.key)) {
-                                params.push(this.formBuilder.group({
-                                    key: keyValue.key,
-                                    value: this.campaign.computedParameters[keyValue.key] ?
-                                        this.campaign.computedParameters[keyValue.key] : ''
-                                }));
-                                addedParams.add(keyValue.key);
-                            }
-                        });
-                    });
-            }
-        }
-        if (addedParams.size > 0) {
-            this.hasParam = true;
-        }
-    }
-
     setCampaignScenariosIdsToAdd(scenariosToAdd: Array<ScenarioIndex>) {
         this.campaign.scenarioIds = [];
         for (const scenario of scenariosToAdd) {
@@ -407,7 +367,6 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     addScenario(scenario: ScenarioIndex) {
         if (!this.scenariosToAdd.some((s) => s.id === scenario.id)) {
             this.scenariosToAdd.push(scenario);
-            this.updateCampaignParameters();
             this.refreshForPipe();
         }
     }
@@ -415,12 +374,7 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
     removeScenario(scenario: ScenarioIndex) {
         const index = this.scenariosToAdd.indexOf(scenario);
         this.scenariosToAdd.splice(index, 1);
-        this.updateCampaignParameters();
         this.refreshForPipe();
-    }
-
-    switchCollapseParam() {
-        this.collapseParam = !this.collapseParam;
     }
 
     private subscribeToSaveResponse(result: Observable<Campaign>) {

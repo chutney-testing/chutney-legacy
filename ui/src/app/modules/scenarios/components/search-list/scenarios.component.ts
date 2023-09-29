@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 
 import {
@@ -13,9 +13,7 @@ import {
 } from '@shared/tools/array-utils';
 import { StateService } from '@shared/state/state.service';
 import { JiraPluginConfigurationService, JiraPluginService, ScenarioService } from '@core/services';
-import { Authorization, ScenarioIndex, ScenarioType, SelectableTags, TestCase } from '@model';
-import { FeatureService } from '@core/feature/feature.service';
-import { FeatureName } from '@core/feature/feature.model';
+import { Authorization, ScenarioIndex } from '@model';
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
 import { TranslateService } from '@ngx-translate/core';
 import { AngularMultiSelect } from 'angular2-multiselect-dropdown';
@@ -27,8 +25,6 @@ import { AngularMultiSelect } from 'angular2-multiselect-dropdown';
 })
 export class ScenariosComponent implements OnInit, OnDestroy {
 
-    SCENARIO_TYPES = [ScenarioType.FORM, ScenarioType.COMPOSED];
-    componentsActive = false;
     urlParams: Subscription;
 
     scenarios: Array<ScenarioIndex> = [];
@@ -37,7 +33,6 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     viewedScenarios: Array<ScenarioIndex> = [];
     textFilter: string;
     fullTextFilter: string;
-    scenarioTypeFilter = new SelectableTags<ScenarioType>();
     settings = {};
     tags = [];
     selectedTags = [];
@@ -51,7 +46,6 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     orderBy = 'lastExecution';
     reverseOrder = false;
 
-    private isComposed = TestCase.isComposed;
     private searchSub$ = new Subject<string>();
 
     Authorization = Authorization;
@@ -63,13 +57,11 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         private jiraPluginConfigurationService: JiraPluginConfigurationService,
         private stateService: StateService,
         private readonly route: ActivatedRoute,
-        private featureService: FeatureService,
         private translateService: TranslateService
     ) {
     }
 
     ngOnInit() {
-        this.componentsActive = this.featureService.active(FeatureName.COMPONENT);
         this.initJiraPlugin();
         this.searchSub$.pipe(
             debounceTime(400)
@@ -131,7 +123,6 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
     private applyDefaultState() {
         this.viewedScenarios = this.scenarios;
-        this.scenarioTypeFilter.initialize(this.SCENARIO_TYPES);
         this.initFilters();
     }
 
@@ -140,7 +131,6 @@ export class ScenariosComponent implements OnInit, OnDestroy {
     }
 
     private applySavedState() {
-        this.setSelectedTypes();
         this.setSelectedTags();
     }
 
@@ -148,12 +138,6 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         const savedTags = this.stateService.getTags();
         if (savedTags != null) {
             this.selectedTags = this.getTagsForComboModel(savedTags);
-        }
-    }
-    private setSelectedTypes() {
-        const savedScenarioType = this.stateService.getScenarioType();
-        if (savedScenarioType != null && savedScenarioType.length > 0) {
-            this.scenarioTypeFilter.selectTags(savedScenarioType);
         }
     }
 
@@ -174,9 +158,6 @@ export class ScenariosComponent implements OnInit, OnDestroy {
                     if (params['reverseOrder']) {
                         this.reverseOrder = params['reverseOrder'] === 'true';
                     }
-                    if (params['type']) {
-                        this.scenarioTypeFilter.selectTags(params['type'].split(','));
-                    }
                     if (params['tags']) {
                         const uriTag = params['tags'].split(',');
                         if (uriTag != null) {
@@ -191,12 +172,8 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
     }
 
-    createNewScenario(compose: boolean) {
-        if (compose) {
-            this.router.navigateByUrl('/scenario/component-edition');
-        } else {
+    createNewScenario() {
             this.router.navigateByUrl('/scenario/raw-edition');
-        }
     }
 
     // Ordering //
@@ -238,12 +215,6 @@ export class ScenariosComponent implements OnInit, OnDestroy {
 
     updateFullTextFilter(text: string) {
         this.fullTextFilter = text;
-        this.applyFilters();
-    }
-
-    toggleScenarioTypeFilter(scenarioType: ScenarioType) {
-        this.scenarioTypeFilter.toggleSelect(scenarioType);
-        this.stateService.changeScenarioType(this.scenarioTypeFilter.selected());
         this.applyFilters();
     }
 
@@ -293,15 +264,10 @@ export class ScenariosComponent implements OnInit, OnDestroy {
         const input = this.viewedScenarios;
 
         const tags = this.getSelectedTags();
-        const scenarioTypes = this.scenarioTypeFilter.selected();
 
         return input.filter((scenario: ScenarioIndex) => {
-            return this.tagPresent(tags, scenario) && this.scenarioTypePresent(scenarioTypes, scenario) && this.scenarioStatusPresent(this.selectedStatus, scenario);
+            return this.tagPresent(tags, scenario) && this.scenarioStatusPresent(this.selectedStatus, scenario);
         });
-    }
-
-    private scenarioTypePresent(scenarioTypes: ScenarioType[], scenario: ScenarioIndex): boolean {
-        return intersection(scenarioTypes, [scenario.type]).length > 0;
     }
 
     private scenarioStatusPresent(statusFilter: any[], scenario: ScenarioIndex): boolean {
@@ -320,7 +286,6 @@ export class ScenariosComponent implements OnInit, OnDestroy {
                 orderBy: this.orderBy,
                 status:this.selectedStatus.map((status) => status.itemName).join(','),
                 reverseOrder: this.reverseOrder,
-                type: this.scenarioTypeFilter.selected().toString(),
                 tags: this.getSelectedTags().toString()
             }
         });
