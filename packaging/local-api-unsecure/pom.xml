@@ -22,10 +22,6 @@
             <artifactId>server</artifactId>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.chutneytesting</groupId>
-            <artifactId>action-impl</artifactId>
-        </dependency>
 
         <!-- External providers -->
         <dependency>

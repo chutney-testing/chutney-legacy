@@ -113,14 +113,6 @@
                             <goals>
                                 <goal>repackage</goal>
                             </goals>
-                            <configuration>
-                                <excludes>
-                                    <exclude>
-                                        <groupId>commons-logging</groupId>
-                                        <artifactId>commons-logging</artifactId>
-                                    </exclude>
-                                </excludes>
-                            </configuration>
                         </execution>
                         <!-- Test start of packaging -->
                         <execution>
