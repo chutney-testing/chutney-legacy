@@ -26,7 +26,6 @@
     <modules>
         <module>local-dev</module>
         <module>local-api-unsecure</module>
-        <module>local-dev-component</module>
     </modules>
 
     <dependencyManagement>

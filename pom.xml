@@ -74,7 +74,6 @@
         <module>glacio-adapter</module>
         <module>chutney-junit</module>
         <module>jira</module>
-        <module>component</module>
     </modules>
 
     <properties>
