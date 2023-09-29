@@ -5,6 +5,7 @@ import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundExce
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Repository storing execution executionHistory by scenario.
@@ -30,6 +31,8 @@ public interface ExecutionHistoryRepository {
      **/
     List<ExecutionSummary> getExecutions(String scenarioId);
 
+    List<ExecutionSummary> getExecutions();
+
     ExecutionSummary getExecutionSummary(Long executionId);
 
     /**
@@ -46,4 +49,7 @@ public interface ExecutionHistoryRepository {
 
     List<ExecutionSummary> getExecutionsWithStatus(ServerReportStatus status);
 
+    ExecutionSummary deleteExecution(Long executionId);
+
+    Set<ExecutionSummary> deleteExecutions(Set<Long> executionsIds);
 }

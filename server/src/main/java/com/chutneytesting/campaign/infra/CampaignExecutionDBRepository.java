@@ -1,6 +1,7 @@
 package com.chutneytesting.campaign.infra;
 
-import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
+import static java.util.stream.Collectors.toSet;
+
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
@@ -10,11 +11,13 @@ import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.PageRequest;
@@ -67,7 +70,6 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
     @Transactional(readOnly = true)
     public List<CampaignExecutionReport> findLastExecutions(Long numberOfExecution) {
         return campaignExecutionJpaRepository.findAll(
-                null,
                 PageRequest.of(0, numberOfExecution.intValue(), Sort.by(Sort.Direction.DESC, "id"))).stream()
             .map(ce -> toDomain(ce, false))
             .filter(Objects::nonNull)
@@ -141,5 +143,29 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
             .findFirstByCampaignIdOrderByIdDesc(campaignId)
             .map(campaignExecution -> toDomain(campaignExecution, true))
             .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignId));
+    }
+
+    @Override
+    public CampaignExecutionReport deleteExecution(Long executionId) {
+        CampaignExecution execution = campaignExecutionJpaRepository.findById(executionId).orElseThrow(
+            () -> new CampaignExecutionNotFoundException(executionId)
+        );
+        CampaignExecutionReport executionReport = toDomain(execution, false);
+        List<ScenarioExecutionEntity> scenarioExecutions = execution.scenarioExecutions();
+        scenarioExecutions.forEach(ScenarioExecutionEntity::clearCampaignExecution);
+        scenarioExecutionJpaRepository.saveAll(scenarioExecutions);
+        campaignExecutionJpaRepository.delete(execution);
+        return executionReport;
+    }
+
+    @Override
+    public Set<CampaignExecutionReport> deleteExecutions(Set<Long> executionsIds) {
+        List<CampaignExecution> executions = campaignExecutionJpaRepository.findAllById(executionsIds);
+        Set<CampaignExecutionReport> executionsReports = executions.stream().map(ce -> toDomain(ce, false)).collect(toSet());
+        List<ScenarioExecutionEntity> scenarioExecutions = executions.stream().flatMap(cer -> cer.scenarioExecutions().stream()).toList();
+        scenarioExecutions.forEach(ScenarioExecutionEntity::clearCampaignExecution);
+        scenarioExecutionJpaRepository.saveAll(scenarioExecutions);
+        campaignExecutionJpaRepository.deleteAllInBatch(executions);
+        return executionsReports;
     }
 }
