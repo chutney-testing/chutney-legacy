@@ -292,14 +292,14 @@ public class CampaignExecutionEngineTest {
         CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(123L, campaign.id, emptyList(), "", false, campaign.executionEnvironment(), null, null, "");
 
 
-        when(campaignRepository.findByName(campaign.title)).thenReturn(singletonList(campaign));
+        when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
         when(campaignExecutionRepository.getLastExecutionReport(campaign.id)).thenReturn(campaignExecutionReport);
 
         // When
         CampaignExecutionReport result = sut.getLastCampaignExecutionReport(campaign.id);
 
         // Then
-        verify(campaignRepository, times(1)).findByName(campaign.title);
+        verify(campaignRepository, times(1)).findById(campaign.id);
         verify(campaignExecutionRepository, times(1)).getLastExecutionReport(campaign.id);
 
         assertThat(result).isEqualTo(campaignExecutionReport);
