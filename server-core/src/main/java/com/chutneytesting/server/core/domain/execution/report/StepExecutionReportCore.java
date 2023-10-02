@@ -1,5 +1,6 @@
 package com.chutneytesting.server.core.domain.execution.report;
 
+import com.chutneytesting.server.core.domain.tools.Default;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.Instant;
@@ -39,6 +40,7 @@ public class StepExecutionReportCore implements ServerReportStatus.HavingStatus 
     }
 
 
+    @Default
     public StepExecutionReportCore(String name,
                                    Long duration,
                                    Instant startDate,
