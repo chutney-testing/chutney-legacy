@@ -101,7 +101,7 @@
         <!-- action-impl dependencies versions -->
         <sshj.version>0.34.0</sshj.version>
         <sshd.version>2.9.2</sshd.version>
-        <qpid-broker.version>9.0.0</qpid-broker.version>
+        <qpid-broker.version>9.1.0</qpid-broker.version>
         <radius.version>1.1.3</radius.version> <!-- Divergence on dependency commons-logging -->
         <wss4j.version>1.6.19</wss4j.version> <!-- Divergence on dependencies xmlsec, commons-logging and joda-time-->
         <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version> <!-- Divergence on dependencies commons-logging and joda-time -->
