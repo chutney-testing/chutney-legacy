@@ -54,7 +54,7 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
 
     public void saveCampaignReport(Long campaignId, CampaignExecutionReport report) {
         CampaignExecution execution = campaignExecutionJpaRepository.findById(report.executionId).orElseThrow(
-            () -> new CampaignExecutionNotFoundException(report.executionId, Optional.of(campaignId))
+            () -> new CampaignExecutionNotFoundException(report.executionId)
         );
         Iterable<ScenarioExecutionEntity> scenarioExecutions =
             scenarioExecutionJpaRepository.findAllById(report.scenarioExecutionReports().stream()
@@ -78,7 +78,7 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
     public CampaignExecutionReport getCampaignExecutionReportsById(Long campaignExecId) {
         return campaignExecutionJpaRepository.findById(campaignExecId)
             .map(ce -> toDomain(ce, true))
-            .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignExecId, Optional.empty()));
+            .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignExecId));
     }
 
     private CampaignExecutionReport toDomain(CampaignExecution campaignExecution, boolean withRunning) {
@@ -140,6 +140,6 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
         return campaignExecutionJpaRepository
             .findFirstByCampaignIdOrderByIdDesc(campaignId)
             .map(campaignExecution -> toDomain(campaignExecution, true))
-            .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignId));
+            .orElseThrow(() -> new CampaignExecutionNotFoundException("Campaign execution could not be found for campaign id [" + campaignId + "]"));
     }
 }
