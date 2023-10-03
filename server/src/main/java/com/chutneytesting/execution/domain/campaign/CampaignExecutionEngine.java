@@ -128,7 +128,7 @@ public class CampaignExecutionEngine {
     public void stopExecution(Long executionId) {
         LOGGER.trace("Stop requested for " + executionId);
         ofNullable(currentCampaignExecutionsStopRequests.computeIfPresent(executionId, (aLong, aBoolean) -> Boolean.TRUE))
-            .orElseThrow(() -> new CampaignExecutionNotFoundException(executionId));
+            .orElseThrow(() -> new CampaignExecutionNotFoundException(executionId, null));
     }
 
     public CampaignExecutionReport executeScenarioInCampaign(List<String> failedIds, Campaign campaign, String userId) {

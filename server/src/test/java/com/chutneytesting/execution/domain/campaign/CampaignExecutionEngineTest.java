@@ -299,8 +299,8 @@ public class CampaignExecutionEngineTest {
         CampaignExecutionReport result = sut.getLastCampaignExecutionReport(campaign.id);
 
         // Then
-        verify(campaignRepository, times(1)).findById(campaign.id);
-        verify(campaignExecutionRepository, times(1)).getLastExecutionReport(campaign.id);
+        verify(campaignRepository).findById(campaign.id);
+        verify(campaignExecutionRepository).getLastExecutionReport(campaign.id);
 
         assertThat(result).isEqualTo(campaignExecutionReport);
     }
@@ -318,7 +318,7 @@ public class CampaignExecutionEngineTest {
         });
 
         // Then
-        verify(campaignRepository, times(1)).findById(campaign.id);
+        verify(campaignRepository).findById(campaign.id);
     }
 
     @Test

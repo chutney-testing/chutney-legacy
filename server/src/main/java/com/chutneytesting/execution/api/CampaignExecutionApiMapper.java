@@ -7,7 +7,7 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface CampaignExecutionApiMapper {
-    CompaignExecutionReportSummaryDto toCompaignExecutionReportSummaryDto(CampaignExecutionReport campaignExecutionReport);
+    CampaignExecutionReportSummaryDto toCompaignExecutionReportSummaryDto(CampaignExecutionReport campaignExecutionReport);
 
     default String mapOptionalString(Optional<String> value) {
         return value.orElse(null);
