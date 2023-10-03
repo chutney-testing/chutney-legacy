@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jdom2.Element;
 import org.junit.jupiter.api.Test;
 
-class WebConfigurationTest {
+class ServerConfigurationTest {
 
     private static final String STANDARD_XML =
             "<node1>\n" +
@@ -20,8 +20,8 @@ class WebConfigurationTest {
 
     @Test
     void verify_no_infinite_recursion_when_serializing_jdom2_element() throws XmlUtils.InvalidXmlDocumentException, XmlUtils.InvalidXPathException, JsonProcessingException {
-        WebConfiguration webConfiguration = new WebConfiguration();
-        ObjectMapper reportObjectMapper = webConfiguration.reportObjectMapper();
+        ServerConfiguration serverConfiguration = new ServerConfiguration();
+        ObjectMapper reportObjectMapper = serverConfiguration.reportObjectMapper();
 
         Element result = (Element) XPathFunction.xpath(STANDARD_XML, "/node1/node2");
 

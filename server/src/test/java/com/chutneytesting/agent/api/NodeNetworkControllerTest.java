@@ -52,7 +52,7 @@ public class NodeNetworkControllerTest {
     private final GetCurrentNetworkDescriptionService getCurrentNetworkDescription = mock(GetCurrentNetworkDescriptionService.class);
     private final EmbeddedEnvironmentApi environmentApi = mock(EmbeddedEnvironmentApi.class);
 
-    private final ObjectMapper objectMapper = new WebConfiguration().objectMapper();
+    private final ObjectMapper objectMapper = new WebConfiguration().webObjectMapper();
     private MockMvc mockMvc;
 
     @BeforeEach

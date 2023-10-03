@@ -37,7 +37,7 @@ public class TestCaseEditionControllerTest {
     private final TestCaseEditionsService testCaseEditionService = mock(TestCaseEditionsService.class);
     private final SpringUserService userService = mock(SpringUserService.class);
     private MockMvc mockMvc;
-    private final ObjectMapper om = new WebConfiguration().objectMapper();
+    private final ObjectMapper om = new WebConfiguration().webObjectMapper();
     private final UserDto currentUser = new UserDto();
 
     @BeforeEach

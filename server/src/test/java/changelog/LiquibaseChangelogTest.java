@@ -3,7 +3,6 @@ package changelog;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
 import com.chutneytesting.campaign.infra.jpa.CampaignParameter;
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import util.infra.AbstractLocalDatabaseTest;
 import util.infra.EnableH2FileTestInfra;
@@ -31,7 +29,6 @@ class LiquibaseChangelogTest {
     class FreshDB {
         @Nested
         @EnableH2MemTestInfra
-        @ContextConfiguration(classes = { WebConfiguration.class })
         class H2 extends AbstractLocalDatabaseTest {
             @RepeatedTest(2)
             @DisplayName("Must be applied without error")
@@ -67,7 +64,6 @@ class LiquibaseChangelogTest {
 
         @Nested
         @EnableSQLiteTestInfra
-        @ContextConfiguration(classes = { WebConfiguration.class })
         class SQLite extends AbstractLocalDatabaseTest {
             @RepeatedTest(2)
             @DisplayName("Must be applied without error")
@@ -78,7 +74,6 @@ class LiquibaseChangelogTest {
 
         @Nested
         @EnablePostgreSQLTestInfra
-        @ContextConfiguration(classes = { WebConfiguration.class })
         class Postgres extends AbstractLocalDatabaseTest {
             @RepeatedTest(2)
             @DisplayName("Must be applied without error")
@@ -94,7 +89,6 @@ class LiquibaseChangelogTest {
     class DataToMigrateDB {
         @Nested
         @EnableH2MemTestInfra
-        @ContextConfiguration(classes = { WebConfiguration.class })
         class H2 extends AbstractLocalDatabaseTest {
             @Test
             @DisplayName("Must be applied without error")
@@ -104,7 +98,6 @@ class LiquibaseChangelogTest {
 
         @Nested
         @EnablePostgreSQLTestInfra
-        @ContextConfiguration(classes = { WebConfiguration.class })
         class Postgres extends AbstractLocalDatabaseTest {
             @Test
             @DisplayName("Must be applied without error")
@@ -162,7 +155,6 @@ class LiquibaseChangelogTest {
     class Fresh171DB {
         @Nested
         @EnableH2FileTestInfra
-        @ContextConfiguration(classes = { WebConfiguration.class })
         class H2 extends AbstractLocalDatabaseTest {
             @Test
             @DisplayName("Must be applied without error")

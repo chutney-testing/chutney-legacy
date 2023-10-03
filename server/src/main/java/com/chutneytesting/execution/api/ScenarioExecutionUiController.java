@@ -18,15 +18,26 @@ import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.tools.ui.KeyValue;
+import com.chutneytesting.tools.ui.MyMixInForIgnoreType;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import io.reactivex.rxjava3.core.BackpressureStrategy;
 import io.reactivex.rxjava3.core.Observable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
@@ -60,7 +71,6 @@ public class ScenarioExecutionUiController {
         ScenarioExecutionEngineAsync executionEngineAsync,
         TestCaseRepository testCaseRepository,
         ObjectMapper objectMapper,
-        @Qualifier("reportObjectMapper") ObjectMapper reportObjectMapper,
         SpringUserService userService,
         DataSetRepository datasetRepository,
         ScenarioExecutionReportMapper scenarioExecutionReportMapper) {
@@ -68,7 +78,7 @@ public class ScenarioExecutionUiController {
         this.executionEngineAsync = executionEngineAsync;
         this.testCaseRepository = testCaseRepository;
         this.objectMapper = objectMapper;
-        this.reportObjectMapper = reportObjectMapper;
+        this.reportObjectMapper = dtoReportObjectMapper();
         this.userService = userService;
         this.datasetRepository = datasetRepository;
         this.scenarioExecutionReportMapper = scenarioExecutionReportMapper;
@@ -169,6 +179,41 @@ public class ScenarioExecutionUiController {
             return datasetRepository.findById(defaultDatasetId);
         } else {
             return DataSet.NO_DATASET;
+        }
+    }
+
+    // TODO - Use Spring serialization
+    public ObjectMapper dtoReportObjectMapper() {
+        SimpleModule jdomElementModule = new SimpleModule();
+        jdomElementModule.addSerializer(Element.class, new JDomElementSerializer());
+
+        return new ObjectMapper()
+            .addMixIn(Resource.class, MyMixInForIgnoreType.class)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            .enable(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS.mappedFeature())
+            .registerModule(jdomElementModule)
+            .findAndRegisterModules();
+    }
+
+    // TODO - To remove when Reporter will serialize itself
+    static class JDomElementSerializer extends StdSerializer<Element> {
+
+        private static final long serialVersionUID = 1L;
+
+        protected JDomElementSerializer() {
+            this(null);
+        }
+
+        protected JDomElementSerializer(Class<Element> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(Element element, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            String xmlString = new XMLOutputter(Format.getCompactFormat()).outputString(element);
+            jsonGenerator.writeObject(xmlString);
         }
     }
 }

@@ -39,7 +39,7 @@ public class ScenarioExecutionEngineAsync {
     private static final long DEFAULT_RETENTION_DELAY_SECONDS = 5;
     private static final long DEFAULT_DEBOUNCE_MILLISECONDS = 100;
 
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper reportObjectMapper;
 
     private final ExecutionHistoryRepository executionHistoryRepository;
     private final ServerTestEngine executionEngine;
@@ -56,8 +56,8 @@ public class ScenarioExecutionEngineAsync {
                                         ExecutionStateRepository executionStateRepository,
                                         ChutneyMetrics metrics,
                                         TestCasePreProcessors testCasePreProcessors,
-                                        ObjectMapper objectMapper) {
-        this(executionHistoryRepository, executionEngine, executionStateRepository, metrics, testCasePreProcessors, objectMapper, DEFAULT_RETENTION_DELAY_SECONDS, DEFAULT_DEBOUNCE_MILLISECONDS);
+                                        ObjectMapper reportObjectMapper) {
+        this(executionHistoryRepository, executionEngine, executionStateRepository, metrics, testCasePreProcessors, reportObjectMapper, DEFAULT_RETENTION_DELAY_SECONDS, DEFAULT_DEBOUNCE_MILLISECONDS);
     }
 
     public ScenarioExecutionEngineAsync(ExecutionHistoryRepository executionHistoryRepository,
@@ -65,7 +65,7 @@ public class ScenarioExecutionEngineAsync {
                                         ExecutionStateRepository executionStateRepository,
                                         ChutneyMetrics metrics,
                                         TestCasePreProcessors testCasePreProcessors,
-                                        ObjectMapper objectMapper,
+                                        ObjectMapper reportObjectMapper,
                                         long retentionDelaySeconds,
                                         long debounceMilliSeconds) {
         this.executionHistoryRepository = executionHistoryRepository;
@@ -73,7 +73,7 @@ public class ScenarioExecutionEngineAsync {
         this.executionStateRepository = executionStateRepository;
         this.metrics = metrics;
         this.testCasePreProcessors = testCasePreProcessors;
-        this.objectMapper = objectMapper;
+        this.reportObjectMapper = reportObjectMapper;
         this.retentionDelaySeconds = retentionDelaySeconds;
         this.debounceMilliSeconds = debounceMilliSeconds;
     }
@@ -269,7 +269,7 @@ public class ScenarioExecutionEngineAsync {
 
     private String serialize(ScenarioExecutionReport stepExecutionReport) {
         try {
-            return objectMapper.writeValueAsString(stepExecutionReport);
+            return reportObjectMapper.writeValueAsString(stepExecutionReport);
         } catch (JsonProcessingException e) {
             LOGGER.error("Unable to serialize StepExecutionReport content with name='{}'", stepExecutionReport.report.name, e);
             return "{}";

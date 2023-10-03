@@ -48,7 +48,7 @@ public class HttpAgentClientTest {
     private AgentClient sut;
 
     private ConnectionChecker connectionChecker = mock(ConnectionChecker.class);
-    private ObjectMapper objectMapper = new WebConfiguration().objectMapper();
+    private ObjectMapper objectMapper = new WebConfiguration().webObjectMapper();
     private RestTemplate restTemplate = new NodeNetworkSpringConfiguration().restTemplateForHttpNodeNetwork(objectMapper);
     private MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
 

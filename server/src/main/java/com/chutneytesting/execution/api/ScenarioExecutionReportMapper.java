@@ -7,8 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface ScenarioExecutionReportMapper {
     ScenarioExecutionReportDto toDto(ScenarioExecutionReport source);
-
     StepExecutionReportCoreDto toStepDto(StepExecutionReportCore domain);
-
-
 }

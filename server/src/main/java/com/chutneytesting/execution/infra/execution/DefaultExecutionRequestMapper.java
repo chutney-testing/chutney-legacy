@@ -38,7 +38,7 @@ public class DefaultExecutionRequestMapper implements ExecutionRequestMapper {
     private final CurrentNetworkDescription currentNetworkDescription;
 
     public DefaultExecutionRequestMapper(ObjectMapper objectMapper, EmbeddedEnvironmentApi environmentApi, CurrentNetworkDescription currentNetworkDescription) {
-        this.objectMapper = objectMapper;
+        this.objectMapper = objectMapper; // TODO - Choose explicitly which mapper to use
         this.environmentApi = environmentApi;
         this.currentNetworkDescription = currentNetworkDescription;
     }
