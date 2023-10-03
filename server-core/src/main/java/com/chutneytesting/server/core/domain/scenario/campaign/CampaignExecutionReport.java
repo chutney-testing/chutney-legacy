@@ -20,6 +20,15 @@ import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * TODO this class do too much things :
+ * - POJO which represent a campaign report
+ * - Status rules calculation
+ * - I dont like mutable object, it's too complicated to maintain
+ * - Should not have optional as properties
+ * - Manage scenario execution lifecycle
+ * - Manage campaign execution lifecycle
+ */
 public class CampaignExecutionReport {
 
     // Mandatory
@@ -33,7 +42,7 @@ public class CampaignExecutionReport {
 
     // Not mandatory
     public final LocalDateTime startDate;
-    private ServerReportStatus status;
+    private ServerReportStatus status; // TODO should not be mutable
     private final List<ScenarioExecutionReportCampaign> scenarioExecutionReports;
     public final Long campaignId;
 
@@ -111,6 +120,7 @@ public class CampaignExecutionReport {
             this.scenarioExecutionReports = scenarioExecutionReports;
         }
     }
+
 
     public void initExecution(List<TestCase> testCases, String executionEnvironment, String userId) {
         testCases.forEach(testCase ->
