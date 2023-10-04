@@ -61,7 +61,7 @@ public class CampaignExecutionUiController {
     }
 
 
-    @PreAuthorize("hasAuthority('CAMPAIGN_EXECUTE')")
+    @PreAuthorize("hasAuthority('CAMPAIGN_READ')")
     @GetMapping(path = {"/{campaignName}/lastExecution", "/{campaignName}/{env}/lastExecution"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignExecutionReportSummaryDto getLastCampaignExecution(@PathVariable("campaignId") Long campaignId) {
         CampaignExecutionReport lastCampaignExecutionReport = campaignExecutionEngine.getLastCampaignExecutionReport(campaignId);
