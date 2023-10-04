@@ -108,7 +108,7 @@ public class SurefireCampaignExecutionReportBuilderTest {
                 }
             }
             assertThat(directories).containsExactlyInAnyOrder("test Campaign Title/", "test Campaign Title 2/");
-            assertThat(files).hasSize(4).containsKeys("test Campaign Title/test ♥ Scenario Title ok.xml", "test Campaign Title/test Scenario Title ko.xml", "test Campaign Title 2/test Scenario Title ko.xml", "test Campaign Title 2/test ♥ Scenario Title ok.xml");
+            assertThat(files).hasSize(4).containsKeys("test Campaign Title/123_test ♥ Scenario Title ok.xml", "test Campaign Title/123_test Scenario Title ko.xml", "test Campaign Title 2/123_test Scenario Title ko.xml", "test Campaign Title 2/123_test ♥ Scenario Title ok.xml");
 
             // assert That XML have been serialized:
             assertThat(files.values()).allSatisfy(s -> assertThat(s).startsWith("<?xml version=\"1.0\" ?><testsuite"));
