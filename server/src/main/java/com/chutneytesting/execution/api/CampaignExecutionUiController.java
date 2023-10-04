@@ -43,20 +43,31 @@ public class CampaignExecutionUiController {
     private final CampaignRepository campaignRepository;
     private final SpringUserService userService;
     private final CampaignService campaignService;
+    private final CampaignExecutionApiMapper campaignExecutionApiMapper;
 
     public CampaignExecutionUiController(
         CampaignExecutionEngine campaignExecutionEngine,
         SurefireScenarioExecutionReportBuilder surefireScenarioExecutionReportBuilder,
         CampaignRepository campaignRepository,
         SpringUserService userService,
-        CampaignService campaignService
-    ) {
+        CampaignService campaignService,
+        CampaignExecutionApiMapper campaignExecutionApiMapper) {
         this.campaignExecutionEngine = campaignExecutionEngine;
         this.surefireCampaignExecutionReportBuilder = new SurefireCampaignExecutionReportBuilder(surefireScenarioExecutionReportBuilder);
         this.campaignRepository = campaignRepository;
         this.userService = userService;
         this.campaignService = campaignService;
+        this.campaignExecutionApiMapper = campaignExecutionApiMapper;
     }
+
+
+    @PreAuthorize("hasAuthority('CAMPAIGN_READ')")
+    @GetMapping(path = {"/{campaignName}/lastExecution", "/{campaignName}/{env}/lastExecution"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public CampaignExecutionReportSummaryDto getLastCampaignExecution(@PathVariable("campaignId") Long campaignId) {
+        CampaignExecutionReport lastCampaignExecutionReport = campaignExecutionEngine.getLastCampaignExecutionReport(campaignId);
+        return campaignExecutionApiMapper.toCompaignExecutionReportSummaryDto(lastCampaignExecutionReport);
+    }
+
 
     @PreAuthorize("hasAuthority('CAMPAIGN_EXECUTE')")
     @GetMapping(path = {"/{campaignName}", "/{campaignName}/{env}"}, produces = MediaType.APPLICATION_JSON_VALUE)

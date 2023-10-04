@@ -54,7 +54,7 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
 
     public void saveCampaignReport(Long campaignId, CampaignExecutionReport report) {
         CampaignExecution execution = campaignExecutionJpaRepository.findById(report.executionId).orElseThrow(
-            () -> new CampaignExecutionNotFoundException(report.executionId)
+            () -> new CampaignExecutionNotFoundException(report.executionId, campaignId)
         );
         Iterable<ScenarioExecutionEntity> scenarioExecutions =
             scenarioExecutionJpaRepository.findAllById(report.scenarioExecutionReports().stream()
@@ -78,7 +78,7 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
     public CampaignExecutionReport getCampaignExecutionReportsById(Long campaignExecId) {
         return campaignExecutionJpaRepository.findById(campaignExecId)
             .map(ce -> toDomain(ce, true))
-            .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignExecId));
+            .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignExecId, null));
     }
 
     private CampaignExecutionReport toDomain(CampaignExecution campaignExecution, boolean withRunning) {
@@ -133,5 +133,13 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
     @Override
     public void stopExecution(Long campaignId) {
         currentCampaignExecutions.remove(campaignId);
+    }
+
+    @Override
+    public CampaignExecutionReport getLastExecutionReport(Long campaignId) {
+        return campaignExecutionJpaRepository
+            .findFirstByCampaignIdOrderByIdDesc(campaignId)
+            .map(campaignExecution -> toDomain(campaignExecution, true))
+            .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignId));
     }
 }

@@ -284,6 +284,43 @@ public class CampaignExecutionEngineTest {
         verify(campaignRepository, times(2)).newCampaignExecution(campaign.id);
     }
 
+
+    @Test
+    public void should_return_last_existing_campaign_execution_for_existing_campaign() {
+        // Given
+        Campaign campaign = createCampaign();
+        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(123L, campaign.id, emptyList(), "", false, campaign.executionEnvironment(), null, null, "");
+
+
+        when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
+        when(campaignExecutionRepository.getLastExecutionReport(campaign.id)).thenReturn(campaignExecutionReport);
+
+        // When
+        CampaignExecutionReport result = sut.getLastCampaignExecutionReport(campaign.id);
+
+        // Then
+        verify(campaignRepository).findById(campaign.id);
+        verify(campaignExecutionRepository).getLastExecutionReport(campaign.id);
+
+        assertThat(result).isEqualTo(campaignExecutionReport);
+    }
+
+    @Test
+    public void should_throw_exception_when_campaign_does_not_exists() {
+        // Given
+        Campaign campaign = createCampaign();
+
+        when(campaignRepository.findById(campaign.id)).thenReturn(null);
+
+        // When
+        assertThatThrownBy(() -> {
+            sut.getLastCampaignExecutionReport(campaign.id);
+        });
+
+        // Then
+        verify(campaignRepository).findById(campaign.id);
+    }
+
     @Test
     public void should_execute_campaign_with_given_environment_when_executed_by_id() {
         // Given
