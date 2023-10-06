@@ -455,7 +455,13 @@
                 <version>3.6.4</version>
                 <scope>runtime</scope>
             </dependency>
-
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>9.3</version>
+                <scope>compile</scope>
+            </dependency>
+            
             <!-- Jira -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
@@ -475,14 +481,6 @@
                 <groupId>com.google.errorprone</groupId>
                 <artifactId>error_prone_annotations</artifactId>
                 <version>2.18.0</version>
-                <scope>compile</scope>
-            </dependency>
-
-            <!-- Component -->
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>9.3</version>
                 <scope>compile</scope>
             </dependency>
         </dependencies>

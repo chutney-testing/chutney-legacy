@@ -8,6 +8,7 @@ import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
 import com.chutneytesting.dataset.domain.DataSetRepository;
 import com.chutneytesting.server.core.domain.dataset.DataSet;
+import com.chutneytesting.server.core.domain.dataset.DataSetAlreadyExistException;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -43,6 +44,9 @@ public class FileDatasetRepository implements DataSetRepository {
 
     @Override
     public String save(DataSet dataSet) {
+        if(alreadyExists(dataSet)) {
+            throw new DataSetAlreadyExistException(dataSet.name);
+        }
         DatasetDto dto = toDto(dataSet);
         Path file = this.storeFolderPath.resolve(dto.id + FILE_EXTENSION);
         createFile(file);
@@ -53,6 +57,19 @@ public class FileDatasetRepository implements DataSetRepository {
             throw new UncheckedIOException("Cannot save " + file.toUri(), e);
         }
         return dto.id;
+    }
+
+    private boolean alreadyExists(DataSet dataSet) {
+        if(dataSet.id != null) {
+            // Not a new dataset
+            return false;
+        }
+        try {
+            DataSet byId = findById(dataSet.name);
+            return !byId.equals(DataSet.NO_DATASET);
+        } catch (UncheckedIOException e) {
+            return false;
+        }
     }
 
     @Override
@@ -72,10 +89,9 @@ public class FileDatasetRepository implements DataSetRepository {
     }
 
     @Override
-    public DataSet removeById(String fileName) {
+    public void removeById(String fileName) {
         Path filePath = this.storeFolderPath.resolve(fileName + FILE_EXTENSION);
         FileUtils.delete(filePath);
-        return null;
     }
 
     @Override

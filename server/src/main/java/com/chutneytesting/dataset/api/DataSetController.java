@@ -7,7 +7,6 @@ import com.chutneytesting.dataset.domain.DatasetService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(DataSetController.BASE_URL)
 @CrossOrigin(origins = "*")
-@ConditionalOnMissingClass(value = "com.chutneytesting.component.dataset.api.ComponentDataSetController")
 public class DataSetController {
 
     public static final String BASE_URL = "/api/v1/datasets";

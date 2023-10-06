@@ -46,21 +46,13 @@ public class DataSet {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         DataSet dataSet = (DataSet) o;
-
-        return Objects.equals(id, dataSet.id) &&
-            Objects.equals(name, dataSet.name) &&
-            Objects.equals(description, dataSet.description) &&
-            Objects.equals(creationDate, dataSet.creationDate) &&
-            Objects.equals(tags, dataSet.tags) &&
-            Objects.equals(constants, dataSet.constants) &&
-            Objects.equals(datatable, dataSet.datatable);
+        return Objects.equals(name, dataSet.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, creationDate, tags, constants, datatable);
+        return Objects.hash(name);
     }
 
     @Override

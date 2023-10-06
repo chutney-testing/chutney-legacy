@@ -118,6 +118,9 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
                         this.errorDuplicateHeader = true;
                         this.notify(this.errorDuplicateHeaderMessage + ':', error.error);
                         this.modificationsSaved = false;
+                    } else {
+                        this.notify(null, error.error);
+                        this.modificationsSaved = false;
                     }
                 }
             });

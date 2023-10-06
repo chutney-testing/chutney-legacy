@@ -341,6 +341,11 @@
         "error": "Erreur",
         "warning": "Avertissement"
     },
+    "dataset": {
+        "error": {
+            "duplicatedHeader": "Une ou plusieurs colonnes ont le même header"
+        }
+    },
     "global": {
         "status": {
             "success": "OK",

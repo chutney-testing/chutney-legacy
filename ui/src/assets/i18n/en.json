@@ -341,6 +341,11 @@
         "error": "Error",
         "warning": "Warning"
     },
+    "dataset": {
+        "error": {
+            "duplicatedHeader": "One or many columns have duplicated header"
+        }
+    },
     "global": {
         "status": {
             "success": "OK",

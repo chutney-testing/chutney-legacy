@@ -64,4 +64,19 @@ class DatasetServiceTest {
     void should_prevent_deletion_of_used_dataset() {
         // TODO - check if dataset is in used using a count
     }
+
+    @Test
+    public void should_return_dataset_with_id_after_save() {
+        // Given
+        DataSet dataset = DataSet.builder().withName("A").build();
+
+        when(datasetRepository.save(any()))
+            .thenReturn("newId");
+
+        // When
+        DataSet persistedDataset = sut.save(dataset);
+
+        // Then
+        assertThat(persistedDataset.id).isEqualTo("newId");
+    }
 }

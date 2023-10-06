@@ -35,8 +35,8 @@ public class DatasetService {
     }
 
     public DataSet save(DataSet dataset) {
-        datasetRepository.save(dataset);
-        return dataset;
+        String id = datasetRepository.save(dataset);
+        return DataSet.builder().fromDataSet(dataset).withId(id).build();
     }
 
     public DataSet update(Optional<String> oldId, DataSet dataset) {
