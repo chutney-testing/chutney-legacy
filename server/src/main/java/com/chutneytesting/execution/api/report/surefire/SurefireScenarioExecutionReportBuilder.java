@@ -25,7 +25,7 @@ public class SurefireScenarioExecutionReportBuilder {
     private final ExecutionHistoryRepository executionHistoryRepository;
 
     SurefireScenarioExecutionReportBuilder(ObjectMapper objectMapper, ExecutionHistoryRepository executionHistoryRepository) {
-        this.objectMapper = objectMapper;
+        this.objectMapper = objectMapper; // TODO - Choose explicitly which mapper to use
         this.executionHistoryRepository = executionHistoryRepository;
     }
 

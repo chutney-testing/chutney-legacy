@@ -22,8 +22,17 @@ import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProc
 import com.chutneytesting.server.core.domain.execution.processor.TestCasePreProcessors;
 import com.chutneytesting.server.core.domain.execution.state.ExecutionStateRepository;
 import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
+import com.chutneytesting.tools.ui.MyMixInForIgnoreType;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import jakarta.annotation.PostConstruct;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -35,6 +44,9 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import javax.sql.DataSource;
 import liquibase.integration.spring.SpringLiquibase;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
@@ -46,6 +58,7 @@ import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfigurati
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.task.TaskExecutorBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.Resource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.support.ExecutorServiceAdapter;
@@ -238,7 +251,7 @@ public class ServerConfiguration implements AsyncConfigurer {
                                                     ChutneyMetrics metrics,
                                                     @Qualifier("campaignExecutor") TaskExecutor campaignExecutor,
                                                     DataSetRepository datasetRepository,
-                                                    ObjectMapper objectMapper) {
+                                                    ObjectMapper objectMapper) { // TODO - Choose explicitly which mapper to use
         return new CampaignExecutionEngine(
             campaignRepository,
             campaignExecutionRepository,
@@ -282,5 +295,42 @@ public class ServerConfiguration implements AsyncConfigurer {
     @Bean
     CampaignService campaignService(CampaignRepository campaignRepository) {
         return new CampaignService(campaignRepository);
+    }
+
+
+    // TODO - To move in infra when it will not be used in domain (ScenarioExecutionEngineAsync)
+    @Bean
+    public ObjectMapper reportObjectMapper() {
+        SimpleModule jdomElementModule = new SimpleModule();
+        jdomElementModule.addSerializer(Element.class, new JDomElementSerializer());
+
+        return new ObjectMapper()
+            .addMixIn(Resource.class, MyMixInForIgnoreType.class)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            .enable(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS.mappedFeature())
+            .registerModule(jdomElementModule)
+            .findAndRegisterModules();
+    }
+
+    // TODO - To remove when Reporter will serialize itself
+    static class JDomElementSerializer extends StdSerializer<Element> {
+
+        private static final long serialVersionUID = 1L;
+
+        protected JDomElementSerializer() {
+            this(null);
+        }
+
+        protected JDomElementSerializer(Class<Element> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(Element element, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            String xmlString = new XMLOutputter(Format.getCompactFormat()).outputString(element);
+            jsonGenerator.writeObject(xmlString);
+        }
     }
 }

@@ -3,7 +3,6 @@ package com.chutneytesting.admin.infra;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.server.core.domain.admin.DatabaseAdminService;
 import com.chutneytesting.server.core.domain.admin.SqlResult;
 import com.chutneytesting.server.core.domain.tools.ImmutablePaginationRequestWrapperDto;
@@ -16,14 +15,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
-import org.springframework.test.context.ContextConfiguration;
 import util.infra.AbstractLocalDatabaseTest;
 import util.infra.EnableH2MemTestInfra;
 
 @DisplayName("DatabaseAdminServiceImplTest")
 @ResourceLock("changelog")
 @EnableH2MemTestInfra
-@ContextConfiguration(classes = { WebConfiguration.class })
 public class DatabaseAdminServiceImplTest extends AbstractLocalDatabaseTest {
 
     private DatabaseAdminService sut;

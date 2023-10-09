@@ -36,6 +36,6 @@ class ScenarioExecutionHistoryController {
     @PreAuthorize("hasAuthority('SCENARIO_READ')")
     @GetMapping(path = "/api/ui/scenario/{scenarioId}/execution/{executionId}/v1", produces = MediaType.APPLICATION_JSON_VALUE)
     public ExecutionHistory.Execution getExecutionReport(@PathVariable("scenarioId") String scenarioId, @PathVariable("executionId") Long executionId) {
-        return executionHistoryRepository.getExecution(scenarioId, executionId);
+        return executionHistoryRepository.getExecution(scenarioId, executionId); // TODO - return ExecutionReportDto
     }
 }

@@ -2,6 +2,8 @@ package util.infra;
 
 import static util.infra.AbstractLocalDatabaseTest.DB_CHANGELOG_DB_CHANGELOG_MASTER_XML;
 
+import com.chutneytesting.ServerConfiguration;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
@@ -166,6 +168,11 @@ class TestInfraConfiguration {
             ));
             return jpaProperties;
         }
+    }
+
+    @Bean
+    public ObjectMapper reportObjectMapper() {
+        return new ServerConfiguration().reportObjectMapper();
     }
 
     @Primary

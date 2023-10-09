@@ -65,7 +65,7 @@ public class CampaignControllerTest {
     private MockMvc mockMvc;
     private ResultExtractor resultExtractor;
     private CampaignDto existingCampaign;
-    private final ObjectMapper om = new WebConfiguration().objectMapper();
+    private final ObjectMapper om = new WebConfiguration().webObjectMapper();
 
     @BeforeEach
     public void setUp() throws Exception {

@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static util.WaitUtils.awaitDuring;
 
-import com.chutneytesting.WebConfiguration;
 import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
@@ -44,7 +43,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.CannotAcquireLockException;
-import org.springframework.test.context.ContextConfiguration;
 import org.sqlite.SQLiteException;
 import util.infra.AbstractLocalDatabaseTest;
 import util.infra.EnableH2MemTestInfra;
@@ -68,7 +66,6 @@ public class DatabaseExecutionHistoryRepositoryTest {
     class PostreSQL extends AllTests {
     }
 
-    @ContextConfiguration(classes = { WebConfiguration.class })
     abstract class AllTests extends AbstractLocalDatabaseTest {
         @Autowired
         private DatabaseExecutionHistoryRepository sut;

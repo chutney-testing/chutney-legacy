@@ -35,7 +35,7 @@ public class JsonFileAgentNetworkDao {
         this(storeFolderPath, buildObjectMapper());
     }
 
-    public JsonFileAgentNetworkDao(String storeFolderPath, ObjectMapper objectMapper) {
+    JsonFileAgentNetworkDao(String storeFolderPath, ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
         Path dir = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME).toAbsolutePath();
         initFolder(dir);
