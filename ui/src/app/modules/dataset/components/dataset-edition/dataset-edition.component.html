@@ -1,6 +1,6 @@
-<div *ngIf="message" class="notification text-center text-white rounded" [ngClass]="errorDuplicateHeader ? 'bg-danger' : 'bg-info'">
-    <strong>{{ message }}</strong>
-    <br>
+<div *ngIf="message || backendError" class="notification text-center text-white rounded" [ngClass]="backendError ? 'bg-danger' : 'bg-info'">
+    <strong *ngIf="message">{{ message }} <br></strong>
+    
     <strong *ngIf="backendError">{{ backendError }}</strong>
 </div>
 <div class="p-3">
@@ -33,8 +33,7 @@
                 [disabled]="null"
                 (deleteEvent)="deleteDataset()">
             </chutney-delete-confirm-dialog>
-            <span *ngIf="componentsActive" class="ms-4">v{{dataset.version}} - {{ dataset.lastUpdated.toString() | amLocale:'fr' | amTimeAgo }}</span>
-            <span *ngIf="!componentsActive" class="ms-4">{{ dataset.lastUpdated.toString() | amLocale:'fr' | amTimeAgo }}</span>
+             <span class="ms-4">{{ dataset.lastUpdated.toString() | amLocale:'fr' | amTimeAgo }}</span>
         </div>
 
         <div>

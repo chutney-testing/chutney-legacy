@@ -11,7 +11,6 @@ import { MomentModule } from 'ngx-moment';
 import { AlertService } from './alert.service';
 import { ErrorInterceptor } from './error-interceptor.service';
 import {
-    ComponentCardComponent,
     EnvironmentComboComponent,
     ExecutionBadgeComponent
 } from './components';
@@ -57,7 +56,6 @@ import { DistinctPipe } from './pipes/distinct.pipe';
         NgbDropdownModule
     ],
     declarations: [
-        ComponentCardComponent,
         ComponentSearchPipe,
         DataSetSearchPipe,
         DatasetSelectionComponent,
@@ -86,7 +84,6 @@ import { DistinctPipe } from './pipes/distinct.pipe';
         DistinctPipe,
     ],
     exports: [
-        ComponentCardComponent,
         ComponentSearchPipe,
         DataSetSearchPipe,
         DatasetSelectionComponent,

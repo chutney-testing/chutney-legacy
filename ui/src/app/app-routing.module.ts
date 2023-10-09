@@ -35,15 +35,6 @@ export const appRoutes: Routes = [
                 data: {'authorizations': [Authorization.CAMPAIGN_READ, Authorization.CAMPAIGN_WRITE, Authorization.CAMPAIGN_EXECUTE]}
             },
             {
-                path: 'component',
-                loadChildren: () => import('./modules/component/component.module').then(m => m.ComponentModule),
-                canActivate: [AuthGuard, FeaturesGuard],
-                data: {
-                    'authorizations': [Authorization.COMPONENT_READ, Authorization.COMPONENT_WRITE],
-                    'feature': FeatureName.COMPONENT
-                }
-            },
-            {
                 path: 'variable',
                 loadChildren: () => import('./modules/global-variable/global-variable.module').then(m => m.GlobalVariableModule),
                 canActivate: [AuthGuard],

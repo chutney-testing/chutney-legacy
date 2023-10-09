@@ -53,7 +53,7 @@ public class HttpEnvironmentApi implements EnvironmentApi {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCENARIO_EXECUTE') or hasAuthority('CAMPAIGN_WRITE') or hasAuthority('CAMPAIGN_EXECUTE') or hasAuthority('COMPONENT_WRITE')")
+    @PreAuthorize("hasAuthority('SCENARIO_EXECUTE') or hasAuthority('CAMPAIGN_WRITE') or hasAuthority('CAMPAIGN_EXECUTE')")
     @GetMapping(path = ENVIRONMENT_BASE_URI + "/names", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<String> listEnvironmentsNames() {
         return delegate.listEnvironmentsNames();

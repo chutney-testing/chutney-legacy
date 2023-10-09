@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 public class DataSet {
 
     public static Comparator<DataSet> datasetComparator = Comparator.comparing(DataSet::getName, String.CASE_INSENSITIVE_ORDER);
-    public static DataSet NO_DATASET = DataSet.builder().build();
+    public static DataSet NO_DATASET = new DataSet(null, null, null, null, null, emptyMap(), emptyList());
 
     public final String id;
     public final String name;
@@ -46,21 +46,13 @@ public class DataSet {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         DataSet dataSet = (DataSet) o;
-
-        return Objects.equals(id, dataSet.id) &&
-            Objects.equals(name, dataSet.name) &&
-            Objects.equals(description, dataSet.description) &&
-            Objects.equals(creationDate, dataSet.creationDate) &&
-            Objects.equals(tags, dataSet.tags) &&
-            Objects.equals(constants, dataSet.constants) &&
-            Objects.equals(datatable, dataSet.datatable);
+        return Objects.equals(name, dataSet.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, creationDate, tags, constants, datatable);
+        return Objects.hash(name);
     }
 
     @Override
@@ -81,7 +73,6 @@ public class DataSet {
     }
 
     public static class DataSetBuilder {
-        private static final String DEFAULT_ID = "-1";
 
         private String id;
         private String name;
@@ -100,8 +91,8 @@ public class DataSet {
             }
 
             return new DataSet(
-                ofNullable(id).orElse(DEFAULT_ID), // TODO - after component deprecation : remove default id and use the name with '_'
-                prettify(ofNullable(name).orElse("")),  // TODO - after component deprecation : throw if name is empty, but provide a Dataset.NoDataset null object
+                id,
+                prettify(ofNullable(name).orElseThrow(() -> new IllegalArgumentException("Dataset name mandatory"))),
                 ofNullable(description).orElse(""),
                 ofNullable(creationDate).orElseGet(() -> Instant.now().truncatedTo(MILLIS)),
                 (ofNullable(tags).orElse(emptyList())).stream().map(String::toUpperCase).map(String::strip).collect(toList()),

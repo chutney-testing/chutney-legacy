@@ -261,21 +261,7 @@ public class CampaignExecutionEngine {
     }
 
     private ExecutionRequest buildExecutionRequest(Campaign campaign, TestCase testCase, CampaignExecutionReport campaignExecutionReport) {
-        // Only composable test cases can use an external dataset, which can be override if set on the campaign
-        if (isNotBlank(campaign.externalDatasetId) && testCase.id().contains("-")) {  // TODO remove after component deprecation
-            return executionWithDatasetIdOverrideByCampaign(campaign, testCase, campaignExecutionReport.userId);
-        } else {
-            return executionWithCombinedParametersFromCampaignAndTestCase(campaign, testCase, campaignExecutionReport);
-        }
-    }
-
-    private ExecutionRequest executionWithDatasetIdOverrideByCampaign(Campaign campaign, TestCase testCase, String userId) {
-        return new ExecutionRequest(
-            testCase.withDataSetId(campaign.externalDatasetId), // TODO - change after component deprecation
-            campaign.executionEnvironment(),
-            userId,
-            datasetRepository.findById(campaign.externalDatasetId)
-        );
+        return executionWithCombinedParametersFromCampaignAndTestCase(campaign, testCase, campaignExecutionReport);
     }
 
     private ExecutionRequest executionWithCombinedParametersFromCampaignAndTestCase(Campaign campaign, TestCase testCase, CampaignExecutionReport campaignExecutionReport) {

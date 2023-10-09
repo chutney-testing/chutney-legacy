@@ -5,8 +5,6 @@ export class ScenarioIndex {
 
     public status;
     public lastExecution;
-    public isComposed;
-    public type;
 
     constructor(
         public id?: string,
@@ -23,8 +21,6 @@ export class ScenarioIndex {
     ) {
         this.status = this.findStatus();
         this.lastExecution = this.lastTimeExec();
-        this.isComposed = this.findIfComposed();
-        this.type = this.setType();
     }
 
     private findStatus() {
@@ -42,17 +38,4 @@ export class ScenarioIndex {
             return null;
         }
     }
-
-    private findIfComposed(): boolean {
-        return TestCase.isComposed(this.id);
-    }
-
-    private setType(): ScenarioType {
-        return this.isComposed ? ScenarioType.COMPOSED : ScenarioType.FORM;
-    }
-}
-
-export enum ScenarioType {
-    FORM = 'FORM',
-    COMPOSED = 'COMPOSED'
 }

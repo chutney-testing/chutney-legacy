@@ -97,16 +97,8 @@ export class CampaignExecutionMenuComponent implements OnInit {
     private createZip(campaignTitle: string, scenarios: ScenarioIndex[]) {
         const $rawTestCases: Array<Observable<TestCase>> = [];
 
-        var existComponentScenarios: number = 0;
         for (const testCase of scenarios) {
-            if (!TestCase.isComposed(testCase.id)) {
-                $rawTestCases.push(this.scenarioService.findRawTestCase(testCase.id));
-            } else {
-                existComponentScenarios++;
-            }
-        }
-        if (!!existComponentScenarios) {
-            this.broadcastError(this.campaignWithComponentError + ` (${existComponentScenarios})`);
+            $rawTestCases.push(this.scenarioService.findRawTestCase(testCase.id));
         }
 
         combineLatest($rawTestCases).subscribe(rawTestCases => {

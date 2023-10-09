@@ -6,7 +6,7 @@ Feature: Roles declarations and users associations
         Given A new role
             Do context-put
                 With entries
-                | newRole | ${#jsonPath('{"name": "NEW_ROLE", "rights":["SCENARIO_READ", "CAMPAIGN_READ", "COMPONENT_READ"]}', "$")} |
+                | newRole | ${#jsonPath('{"name": "NEW_ROLE", "rights":["SCENARIO_READ", "CAMPAIGN_READ", "SCENARIO_WRITE"]}', "$")} |
         When Add it to current roles and authorizations
             Ask for current roles
                 Do http-get

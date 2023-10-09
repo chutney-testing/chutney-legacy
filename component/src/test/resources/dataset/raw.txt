@@ -1,6 +1,0 @@
-p1 | value1
-param2 | v2
-
-| p3 | param4 |
-| v31 | value41 |
-| value32 | v42 |

@@ -3,7 +3,6 @@ import { Clonable, cloneAsPossible } from '@shared/clonable';
 
 import { KeyValue } from '@core/model/component-task.model';
 import { Execution } from '@core/model/scenario/execution.model';
-import { ScenarioComponent } from '@core/model/scenario/scenario-component.model';
 
 export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
 
@@ -54,17 +53,7 @@ export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
     hasParameters(): boolean {
         return (this.computedParameters && this.computedParameters.length > 0);
     }
-
-    static isComposed(testCaseOrId: TestCase | string): boolean {
-        let id: string;
-        if (testCaseOrId instanceof TestCase) {
-            id = testCaseOrId.id;
-        } else {
-            id = testCaseOrId;
-        }
-        return (id && id.indexOf('-') > 0);
-    }
-
+    
     static fromRaw(raw: any): TestCase {
         return new TestCase(
             raw.id,
@@ -80,24 +69,6 @@ export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
             raw.executions,
             raw.computedParameters,
             raw.defaultDataset
-        );
-    }
-
-    static fromComponent(testCase: ScenarioComponent) {
-        return new TestCase(
-            testCase.id,
-            testCase.title,
-            testCase.description,
-            '',
-            'local',
-            testCase.creationDate,
-            testCase.updateDate,
-            testCase.version,
-            testCase.author,
-            [],
-            null,
-            testCase.computedParameters,
-            ''
         );
     }
 }

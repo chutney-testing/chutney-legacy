@@ -27,6 +27,7 @@ public class DatasetTest {
     public void should_get_rid_of_empty_keys_and_lines() {
         // Edge case
         DataSet dataSet = DataSet.builder()
+            .withName("my name")
             .withConstants(
                 Map.of("", "")
             )
@@ -42,6 +43,7 @@ public class DatasetTest {
         // Normal case
         Map<String, String> expectedMap = Map.of("key1", "value", "key2", "value");
         dataSet = DataSet.builder()
+            .withName("my name")
             .withConstants(
                 Map.of("key1", "value", "", "value", "key2", "value")
             )
@@ -60,6 +62,7 @@ public class DatasetTest {
     public void should_strip_whitespaces_in_keys_and_values() {
         Map<String, String> expectedMap = Map.of("key1", "value", "key2", "value");
         DataSet dataSet = DataSet.builder()
+            .withName("my name")
             .withConstants(
                 Map.of("key1 ", "value ", "", "value", " key2   ", "value")
             )

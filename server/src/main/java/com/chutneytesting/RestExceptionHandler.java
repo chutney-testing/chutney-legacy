@@ -10,6 +10,7 @@ import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
 import com.chutneytesting.execution.domain.campaign.CampaignAlreadyRunningException;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionNotFoundException;
 import com.chutneytesting.security.domain.CurrentUserNotFoundException;
+import com.chutneytesting.server.core.domain.dataset.DataSetAlreadyExistException;
 import com.chutneytesting.server.core.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.server.core.domain.execution.FailedExecutionAttempt;
 import com.chutneytesting.server.core.domain.execution.ScenarioConversionException;
@@ -89,7 +90,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         AlreadyExistingEnvironmentException.class,
         AlreadyExistingScenarioException.class,
         AlreadyExistingTargetException.class,
-        CampaignAlreadyRunningException.class
+        CampaignAlreadyRunningException.class,
+        DataSetAlreadyExistException.class
     })
     protected ResponseEntity<Object> conflict(RuntimeException ex, WebRequest request) {
         return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.CONFLICT, request);

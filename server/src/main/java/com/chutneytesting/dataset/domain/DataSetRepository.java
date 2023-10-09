@@ -9,7 +9,7 @@ public interface DataSetRepository {
 
     DataSet findById(String dataSetId);
 
-    DataSet removeById(String dataSetId);
+    void removeById(String dataSetId);
 
     List<DataSet> findAll();
 }

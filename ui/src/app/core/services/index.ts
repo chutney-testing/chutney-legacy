@@ -2,7 +2,6 @@ export * from './agent-network.service';
 export * from './backups.service';
 export * from './campaign.service';
 export * from './campaign-scheduling.service';
-export * from './component.service';
 export * from './database-admin.service';
 export * from './dataset.service';
 export * from './edition.service';

@@ -27,8 +27,7 @@
     "scenarios": {
         "search": {
             "create": {
-                "form": "Write a testcase",
-                "component": "Compose a testcase"
+                "form": "Write a testcase"
             },
             "placeholder": "Search for scenario (id or title or jira or tags)",
             "placeholder-fulltext": "Search in scenario content (json scenario only)",
@@ -329,83 +328,6 @@
             }
         }
     },
-    "components": {
-        "menu": {
-            "components": "Components",
-            "actions": "Actions"
-        },
-        "shared": {
-            "list": {
-                "filter.placeholder": "Find a component"
-            },
-            "edition": {
-                "draganddrop": "Drag/drop your component",
-                "existTitle":"References",
-                "existInStep": "Component",
-                "existInScenario": "Testcase",
-                "seeParents": "See/hide parents",
-                "blocks": {
-                    "global": "General",
-                    "parameters": "Parameters",
-                    "inputs": "Inputs",
-                    "outputs": "Outputs",
-                    "validations": "Validations"
-                },
-                "fields": {
-                    "intention.placeholder" : "Describe your intention",
-                    "strategy": {
-                        "name": "Strategy",
-                        "retry": {
-                            "name": "retry",
-                            "timeout": "Time out",
-                            "delay": "Delay"
-                        },
-                        "loop": {
-                            "name": "for",
-                            "data": "Data"
-                        }
-                    },
-                    "target.name": "Target"
-                }
-            }
-        },
-        "action": {
-            "list": {
-                "filter.placeholder": "Find an action"
-            },
-            "edition": {
-                "select": "Select your action to create a component"
-            },
-            "refvar" : {
-                "label": "var",
-                "switchTo.tooltip": "Replace list/map elements by a contextual variable",
-                "backTo.tooltip": "Replace contextual variable by list/map"
-            }
-        },
-        "component": {
-            "edition": {
-                "blocks": {
-                    "steps": "Steps"
-                }
-            },
-            "create": "Create a component",
-            "messages": {
-                "empty": "Empty component"
-            }
-        },
-        "testcase": {
-            "edition": {
-                "blocks": {
-                    "steps": "Steps"
-                }
-            }
-        },
-        "dataset": {
-            "error": {
-                "duplicatedHeader": "One or many columns have duplicated header"
-            }
-        }
-    },
     "login": {
         "logout": "You are disconnected",
         "unauthorized": "You are not authorized to access this view. Contact your administrator.",
@@ -418,6 +340,11 @@
         "info": "Information",
         "error": "Error",
         "warning": "Warning"
+    },
+    "dataset": {
+        "error": {
+            "duplicatedHeader": "One or many columns have duplicated header"
+        }
     },
     "global": {
         "status": {

@@ -6,10 +6,6 @@
                 (click)="createNewScenario(false)">
             <span class="fa fa-pencil-alt fa-2x"></span>
         </button>
-        <button *ngIf="componentsActive" type="button" class="btn btn-xs" title="{{ 'scenarios.search.create.component' | translate }}"
-                (click)="createNewScenario(true)">
-            <span class="fa fa-cubes fa-2x"></span>
-        </button>
     </div>
 </div>
 <div class="header-scenario">
@@ -38,21 +34,6 @@
                                         (searchInputEvent)="updateFullTextFilter($event)"></chutney-forms-search-field>
         </div>
     </div>
-    <div class="row my-2">
-
-        <div class="col-2">
-            <ng-container *ngIf="componentsActive">
-                <button *ngFor="let scenarioType of SCENARIO_TYPES; let i=index"
-                        class="btn align-self-center"
-                        [ngClass]="{'btn-primary' : scenarioTypeFilter.isSelected(scenarioType),
-                              'me-2': i < SCENARIO_TYPES.length - 1
-                              }"
-                        (click)="toggleScenarioTypeFilter(scenarioType)">
-                    <i class="fa " [ngClass]="scenarioType === SCENARIO_TYPES[0] ? 'fa-pencil-alt' : 'fa-cubes'"></i>
-                </button>
-            </ng-container>
-        </div>
-    </div>
 </div>
 
 <div class="row w-100">
@@ -65,7 +46,6 @@
                         <span *ngIf="orderBy == 'id' && reverseOrder" class="fa fa-caret-down"></span>
                         <span *ngIf="orderBy == 'id' && !reverseOrder" class="fa fa-caret-up"></span>
                     </th>
-                    <th scope="col" class="w1" *ngIf="componentsActive">&nbsp;</th>
                     <th class="filter w3" scope="col" (click)="toggleDropDown(statusDropdown, $event)">
                         <span>{{ 'scenarios.list.header.status'  | translate  }}</span>
                             <i class="ms-2 fa" [ngClass]="{
@@ -102,7 +82,6 @@
                 </tr>
                 <tr class="headers-filters">
                     <th></th>
-                    <th *ngIf="componentsActive"></th>
                     <th>
                         <angular2-multiselect #statusDropdown 
                             [data]="status"
@@ -137,10 +116,6 @@
 
                 <td class="text-center text-nowrap">
                     <span>{{scenario.id}}</span>
-                </td>
-
-                <td class="text-center" *ngIf="componentsActive">
-                    <span class="fa" [ngClass]="scenario.isComposed ? 'fa-cubes' : 'fa-pencil-alt'"></span>
                 </td>
 
                 <td scope="row" class="text-center">
@@ -195,7 +170,7 @@
                     <button type="button" class="btn bnt-xs" [routerLink]="['/scenario', scenario.id, 'executions']" [queryParams]="{open: 'last', active: 'last'}" (click)="$event.stopPropagation()" >
                         <span  class="fa fa-eye"></span>
                     </button>
-                    <button type="button" class="btn bnt-xs"  routerLink="{{isComposed(scenario.id) ? '/scenario/' + scenario.id + '/component-edition' : '/scenario/' + scenario.id + '/raw-edition'}}" (click)="$event.stopPropagation()">
+                    <button type="button" class="btn bnt-xs"  routerLink="{{'/scenario/' + scenario.id + '/raw-edition'}}" (click)="$event.stopPropagation()">
                         <span  class="fa fa-edit"></span>
                     </button>
                 </td>

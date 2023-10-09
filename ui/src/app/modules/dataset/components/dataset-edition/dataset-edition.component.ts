@@ -11,8 +11,6 @@ import { CanDeactivatePage } from '@core/guards';
 import { DataSetService } from '@core/services';
 import { ValidationService } from '../../../../molecules/validation/validation.service';
 import { Dataset, KeyValue } from '@model';
-import { FeatureService } from '@core/feature/feature.service';
-import { FeatureName } from '@core/feature/feature.model';
 
 @Component({
     selector: 'chutney-dataset-edition',
@@ -31,7 +29,6 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
     message;
     backendError;
     private savedMessage: string;
-    componentsActive = false;
     errorDuplicateHeader = false;
 
     errorDuplicateHeaderMessage: string
@@ -43,14 +40,11 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
                 private validationService: ValidationService,
                 private translate: TranslateService,
                 private formBuilder: FormBuilder,
-                private location: Location,
-                private featureService: FeatureService) {
+                private location: Location) {
         super();
     }
 
     ngOnInit(): void {
-        this.componentsActive = this.featureService.active(FeatureName.COMPONENT);
-
         this.datasetForm = this.formBuilder.group({
             name: ['', Validators.required],
             description: '',
@@ -123,6 +117,9 @@ export class DatasetEditionComponent extends CanDeactivatePage implements OnInit
                     if (error.status === 400) {
                         this.errorDuplicateHeader = true;
                         this.notify(this.errorDuplicateHeaderMessage + ':', error.error);
+                        this.modificationsSaved = false;
+                    } else {
+                        this.notify(null, error.error);
                         this.modificationsSaved = false;
                     }
                 }

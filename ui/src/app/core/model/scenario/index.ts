@@ -2,7 +2,6 @@ export * from './example-parameters.model';
 export * from './execution.model';
 export * from './functional-step.model';
 export * from './gwt-test-case.model';
-export * from './scenario-component.model';
 export * from './scenario-execution-report.model';
 export * from './scenario-index.model';
 export * from './scenario.model';

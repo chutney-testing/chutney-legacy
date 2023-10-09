@@ -18,8 +18,5 @@ public enum Authorization {
     DATASET_READ,
     DATASET_WRITE,
 
-    COMPONENT_READ,
-    COMPONENT_WRITE,
-
     ADMIN_ACCESS
 }

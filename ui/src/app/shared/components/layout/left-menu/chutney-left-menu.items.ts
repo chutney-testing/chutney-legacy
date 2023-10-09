@@ -25,13 +25,6 @@ export const allMenuItems: MenuItem [] = [
                 authorizations: [Authorization.GLOBAL_VAR_READ,Authorization.GLOBAL_VAR_WRITE]
             },
             {
-                label: 'menu.principal.component',
-                link: '/component',
-                iconClass: 'fa fa-cubes',
-                authorizations: [Authorization.COMPONENT_READ,Authorization.COMPONENT_WRITE],
-                feature: FeatureName.COMPONENT
-            },
-            {
                 label: 'menu.principal.dataset',
                 link: '/dataset',
                 iconClass: 'fa fa-table',

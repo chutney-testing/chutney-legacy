@@ -1,12 +1,5 @@
 <div class="database-admin-container">
     <div class="row">
-        <div class="col text-center">
-            <label for="database" class="me-2">Database</label>
-            <select id="database" [(ngModel)]="database" class="no-border">
-                <option value="jdbc">JDBC</option>
-                <option *ngIf="componentsActive" value="orient">ORIENT</option>
-            </select>
-        </div>
         <div class="col text-center input-group input-group-sm">
             <div class="align-bottom">
                 <label for="paginate" class="me-2">Paginate</label>

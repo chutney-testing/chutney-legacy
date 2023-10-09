@@ -164,8 +164,6 @@ public class ChutneyTest {
                 Role.builder().withName("GLOBAL_VAR_WRITE_ROLE").withAuthorizations(List.of(Authorization.GLOBAL_VAR_WRITE.name())).build(),
                 Role.builder().withName("DATASET_READ_ROLE").withAuthorizations(List.of(Authorization.DATASET_READ.name())).build(),
                 Role.builder().withName("DATASET_WRITE_ROLE").withAuthorizations(List.of(Authorization.DATASET_WRITE.name())).build(),
-                Role.builder().withName("COMPONENT_READ_ROLE").withAuthorizations(List.of(Authorization.COMPONENT_READ.name())).build(),
-                Role.builder().withName("COMPONENT_WRITE_ROLE").withAuthorizations(List.of(Authorization.COMPONENT_WRITE.name())).build(),
                 Role.builder().withName("ADMIN_ACCESS_ROLE").withAuthorizations(List.of(Authorization.ADMIN_ACCESS.name())).build(),
                 Role.builder().withName("GOD").withAuthorizations(Arrays.stream(Authorization.values()).map(Enum::name).collect(toList())).build()
             ))
