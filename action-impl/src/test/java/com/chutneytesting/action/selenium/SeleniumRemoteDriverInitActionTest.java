@@ -28,9 +28,9 @@ public class SeleniumRemoteDriverInitActionTest {
         TestLogger logger = new TestLogger();
         TestFinallyActionRegistry finallyActionRegistry = spy(new TestFinallyActionRegistry());
 
-        SeleniumRemoteDriverInitAction firefoxAction = spy(new SeleniumRemoteDriverInitAction(logger, finallyActionRegistry, "", "firefox"));
-        SeleniumRemoteDriverInitAction ieAction = spy(new SeleniumRemoteDriverInitAction(logger, finallyActionRegistry, "","internet explorer"));
-        SeleniumRemoteDriverInitAction chromeAction = spy(new SeleniumRemoteDriverInitAction(logger, finallyActionRegistry, "","chrome"));
+        SeleniumRemoteDriverInitAction firefoxAction = spy(new SeleniumRemoteDriverInitAction(logger, finallyActionRegistry, "", "firefox", null, null, null, null));
+        SeleniumRemoteDriverInitAction ieAction = spy(new SeleniumRemoteDriverInitAction(logger, finallyActionRegistry, "","internet explorer", null, null, null, null));
+        SeleniumRemoteDriverInitAction chromeAction = spy(new SeleniumRemoteDriverInitAction(logger, finallyActionRegistry, "","chrome", null, null, null, null));
 
 
         WebDriver firefoxRemoteDriver = mock(FirefoxDriver.class);

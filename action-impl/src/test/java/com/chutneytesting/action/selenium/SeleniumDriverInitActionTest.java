@@ -18,6 +18,7 @@ import com.chutneytesting.action.spi.ActionExecutionResult;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
@@ -27,16 +28,20 @@ public class SeleniumDriverInitActionTest {
         TestLogger logger = new TestLogger();
         TestFinallyActionRegistry finallyActionRegistry = spy(new TestFinallyActionRegistry());
 
-        SeleniumDriverInitAction firefoxAction = spy(new SeleniumDriverInitAction(logger, finallyActionRegistry, "", "", "firefox"));
-        SeleniumDriverInitAction ieAction = spy(new SeleniumDriverInitAction(logger, finallyActionRegistry, "", "", "Internet Explorer"));
+        SeleniumDriverInitAction firefoxAction = spy(new SeleniumDriverInitAction(logger, finallyActionRegistry, "", "", "firefox", null, null, null, null));
+        SeleniumDriverInitAction ieAction = spy(new SeleniumDriverInitAction(logger, finallyActionRegistry, "", "", "internet explorer", null, null, null, null));
+        SeleniumDriverInitAction chromeAction = spy(new SeleniumDriverInitAction(logger, finallyActionRegistry, "", "", "chrome", null, null, null, null));
 
         WebDriver firefoxDriver = mock(FirefoxDriver.class);
         WebDriver internetExplorerDriver = mock(InternetExplorerDriver.class);
+        WebDriver chromeDriver = mock(ChromeDriver.class);
 
         doNothing()
             .when(firefoxAction).configureWebDriver(eq(firefoxDriver));
         doReturn(firefoxDriver)
             .when(firefoxAction).createFirefoxWebDriver();
+        doReturn(chromeDriver)
+            .when(chromeAction).createChromeWebDriver();
 
         doNothing()
             .when(ieAction).configureWebDriver(eq(internetExplorerDriver));
@@ -45,7 +50,8 @@ public class SeleniumDriverInitActionTest {
 
         return new Object[][]{
             {firefoxAction, firefoxDriver, finallyActionRegistry},
-            {ieAction, internetExplorerDriver, finallyActionRegistry}
+            {ieAction, internetExplorerDriver, finallyActionRegistry},
+            {chromeAction, chromeDriver, finallyActionRegistry}
         };
     }
 
