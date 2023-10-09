@@ -58,7 +58,7 @@ public class SurefireScenarioExecutionReportBuilderTest {
         Testsuite testsuite = sut.create(scenarioExecutionReportCampaign);
 
         // Then
-        assertThat(testsuite.getName()).isEqualTo("test1");
+        assertThat(testsuite.getName()).isEqualTo("123_test1");
         assertThat(testsuite.getTime()).isEqualTo("0.32");
         assertThat(testsuite.getTests()).isEqualTo("2");
         assertThat(testsuite.getFailures()).isEqualTo("0");
@@ -111,7 +111,7 @@ public class SurefireScenarioExecutionReportBuilderTest {
         Testsuite testsuite = sut.create(scenarioExecutionReportCampaign);
 
         // Then
-        assertThat(testsuite.getName()).isEqualTo("test2");
+        assertThat(testsuite.getName()).isEqualTo("123_test2");
         assertThat(testsuite.getTime()).isEqualTo("23.546");
         assertThat(testsuite.getTests()).isEqualTo("3");
         assertThat(testsuite.getFailures()).isEqualTo("1");
