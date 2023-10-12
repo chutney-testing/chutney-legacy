@@ -4,6 +4,7 @@ import static com.chutneytesting.server.core.domain.execution.report.ServerRepor
 import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.SUCCESS;
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -29,6 +30,27 @@ import org.junit.jupiter.api.Test;
 
 @DisplayName("Purge service")
 public class PurgeServiceTest {
+
+    @Nested
+    @DisplayName("validates configuration")
+    class ConfigurationValidation {
+        @Test
+        void scenario_configuration_must_be_positive_integer() {
+            Integer scenarioConfiguration = -10;
+            assertThatThrownBy(() ->
+                new PurgeServiceImpl(mock(TestCaseRepository.class), mock(ExecutionHistoryRepository.class), mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), scenarioConfiguration, 10)
+            ).isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void campaign_configuration_must_be_positive_integer() {
+            Integer campaignConfiguration = -10;
+            assertThatThrownBy(() ->
+                new PurgeServiceImpl(mock(TestCaseRepository.class), mock(ExecutionHistoryRepository.class), mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), 10, campaignConfiguration))
+                .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
     @Nested
     @DisplayName("deletes scenarios' executions according to configuration")
     class CleanScenariosExecutionsOutsideCampaign {
@@ -57,7 +79,7 @@ public class PurgeServiceTest {
                     ));
 
                     // When
-                    PurgeServiceImpl sut = new PurgeServiceImpl(testCaseRepository, executionsRepository, mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), maxScenarioExecutionsConfiguration);
+                    PurgeServiceImpl sut = new PurgeServiceImpl(testCaseRepository, executionsRepository, mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), maxScenarioExecutionsConfiguration, 100);
                     PurgeReport report = sut.purge();
 
                     // Then
@@ -89,7 +111,7 @@ public class PurgeServiceTest {
                     ));
 
                     // When
-                    PurgeServiceImpl sut = new PurgeServiceImpl(testCaseRepository, executionsRepository, mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), maxScenarioExecutionsConfiguration);
+                    PurgeServiceImpl sut = new PurgeServiceImpl(testCaseRepository, executionsRepository, mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), maxScenarioExecutionsConfiguration, 100);
                     PurgeReport report = sut.purge();
 
                     // Then
@@ -123,7 +145,7 @@ public class PurgeServiceTest {
                     ));
 
                     // When
-                    PurgeServiceImpl sut = new PurgeServiceImpl(testCaseRepository, executionsRepository, mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), maxScenarioExecutionsConfiguration);
+                    PurgeServiceImpl sut = new PurgeServiceImpl(testCaseRepository, executionsRepository, mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), maxScenarioExecutionsConfiguration, 100);
                     PurgeReport report = sut.purge();
 
                     // Then
@@ -155,7 +177,7 @@ public class PurgeServiceTest {
                     ));
 
                     // When
-                    PurgeServiceImpl sut = new PurgeServiceImpl(testCaseRepository, executionsRepository, mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), maxScenarioExecutionsConfiguration);
+                    PurgeServiceImpl sut = new PurgeServiceImpl(testCaseRepository, executionsRepository, mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), maxScenarioExecutionsConfiguration, 100);
                     PurgeReport report = sut.purge();
 
                     // Then
@@ -196,7 +218,7 @@ public class PurgeServiceTest {
                 ));
 
                 // When
-                PurgeServiceImpl sut = new PurgeServiceImpl(testCaseRepository, executionsRepository, mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), maxScenarioExecutionsConfiguration);
+                PurgeServiceImpl sut = new PurgeServiceImpl(testCaseRepository, executionsRepository, mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), maxScenarioExecutionsConfiguration, 100);
                 PurgeReport report = sut.purge();
 
                 // Then
@@ -476,7 +498,7 @@ public class PurgeServiceTest {
                 ));
 
                 // When
-                PurgeServiceImpl sut = new PurgeServiceImpl(testCaseRepository, executionsRepository, mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), maxScenarioExecutionsConfiguration);
+                PurgeServiceImpl sut = new PurgeServiceImpl(testCaseRepository, executionsRepository, mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), maxScenarioExecutionsConfiguration, 100);
                 PurgeReport report = sut.purge();
 
                 // Then

@@ -23,11 +23,12 @@ public class SchedulePurge {
 
     @Scheduled(cron = SCHEDULED_PURGE_CRON_SPRING_VALUE)
     public void launchPurge() {
+        LOGGER.debug("Launch executions purge : START");
         try {
-            CompletableFuture.supplyAsync(purgeService::purge)
-                .get(10, TimeUnit.MINUTES);
+            CompletableFuture.supplyAsync(purgeService::purge).get(10, TimeUnit.MINUTES);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             LOGGER.error("Purge did not finish correctly.", e);
         }
+        LOGGER.debug("Launch executions purge : END");
     }
 }
