@@ -23,8 +23,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Entity(name = "CAMPAIGN_EXECUTIONS")
-public class CampaignExecution {
-
+public class CampaignExecutionEntity {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,14 +54,14 @@ public class CampaignExecution {
     @Version
     private Integer version;
 
-    public CampaignExecution() {
+    public CampaignExecutionEntity() {
     }
 
-    public CampaignExecution(Long campaignId) {
+    public CampaignExecutionEntity(Long campaignId) {
         this(null, campaignId, null, null, null, null, null, null, null);
     }
 
-    public CampaignExecution(Long id, Long campaignId, List<ScenarioExecutionEntity> scenarioExecutions, Boolean partial, String environment, String userId, String datasetId, Integer datasetVersion, Integer version) {
+    public CampaignExecutionEntity(Long id, Long campaignId, List<ScenarioExecutionEntity> scenarioExecutions, Boolean partial, String environment, String userId, String datasetId, Integer datasetVersion, Integer version) {
         this.id = id;
         this.campaignId = campaignId;
         this.scenarioExecutions = scenarioExecutions;
@@ -136,9 +135,9 @@ public class CampaignExecution {
             userId);
     }
 
-    private ScenarioExecutionReportCampaign blankScenarioExecutionReport(CampaignScenario campaignScenario, Function<String, String> titleSupplier) {
-        String scenarioTitle = titleSupplier.apply(campaignScenario.scenarioId());
-        return new ScenarioExecutionReportCampaign(campaignScenario.scenarioId(), scenarioTitle, blankScenarioExecution(scenarioTitle));
+    private ScenarioExecutionReportCampaign blankScenarioExecutionReport(CampaignScenarioEntity campaignScenarioEntity, Function<String, String> titleSupplier) {
+        String scenarioTitle = titleSupplier.apply(campaignScenarioEntity.scenarioId());
+        return new ScenarioExecutionReportCampaign(campaignScenarioEntity.scenarioId(), scenarioTitle, blankScenarioExecution(scenarioTitle));
     }
 
     private ExecutionHistory.ExecutionSummary blankScenarioExecution(String testCaseTitle) {

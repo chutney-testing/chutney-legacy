@@ -1,11 +1,11 @@
 package com.chutneytesting.campaign.infra;
 
-import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
+import com.chutneytesting.campaign.infra.jpa.CampaignScenarioEntity;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
-public interface CampaignScenarioJpaRepository extends CrudRepository<CampaignScenario, Long>, JpaSpecificationExecutor<CampaignScenario> {
+public interface CampaignScenarioJpaRepository extends CrudRepository<CampaignScenarioEntity, Long>, JpaSpecificationExecutor<CampaignScenarioEntity> {
 
-    List<CampaignScenario> findAllByScenarioId(String scenarioId);
+    List<CampaignScenarioEntity> findAllByScenarioId(String scenarioId);
 }

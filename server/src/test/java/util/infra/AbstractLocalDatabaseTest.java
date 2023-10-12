@@ -3,9 +3,9 @@ package util.infra;
 import static java.time.Instant.now;
 
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
-import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
+import com.chutneytesting.campaign.infra.jpa.CampaignScenarioEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
-import com.chutneytesting.scenario.infra.jpa.Scenario;
+import com.chutneytesting.scenario.infra.jpa.ScenarioEntity;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import jakarta.persistence.EntityManager;
 import java.sql.Connection;
@@ -69,11 +69,11 @@ public abstract class AbstractLocalDatabaseTest {
         }
     }
 
-    protected Scenario givenScenario() {
-        Scenario scenario = new Scenario(null, "", null, "{\"when\":{}}", null, now(), null, true, null, now(), null, null);
+    protected ScenarioEntity givenScenario() {
+        ScenarioEntity scenarioEntity = new ScenarioEntity(null, "", null, "{\"when\":{}}", null, now(), null, true, null, now(), null, null);
         return transactionTemplate.execute(ts -> {
-            entityManager.persist(scenario);
-            return scenario;
+            entityManager.persist(scenarioEntity);
+            return scenarioEntity;
         });
     }
 
@@ -87,15 +87,15 @@ public abstract class AbstractLocalDatabaseTest {
         return componentId ? clusterId + "-" + objectId : String.valueOf(objectId);
     }
 
-    protected CampaignEntity givenCampaign(Scenario... scenarios) {
-        ArrayList<CampaignScenario> campaignScenarios = new ArrayList<>();
-        CampaignEntity campaign = new CampaignEntity("", campaignScenarios);
+    protected CampaignEntity givenCampaign(ScenarioEntity... scenarioEntities) {
+        ArrayList<CampaignScenarioEntity> campaignScenarioEntities = new ArrayList<>();
+        CampaignEntity campaign = new CampaignEntity("", campaignScenarioEntities);
         return transactionTemplate.execute(ts -> {
-            for (int i = 0; i < scenarios.length; i++) {
-                Scenario scenario = scenarios[i];
-                campaignScenarios.add(new CampaignScenario(campaign, scenario.getId().toString(), i));
+            for (int i = 0; i < scenarioEntities.length; i++) {
+                ScenarioEntity scenarioEntity = scenarioEntities[i];
+                campaignScenarioEntities.add(new CampaignScenarioEntity(campaign, scenarioEntity.getId().toString(), i));
             }
-            campaign.campaignScenarios().addAll(campaignScenarios);
+            campaign.campaignScenarios().addAll(campaignScenarioEntities);
             entityManager.persist(campaign);
             return campaign;
         });
@@ -109,7 +109,7 @@ public abstract class AbstractLocalDatabaseTest {
         });
     }
 
-    protected List<String> scenariosIds(Scenario... scenarios) {
-        return Arrays.stream(scenarios).map(Scenario::getId).map(String::valueOf).toList();
+    protected List<String> scenariosIds(ScenarioEntity... scenarioEntities) {
+        return Arrays.stream(scenarioEntities).map(ScenarioEntity::getId).map(String::valueOf).toList();
     }
 }

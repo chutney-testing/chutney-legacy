@@ -7,7 +7,7 @@ import static java.util.stream.Collectors.toUnmodifiableSet;
 
 import com.chutneytesting.campaign.infra.CampaignExecutionJpaRepository;
 import com.chutneytesting.campaign.infra.CampaignJpaRepository;
-import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
+import com.chutneytesting.campaign.infra.jpa.CampaignExecutionEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionReportEntity;
 import com.chutneytesting.scenario.infra.raw.ScenarioJpaRepository;
@@ -120,7 +120,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         }
         ScenarioExecutionEntity scenarioExecution = ScenarioExecutionEntity.fromDomain(scenarioId, detachedExecution);
         if (detachedExecution.campaignReport().isPresent()) {
-            Optional<CampaignExecution> campaignExecution = campaignExecutionJpaRepository.findById(detachedExecution.campaignReport().get().executionId.longValue());
+            Optional<CampaignExecutionEntity> campaignExecution = campaignExecutionJpaRepository.findById(detachedExecution.campaignReport().get().executionId.longValue());
             scenarioExecution.forCampaignExecution(campaignExecution.get());
         }
         scenarioExecution = scenarioExecutionsJpaRepository.save(scenarioExecution);

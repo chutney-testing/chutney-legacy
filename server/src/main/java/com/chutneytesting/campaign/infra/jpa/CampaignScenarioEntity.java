@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 @Entity(name = "CAMPAIGN_SCENARIOS")
-public class CampaignScenario {
+public class CampaignScenarioEntity {
 
     @Id
     @Column(name = "ID")
@@ -29,14 +29,14 @@ public class CampaignScenario {
     @Column(name = "RANK")
     private Integer rank;
 
-    public CampaignScenario() {
+    public CampaignScenarioEntity() {
     }
 
-    public CampaignScenario(String scenarioId, Integer rank) {
+    public CampaignScenarioEntity(String scenarioId, Integer rank) {
         this(null, scenarioId, rank);
     }
 
-    public CampaignScenario(CampaignEntity campaign, String scenarioId, Integer rank) {
+    public CampaignScenarioEntity(CampaignEntity campaign, String scenarioId, Integer rank) {
         this.campaign = campaign;
         this.scenarioId = scenarioId;
         this.rank = rank;
@@ -58,9 +58,9 @@ public class CampaignScenario {
         this.campaign = campaign;
     }
 
-    public static List<CampaignScenario> fromDomain(com.chutneytesting.server.core.domain.scenario.campaign.Campaign campaign) {
+    public static List<CampaignScenarioEntity> fromDomain(com.chutneytesting.server.core.domain.scenario.campaign.Campaign campaign) {
         return IntStream.range(0, campaign.scenarioIds.size())
-            .mapToObj(idx -> new CampaignScenario(campaign.scenarioIds.get(idx), idx))
+            .mapToObj(idx -> new CampaignScenarioEntity(campaign.scenarioIds.get(idx), idx))
             .toList();
     }
 

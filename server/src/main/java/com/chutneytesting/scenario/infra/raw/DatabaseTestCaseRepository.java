@@ -7,11 +7,11 @@ import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 import com.chutneytesting.campaign.infra.CampaignScenarioJpaRepository;
-import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
+import com.chutneytesting.campaign.infra.jpa.CampaignScenarioEntity;
 import com.chutneytesting.execution.infra.storage.DatabaseExecutionJpaRepository;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
-import com.chutneytesting.scenario.infra.jpa.Scenario;
+import com.chutneytesting.scenario.infra.jpa.ScenarioEntity;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
@@ -62,7 +62,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
           return testCase.id();
         }
         try {
-            return scenarioJpaRepository.save(Scenario.fromGwtTestCase(testCase)).getId().toString();
+            return scenarioJpaRepository.save(ScenarioEntity.fromGwtTestCase(testCase)).getId().toString();
         } catch (ObjectOptimisticLockingFailureException e) {
             throw new ScenarioNotFoundException(testCase.id(), testCase.metadata().version());
         }
@@ -74,9 +74,9 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         if (checkIdInput(scenarioId)) {
             return empty();
         }
-        Optional<Scenario> scenarioDao = scenarioJpaRepository.findByIdAndActivated(valueOf(scenarioId), true)
-            .filter(Scenario::isActivated);
-        return scenarioDao.map(Scenario::toGwtTestCase);
+        Optional<ScenarioEntity> scenarioDao = scenarioJpaRepository.findByIdAndActivated(valueOf(scenarioId), true)
+            .filter(ScenarioEntity::isActivated);
+        return scenarioDao.map(ScenarioEntity::toGwtTestCase);
     }
 
     @Override
@@ -91,14 +91,14 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         if (checkIdInput(testCaseId)) {
             return empty();
         }
-        return scenarioJpaRepository.findMetaDataByIdAndActivated(valueOf(testCaseId), true).map(Scenario::toTestCaseMetadata);
+        return scenarioJpaRepository.findMetaDataByIdAndActivated(valueOf(testCaseId), true).map(ScenarioEntity::toTestCaseMetadata);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<TestCaseMetadata> findAll() {
         return scenarioJpaRepository.findMetaDataByActivatedTrue().stream()
-            .map(Scenario::toTestCaseMetadata)
+            .map(ScenarioEntity::toTestCaseMetadata)
             .toList();
     }
 
@@ -115,8 +115,8 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
                     scenarioExecutionsJpaRepository.save(e);
                 });
 
-                List<CampaignScenario> allCampaignScenarios = campaignScenarioJpaRepository.findAllByScenarioId(scenarioId);
-                campaignScenarioJpaRepository.deleteAll(allCampaignScenarios);
+                List<CampaignScenarioEntity> allCampaignScenarioEntities = campaignScenarioJpaRepository.findAllByScenarioId(scenarioId);
+                campaignScenarioJpaRepository.deleteAll(allCampaignScenarioEntities);
 
                 scenarioJpa.deactivate();
                 scenarioJpaRepository.save(scenarioJpa);
@@ -141,15 +141,15 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     public List<TestCaseMetadata> search(String textFilter) {
         if (!textFilter.isEmpty()) {
             List<String> words = getWordsToSearchWithQuotes(escapeSql(textFilter));
-            Specification<Scenario> scenarioDaoSpecification = buildLikeSpecificationOnContent(words);
+            Specification<ScenarioEntity> scenarioDaoSpecification = buildLikeSpecificationOnContent(words);
 
             CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-            CriteriaQuery<Scenario> query = builder.createQuery(Scenario.class);
-            Root<Scenario> root = query.from(Scenario.class);
-            query.select(builder.construct(Scenario.class, root.get("id"), root.get("title"), root.get("description"), root.get("tags"), root.get("creationDate"), root.get("dataset"), root.get("activated"), root.get("userId"), root.get("updateDate"), root.get("version"), root.get("defaultDataset")));
+            CriteriaQuery<ScenarioEntity> query = builder.createQuery(ScenarioEntity.class);
+            Root<ScenarioEntity> root = query.from(ScenarioEntity.class);
+            query.select(builder.construct(ScenarioEntity.class, root.get("id"), root.get("title"), root.get("description"), root.get("tags"), root.get("creationDate"), root.get("dataset"), root.get("activated"), root.get("userId"), root.get("updateDate"), root.get("version"), root.get("defaultDataset")));
             query = query.where(scenarioDaoSpecification.toPredicate(root, query, builder));
 
-            return entityManager.createQuery(query).getResultList().stream().map(Scenario::toTestCaseMetadata).toList();
+            return entityManager.createQuery(query).getResultList().stream().map(ScenarioEntity::toTestCaseMetadata).toList();
         } else {
             return findAll();
         }
@@ -178,20 +178,20 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
     }
 
     private void saveScenarioWithExplicitId(GwtTestCase testCase) {
-        Scenario scenario = Scenario.fromGwtTestCase(testCase);
+        ScenarioEntity scenarioEntity = ScenarioEntity.fromGwtTestCase(testCase);
         scenarioJpaRepository.saveWithExplicitId(
-            scenario.getId(),
-            scenario.getTitle(),
-            scenario.getDescription(),
-            scenario.getContent(),
-            scenario.getTags(),
-            scenario.getCreationDate(),
-            scenario.getDataset(),
-            scenario.isActivated(),
-            scenario.getUserId(),
-            scenario.getUpdateDate(),
-            scenario.getVersion(),
-            scenario.getDefaultDataset()
+            scenarioEntity.getId(),
+            scenarioEntity.getTitle(),
+            scenarioEntity.getDescription(),
+            scenarioEntity.getContent(),
+            scenarioEntity.getTags(),
+            scenarioEntity.getCreationDate(),
+            scenarioEntity.getDataset(),
+            scenarioEntity.isActivated(),
+            scenarioEntity.getUserId(),
+            scenarioEntity.getUpdateDate(),
+            scenarioEntity.getVersion(),
+            scenarioEntity.getDefaultDataset()
         );
     }
 
@@ -202,10 +202,10 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
         return str.replace("'", "''");
     }
 
-    private Specification<Scenario> buildLikeSpecificationOnContent(List<String> words) {
-        Specification<Scenario> scenarioDaoSpecification = null;
+    private Specification<ScenarioEntity> buildLikeSpecificationOnContent(List<String> words) {
+        Specification<ScenarioEntity> scenarioDaoSpecification = null;
         for (String word : words) {
-            Specification<Scenario> wordSpecification = ScenarioJpaRepository.contentContains(word);
+            Specification<ScenarioEntity> wordSpecification = ScenarioJpaRepository.contentContains(word);
             scenarioDaoSpecification = ofNullable(scenarioDaoSpecification)
                 .map(s -> s.or(wordSpecification))
                 .orElse(wordSpecification);

@@ -7,7 +7,7 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
-import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
+import com.chutneytesting.campaign.infra.jpa.CampaignScenarioEntity;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import java.util.List;
@@ -89,7 +89,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     public List<String> findScenariosIds(Long campaignId) {
         return campaignJpaRepository.findById(campaignId)
             .map(c -> c.campaignScenarios().stream()
-                .map(CampaignScenario::scenarioId)
+                .map(CampaignScenarioEntity::scenarioId)
                 .toList()
             )
             .orElseThrow(() -> new CampaignNotFoundException(campaignId));
@@ -122,7 +122,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
         }
 
         return campaignScenarioJpaRepository.findAllByScenarioId(scenarioId).stream()
-            .map(CampaignScenario::campaign)
+            .map(CampaignScenarioEntity::campaign)
             .map(CampaignEntity::toDomain)
             .toList();
     }

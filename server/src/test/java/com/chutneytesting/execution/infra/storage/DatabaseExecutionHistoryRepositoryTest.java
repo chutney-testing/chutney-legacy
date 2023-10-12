@@ -16,7 +16,7 @@ import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionReportEntity;
-import com.chutneytesting.scenario.infra.jpa.Scenario;
+import com.chutneytesting.scenario.infra.jpa.ScenarioEntity;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.Execution;
@@ -324,19 +324,19 @@ public class DatabaseExecutionHistoryRepositoryTest {
         @Test
         public void should_map_campaign_only_when_executing_from_campaign() {
             // Given
-            Scenario scenario = givenScenario();
-            CampaignEntity campaign = givenCampaign(scenario);
+            ScenarioEntity scenarioEntity = givenScenario();
+            CampaignEntity campaign = givenCampaign(scenarioEntity);
 
-            ScenarioExecutionEntity scenarioExecutionOne = givenScenarioExecution(scenario.getId(), FAILURE);
-            ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecutionOne.toDomain());
-            ScenarioExecutionEntity scenarioExecutionTwo = givenScenarioExecution(scenario.getId(), SUCCESS);
+            ScenarioExecutionEntity scenarioExecutionOne = givenScenarioExecution(scenarioEntity.getId(), FAILURE);
+            ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenarioEntity.getId().toString(), scenarioEntity.getTitle(), scenarioExecutionOne.toDomain());
+            ScenarioExecutionEntity scenarioExecutionTwo = givenScenarioExecution(scenarioEntity.getId(), SUCCESS);
 
             Long campaignExecutionId = campaignExecutionDBRepository.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
             campaignExecutionDBRepository.saveCampaignReport(campaign.id(), campaignExecutionReport);
 
             // When
-            List<ExecutionSummary> executions = sut.getExecutions(scenario.getId().toString());
+            List<ExecutionSummary> executions = sut.getExecutions(scenarioEntity.getId().toString());
 
             // Then
             assertThat(executions).hasSize(2);
@@ -352,12 +352,12 @@ public class DatabaseExecutionHistoryRepositoryTest {
         @Test
         public void should_retrieve_scenario_execution_summary() {
             // Given
-            Scenario scenario = givenScenario();
-            CampaignEntity campaign = givenCampaign(scenario);
+            ScenarioEntity scenarioEntity = givenScenario();
+            CampaignEntity campaign = givenCampaign(scenarioEntity);
 
-            ScenarioExecutionEntity scenarioExecutionOne = givenScenarioExecution(scenario.getId(), FAILURE);
-            ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenario.getId().toString(), scenario.getTitle(), scenarioExecutionOne.toDomain());
-            givenScenarioExecution(scenario.getId(), SUCCESS);
+            ScenarioExecutionEntity scenarioExecutionOne = givenScenarioExecution(scenarioEntity.getId(), FAILURE);
+            ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenarioEntity.getId().toString(), scenarioEntity.getTitle(), scenarioExecutionOne.toDomain());
+            givenScenarioExecution(scenarioEntity.getId(), SUCCESS);
 
             Long campaignExecutionId = campaignExecutionDBRepository.generateCampaignExecutionId(campaign.id());
             CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");

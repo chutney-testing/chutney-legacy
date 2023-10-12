@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
-import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
-import com.chutneytesting.campaign.infra.jpa.CampaignParameter;
+import com.chutneytesting.campaign.infra.jpa.CampaignExecutionEntity;
+import com.chutneytesting.campaign.infra.jpa.CampaignParameterEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
-import com.chutneytesting.scenario.infra.jpa.Scenario;
+import com.chutneytesting.scenario.infra.jpa.ScenarioEntity;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -44,20 +44,20 @@ class LiquibaseChangelogTest {
                 givenScenario();
                 givenScenario();
                 givenScenario();
-                Scenario s1 = givenScenario();
+                ScenarioEntity s1 = givenScenario();
 
                 // When redo liquibase
                 assertDoesNotThrow(this::liquibaseUpdate);
 
                 // Then
-                Scenario s2 = givenScenario();
+                ScenarioEntity s2 = givenScenario();
                 assertThat(s2.getId()).isEqualTo(s1.getId() + 1);
 
                 // When redo liquibase
                 assertDoesNotThrow(this::liquibaseUpdate);
 
                 // Then
-                Scenario s3 = givenScenario();
+                ScenarioEntity s3 = givenScenario();
                 assertThat(s3.getId()).isEqualTo(s2.getId() + 1);
             }
         }
@@ -107,16 +107,16 @@ class LiquibaseChangelogTest {
             @Test
             @DisplayName("Set scenario sequence correctly")
             void set_scenario_sequence_value_after_migration() {
-                Scenario scenario = givenScenario();
-                assertThat(scenario.getId()).isEqualTo(3);
+                ScenarioEntity scenarioEntity = givenScenario();
+                assertThat(scenarioEntity.getId()).isEqualTo(3);
             }
 
             @Test
             @DisplayName("Set campaign sequences correctly")
             void set_campaign_sequence_value_after_migration() {
                 CampaignEntity campaign = transactionTemplate.execute(status -> {
-                    Set<CampaignParameter> parameters = Set.of(
-                        new CampaignParameter("param1", "val1")
+                    Set<CampaignParameterEntity> parameters = Set.of(
+                        new CampaignParameterEntity("param1", "val1")
                     );
                     CampaignEntity c = new CampaignEntity(null, "title", "", null, false, false, null, null, null, null, parameters);
                     entityManager.persist(c);
@@ -140,8 +140,8 @@ class LiquibaseChangelogTest {
             @Test
             @DisplayName("Set campaign executions sequence correctly")
             void set_campaign_executions_sequence_value_after_migration() {
-                CampaignExecution execution = transactionTemplate.execute(status -> {
-                    CampaignExecution e = new CampaignExecution(null, 2L, null, null, null, null, null, null, null);
+                CampaignExecutionEntity execution = transactionTemplate.execute(status -> {
+                    CampaignExecutionEntity e = new CampaignExecutionEntity(null, 2L, null, null, null, null, null, null, null);
                     entityManager.persist(e);
                     return e;
                 });
