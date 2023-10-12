@@ -33,7 +33,7 @@ public class ChutneyWebSecurityConfig {
     public static final String LOGOUT_URL = UserController.BASE_URL + "/logout";
     public static final String API_BASE_URL_PATTERN = "/api/**";
 
-    @Value("${management.endpoints.web.base-path:'/actuator'}")
+    @Value("${management.endpoints.web.base-path:/actuator}")
     String actuatorBaseUrl;
 
     @Bean
