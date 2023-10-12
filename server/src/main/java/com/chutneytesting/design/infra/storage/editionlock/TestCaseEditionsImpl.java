@@ -1,7 +1,7 @@
 package com.chutneytesting.design.infra.storage.editionlock;
 
-import static com.chutneytesting.ServerConfiguration.EDITIONS_TTL_UNIT_SPRING_VALUE;
-import static com.chutneytesting.ServerConfiguration.EDITIONS_TTL_VALUE_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.EDITIONS_TTL_UNIT_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.EDITIONS_TTL_VALUE_SPRING_VALUE;
 
 import com.chutneytesting.design.domain.editionlock.TestCaseEdition;
 import com.chutneytesting.design.domain.editionlock.TestCaseEditions;

@@ -1,5 +1,16 @@
 package com.chutneytesting;
 
+import static com.chutneytesting.ServerConfigurationValues.CAMPAIGNS_EXECUTOR_POOL_SIZE_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.ENGINE_DELEGATION_PASSWORD_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.ENGINE_DELEGATION_USER_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.ENGINE_EXECUTOR_POOL_SIZE_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.EXECUTION_ASYNC_PUBLISHER_DEBOUNCE_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.EXECUTION_ASYNC_PUBLISHER_TTL_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.SERVER_PORT_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.TASK_SQL_NB_LOGGED_ROW;
+import static com.chutneytesting.ServerConfigurationValues.TASK_SQL_NB_LOGGED_ROW_SPRING_VALUE;
+
 import com.chutneytesting.action.api.EmbeddedActionEngine;
 import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignRepository;
@@ -33,7 +44,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Clock;
@@ -41,7 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
 import javax.sql.DataSource;
 import liquibase.integration.spring.SpringLiquibase;
 import org.jdom2.Element;
@@ -49,56 +58,22 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
-import org.springframework.boot.task.TaskExecutorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.support.ExecutorServiceAdapter;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.annotation.AsyncConfigurer;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @SpringBootApplication(exclude = {LiquibaseAutoConfiguration.class, ActiveMQAutoConfiguration.class, MongoAutoConfiguration.class})
-@EnableScheduling
-@EnableAsync
-public class ServerConfiguration implements AsyncConfigurer {
+public class ServerConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerConfiguration.class);
-
-    public static final String SERVER_PORT_SPRING_VALUE = "${server.port}";
-    public static final String SERVER_INSTANCE_NAME_VALUE = "${server.instance-name:''}";
-    public static final String SERVER_HTTP_PORT_SPRING_VALUE = "${server.http.port}";
-    public static final String SERVER_HTTP_INTERFACE_SPRING_VALUE = "${server.http.interface}";
-
-    public static final String CONFIGURATION_FOLDER_SPRING_VALUE = "${chutney.configuration-folder:~/.chutney/conf}";
-    public static final String ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE = "${chutney.engine.reporter.publisher.ttl:5}";
-    public static final String ENGINE_DELEGATION_USER_SPRING_VALUE = "${chutney.engine.delegation.user:#{null}}";
-    public static final String ENGINE_DELEGATION_PASSWORD_SPRING_VALUE = "${chutney.engine.delegation.password:#{null}}";
-    public static final String EXECUTION_ASYNC_PUBLISHER_TTL_SPRING_VALUE = "${chutney.server.execution.async.publisher.ttl:5}";
-    public static final String EXECUTION_ASYNC_PUBLISHER_DEBOUNCE_SPRING_VALUE = "${chutney.server.execution.async.publisher.debounce:250}";
-    public static final String CAMPAIGNS_EXECUTOR_POOL_SIZE_SPRING_VALUE = "${chutney.server.campaigns.executor.pool-size:20}";
-    public static final String SCHEDULED_CAMPAIGNS_EXECUTOR_POOL_SIZE_SPRING_VALUE = "${chutney.server.schedule-campaigns.executor.pool-size:20}";
-    public static final String SCHEDULED_CAMPAIGNS_FIXED_RATE_SPRING_VALUE = "${chutney.server.schedule-campaigns.fixed-rate:60000}";
-    public static final String ENGINE_EXECUTOR_POOL_SIZE_SPRING_VALUE = "${chutney.engine.executor.pool-size:20}";
-    public static final String AGENT_NETWORK_CONNECTION_CHECK_TIMEOUT_SPRING_VALUE = "${chutney.server.agent.network.connection-checker-timeout:1000}";
-    public static final String LOCAL_AGENT_DEFAULT_NAME_SPRING_VALUE = "${chutney.server.agent.name:#{null}}";
-    public static final String LOCAL_AGENT_DEFAULT_HOSTNAME_SPRING_VALUE = "${chutney.server.agent.hostname:#{null}}";
-    public static final String EDITIONS_TTL_VALUE_SPRING_VALUE = "${chutney.server.editions.ttl.value:6}";
-    public static final String EDITIONS_TTL_UNIT_SPRING_VALUE = "${chutney.server.editions.ttl.unit:HOURS}";
-
-    private static final String TASK_SQL_NB_LOGGED_ROW = "chutney.actions.sql.max-logged-rows";
-    public static final String TASK_SQL_NB_LOGGED_ROW_SPRING_VALUE = "${" + TASK_SQL_NB_LOGGED_ROW + ":30}";
 
     @Value(SERVER_PORT_SPRING_VALUE)
     int port;
@@ -106,39 +81,6 @@ public class ServerConfiguration implements AsyncConfigurer {
     @PostConstruct
     public void logPort() throws UnknownHostException {
         LOGGER.debug("Starting server " + InetAddress.getLocalHost().getCanonicalHostName() + " on " + port);
-    }
-
-    @Override
-    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return (Throwable ex, Method method, Object... params) -> {
-            LOGGER.error("Uncaught exception in async execution", ex);
-        };
-    }
-
-    /**
-     * Default task scheduler for
-     * With a default ScheduledExecutorService with a pool size of 1
-     */
-    @Bean
-    public TaskScheduler taskScheduler() {
-        return new ThreadPoolTaskScheduler();
-    }
-
-    /**
-     * Default task executor for @Aync (used for SSE for example)
-     * With a default  with default configuration: org.springframework.boot.autoconfigure.task.TaskExecutionProperties.Pool
-     */
-    @Bean
-    public TaskExecutor applicationTaskExecutor(TaskExecutorBuilder builder) {
-        return builder.threadNamePrefix("app-task-exec").build();
-    }
-
-    /**
-     * For com.chutneytesting.execution.domain.schedule.CampaignScheduler#executeScheduledCampaigns()
-     */
-    @Bean
-    public TaskExecutor scheduleCampaignsExecutor() {
-        return new SimpleAsyncTaskExecutor("schedule-campaigns-executor");
     }
 
     /**
@@ -167,20 +109,6 @@ public class ServerConfiguration implements AsyncConfigurer {
         executor.initialize();
         LOGGER.debug("Pool for campaigns created with size {}", threadForCampaigns);
         return executor;
-    }
-
-    /**
-     * For com.chutneytesting.execution.domain.schedule.CampaignScheduler#CampaignScheduler()
-     */
-    @Bean
-    public ExecutorService scheduledCampaignsExecutor(@Value(SCHEDULED_CAMPAIGNS_EXECUTOR_POOL_SIZE_SPRING_VALUE) Integer threadForScheduledCampaigns) {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(threadForScheduledCampaigns);
-        executor.setMaxPoolSize(threadForScheduledCampaigns);
-        executor.setThreadNamePrefix("scheduled-campaigns-executor");
-        executor.initialize();
-        LOGGER.debug("Pool for scheduled campaigns created with size {}", threadForScheduledCampaigns);
-        return new ExecutorServiceAdapter(executor);
     }
 
     @Bean

@@ -13,7 +13,7 @@ public interface DatabaseExecutionJpaRepository extends JpaRepository<ScenarioEx
 
     List<ScenarioExecutionEntity> findByStatus(ServerReportStatus status);
 
-    List<ScenarioExecutionEntity> findFirst20ByScenarioIdOrderByIdDesc(String scenarioId);
+    List<ScenarioExecutionEntity> findByScenarioIdOrderByIdDesc(String scenarioId);
 
     @Query("select max(se.id), se.scenarioId from SCENARIO_EXECUTIONS se where se.scenarioId in :scenarioIds group by se.scenarioId")
     List<Tuple> findLastExecutionsByScenarioId(@Param("scenarioIds") List<String> scenarioIds);

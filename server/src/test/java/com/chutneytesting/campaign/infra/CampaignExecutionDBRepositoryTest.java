@@ -21,7 +21,7 @@ import util.infra.EnableH2MemTestInfra;
 import util.infra.EnablePostgreSQLTestInfra;
 import util.infra.EnableSQLiteTestInfra;
 
-public class CampaignExecutionRepositoryTest {
+public class CampaignExecutionDBRepositoryTest {
 
     @Nested
     @EnableH2MemTestInfra

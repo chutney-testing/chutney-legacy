@@ -1,6 +1,6 @@
 package com.chutneytesting.execution.api.schedule;
 
-import static com.chutneytesting.ServerConfiguration.SCHEDULED_CAMPAIGNS_FIXED_RATE_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.SCHEDULED_CAMPAIGNS_FIXED_RATE_SPRING_VALUE;
 
 import com.chutneytesting.execution.domain.schedule.CampaignScheduler;
 import org.springframework.scheduling.annotation.Scheduled;

@@ -49,7 +49,7 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
     @Transactional(readOnly = true)
     public List<CampaignExecutionReport> findExecutionHistory(Long campaignId) {
         CampaignEntity campaign = campaignJpaRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
-        return campaignExecutionJpaRepository.findFirst20ByCampaignIdOrderByIdDesc(campaignId).stream()
+        return campaignExecutionJpaRepository.findByCampaignIdOrderByIdDesc(campaignId).stream()
             .map(ce -> toDomain(campaign, ce, false))
             .filter(Objects::nonNull)
             .collect(Collectors.toCollection(ArrayList::new));

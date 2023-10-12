@@ -7,12 +7,10 @@ import static com.chutneytesting.server.core.domain.execution.report.ServerRepor
 import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.SUCCESS;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static util.WaitUtils.awaitDuring;
 
 import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
@@ -37,7 +35,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -156,30 +153,6 @@ public class DatabaseExecutionHistoryRepositoryTest {
             assertThat(lastExecutions).containsOnlyKeys(scenarioIdOne, scenarioIdTwo);
             assertThat(lastExecutions.get(scenarioIdOne).info()).hasValue("exec3");
             assertThat(lastExecutions.get(scenarioIdTwo).info()).hasValue("exec4");
-        }
-
-        @Test
-        public void execution_summaries_retrieved_are_limit_to_20() {
-            String scenarioId = givenScenarioId();
-            List<String> expectedInfos = new ArrayList<>(20);
-            List<String> finalExpectedInfos = expectedInfos;
-            IntStream.range(0, 25).forEach(
-                i -> {
-                    String info = "exec" + i;
-                    sut.store(scenarioId, buildDetachedExecution(SUCCESS, info, ""));
-                    finalExpectedInfos.add(info);
-                    // As order is based on executionTime, if they are stored at the exact same time, check on order may fail
-                    awaitDuring(20, MILLISECONDS);
-                }
-            );
-
-            Collections.reverse(expectedInfos);
-            expectedInfos = expectedInfos.stream().limit(20).toList();
-
-            assertThat(sut.getExecutions(scenarioId))
-                .extracting(ExecutionHistory.ExecutionProperties::info)
-                .map(Optional::get)
-                .containsExactlyElementsOf(expectedInfos);
         }
 
         @Test

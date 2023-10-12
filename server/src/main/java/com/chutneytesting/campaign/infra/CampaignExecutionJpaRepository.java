@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface CampaignExecutionJpaRepository extends JpaRepository<CampaignExecution, Long>, JpaSpecificationExecutor<CampaignExecution> {
 
-    List<CampaignExecution> findFirst20ByCampaignIdOrderByIdDesc(Long campaignId);
+    List<CampaignExecution> findByCampaignIdOrderByIdDesc(Long campaignId);
 
     List<CampaignExecution> findAllByCampaignId(Long campaignId);
 

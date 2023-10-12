@@ -82,7 +82,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         if (invalidScenarioId(scenarioId)) {
             return emptyList();
         }
-        List<ScenarioExecutionEntity> scenarioExecutions = scenarioExecutionsJpaRepository.findFirst20ByScenarioIdOrderByIdDesc(scenarioId);
+        List<ScenarioExecutionEntity> scenarioExecutions = scenarioExecutionsJpaRepository.findByScenarioIdOrderByIdDesc(scenarioId);
         return scenarioExecutions.stream()
             .map(this::scenarioExecutionToExecutionSummary)
             .toList();

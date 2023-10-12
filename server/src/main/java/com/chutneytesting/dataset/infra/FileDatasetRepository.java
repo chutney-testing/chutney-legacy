@@ -1,6 +1,6 @@
 package com.chutneytesting.dataset.infra;
 
-import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.dataset.infra.DatasetMapper.fromDto;
 import static com.chutneytesting.dataset.infra.DatasetMapper.toDto;
 import static com.chutneytesting.tools.file.FileUtils.createFile;

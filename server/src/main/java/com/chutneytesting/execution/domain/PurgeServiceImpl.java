@@ -15,6 +15,7 @@ import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.ExecutionProperties;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.ExecutionSummary;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
+import com.chutneytesting.server.core.domain.execution.history.PurgeService;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class PurgeServiceImpl implements com.chutneytesting.server.core.domain.execution.history.PurgeService {
+public class PurgeServiceImpl implements PurgeService {
     private final TestCaseRepository testCaseRepository;
     private final ExecutionHistoryRepository executionsRepository;
     private final CampaignRepository campaignRepository;
