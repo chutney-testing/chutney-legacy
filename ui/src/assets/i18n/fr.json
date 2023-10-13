@@ -21,7 +21,8 @@
             "darkMode": "Thème sombre",
             "lightMode": "Thème clair",
             "feedback": "Donner un avis",
-            "notif": "Notifications"
+            "notif": "Notifications",
+            "previewReport": "Visualiser une exécution"
         }
     },
     "scenarios": {
@@ -326,6 +327,9 @@
                 "globalvars.title": "Variables globales",
                 "jiralinks.title": "Liens Jira"
             }
+        },
+        "previewReport": {
+            "load.title": "Charger un rapport"
         }
     },
     "login": {

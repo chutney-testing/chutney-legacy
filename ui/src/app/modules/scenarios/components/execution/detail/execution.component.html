@@ -32,26 +32,33 @@
             </span>
         </div>
         <div class="col text-sm-center" *hasAuthorization="[Authorization.SCENARIO_EXECUTE]">
-            <div *ngIf="isRunning() || isPaused()"
-                 class="btn-group btn-group-sm mt-1 justify-content-center position-relative">
-                <button type="button" class="btn btn-primary" (click)="stopScenario()"
-                        [disabled]="!isRunning()">
-                    <span class="fa fa-stop"></span>
-                    <span class="btn-label">{{'global.actions.stop' | translate}}</span>
-                </button>
+            <ng-container *ngIf="scenario">
+                <div *ngIf="isRunning() || isPaused()"
+                class="btn-group btn-group-sm mt-1 justify-content-center position-relative">
+                    <button type="button" class="btn btn-primary" (click)="stopScenario()"
+                            [disabled]="!isRunning()">
+                        <span class="fa fa-stop"></span>
+                        <span class="btn-label">{{'global.actions.stop' | translate}}</span>
+                    </button>
 
-                <button type="button" class="btn btn-primary mx-1" (click)="pauseScenario()"
-                        [disabled]="!isRunning()">
-                    <span class="fa fa-pause"></span>
-                    <span class="btn-label">{{'global.actions.pause' | translate}}</span>
-                </button>
+                    <button type="button" class="btn btn-primary mx-1" (click)="pauseScenario()"
+                            [disabled]="!isRunning()">
+                        <span class="fa fa-pause"></span>
+                        <span class="btn-label">{{'global.actions.pause' | translate}}</span>
+                    </button>
 
-                <button type="button" class="btn btn-primary" (click)="resumeScenario()"
-                        [disabled]="!isPaused()">
-                    <span class="fa fa-play"></span>
-                    <span class="btn-label">{{'global.actions.resume' | translate}}</span>
-                </button>
-            </div>
+                    <button type="button" class="btn btn-primary" (click)="resumeScenario()"
+                            [disabled]="!isPaused()">
+                        <span class="fa fa-play"></span>
+                        <span class="btn-label">{{'global.actions.resume' | translate}}</span>
+                    </button>
+                </div>
+                <div *ngIf="!isRunning() && !isPaused()">
+                    <button type="button" class="btn btn-primary" (click)="exportReport()">
+                        <span class="fa fa-download"></span>
+                    </button>
+                </div>
+            </ng-container>
         </div>
     </div>
 

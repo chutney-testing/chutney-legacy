@@ -21,7 +21,8 @@
             "darkMode": "Dark mode",
             "lightMode": "Light mode",
             "feedback": "Feedback",
-            "notif": "Notifications"
+            "notif": "Notifications",
+            "previewReport": "Preview execution"
         }
     },
     "scenarios": {
@@ -326,6 +327,9 @@
                 "globalvars.title": "Global vars",
                 "jiralinks.title": "Jira links"
             }
+        },
+        "previewReport": {
+            "load.title": "Load report"
         }
     },
     "login": {

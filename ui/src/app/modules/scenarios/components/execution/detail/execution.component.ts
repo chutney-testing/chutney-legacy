@@ -15,6 +15,7 @@ import {
 import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
 import { ObjectAsEntryListPipe } from '@shared/pipes';
+import { FileSaverService } from 'ngx-filesaver';
 
 @Component({
     selector: 'chutney-scenario-execution',
@@ -48,11 +49,17 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     constructor(
         private eventManager: EventManagerService,
-        private scenarioExecutionService: ScenarioExecutionService) {
+        private scenarioExecutionService: ScenarioExecutionService,
+        private fileSaverService: FileSaverService) {
     }
 
     ngOnInit() {
-        this.loadScenarioExecution(this.execution.executionId);
+        if (this.scenario) {
+            this.loadScenarioExecution(this.execution.executionId);
+        }
+        else{
+            this.scenarioExecutionReport = JSON.parse(this.execution.report);
+        }
         this.stepDetailsSubscription = this.eventManager.subscribe('selectStepEvent_' + this.execution.executionId, (data) => {
             this.selectedStep = data.step;
             this.selectedStepId = data.stepId;
@@ -273,5 +280,10 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         }
     }
 
+    private exportReport() {
+        const fileName = `${this.scenario.title}.execution.${this.execution.executionId}.chutney.json`;
+        this.execution.report = JSON.stringify(this.scenarioExecutionReport);
+        this.fileSaverService.saveText(JSON.stringify(this.execution), fileName);
+    }
 
 }
