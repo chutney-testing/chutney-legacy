@@ -5,6 +5,7 @@ import static com.chutneytesting.server.core.domain.execution.report.ServerRepor
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -13,6 +14,7 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignRepository;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory.ExecutionSummary;
 import com.chutneytesting.server.core.domain.execution.history.PurgeService.PurgeReport;
@@ -22,8 +24,10 @@ import com.chutneytesting.server.core.domain.scenario.campaign.CampaignBuilder;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
 import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -74,8 +78,8 @@ public class PurgeServiceTest {
                     ));
                     ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                     when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
-                        executionBuilder().executionId(1L).build(),
-                        executionBuilder().executionId(2L).build()
+                        scenarioExecutionBuilder().executionId(1L).build(),
+                        scenarioExecutionBuilder().executionId(2L).build()
                     ));
 
                     // When
@@ -105,9 +109,9 @@ public class PurgeServiceTest {
                     ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                     LocalDateTime now = now();
                     when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
-                        executionBuilder().executionId(3L).time(now).build(),
-                        executionBuilder().executionId(2L).time(now.minusSeconds(10)).build(),
-                        executionBuilder().executionId(oldestScenarioExecutionId).time(now.minusSeconds(20)).build()
+                        scenarioExecutionBuilder().executionId(3L).time(now).build(),
+                        scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(10)).build(),
+                        scenarioExecutionBuilder().executionId(oldestScenarioExecutionId).time(now.minusSeconds(20)).build()
                     ));
 
                     // When
@@ -140,8 +144,8 @@ public class PurgeServiceTest {
                     ));
                     ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                     when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
-                        executionBuilder().executionId(1L).environment("env1").build(),
-                        executionBuilder().executionId(2L).environment("env2").build()
+                        scenarioExecutionBuilder().executionId(1L).environment("env1").build(),
+                        scenarioExecutionBuilder().executionId(2L).environment("env2").build()
                     ));
 
                     // When
@@ -171,9 +175,9 @@ public class PurgeServiceTest {
                     ));
                     ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                     when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
-                        executionBuilder().executionId(3L).time(now).environment("env1").build(),
-                        executionBuilder().executionId(2L).time(now.minusSeconds(10)).environment("env2").build(),
-                        executionBuilder().executionId(oldestScenarioExecutionId).time(now.minusSeconds(20)).environment("env1").build()
+                        scenarioExecutionBuilder().executionId(3L).time(now).environment("env1").build(),
+                        scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(10)).environment("env2").build(),
+                        scenarioExecutionBuilder().executionId(oldestScenarioExecutionId).time(now.minusSeconds(20)).environment("env1").build()
                     ));
 
                     // When
@@ -210,11 +214,11 @@ public class PurgeServiceTest {
                 ));
                 ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                 when(executionsRepository.getExecutions(scenarioId1)).thenReturn(List.of(
-                    executionBuilder().executionId(1L).time(now).build(),
-                    executionBuilder().executionId(3L).time(now.minusSeconds(10)).build()
+                    scenarioExecutionBuilder().executionId(1L).time(now).build(),
+                    scenarioExecutionBuilder().executionId(3L).time(now.minusSeconds(10)).build()
                 ));
                 when(executionsRepository.getExecutions(scenarioId2)).thenReturn(List.of(
-                    executionBuilder().executionId(2L).time(now.minusSeconds(20)).build()
+                    scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(20)).build()
                 ));
 
                 // When
@@ -259,17 +263,14 @@ public class PurgeServiceTest {
                         TestCaseMetadataImpl.builder().withId(scenarioId).build()
                     ));
 
-                    ExecutionSummary scenarioExecution1 = executionBuilder().executionId(3L).time(now).build();
-                    ScenarioExecutionReportCampaign scenarioExecutionReportCampaign1 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution1.testCaseTitle(), scenarioExecution1);
-                    CampaignExecutionReport campaignExecutionReport1 = new CampaignExecutionReport(3L, campaignId, List.of(scenarioExecutionReportCampaign1), "", false, scenarioExecution1.environment(), scenarioExecution1.datasetId().orElse(null), scenarioExecution1.datasetVersion().orElse(null), scenarioExecution1.user());
+                    ExecutionSummary scenarioExecution1 = scenarioExecutionBuilder().executionId(3L).time(now).build();
+                    CampaignExecutionReport campaignExecutionReport1 = buildCampaignExecution(3L, campaignId, tuple(scenarioId, scenarioExecution1));
 
-                    ExecutionSummary scenarioExecution2 = executionBuilder().executionId(2L).time(now.minusSeconds(10)).build();
-                    ScenarioExecutionReportCampaign scenarioExecutionReportCampaign2 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution2.testCaseTitle(), scenarioExecution2);
-                    CampaignExecutionReport campaignExecutionReport2 = new CampaignExecutionReport(2L, campaignId, List.of(scenarioExecutionReportCampaign2), "", false, scenarioExecution2.environment(), scenarioExecution2.datasetId().orElse(null), scenarioExecution2.datasetVersion().orElse(null), scenarioExecution2.user());
+                    ExecutionSummary scenarioExecution2 = scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(10)).build();
+                    CampaignExecutionReport campaignExecutionReport2 = buildCampaignExecution(2L, campaignId, tuple(scenarioId, scenarioExecution2));
 
-                    ExecutionSummary scenarioExecution3 = executionBuilder().executionId(1L).time(now.minusSeconds(20)).build();
-                    ScenarioExecutionReportCampaign scenarioExecutionReportCampaign3 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution3.testCaseTitle(), scenarioExecution3);
-                    CampaignExecutionReport campaignExecutionReport3 = new CampaignExecutionReport(oldestCampaignExecutionId, campaignId, List.of(scenarioExecutionReportCampaign3), "", false, scenarioExecution3.environment(), scenarioExecution3.datasetId().orElse(null), scenarioExecution3.datasetVersion().orElse(null), scenarioExecution3.user());
+                    ExecutionSummary scenarioExecution3 = scenarioExecutionBuilder().executionId(1L).time(now.minusSeconds(20)).build();
+                    CampaignExecutionReport campaignExecutionReport3 = buildCampaignExecution(oldestCampaignExecutionId, campaignId, tuple(scenarioId, scenarioExecution3));
 
                     ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                     when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
@@ -326,17 +327,14 @@ public class PurgeServiceTest {
                         TestCaseMetadataImpl.builder().withId(scenarioId).build()
                     ));
 
-                    ExecutionSummary scenarioExecution1 = executionBuilder().executionId(3L).time(now).environment("env1").build();
-                    ScenarioExecutionReportCampaign scenarioExecutionReportCampaign1 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution1.testCaseTitle(), scenarioExecution1);
-                    CampaignExecutionReport campaignExecutionReport1 = new CampaignExecutionReport(3L, campaignId, List.of(scenarioExecutionReportCampaign1), "", false, scenarioExecution1.environment(), scenarioExecution1.datasetId().orElse(null), scenarioExecution1.datasetVersion().orElse(null), scenarioExecution1.user());
+                    ExecutionSummary scenarioExecution1 = scenarioExecutionBuilder().executionId(3L).time(now).environment("env1").build();
+                    CampaignExecutionReport campaignExecutionReport1 = buildCampaignExecution(3L, campaignId, tuple(scenarioId, scenarioExecution1));
 
-                    ExecutionSummary scenarioExecution2 = executionBuilder().executionId(2L).time(now.minusSeconds(10)).environment("env2").build();
-                    ScenarioExecutionReportCampaign scenarioExecutionReportCampaign2 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution2.testCaseTitle(), scenarioExecution2);
-                    CampaignExecutionReport campaignExecutionReport2 = new CampaignExecutionReport(2L, campaignId, List.of(scenarioExecutionReportCampaign2), "", false, scenarioExecution2.environment(), scenarioExecution2.datasetId().orElse(null), scenarioExecution2.datasetVersion().orElse(null), scenarioExecution2.user());
+                    ExecutionSummary scenarioExecution2 = scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(10)).environment("env2").build();
+                    CampaignExecutionReport campaignExecutionReport2 = buildCampaignExecution(2L, campaignId, tuple(scenarioId, scenarioExecution2));
 
-                    ExecutionSummary scenarioExecution3 = executionBuilder().executionId(1L).time(now.minusSeconds(20)).environment("env1").build();
-                    ScenarioExecutionReportCampaign scenarioExecutionReportCampaign3 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution3.testCaseTitle(), scenarioExecution3);
-                    CampaignExecutionReport campaignExecutionReport3 = new CampaignExecutionReport(oldestCampaignExecutionId, campaignId, List.of(scenarioExecutionReportCampaign3), "", false, scenarioExecution3.environment(), scenarioExecution3.datasetId().orElse(null), scenarioExecution3.datasetVersion().orElse(null), scenarioExecution3.user());
+                    ExecutionSummary scenarioExecution3 = scenarioExecutionBuilder().executionId(1L).time(now.minusSeconds(20)).environment("env1").build();
+                    CampaignExecutionReport campaignExecutionReport3 = buildCampaignExecution(oldestCampaignExecutionId, campaignId, tuple(scenarioId, scenarioExecution3));
 
                     ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                     when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
@@ -397,32 +395,22 @@ public class PurgeServiceTest {
                 ));
 
                 // Scenario executions
-                ExecutionSummary scenarioExecution1 = executionBuilder().executionId(6L).time(now).build();
-                ExecutionSummary scenarioExecution2 = executionBuilder().executionId(5L).time(now.minusSeconds(10)).build();
-                ExecutionSummary scenarioExecution3 = executionBuilder().executionId(4L).time(now.minusSeconds(20)).build();
-                ExecutionSummary scenarioExecution4 = executionBuilder().executionId(3L).time(now.minusSeconds(30)).build();
-                ExecutionSummary scenarioExecution5 = executionBuilder().executionId(2L).time(now.minusSeconds(40)).build();
-                ExecutionSummary scenarioExecution6 = executionBuilder().executionId(1L).time(now.minusSeconds(50)).build();
+                ExecutionSummary scenarioExecution1 = scenarioExecutionBuilder().executionId(6L).time(now).build();
+                ExecutionSummary scenarioExecution2 = scenarioExecutionBuilder().executionId(5L).time(now.minusSeconds(10)).build();
+                ExecutionSummary scenarioExecution3 = scenarioExecutionBuilder().executionId(4L).time(now.minusSeconds(20)).build();
+                ExecutionSummary scenarioExecution4 = scenarioExecutionBuilder().executionId(3L).time(now.minusSeconds(30)).build();
+                ExecutionSummary scenarioExecution5 = scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(40)).build();
+                ExecutionSummary scenarioExecution6 = scenarioExecutionBuilder().executionId(1L).time(now.minusSeconds(50)).build();
 
                 // First campaign executions
-                ScenarioExecutionReportCampaign scenarioExecutionReportCampaign1 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution1.testCaseTitle(), scenarioExecution1);
-                CampaignExecutionReport campaignExecutionReport1 = new CampaignExecutionReport(6L, campaignId1, List.of(scenarioExecutionReportCampaign1), "", false, scenarioExecution1.environment(), scenarioExecution1.datasetId().orElse(null), scenarioExecution1.datasetVersion().orElse(null), scenarioExecution1.user());
-
-                ScenarioExecutionReportCampaign scenarioExecutionReportCampaign2 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution3.testCaseTitle(), scenarioExecution3);
-                CampaignExecutionReport campaignExecutionReport2 = new CampaignExecutionReport(4L, campaignId1, List.of(scenarioExecutionReportCampaign2), "", false, scenarioExecution3.environment(), scenarioExecution3.datasetId().orElse(null), scenarioExecution3.datasetVersion().orElse(null), scenarioExecution3.user());
-
-                ScenarioExecutionReportCampaign scenarioExecutionReportCampaign3 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution5.testCaseTitle(), scenarioExecution5);
-                CampaignExecutionReport campaignExecutionReport3 = new CampaignExecutionReport(oldestCampaignExecutionId1, campaignId1, List.of(scenarioExecutionReportCampaign3), "", false, scenarioExecution5.environment(), scenarioExecution5.datasetId().orElse(null), scenarioExecution5.datasetVersion().orElse(null), scenarioExecution5.user());
+                CampaignExecutionReport campaignExecutionReport1 = buildCampaignExecution(6L, campaignId1, tuple(scenarioId, scenarioExecution1));
+                CampaignExecutionReport campaignExecutionReport2 = buildCampaignExecution(4L, campaignId1, tuple(scenarioId, scenarioExecution3));
+                CampaignExecutionReport campaignExecutionReport3 = buildCampaignExecution(oldestCampaignExecutionId1, campaignId1, tuple(scenarioId, scenarioExecution5));
 
                 // Second campaign executions
-                ScenarioExecutionReportCampaign scenarioExecutionReportCampaign4 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution2.testCaseTitle(), scenarioExecution2);
-                CampaignExecutionReport campaignExecutionReport4 = new CampaignExecutionReport(5L, campaignId1, List.of(scenarioExecutionReportCampaign4), "", false, scenarioExecution2.environment(), scenarioExecution2.datasetId().orElse(null), scenarioExecution2.datasetVersion().orElse(null), scenarioExecution2.user());
-
-                ScenarioExecutionReportCampaign scenarioExecutionReportCampaign5 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution4.testCaseTitle(), scenarioExecution4);
-                CampaignExecutionReport campaignExecutionReport5 = new CampaignExecutionReport(3L, campaignId1, List.of(scenarioExecutionReportCampaign5), "", false, scenarioExecution4.environment(), scenarioExecution4.datasetId().orElse(null), scenarioExecution4.datasetVersion().orElse(null), scenarioExecution4.user());
-
-                ScenarioExecutionReportCampaign scenarioExecutionReportCampaign6 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution6.testCaseTitle(), scenarioExecution6);
-                CampaignExecutionReport campaignExecutionReport6 = new CampaignExecutionReport(oldestCampaignExecutionId2, campaignId1, List.of(scenarioExecutionReportCampaign6), "", false, scenarioExecution6.environment(), scenarioExecution6.datasetId().orElse(null), scenarioExecution6.datasetVersion().orElse(null), scenarioExecution6.user());
+                CampaignExecutionReport campaignExecutionReport4 = buildCampaignExecution(5L, campaignId2, tuple(scenarioId, scenarioExecution2));
+                CampaignExecutionReport campaignExecutionReport5 = buildCampaignExecution(3L, campaignId2, tuple(scenarioId, scenarioExecution4));
+                CampaignExecutionReport campaignExecutionReport6 = buildCampaignExecution(oldestCampaignExecutionId2, campaignId2, tuple(scenarioId, scenarioExecution6));
 
                 ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                 when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
@@ -491,10 +479,10 @@ public class PurgeServiceTest {
                 ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                 LocalDateTime now = now();
                 when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
-                    executionBuilder().executionId(4L).status(FAILURE).time(now).build(),
-                    executionBuilder().executionId(3L).status(FAILURE).time(now.minusSeconds(10)).build(),
-                    executionBuilder().executionId(lastSuccessScenarioExecutionId).time(now.minusSeconds(20)).build(),
-                    executionBuilder().executionId(1L).time(now.minusSeconds(30)).build()
+                    scenarioExecutionBuilder().executionId(4L).status(FAILURE).time(now).build(),
+                    scenarioExecutionBuilder().executionId(3L).status(FAILURE).time(now.minusSeconds(10)).build(),
+                    scenarioExecutionBuilder().executionId(lastSuccessScenarioExecutionId).time(now.minusSeconds(20)).build(),
+                    scenarioExecutionBuilder().executionId(1L).time(now.minusSeconds(30)).build()
                 ));
 
                 // When
@@ -532,21 +520,17 @@ public class PurgeServiceTest {
                     TestCaseMetadataImpl.builder().withId(scenarioId).build()
                 ));
 
-                ExecutionSummary scenarioExecution1 = executionBuilder().executionId(4L).status(FAILURE).time(now).build();
-                ScenarioExecutionReportCampaign scenarioExecutionReportCampaign1 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution1.testCaseTitle(), scenarioExecution1);
-                CampaignExecutionReport campaignExecutionReport1 = new CampaignExecutionReport(4L, campaignId, List.of(scenarioExecutionReportCampaign1), "", false, scenarioExecution1.environment(), scenarioExecution1.datasetId().orElse(null), scenarioExecution1.datasetVersion().orElse(null), scenarioExecution1.user());
+                ExecutionSummary scenarioExecution1 = scenarioExecutionBuilder().executionId(4L).status(FAILURE).time(now).build();
+                CampaignExecutionReport campaignExecutionReport1 = buildCampaignExecution(4L, campaignId, tuple(scenarioId, scenarioExecution1));
 
-                ExecutionSummary scenarioExecution2 = executionBuilder().executionId(3L).status(FAILURE).time(now.minusSeconds(10)).build();
-                ScenarioExecutionReportCampaign scenarioExecutionReportCampaign2 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution2.testCaseTitle(), scenarioExecution2);
-                CampaignExecutionReport campaignExecutionReport2 = new CampaignExecutionReport(3L, campaignId, List.of(scenarioExecutionReportCampaign2), "", false, scenarioExecution2.environment(), scenarioExecution2.datasetId().orElse(null), scenarioExecution2.datasetVersion().orElse(null), scenarioExecution2.user());
+                ExecutionSummary scenarioExecution2 = scenarioExecutionBuilder().executionId(3L).status(FAILURE).time(now.minusSeconds(10)).build();
+                CampaignExecutionReport campaignExecutionReport2 = buildCampaignExecution(3L, campaignId, tuple(scenarioId, scenarioExecution2));
 
-                ExecutionSummary scenarioExecution3 = executionBuilder().executionId(2L).time(now.minusSeconds(20)).build();
-                ScenarioExecutionReportCampaign scenarioExecutionReportCampaign3 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution3.testCaseTitle(), scenarioExecution3);
-                CampaignExecutionReport campaignExecutionReport3 = new CampaignExecutionReport(lastSuccessCampaignExecutionId, campaignId, List.of(scenarioExecutionReportCampaign3), "", false, scenarioExecution3.environment(), scenarioExecution3.datasetId().orElse(null), scenarioExecution3.datasetVersion().orElse(null), scenarioExecution3.user());
+                ExecutionSummary scenarioExecution3 = scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(20)).build();
+                CampaignExecutionReport campaignExecutionReport3 = buildCampaignExecution(lastSuccessCampaignExecutionId, campaignId, tuple(scenarioId, scenarioExecution3));
 
-                ExecutionSummary scenarioExecution4 = executionBuilder().executionId(1L).time(now.minusSeconds(30)).build();
-                ScenarioExecutionReportCampaign scenarioExecutionReportCampaign4 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution4.testCaseTitle(), scenarioExecution4);
-                CampaignExecutionReport campaignExecutionReport4 = new CampaignExecutionReport(1L, campaignId, List.of(scenarioExecutionReportCampaign4), "", false, scenarioExecution4.environment(), scenarioExecution4.datasetId().orElse(null), scenarioExecution4.datasetVersion().orElse(null), scenarioExecution4.user());
+                ExecutionSummary scenarioExecution4 = scenarioExecutionBuilder().executionId(1L).time(now.minusSeconds(30)).build();
+                CampaignExecutionReport campaignExecutionReport4 = buildCampaignExecution(1L, campaignId, tuple(scenarioId, scenarioExecution4));
 
                 ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                 when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
@@ -607,14 +591,12 @@ public class PurgeServiceTest {
                 TestCaseMetadataImpl.builder().withId(scenarioId).build()
             ));
 
-            ExecutionSummary scenarioExecution1 = executionBuilder().executionId(4L).time(now).build();
-            ExecutionSummary scenarioExecution2 = executionBuilder().executionId(3L).time(now.minusSeconds(10)).status(FAILURE).build();
-            ExecutionSummary scenarioExecution3 = executionBuilder().executionId(2L).time(now.minusSeconds(20)).build();
-            ExecutionSummary scenarioExecution4 = executionBuilder().executionId(oldestScenarioExecutionId).time(now.minusSeconds(30)).build();
+            ExecutionSummary scenarioExecution1 = scenarioExecutionBuilder().executionId(4L).time(now).build();
+            ExecutionSummary scenarioExecution2 = scenarioExecutionBuilder().executionId(3L).time(now.minusSeconds(10)).status(FAILURE).build();
+            ExecutionSummary scenarioExecution3 = scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(20)).build();
+            ExecutionSummary scenarioExecution4 = scenarioExecutionBuilder().executionId(oldestScenarioExecutionId).time(now.minusSeconds(30)).build();
 
-            ScenarioExecutionReportCampaign scenarioExecutionReportCampaign1 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution1.testCaseTitle(), scenarioExecution1);
-            ScenarioExecutionReportCampaign scenarioExecutionReportCampaign2 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution2.testCaseTitle(), scenarioExecution2);
-            CampaignExecutionReport campaignExecutionReport1 = new CampaignExecutionReport(1L, campaignId, List.of(scenarioExecutionReportCampaign1, scenarioExecutionReportCampaign2), "", false, scenarioExecution1.environment(), scenarioExecution1.datasetId().orElse(null), scenarioExecution1.datasetVersion().orElse(null), scenarioExecution1.user());
+            CampaignExecutionReport campaignExecutionReport1 = buildCampaignExecution(1L, campaignId, tuple(scenarioId, scenarioExecution1), tuple(scenarioId, scenarioExecution2));
 
             ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
             when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
@@ -675,33 +657,22 @@ public class PurgeServiceTest {
             ));
 
             // Scenario executions
-            ExecutionSummary scenarioExecution1 = executionBuilder().executionId(6L).time(now).build();
-            ExecutionSummary scenarioExecution2 = executionBuilder().executionId(5L).time(now).build();
-            ExecutionSummary scenarioExecution3 = executionBuilder().executionId(4L).time(now.minusSeconds(10)).build();
-            ExecutionSummary scenarioExecution4 = executionBuilder().executionId(3L).time(now.minusSeconds(20)).status(FAILURE).build();
-            ExecutionSummary scenarioExecution5 = executionBuilder().executionId(2L).time(now.minusSeconds(30)).build();
-            ExecutionSummary scenarioExecution6 = executionBuilder().executionId(1L).time(now.minusSeconds(40)).status(FAILURE).build();
+            ExecutionSummary scenarioExecution1 = scenarioExecutionBuilder().executionId(6L).time(now).build();
+            ExecutionSummary scenarioExecution2 = scenarioExecutionBuilder().executionId(5L).time(now).build();
+            ExecutionSummary scenarioExecution3 = scenarioExecutionBuilder().executionId(4L).time(now.minusSeconds(10)).build();
+            ExecutionSummary scenarioExecution4 = scenarioExecutionBuilder().executionId(3L).time(now.minusSeconds(20)).status(FAILURE).build();
+            ExecutionSummary scenarioExecution5 = scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(30)).build();
+            ExecutionSummary scenarioExecution6 = scenarioExecutionBuilder().executionId(1L).time(now.minusSeconds(40)).status(FAILURE).build();
 
             // First campaign executions
-            ScenarioExecutionReportCampaign scenarioExecutionReportCampaign1 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution1.testCaseTitle(), scenarioExecution1);
-            CampaignExecutionReport campaignExecutionReport1 = new CampaignExecutionReport(6L, campaignWithManualReplaysId, List.of(scenarioExecutionReportCampaign1), "", false, scenarioExecution1.environment(), scenarioExecution1.datasetId().orElse(null), scenarioExecution1.datasetVersion().orElse(null), scenarioExecution1.user());
-
-            ScenarioExecutionReportCampaign scenarioExecutionReportCampaign2 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution2.testCaseTitle(), scenarioExecution2);
-            CampaignExecutionReport campaignExecutionReport2 = new CampaignExecutionReport(5L, campaignWithManualReplaysId, List.of(scenarioExecutionReportCampaign2), "", true, scenarioExecution2.environment(), scenarioExecution2.datasetId().orElse(null), scenarioExecution2.datasetVersion().orElse(null), scenarioExecution2.user());
-
-            ScenarioExecutionReportCampaign scenarioExecutionReportCampaign3 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution4.testCaseTitle(), scenarioExecution4);
-            CampaignExecutionReport campaignExecutionReport3 = new CampaignExecutionReport(3L, campaignWithManualReplaysId, List.of(scenarioExecutionReportCampaign3), "", true, scenarioExecution4.environment(), scenarioExecution4.datasetId().orElse(null), scenarioExecution4.datasetVersion().orElse(null), scenarioExecution4.user());
-
-            ScenarioExecutionReportCampaign scenarioExecutionReportCampaign4 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution6.testCaseTitle(), scenarioExecution6);
-            CampaignExecutionReport campaignExecutionReport4 = new CampaignExecutionReport(1L, campaignWithManualReplaysId, List.of(scenarioExecutionReportCampaign4), "", false, scenarioExecution6.environment(), scenarioExecution6.datasetId().orElse(null), scenarioExecution6.datasetVersion().orElse(null), scenarioExecution6.user());
+            CampaignExecutionReport campaignExecutionReport1 = buildCampaignExecution(6L, campaignWithManualReplaysId, tuple(scenarioId, scenarioExecution1));
+            CampaignExecutionReport campaignExecutionReport2 = buildCampaignExecution(5L, campaignWithManualReplaysId, true, tuple(scenarioId, scenarioExecution2));
+            CampaignExecutionReport campaignExecutionReport3 = buildCampaignExecution(3L, campaignWithManualReplaysId, true, tuple(scenarioId, scenarioExecution4));
+            CampaignExecutionReport campaignExecutionReport4 = buildCampaignExecution(1L, campaignWithManualReplaysId, tuple(scenarioId, scenarioExecution6));
 
             // Second campaign executions
-            ScenarioExecutionReportCampaign scenarioExecutionReportCampaign5 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution3.testCaseTitle(), scenarioExecution3);
-            CampaignExecutionReport campaignExecutionReport5 = new CampaignExecutionReport(4L, campaignId, List.of(scenarioExecutionReportCampaign5), "", false, scenarioExecution3.environment(), scenarioExecution3.datasetId().orElse(null), scenarioExecution3.datasetVersion().orElse(null), scenarioExecution3.user());
-
-            ScenarioExecutionReportCampaign scenarioExecutionReportCampaign6 = new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution5.testCaseTitle(), scenarioExecution5);
-            CampaignExecutionReport campaignExecutionReport6 = new CampaignExecutionReport(2L, campaignId, List.of(scenarioExecutionReportCampaign6), "", false, scenarioExecution5.environment(), scenarioExecution5.datasetId().orElse(null), scenarioExecution5.datasetVersion().orElse(null), scenarioExecution5.user());
-
+            CampaignExecutionReport campaignExecutionReport5 = buildCampaignExecution(4L, campaignId, tuple(scenarioId, scenarioExecution3));
+            CampaignExecutionReport campaignExecutionReport6 = buildCampaignExecution(2L, campaignId, tuple(scenarioId, scenarioExecution5));
 
             ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
             when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
@@ -746,7 +717,7 @@ public class PurgeServiceTest {
         }
     }
 
-    private static ExecutionSummary.Builder executionBuilder() {
+    private static ExecutionSummary.Builder scenarioExecutionBuilder() {
         return ExecutionSummary.builder()
             .executionId(-1L)
             .environment("env")
@@ -755,5 +726,36 @@ public class PurgeServiceTest {
             .status(SUCCESS)
             .user("executor")
             .testCaseTitle("");
+    }
+
+    /**
+     * scenarioExecutions tuples are composed of (scenario id as String, scenario execution as ExecutionSummary)
+     */
+    private static CampaignExecutionReport buildCampaignExecution(Long campaignExecutionId, Long campaignId, boolean partialExecution, Tuple... scenarioExecutions) {
+        List<ScenarioExecutionReportCampaign> scenarioExecutionsForCampaign = Arrays.stream(scenarioExecutions)
+            .map(t -> {
+                List<Object> tt = t.toList();
+                String scenarioId = (String) tt.get(0);
+                ExecutionHistory.ExecutionSummary scenarioExecution = (ExecutionHistory.ExecutionSummary) tt.get(1);
+                return new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution.testCaseTitle(), scenarioExecution);
+            })
+            .toList();
+
+        ExecutionHistory.ExecutionSummary firsScenarioExecution = scenarioExecutionsForCampaign.get(0).execution;
+        return new CampaignExecutionReport(
+            campaignExecutionId,
+            campaignId,
+            scenarioExecutionsForCampaign,
+            "",
+            partialExecution,
+            firsScenarioExecution.environment(),
+            firsScenarioExecution.datasetId().orElse(null),
+            firsScenarioExecution.datasetVersion().orElse(null),
+            firsScenarioExecution.user()
+        );
+    }
+
+    private static CampaignExecutionReport buildCampaignExecution(Long campaignExecutionId, Long campaignId, Tuple... scenarioExecutions) {
+        return buildCampaignExecution(campaignExecutionId, campaignId, false, scenarioExecutions);
     }
 }
