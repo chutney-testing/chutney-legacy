@@ -4,7 +4,6 @@ import static com.chutneytesting.server.core.domain.execution.report.ServerRepor
 import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.SUCCESS;
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.mock;
@@ -21,8 +20,8 @@ import com.chutneytesting.server.core.domain.execution.history.PurgeService.Purg
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignBuilder;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
-import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionCampaign;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -34,26 +33,6 @@ import org.junit.jupiter.api.Test;
 
 @DisplayName("Purge service")
 public class PurgeServiceTest {
-
-    @Nested
-    @DisplayName("validates configuration")
-    class ConfigurationValidation {
-        @Test
-        void scenario_configuration_must_be_positive_integer() {
-            Integer scenarioConfiguration = -10;
-            assertThatThrownBy(() ->
-                new PurgeServiceImpl(mock(TestCaseRepository.class), mock(ExecutionHistoryRepository.class), mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), scenarioConfiguration, 10)
-            ).isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void campaign_configuration_must_be_positive_integer() {
-            Integer campaignConfiguration = -10;
-            assertThatThrownBy(() ->
-                new PurgeServiceImpl(mock(TestCaseRepository.class), mock(ExecutionHistoryRepository.class), mock(CampaignRepository.class), mock(CampaignExecutionRepository.class), 10, campaignConfiguration))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-    }
 
     @Nested
     @DisplayName("deletes scenarios' executions according to configuration")
@@ -88,8 +67,6 @@ public class PurgeServiceTest {
 
                     // Then
                     // The two scenario's executions are not deleted
-                    verify(testCaseRepository).findAll();
-                    verify(executionsRepository).getExecutions(scenarioId);
                     assertThat(report.scenariosExecutionsIds()).isEmpty();
                 }
 
@@ -120,8 +97,6 @@ public class PurgeServiceTest {
 
                     // Then
                     // The oldest scenario's execution is deleted
-                    verify(testCaseRepository).findAll();
-                    verify(executionsRepository).getExecutions(scenarioId);
                     verify(executionsRepository).deleteExecutions(Set.of(oldestScenarioExecutionId));
                     assertThat(report.scenariosExecutionsIds()).containsExactly(oldestScenarioExecutionId);
                 }
@@ -154,8 +129,6 @@ public class PurgeServiceTest {
 
                     // Then
                     // The two scenario's executions are not deleted
-                    verify(testCaseRepository).findAll();
-                    verify(executionsRepository).getExecutions(scenarioId);
                     assertThat(report.scenariosExecutionsIds()).isEmpty();
                 }
 
@@ -186,8 +159,6 @@ public class PurgeServiceTest {
 
                     // Then
                     // The oldest scenario's execution on the environment with two executions is deleted
-                    verify(testCaseRepository).findAll();
-                    verify(executionsRepository).getExecutions(scenarioId);
                     verify(executionsRepository).deleteExecutions(Set.of(oldestScenarioExecutionId));
                     assertThat(report.scenariosExecutionsIds()).containsExactly(oldestScenarioExecutionId);
                 }
@@ -227,9 +198,6 @@ public class PurgeServiceTest {
 
                 // Then
                 // The oldest scenario's execution is deleted for the scenario with two executions
-                verify(testCaseRepository).findAll();
-                verify(executionsRepository).getExecutions(scenarioId1);
-                verify(executionsRepository).getExecutions(scenarioId2);
                 verify(executionsRepository).deleteExecutions(Set.of(3L));
                 assertThat(report.scenariosExecutionsIds()).containsExactly(3L);
             }
@@ -264,19 +232,19 @@ public class PurgeServiceTest {
                     ));
 
                     ExecutionSummary scenarioExecution1 = scenarioExecutionBuilder().executionId(3L).time(now).build();
-                    CampaignExecutionReport campaignExecutionReport1 = buildCampaignExecution(3L, campaignId, tuple(scenarioId, scenarioExecution1));
+                    CampaignExecution campaignExecution1 = buildCampaignExecution(3L, campaignId, tuple(scenarioId, scenarioExecution1));
 
                     ExecutionSummary scenarioExecution2 = scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(10)).build();
-                    CampaignExecutionReport campaignExecutionReport2 = buildCampaignExecution(2L, campaignId, tuple(scenarioId, scenarioExecution2));
+                    CampaignExecution campaignExecution2 = buildCampaignExecution(2L, campaignId, tuple(scenarioId, scenarioExecution2));
 
                     ExecutionSummary scenarioExecution3 = scenarioExecutionBuilder().executionId(1L).time(now.minusSeconds(20)).build();
-                    CampaignExecutionReport campaignExecutionReport3 = buildCampaignExecution(oldestCampaignExecutionId, campaignId, tuple(scenarioId, scenarioExecution3));
+                    CampaignExecution campaignExecution3 = buildCampaignExecution(oldestCampaignExecutionId, campaignId, tuple(scenarioId, scenarioExecution3));
 
                     ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                     when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
-                        scenarioExecution1.withCampaignReport(campaignExecutionReport1),
-                        scenarioExecution2.withCampaignReport(campaignExecutionReport2),
-                        scenarioExecution3.withCampaignReport(campaignExecutionReport3)
+                        scenarioExecution1.withCampaignReport(campaignExecution1),
+                        scenarioExecution2.withCampaignReport(campaignExecution2),
+                        scenarioExecution3.withCampaignReport(campaignExecution3)
                     ));
 
                     CampaignRepository campaignRepository = mock(CampaignRepository.class);
@@ -285,7 +253,7 @@ public class PurgeServiceTest {
                     ));
                     CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
                     when(campaignRepository.findExecutionsById(campaignId)).thenReturn(List.of(
-                        campaignExecutionReport1, campaignExecutionReport2, campaignExecutionReport3
+                        campaignExecution1, campaignExecution2, campaignExecution3
                     ));
 
                     // When
@@ -295,11 +263,7 @@ public class PurgeServiceTest {
                     // Then
                     // The oldest campaign's execution is deleted
                     // The associated scenario's execution is kept
-                    verify(testCaseRepository).findAll();
-                    verify(executionsRepository).getExecutions(scenarioId);
                     verify(executionsRepository, times(0)).deleteExecutions(anySet());
-                    verify(campaignRepository).findAll();
-                    verify(campaignRepository).findExecutionsById(campaignId);
                     verify(campaignExecutionRepository).deleteExecutions(Set.of(oldestCampaignExecutionId));
                     assertThat(report.scenariosExecutionsIds()).isEmpty();
                     assertThat(report.campaignsExecutionsIds()).containsExactly(oldestCampaignExecutionId);
@@ -328,19 +292,19 @@ public class PurgeServiceTest {
                     ));
 
                     ExecutionSummary scenarioExecution1 = scenarioExecutionBuilder().executionId(3L).time(now).environment("env1").build();
-                    CampaignExecutionReport campaignExecutionReport1 = buildCampaignExecution(3L, campaignId, tuple(scenarioId, scenarioExecution1));
+                    CampaignExecution campaignExecution1 = buildCampaignExecution(3L, campaignId, tuple(scenarioId, scenarioExecution1));
 
                     ExecutionSummary scenarioExecution2 = scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(10)).environment("env2").build();
-                    CampaignExecutionReport campaignExecutionReport2 = buildCampaignExecution(2L, campaignId, tuple(scenarioId, scenarioExecution2));
+                    CampaignExecution campaignExecution2 = buildCampaignExecution(2L, campaignId, tuple(scenarioId, scenarioExecution2));
 
                     ExecutionSummary scenarioExecution3 = scenarioExecutionBuilder().executionId(1L).time(now.minusSeconds(20)).environment("env1").build();
-                    CampaignExecutionReport campaignExecutionReport3 = buildCampaignExecution(oldestCampaignExecutionId, campaignId, tuple(scenarioId, scenarioExecution3));
+                    CampaignExecution campaignExecution3 = buildCampaignExecution(oldestCampaignExecutionId, campaignId, tuple(scenarioId, scenarioExecution3));
 
                     ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                     when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
-                        scenarioExecution1.withCampaignReport(campaignExecutionReport1),
-                        scenarioExecution2.withCampaignReport(campaignExecutionReport2),
-                        scenarioExecution3.withCampaignReport(campaignExecutionReport3)
+                        scenarioExecution1.withCampaignReport(campaignExecution1),
+                        scenarioExecution2.withCampaignReport(campaignExecution2),
+                        scenarioExecution3.withCampaignReport(campaignExecution3)
                     ));
 
                     CampaignRepository campaignRepository = mock(CampaignRepository.class);
@@ -349,7 +313,7 @@ public class PurgeServiceTest {
                     ));
                     CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
                     when(campaignRepository.findExecutionsById(campaignId)).thenReturn(List.of(
-                        campaignExecutionReport1, campaignExecutionReport2, campaignExecutionReport3
+                        campaignExecution1, campaignExecution2, campaignExecution3
                     ));
 
                     // When
@@ -359,11 +323,7 @@ public class PurgeServiceTest {
                     // Then
                     // The oldest campaign's execution on the environment with two executions is deleted
                     // The associated scenario's execution is kept
-                    verify(testCaseRepository).findAll();
-                    verify(executionsRepository).getExecutions(scenarioId);
                     verify(executionsRepository, times(0)).deleteExecutions(anySet());
-                    verify(campaignRepository).findAll();
-                    verify(campaignRepository).findExecutionsById(campaignId);
                     verify(campaignExecutionRepository).deleteExecutions(Set.of(oldestCampaignExecutionId));
                     assertThat(report.scenariosExecutionsIds()).isEmpty();
                     assertThat(report.campaignsExecutionsIds()).containsExactly(oldestCampaignExecutionId);
@@ -403,23 +363,23 @@ public class PurgeServiceTest {
                 ExecutionSummary scenarioExecution6 = scenarioExecutionBuilder().executionId(1L).time(now.minusSeconds(50)).build();
 
                 // First campaign executions
-                CampaignExecutionReport campaignExecutionReport1 = buildCampaignExecution(6L, campaignId1, tuple(scenarioId, scenarioExecution1));
-                CampaignExecutionReport campaignExecutionReport2 = buildCampaignExecution(4L, campaignId1, tuple(scenarioId, scenarioExecution3));
-                CampaignExecutionReport campaignExecutionReport3 = buildCampaignExecution(oldestCampaignExecutionId1, campaignId1, tuple(scenarioId, scenarioExecution5));
+                CampaignExecution campaignExecution1 = buildCampaignExecution(6L, campaignId1, tuple(scenarioId, scenarioExecution1));
+                CampaignExecution campaignExecution2 = buildCampaignExecution(4L, campaignId1, tuple(scenarioId, scenarioExecution3));
+                CampaignExecution campaignExecution3 = buildCampaignExecution(oldestCampaignExecutionId1, campaignId1, tuple(scenarioId, scenarioExecution5));
 
                 // Second campaign executions
-                CampaignExecutionReport campaignExecutionReport4 = buildCampaignExecution(5L, campaignId2, tuple(scenarioId, scenarioExecution2));
-                CampaignExecutionReport campaignExecutionReport5 = buildCampaignExecution(3L, campaignId2, tuple(scenarioId, scenarioExecution4));
-                CampaignExecutionReport campaignExecutionReport6 = buildCampaignExecution(oldestCampaignExecutionId2, campaignId2, tuple(scenarioId, scenarioExecution6));
+                CampaignExecution campaignExecution4 = buildCampaignExecution(5L, campaignId2, tuple(scenarioId, scenarioExecution2));
+                CampaignExecution campaignExecution5 = buildCampaignExecution(3L, campaignId2, tuple(scenarioId, scenarioExecution4));
+                CampaignExecution campaignExecution6 = buildCampaignExecution(oldestCampaignExecutionId2, campaignId2, tuple(scenarioId, scenarioExecution6));
 
                 ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                 when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
-                    scenarioExecution1.withCampaignReport(campaignExecutionReport1),
-                    scenarioExecution2.withCampaignReport(campaignExecutionReport4),
-                    scenarioExecution3.withCampaignReport(campaignExecutionReport2),
-                    scenarioExecution4.withCampaignReport(campaignExecutionReport5),
-                    scenarioExecution5.withCampaignReport(campaignExecutionReport3),
-                    scenarioExecution6.withCampaignReport(campaignExecutionReport6)
+                    scenarioExecution1.withCampaignReport(campaignExecution1),
+                    scenarioExecution2.withCampaignReport(campaignExecution4),
+                    scenarioExecution3.withCampaignReport(campaignExecution2),
+                    scenarioExecution4.withCampaignReport(campaignExecution5),
+                    scenarioExecution5.withCampaignReport(campaignExecution3),
+                    scenarioExecution6.withCampaignReport(campaignExecution6)
                 ));
 
                 CampaignRepository campaignRepository = mock(CampaignRepository.class);
@@ -429,10 +389,10 @@ public class PurgeServiceTest {
                 ));
                 CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
                 when(campaignRepository.findExecutionsById(campaignId1)).thenReturn(List.of(
-                    campaignExecutionReport1, campaignExecutionReport2, campaignExecutionReport3
+                    campaignExecution1, campaignExecution2, campaignExecution3
                 ));
                 when(campaignRepository.findExecutionsById(campaignId2)).thenReturn(List.of(
-                    campaignExecutionReport4, campaignExecutionReport5, campaignExecutionReport6
+                    campaignExecution4, campaignExecution5, campaignExecution6
                 ));
 
                 // When
@@ -442,12 +402,7 @@ public class PurgeServiceTest {
                 // Then
                 // The oldest campaign's execution is deleted
                 // The associated scenario's execution is kept
-                verify(testCaseRepository).findAll();
-                verify(executionsRepository).getExecutions(scenarioId);
                 verify(executionsRepository, times(0)).deleteExecutions(anySet());
-                verify(campaignRepository).findAll();
-                verify(campaignRepository).findExecutionsById(campaignId1);
-                verify(campaignRepository).findExecutionsById(campaignId2);
                 verify(campaignExecutionRepository).deleteExecutions(Set.of(oldestCampaignExecutionId1));
                 verify(campaignExecutionRepository).deleteExecutions(Set.of(oldestCampaignExecutionId2));
                 assertThat(report.scenariosExecutionsIds()).isEmpty();
@@ -491,8 +446,6 @@ public class PurgeServiceTest {
 
                 // Then
                 // The oldest scenario's execution is deleted
-                verify(testCaseRepository).findAll();
-                verify(executionsRepository).getExecutions(scenarioId);
                 verify(executionsRepository).deleteExecutions(Set.of(3L, 1L));
                 assertThat(report.scenariosExecutionsIds()).containsExactlyInAnyOrder(3L, 1L);
             }
@@ -521,23 +474,23 @@ public class PurgeServiceTest {
                 ));
 
                 ExecutionSummary scenarioExecution1 = scenarioExecutionBuilder().executionId(4L).status(FAILURE).time(now).build();
-                CampaignExecutionReport campaignExecutionReport1 = buildCampaignExecution(4L, campaignId, tuple(scenarioId, scenarioExecution1));
+                CampaignExecution campaignExecution1 = buildCampaignExecution(4L, campaignId, tuple(scenarioId, scenarioExecution1));
 
                 ExecutionSummary scenarioExecution2 = scenarioExecutionBuilder().executionId(3L).status(FAILURE).time(now.minusSeconds(10)).build();
-                CampaignExecutionReport campaignExecutionReport2 = buildCampaignExecution(3L, campaignId, tuple(scenarioId, scenarioExecution2));
+                CampaignExecution campaignExecution2 = buildCampaignExecution(3L, campaignId, tuple(scenarioId, scenarioExecution2));
 
                 ExecutionSummary scenarioExecution3 = scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(20)).build();
-                CampaignExecutionReport campaignExecutionReport3 = buildCampaignExecution(lastSuccessCampaignExecutionId, campaignId, tuple(scenarioId, scenarioExecution3));
+                CampaignExecution campaignExecution3 = buildCampaignExecution(lastSuccessCampaignExecutionId, campaignId, tuple(scenarioId, scenarioExecution3));
 
                 ExecutionSummary scenarioExecution4 = scenarioExecutionBuilder().executionId(1L).time(now.minusSeconds(30)).build();
-                CampaignExecutionReport campaignExecutionReport4 = buildCampaignExecution(1L, campaignId, tuple(scenarioId, scenarioExecution4));
+                CampaignExecution campaignExecution4 = buildCampaignExecution(1L, campaignId, tuple(scenarioId, scenarioExecution4));
 
                 ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
                 when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
-                    scenarioExecution1.withCampaignReport(campaignExecutionReport1),
-                    scenarioExecution2.withCampaignReport(campaignExecutionReport2),
-                    scenarioExecution3.withCampaignReport(campaignExecutionReport3),
-                    scenarioExecution4.withCampaignReport(campaignExecutionReport4)
+                    scenarioExecution1.withCampaignReport(campaignExecution1),
+                    scenarioExecution2.withCampaignReport(campaignExecution2),
+                    scenarioExecution3.withCampaignReport(campaignExecution3),
+                    scenarioExecution4.withCampaignReport(campaignExecution4)
                 ));
 
                 CampaignRepository campaignRepository = mock(CampaignRepository.class);
@@ -546,7 +499,7 @@ public class PurgeServiceTest {
                 ));
                 CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
                 when(campaignRepository.findExecutionsById(campaignId)).thenReturn(List.of(
-                    campaignExecutionReport1, campaignExecutionReport2, campaignExecutionReport3, campaignExecutionReport4
+                    campaignExecution1, campaignExecution2, campaignExecution3, campaignExecution4
                 ));
 
                 // When
@@ -556,11 +509,7 @@ public class PurgeServiceTest {
                 // Then
                 // The oldest campaign's execution is deleted
                 // The associated scenario's execution is kept
-                verify(testCaseRepository).findAll();
-                verify(executionsRepository).getExecutions(scenarioId);
                 verify(executionsRepository, times(0)).deleteExecutions(anySet());
-                verify(campaignRepository).findAll();
-                verify(campaignRepository).findExecutionsById(campaignId);
                 verify(campaignExecutionRepository).deleteExecutions(Set.of(3L, 1L));
                 assertThat(report.scenariosExecutionsIds()).isEmpty();
                 assertThat(report.campaignsExecutionsIds()).containsExactlyInAnyOrder(3L, 1L);
@@ -577,7 +526,7 @@ public class PurgeServiceTest {
             // A campaign with auto retry on with one scenario
             // A campaign's execution with two scenario's executions, first in failure, second in success
             // Two manual scenario's executions older than the others
-            // And a configuration limit set to 2 for scenarios' executions
+            // And a configuration limit set to 1 for scenarios' executions
             // And a configuration limit set to 1 for campaigns' executions
             Integer maxScenarioExecutionsConfiguration = 1;
             Integer maxCampaignExecutionsConfiguration = 1;
@@ -591,17 +540,17 @@ public class PurgeServiceTest {
                 TestCaseMetadataImpl.builder().withId(scenarioId).build()
             ));
 
-            ExecutionSummary scenarioExecution1 = scenarioExecutionBuilder().executionId(4L).time(now).build();
+            ExecutionSummary autoRetryScenarioExecution2 = scenarioExecutionBuilder().executionId(4L).time(now).build();
             ExecutionSummary scenarioExecution2 = scenarioExecutionBuilder().executionId(3L).time(now.minusSeconds(10)).status(FAILURE).build();
             ExecutionSummary scenarioExecution3 = scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(20)).build();
             ExecutionSummary scenarioExecution4 = scenarioExecutionBuilder().executionId(oldestScenarioExecutionId).time(now.minusSeconds(30)).build();
 
-            CampaignExecutionReport campaignExecutionReport1 = buildCampaignExecution(1L, campaignId, tuple(scenarioId, scenarioExecution1), tuple(scenarioId, scenarioExecution2));
+            CampaignExecution campaignExecution1 = buildCampaignExecution(1L, campaignId, tuple(scenarioId, autoRetryScenarioExecution2), tuple(scenarioId, scenarioExecution2));
 
             ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
             when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
-                scenarioExecution1.withCampaignReport(campaignExecutionReport1),
-                scenarioExecution2.withCampaignReport(campaignExecutionReport1),
+                autoRetryScenarioExecution2.withCampaignReport(campaignExecution1),
+                scenarioExecution2.withCampaignReport(campaignExecution1),
                 scenarioExecution3,
                 scenarioExecution4
             ));
@@ -612,7 +561,7 @@ public class PurgeServiceTest {
             ));
             CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
             when(campaignRepository.findExecutionsById(campaignId)).thenReturn(List.of(
-                campaignExecutionReport1
+                campaignExecution1
             ));
 
             // When
@@ -622,11 +571,7 @@ public class PurgeServiceTest {
             // Then
             // The oldest scenario's execution is deleted
             // The scenario's execution which was retried is kept
-            verify(testCaseRepository).findAll();
-            verify(executionsRepository).getExecutions(scenarioId);
             verify(executionsRepository).deleteExecutions(Set.of(oldestScenarioExecutionId));
-            verify(campaignRepository).findAll();
-            verify(campaignRepository).findExecutionsById(campaignId);
             verify(campaignExecutionRepository, times(0)).deleteExecutions(anySet());
             assertThat(report.scenariosExecutionsIds()).containsExactly(oldestScenarioExecutionId);
             assertThat(report.campaignsExecutionsIds()).isEmpty();
@@ -634,7 +579,7 @@ public class PurgeServiceTest {
     }
 
     @Nested
-    @DisplayName("deletes campaigns' manual retried executions when older than oldest kept campaign's execution")
+    @DisplayName("deletes campaigns' manual retried (i.e. potentially partial) executions when older than oldest kept campaign's execution")
     class ManualRetriedCampaignExecutions {
         @Test
         void purge_oldest_campaign_manual_execution() {
@@ -642,8 +587,8 @@ public class PurgeServiceTest {
             // Two campaigns with one scenario
             // First campaign has four executions, with the second and third as partial execution
             // Second campaign has two executions, which frame the first campaign second execution
-            // And a configuration limit set to 2 for scenarios' executions
-            // And a configuration limit set to 1 for campaigns' executions
+            // And a configuration limit set to 1 for scenarios' executions
+            // And a configuration limit set to 100 for campaigns' executions
             Integer maxScenarioExecutionsConfiguration = 100;
             Integer maxCampaignExecutionsConfiguration = 1;
             String scenarioId = "1";
@@ -665,23 +610,23 @@ public class PurgeServiceTest {
             ExecutionSummary scenarioExecution6 = scenarioExecutionBuilder().executionId(1L).time(now.minusSeconds(40)).status(FAILURE).build();
 
             // First campaign executions
-            CampaignExecutionReport campaignExecutionReport1 = buildCampaignExecution(6L, campaignWithManualReplaysId, tuple(scenarioId, scenarioExecution1));
-            CampaignExecutionReport campaignExecutionReport2 = buildCampaignExecution(5L, campaignWithManualReplaysId, true, tuple(scenarioId, scenarioExecution2));
-            CampaignExecutionReport campaignExecutionReport3 = buildCampaignExecution(3L, campaignWithManualReplaysId, true, tuple(scenarioId, scenarioExecution4));
-            CampaignExecutionReport campaignExecutionReport4 = buildCampaignExecution(1L, campaignWithManualReplaysId, tuple(scenarioId, scenarioExecution6));
+            CampaignExecution campaignExecution1 = buildCampaignExecution(6L, campaignWithManualReplaysId, tuple(scenarioId, scenarioExecution1));
+            CampaignExecution campaignExecution2 = buildCampaignExecution(5L, campaignWithManualReplaysId, true, tuple(scenarioId, scenarioExecution2));
+            CampaignExecution campaignExecution3 = buildCampaignExecution(3L, campaignWithManualReplaysId, true, tuple(scenarioId, scenarioExecution4));
+            CampaignExecution campaignExecution4 = buildCampaignExecution(1L, campaignWithManualReplaysId, tuple(scenarioId, scenarioExecution6));
 
             // Second campaign executions
-            CampaignExecutionReport campaignExecutionReport5 = buildCampaignExecution(4L, campaignId, tuple(scenarioId, scenarioExecution3));
-            CampaignExecutionReport campaignExecutionReport6 = buildCampaignExecution(2L, campaignId, tuple(scenarioId, scenarioExecution5));
+            CampaignExecution campaignExecution5 = buildCampaignExecution(4L, campaignId, tuple(scenarioId, scenarioExecution3));
+            CampaignExecution campaignExecution6 = buildCampaignExecution(2L, campaignId, tuple(scenarioId, scenarioExecution5));
 
             ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
             when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
-                scenarioExecution1.withCampaignReport(campaignExecutionReport1),
-                scenarioExecution2.withCampaignReport(campaignExecutionReport2),
-                scenarioExecution3.withCampaignReport(campaignExecutionReport5),
-                scenarioExecution4.withCampaignReport(campaignExecutionReport3),
-                scenarioExecution5.withCampaignReport(campaignExecutionReport6),
-                scenarioExecution6.withCampaignReport(campaignExecutionReport4)
+                scenarioExecution1.withCampaignReport(campaignExecution1),
+                scenarioExecution2.withCampaignReport(campaignExecution2),
+                scenarioExecution3.withCampaignReport(campaignExecution5),
+                scenarioExecution4.withCampaignReport(campaignExecution3),
+                scenarioExecution5.withCampaignReport(campaignExecution6),
+                scenarioExecution6.withCampaignReport(campaignExecution4)
             ));
 
             CampaignRepository campaignRepository = mock(CampaignRepository.class);
@@ -691,10 +636,10 @@ public class PurgeServiceTest {
             ));
             CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
             when(campaignRepository.findExecutionsById(campaignId)).thenReturn(List.of(
-                campaignExecutionReport5, campaignExecutionReport6
+                campaignExecution5, campaignExecution6
             ));
             when(campaignRepository.findExecutionsById(campaignWithManualReplaysId)).thenReturn(List.of(
-                campaignExecutionReport1, campaignExecutionReport2, campaignExecutionReport3, campaignExecutionReport4
+                campaignExecution1, campaignExecution2, campaignExecution3, campaignExecution4
             ));
 
             // When
@@ -704,12 +649,7 @@ public class PurgeServiceTest {
             // Then
             // The oldest first campaign and second campaign's executions are deleted
             // The first campaign partial execution is deleted and the second is kept
-            verify(testCaseRepository).findAll();
-            verify(executionsRepository).getExecutions(scenarioId);
             verify(executionsRepository, times(0)).deleteExecutions(anySet());
-            verify(campaignRepository).findAll();
-            verify(campaignRepository).findExecutionsById(campaignId);
-            verify(campaignRepository).findExecutionsById(campaignWithManualReplaysId);
             verify(campaignExecutionRepository).deleteExecutions(Set.of(1L, 3L));
             verify(campaignExecutionRepository).deleteExecutions(Set.of(2L));
             assertThat(report.scenariosExecutionsIds()).isEmpty();
@@ -731,18 +671,18 @@ public class PurgeServiceTest {
     /**
      * scenarioExecutions tuples are composed of (scenario id as String, scenario execution as ExecutionSummary)
      */
-    private static CampaignExecutionReport buildCampaignExecution(Long campaignExecutionId, Long campaignId, boolean partialExecution, Tuple... scenarioExecutions) {
-        List<ScenarioExecutionReportCampaign> scenarioExecutionsForCampaign = Arrays.stream(scenarioExecutions)
+    private static CampaignExecution buildCampaignExecution(Long campaignExecutionId, Long campaignId, boolean partialExecution, Tuple... scenarioExecutions) {
+        List<ScenarioExecutionCampaign> scenarioExecutionsForCampaign = Arrays.stream(scenarioExecutions)
             .map(t -> {
                 List<Object> tt = t.toList();
                 String scenarioId = (String) tt.get(0);
                 ExecutionHistory.ExecutionSummary scenarioExecution = (ExecutionHistory.ExecutionSummary) tt.get(1);
-                return new ScenarioExecutionReportCampaign(scenarioId, scenarioExecution.testCaseTitle(), scenarioExecution);
+                return new ScenarioExecutionCampaign(scenarioId, scenarioExecution.testCaseTitle(), scenarioExecution);
             })
             .toList();
 
         ExecutionHistory.ExecutionSummary firsScenarioExecution = scenarioExecutionsForCampaign.get(0).execution;
-        return new CampaignExecutionReport(
+        return new CampaignExecution(
             campaignExecutionId,
             campaignId,
             scenarioExecutionsForCampaign,
@@ -755,7 +695,7 @@ public class PurgeServiceTest {
         );
     }
 
-    private static CampaignExecutionReport buildCampaignExecution(Long campaignExecutionId, Long campaignId, Tuple... scenarioExecutions) {
+    private static CampaignExecution buildCampaignExecution(Long campaignExecutionId, Long campaignId, Tuple... scenarioExecutions) {
         return buildCampaignExecution(campaignExecutionId, campaignId, false, scenarioExecutions);
     }
 }

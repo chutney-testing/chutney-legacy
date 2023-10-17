@@ -1,7 +1,7 @@
 package com.chutneytesting.server.core.domain.execution.history;
 
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,7 +40,7 @@ public interface ExecutionHistory {
 
         String user();
 
-        Optional<CampaignExecutionReport> campaignReport();
+        Optional<CampaignExecution> campaignReport();
     }
 
     interface Attached {

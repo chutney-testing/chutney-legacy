@@ -6,7 +6,7 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.ExecutionSummary;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -44,8 +44,8 @@ class ExecutionSummaryRowMapper implements RowMapper<ExecutionSummary> {
         }
     }
 
-    private Optional<CampaignExecutionReport> mapCampaignExecutionReport(ResultSet rs) throws SQLException {
-        CampaignExecutionReport report = new CampaignExecutionReport(
+    private Optional<CampaignExecution> mapCampaignExecutionReport(ResultSet rs) throws SQLException {
+        CampaignExecution report = new CampaignExecution(
             rs.getLong("CAMPAIGN_EXECUTION_ID"),
             rs.getLong("CAMPAIGN_ID"),
             new ArrayList<>(),

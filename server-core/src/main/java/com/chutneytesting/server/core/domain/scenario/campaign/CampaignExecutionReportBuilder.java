@@ -18,7 +18,7 @@ public class CampaignExecutionReportBuilder {
     private String userId;
 
     // Optional fields
-    private List<ScenarioExecutionReportCampaign> scenarioExecutionReports = new ArrayList<>();
+    private List<ScenarioExecutionCampaign> scenarioExecutionReports = new ArrayList<>();
     private Long campaignId;
     private LocalDateTime startDate;
     private ServerReportStatus status;
@@ -76,12 +76,12 @@ public class CampaignExecutionReportBuilder {
         return this;
     }
 
-    public CampaignExecutionReportBuilder addScenarioExecutionReport(ScenarioExecutionReportCampaign scenarioExecutionReport) {
+    public CampaignExecutionReportBuilder addScenarioExecutionReport(ScenarioExecutionCampaign scenarioExecutionReport) {
         this.scenarioExecutionReports.add(scenarioExecutionReport);
         return this;
     }
 
-    public CampaignExecutionReportBuilder setScenarioExecutionReport(List<ScenarioExecutionReportCampaign> scenarioExecutionsReports) {
+    public CampaignExecutionReportBuilder setScenarioExecutionReport(List<ScenarioExecutionCampaign> scenarioExecutionsReports) {
         this.scenarioExecutionReports = new ArrayList<>(scenarioExecutionsReports);
         return this;
     }
@@ -91,8 +91,8 @@ public class CampaignExecutionReportBuilder {
         return this;
     }
 
-    public CampaignExecutionReport build() {
-        return new CampaignExecutionReport(
+    public CampaignExecution build() {
+        return new CampaignExecution(
             executionId,
             campaignId,
             campaignName,

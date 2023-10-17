@@ -11,7 +11,7 @@ import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus
 import com.chutneytesting.server.core.domain.instrument.ChutneyMetrics;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
@@ -52,11 +52,11 @@ class MicrometerMetrics implements ChutneyMetrics {
     }
 
     @Override
-    public void onCampaignExecutionEnded(Campaign campaign, CampaignExecutionReport campaignExecutionReport) {
+    public void onCampaignExecutionEnded(Campaign campaign, CampaignExecution campaignExecution) {
         final String campaignId = campaign.id.toString();
-        final Map<ServerReportStatus, Long> campaignCountByStatus = campaignExecutionReport.scenarioExecutionReports().stream().collect(groupingBy(s -> s.execution.status(), counting()));
-        final ServerReportStatus status = campaignExecutionReport.status();
-        final long campaignDuration = campaignExecutionReport.getDuration();
+        final Map<ServerReportStatus, Long> campaignCountByStatus = campaignExecution.scenarioExecutionReports().stream().collect(groupingBy(s -> s.execution.status(), counting()));
+        final ServerReportStatus status = campaignExecution.status();
+        final long campaignDuration = campaignExecution.getDuration();
 
         final Counter campaignExecutionCount = this.meterRegistry.counter("campaign_execution_count", asList(of("campaignId", campaignId), of("campaignTitle", campaign.title), of("status", status.name())));
         campaignExecutionCount.increment();

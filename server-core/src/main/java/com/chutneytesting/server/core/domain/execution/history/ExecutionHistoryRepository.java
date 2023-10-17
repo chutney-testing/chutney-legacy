@@ -49,7 +49,5 @@ public interface ExecutionHistoryRepository {
 
     List<ExecutionSummary> getExecutionsWithStatus(ServerReportStatus status);
 
-    ExecutionSummary deleteExecution(Long executionId);
-
-    Set<ExecutionSummary> deleteExecutions(Set<Long> executionsIds);
+    void deleteExecutions(Set<Long> executionsIds);
 }

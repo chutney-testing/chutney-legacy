@@ -1,7 +1,6 @@
 package com.chutneytesting.campaign.infra;
 
-import static java.util.stream.Collectors.toSet;
-
+import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignExecutionEntity;
@@ -10,8 +9,7 @@ import com.chutneytesting.execution.infra.storage.DatabaseExecutionJpaRepository
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
-import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +31,7 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
     private final CampaignJpaRepository campaignJpaRepository;
     private final DatabaseExecutionJpaRepository scenarioExecutionJpaRepository;
     private final TestCaseRepository testCaseRepository;
-    private final Map<Long, CampaignExecutionReport> currentCampaignExecutions = new ConcurrentHashMap<>();
+    private final Map<Long, CampaignExecution> currentCampaignExecutions = new ConcurrentHashMap<>();
 
     public CampaignExecutionDBRepository(
         CampaignExecutionJpaRepository campaignExecutionJpaRepository,
@@ -46,29 +44,67 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
         this.testCaseRepository = testCaseRepository;
     }
 
+    @Override
+    public Optional<CampaignExecution> currentExecution(Long campaignId) {
+        return Optional.ofNullable(campaignId)
+            .map(id -> currentCampaignExecutions.get(campaignId));
+    }
+
+    @Override
+    public List<CampaignExecution> currentExecutions() {
+        return new ArrayList<>(currentCampaignExecutions.values());
+    }
+
+    @Override
+    public void startExecution(Long campaignId, CampaignExecution campaignExecution) {
+        currentCampaignExecutions.put(campaignId, campaignExecution);
+    }
+
+    @Override
+    public void stopExecution(Long campaignId) {
+        currentCampaignExecutions.remove(campaignId);
+    }
+
+    @Override
+    public CampaignExecution getLastExecution(Long campaignId) {
+        return campaignExecutionJpaRepository
+            .findFirstByCampaignIdOrderByIdDesc(campaignId)
+            .map(campaignExecution -> toDomain(campaignExecution, true))
+            .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignId));
+    }
+
+    @Override
+    public void deleteExecutions(Set<Long> executionsIds) {
+        List<CampaignExecutionEntity> executions = campaignExecutionJpaRepository.findAllById(executionsIds);
+        List<ScenarioExecutionEntity> scenarioExecutions = executions.stream().flatMap(cer -> cer.scenarioExecutions().stream()).toList();
+        scenarioExecutions.forEach(ScenarioExecutionEntity::clearCampaignExecution);
+        scenarioExecutionJpaRepository.saveAll(scenarioExecutions);
+        campaignExecutionJpaRepository.deleteAllInBatch(executions);
+    }
+
     @Transactional(readOnly = true)
-    public List<CampaignExecutionReport> findExecutionHistory(Long campaignId) {
+    public List<CampaignExecution> findExecutionHistory(Long campaignId) {
         CampaignEntity campaign = campaignJpaRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         return campaignExecutionJpaRepository.findByCampaignIdOrderByIdDesc(campaignId).stream()
-            .map(ce -> toDomain(campaign, ce, false))
+            .map(ce -> toDomainWithCampaign(campaign, ce, false))
             .filter(Objects::nonNull)
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public void saveCampaignReport(Long campaignId, CampaignExecutionReport report) {
-        CampaignExecutionEntity execution = campaignExecutionJpaRepository.findById(report.executionId).orElseThrow(
-            () -> new CampaignExecutionNotFoundException(report.executionId, campaignId)
+    public void saveCampaignExecution(Long campaignId, CampaignExecution campaignExecution) {
+        CampaignExecutionEntity execution = campaignExecutionJpaRepository.findById(campaignExecution.executionId).orElseThrow(
+            () -> new CampaignExecutionNotFoundException(campaignExecution.executionId, campaignId)
         );
         Iterable<ScenarioExecutionEntity> scenarioExecutions =
-            scenarioExecutionJpaRepository.findAllById(report.scenarioExecutionReports().stream()
+            scenarioExecutionJpaRepository.findAllById(campaignExecution.scenarioExecutionReports().stream()
                 .map(serc -> serc.execution.executionId())
                 .toList());
-        execution.updateFromDomain(report, scenarioExecutions);
+        execution.updateFromDomain(campaignExecution, scenarioExecutions);
         campaignExecutionJpaRepository.save(execution);
     }
 
     @Transactional(readOnly = true)
-    public List<CampaignExecutionReport> findLastExecutions(Long numberOfExecution) {
+    public List<CampaignExecution> findLastExecutions(Long numberOfExecution) {
         return campaignExecutionJpaRepository.findAll(
                 PageRequest.of(0, numberOfExecution.intValue(), Sort.by(Sort.Direction.DESC, "id"))).stream()
             .map(ce -> toDomain(ce, false))
@@ -77,27 +113,27 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
     }
 
     @Transactional(readOnly = true)
-    public CampaignExecutionReport getCampaignExecutionReportsById(Long campaignExecId) {
+    public CampaignExecution getCampaignExecutionById(Long campaignExecId) {
         return campaignExecutionJpaRepository.findById(campaignExecId)
             .map(ce -> toDomain(ce, true))
             .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignExecId, null));
     }
 
-    private CampaignExecutionReport toDomain(CampaignExecutionEntity campaignExecutionEntity, boolean withRunning) {
-        return toDomain(campaignJpaRepository.findById(campaignExecutionEntity.campaignId()).get(), campaignExecutionEntity, withRunning);
+    private CampaignExecution toDomain(CampaignExecutionEntity campaignExecutionEntity, boolean withRunning) {
+        return toDomainWithCampaign(campaignJpaRepository.findById(campaignExecutionEntity.campaignId()).get(), campaignExecutionEntity, withRunning);
     }
 
-    private CampaignExecutionReport toDomain(CampaignEntity campaign, CampaignExecutionEntity campaignExecutionEntity, boolean withRunning) {
+    private CampaignExecution toDomainWithCampaign(CampaignEntity campaign, CampaignExecutionEntity campaignExecutionEntity, boolean withRunning) {
         if (!withRunning && isCampaignExecutionRunning(campaignExecutionEntity)) return null;
         return campaignExecutionEntity.toDomain(campaign, isCampaignExecutionRunning(campaignExecutionEntity), this::title);
     }
 
-    public void clearAllExecutionHistory(Long campaignId) {
+    void clearAllExecutionHistory(Long campaignId) {
         List<CampaignExecutionEntity> campaignExecutionEntities = campaignExecutionJpaRepository.findAllByCampaignId(campaignId);
         List<ScenarioExecutionEntity> scenarioExecutions = campaignExecutionEntities.stream().flatMap(ce -> ce.scenarioExecutions().stream()).toList();
         scenarioExecutions.forEach(ScenarioExecutionEntity::clearCampaignExecution);
         scenarioExecutionJpaRepository.saveAll(scenarioExecutions);
-        campaignExecutionJpaRepository.deleteAll(campaignExecutionEntities);
+        campaignExecutionJpaRepository.deleteAllInBatch(campaignExecutionEntities);
     }
 
     public Long generateCampaignExecutionId(Long campaignId) {
@@ -114,58 +150,5 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
         return currentExecution(campaignExecutionEntity.campaignId())
             .map(cer -> cer.executionId.equals(campaignExecutionEntity.id()))
             .orElse(false);
-    }
-
-    @Override
-    public Optional<CampaignExecutionReport> currentExecution(Long campaignId) {
-        return Optional.ofNullable(campaignId)
-            .map(id -> currentCampaignExecutions.get(campaignId));
-    }
-
-    @Override
-    public List<CampaignExecutionReport> currentExecutions() {
-        return new ArrayList<>(currentCampaignExecutions.values());
-    }
-
-    @Override
-    public void startExecution(Long campaignId, CampaignExecutionReport campaignExecutionReport) {
-        currentCampaignExecutions.put(campaignId, campaignExecutionReport);
-    }
-
-    @Override
-    public void stopExecution(Long campaignId) {
-        currentCampaignExecutions.remove(campaignId);
-    }
-
-    @Override
-    public CampaignExecutionReport getLastExecutionReport(Long campaignId) {
-        return campaignExecutionJpaRepository
-            .findFirstByCampaignIdOrderByIdDesc(campaignId)
-            .map(campaignExecution -> toDomain(campaignExecution, true))
-            .orElseThrow(() -> new CampaignExecutionNotFoundException(campaignId));
-    }
-
-    @Override
-    public CampaignExecutionReport deleteExecution(Long executionId) {
-        CampaignExecutionEntity execution = campaignExecutionJpaRepository.findById(executionId).orElseThrow(
-            () -> new CampaignExecutionNotFoundException(executionId)
-        );
-        CampaignExecutionReport executionReport = toDomain(execution, false);
-        List<ScenarioExecutionEntity> scenarioExecutions = execution.scenarioExecutions();
-        scenarioExecutions.forEach(ScenarioExecutionEntity::clearCampaignExecution);
-        scenarioExecutionJpaRepository.saveAll(scenarioExecutions);
-        campaignExecutionJpaRepository.delete(execution);
-        return executionReport;
-    }
-
-    @Override
-    public Set<CampaignExecutionReport> deleteExecutions(Set<Long> executionsIds) {
-        List<CampaignExecutionEntity> executions = campaignExecutionJpaRepository.findAllById(executionsIds);
-        Set<CampaignExecutionReport> executionsReports = executions.stream().map(ce -> toDomain(ce, false)).collect(toSet());
-        List<ScenarioExecutionEntity> scenarioExecutions = executions.stream().flatMap(cer -> cer.scenarioExecutions().stream()).toList();
-        scenarioExecutions.forEach(ScenarioExecutionEntity::clearCampaignExecution);
-        scenarioExecutionJpaRepository.saveAll(scenarioExecutions);
-        campaignExecutionJpaRepository.deleteAllInBatch(executions);
-        return executionsReports;
     }
 }

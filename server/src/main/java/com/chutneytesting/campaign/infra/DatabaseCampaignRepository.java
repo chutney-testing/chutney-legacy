@@ -9,7 +9,7 @@ import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignScenarioEntity;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import java.util.List;
 import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Repository;
@@ -46,8 +46,8 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     }
 
     @Override
-    public void saveReport(Long campaignId, CampaignExecutionReport report) {
-        campaignExecutionRepository.saveCampaignReport(campaignId, report);
+    public void saveExecution(Long campaignId, CampaignExecution execution) {
+        campaignExecutionRepository.saveCampaignExecution(campaignId, execution);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CampaignExecutionReport> findLastExecutions(Long numberOfExecution) {
+    public List<CampaignExecution> findLastExecutions(Long numberOfExecution) {
         return campaignExecutionRepository.findLastExecutions(numberOfExecution);
     }
 
@@ -110,7 +110,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CampaignExecutionReport> findExecutionsById(Long campaignId) {
+    public List<CampaignExecution> findExecutionsById(Long campaignId) {
         return campaignExecutionRepository.findExecutionHistory(campaignId);
     }
 
@@ -129,7 +129,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public CampaignExecutionReport findByExecutionId(Long campaignExecutionId) {
-        return campaignExecutionRepository.getCampaignExecutionReportsById(campaignExecutionId);
+    public CampaignExecution findByExecutionId(Long campaignExecutionId) {
+        return campaignExecutionRepository.getCampaignExecutionById(campaignExecutionId);
     }
 }

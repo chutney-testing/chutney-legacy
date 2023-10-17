@@ -15,7 +15,7 @@ import com.chutneytesting.scenario.api.raw.dto.TestCaseIndexDto;
 import com.chutneytesting.scenario.infra.TestCaseRepositoryAggregator;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -75,7 +75,7 @@ public class CampaignController {
     @GetMapping(path = "/{campaignId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignDto getCampaignById(@PathVariable("campaignId") Long campaignId) {
         Campaign campaign = campaignRepository.findById(campaignId);
-        List<CampaignExecutionReport> reports = campaignService.findExecutionsById(campaignId);
+        List<CampaignExecution> reports = campaignService.findExecutionsById(campaignId);
         campaignExecutionEngine.currentExecution(campaignId)
             .ifPresent(report -> addCurrentExecution(reports, report));
         return toDto(campaign, reports);
@@ -101,7 +101,7 @@ public class CampaignController {
     @PreAuthorize("hasAuthority('CAMPAIGN_READ')")
     @GetMapping(path = "/lastexecutions/{limit}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CampaignExecutionReportDto> getLastExecutions(@PathVariable("limit") Long limit) {
-        List<CampaignExecutionReport> lastExecutions = campaignExecutionEngine.currentExecutions();
+        List<CampaignExecution> lastExecutions = campaignExecutionEngine.currentExecutions();
 
         // Complete current executions with finished ones up to the limit
         if (lastExecutions.size() < limit) {
@@ -122,10 +122,10 @@ public class CampaignController {
             .collect(Collectors.toList());
     }
 
-    private void addCurrentExecution(List<CampaignExecutionReport> currentCampaignExecutionReports, CampaignExecutionReport campaignExecutionReport) {
-        if (currentCampaignExecutionReports == null) {
-            currentCampaignExecutionReports = new ArrayList<>();
+    private void addCurrentExecution(List<CampaignExecution> currentCampaignExecutions, CampaignExecution campaignExecution) {
+        if (currentCampaignExecutions == null) {
+            currentCampaignExecutions = new ArrayList<>();
         }
-        currentCampaignExecutionReports.add(0, campaignExecutionReport);
+        currentCampaignExecutions.add(0, campaignExecution);
     }
 }

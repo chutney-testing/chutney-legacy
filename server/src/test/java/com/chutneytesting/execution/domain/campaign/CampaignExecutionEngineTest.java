@@ -42,7 +42,7 @@ import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -115,7 +115,7 @@ public class CampaignExecutionEngineTest {
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
 
         // When
-        CampaignExecutionReport cer = sut.executeScenarioInCampaign(emptyList(), campaign, "user");
+        CampaignExecution cer = sut.executeScenarioInCampaign(emptyList(), campaign, "user");
 
         ArgumentCaptor<ReportForJira> reportForJiraCaptor = ArgumentCaptor.forClass(ReportForJira.class);
         verify(jiraXrayPlugin).updateTestExecution(eq(campaign.id), eq(cer.executionId), eq(firstTestCase.metadata.id), reportForJiraCaptor.capture());
@@ -132,21 +132,21 @@ public class CampaignExecutionEngineTest {
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
 
         // When
-        CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(emptyList(), campaign, "user");
+        CampaignExecution campaignExecution = sut.executeScenarioInCampaign(emptyList(), campaign, "user");
 
         // Then
         verify(testCaseRepository, times(2)).findExecutableById(anyString());
         verify(scenarioExecutionEngine, times(2)).execute(any(ExecutionRequest.class));
         verify(executionHistoryRepository, times(4)).getExecution(anyString(), anyLong());
 
-        assertThat(campaignExecutionReport.scenarioExecutionReports()).hasSize(campaign.scenarioIds.size());
-        assertThat(campaignExecutionReport.scenarioExecutionReports().get(0).execution.executionId()).isEqualTo(firstScenarioExecutionId);
-        assertThat(campaignExecutionReport.scenarioExecutionReports().get(1).execution.executionId()).isEqualTo(secondScenarioExecutionId);
-        assertThat(campaignExecutionReport.partialExecution).isFalse();
-        verify(campaignRepository).saveReport(campaign.id, campaignExecutionReport);
+        assertThat(campaignExecution.scenarioExecutionReports()).hasSize(campaign.scenarioIds.size());
+        assertThat(campaignExecution.scenarioExecutionReports().get(0).execution.executionId()).isEqualTo(firstScenarioExecutionId);
+        assertThat(campaignExecution.scenarioExecutionReports().get(1).execution.executionId()).isEqualTo(secondScenarioExecutionId);
+        assertThat(campaignExecution.partialExecution).isFalse();
+        verify(campaignRepository).saveExecution(campaign.id, campaignExecution);
         verify(metrics).onCampaignExecutionEnded(
             eq(campaign),
-            eq(campaignExecutionReport)
+            eq(campaignExecution)
         );
     }
 
@@ -158,17 +158,17 @@ public class CampaignExecutionEngineTest {
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
 
         // When
-        CampaignExecutionReport campaignExecutionReport = sut.executeScenarioInCampaign(singletonList("2"), campaign, "user");
+        CampaignExecution campaignExecution = sut.executeScenarioInCampaign(singletonList("2"), campaign, "user");
 
         // Then
         verify(testCaseRepository, times(1)).findExecutableById(anyString());
         verify(scenarioExecutionEngine, times(1)).execute(any(ExecutionRequest.class));
         verify(executionHistoryRepository, times(2)).getExecution(anyString(), anyLong());
 
-        assertThat(campaignExecutionReport.scenarioExecutionReports()).hasSize(1);
-        assertThat(campaignExecutionReport.scenarioExecutionReports().get(0).execution.executionId()).isEqualTo(secondScenarioExecutionId);
-        assertThat(campaignExecutionReport.partialExecution).isTrue();
-        verify(campaignRepository).saveReport(campaign.id, campaignExecutionReport);
+        assertThat(campaignExecution.scenarioExecutionReports()).hasSize(1);
+        assertThat(campaignExecution.scenarioExecutionReports().get(0).execution.executionId()).isEqualTo(secondScenarioExecutionId);
+        assertThat(campaignExecution.partialExecution).isTrue();
+        verify(campaignRepository).saveExecution(campaign.id, campaignExecution);
     }
 
     @Test
@@ -186,7 +186,7 @@ public class CampaignExecutionEngineTest {
             .thenReturn(executionWithId(firstScenarioExecutionId));
 
         // When
-        AtomicReference<CampaignExecutionReport> campaignExecutionReport = new AtomicReference<>();
+        AtomicReference<CampaignExecution> campaignExecutionReport = new AtomicReference<>();
 
         Executors.newFixedThreadPool(1).submit(() -> campaignExecutionReport.set(sut.executeScenarioInCampaign(emptyList(), campaign, "user")));
 
@@ -257,7 +257,7 @@ public class CampaignExecutionEngineTest {
     public void should_throw_when_campaign_already_running() {
         Campaign campaign = createCampaign(1L);
 
-        CampaignExecutionReport mockReport = new CampaignExecutionReport(1L, "", false, "", null, null, "");
+        CampaignExecution mockReport = new CampaignExecution(1L, "", false, "", null, null, "");
         when(campaignExecutionRepository.currentExecution(1L)).thenReturn(Optional.of(mockReport));
 
         // When
@@ -289,20 +289,20 @@ public class CampaignExecutionEngineTest {
     public void should_return_last_existing_campaign_execution_for_existing_campaign() {
         // Given
         Campaign campaign = createCampaign();
-        CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(123L, campaign.id, emptyList(), "", false, campaign.executionEnvironment(), null, null, "");
+        CampaignExecution campaignExecution = new CampaignExecution(123L, campaign.id, emptyList(), "", false, campaign.executionEnvironment(), null, null, "");
 
 
         when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
-        when(campaignExecutionRepository.getLastExecutionReport(campaign.id)).thenReturn(campaignExecutionReport);
+        when(campaignExecutionRepository.getLastExecution(campaign.id)).thenReturn(campaignExecution);
 
         // When
-        CampaignExecutionReport result = sut.getLastCampaignExecutionReport(campaign.id);
+        CampaignExecution result = sut.getLastCampaignExecution(campaign.id);
 
         // Then
         verify(campaignRepository).findById(campaign.id);
-        verify(campaignExecutionRepository).getLastExecutionReport(campaign.id);
+        verify(campaignExecutionRepository).getLastExecution(campaign.id);
 
-        assertThat(result).isEqualTo(campaignExecutionReport);
+        assertThat(result).isEqualTo(campaignExecution);
     }
 
     @Test
@@ -314,7 +314,7 @@ public class CampaignExecutionEngineTest {
 
         // When
         assertThatThrownBy(() -> {
-            sut.getLastCampaignExecutionReport(campaign.id);
+            sut.getLastCampaignExecution(campaign.id);
         });
 
         // Then
@@ -355,12 +355,12 @@ public class CampaignExecutionEngineTest {
 
     @Test
     public void should_retrieve_current_campaign_executions() {
-        CampaignExecutionReport report = new CampaignExecutionReport(1L, 33L, emptyList(), "", false, "", null, null, "");
-        CampaignExecutionReport report2 = new CampaignExecutionReport(2L, 42L, emptyList(), "", false, "", null, null, "");
+        CampaignExecution report = new CampaignExecution(1L, 33L, emptyList(), "", false, "", null, null, "");
+        CampaignExecution report2 = new CampaignExecution(2L, 42L, emptyList(), "", false, "", null, null, "");
         when(campaignExecutionRepository.currentExecution(1L)).thenReturn(Optional.of(report));
         when(campaignExecutionRepository.currentExecution(2L)).thenReturn(Optional.of(report2));
 
-        Optional<CampaignExecutionReport> campaignExecutionReport = sut.currentExecution(1L);
+        Optional<CampaignExecution> campaignExecutionReport = sut.currentExecution(1L);
 
         assertThat(campaignExecutionReport).isNotEmpty();
         assertThat(campaignExecutionReport.get().campaignId).isEqualTo(33L);

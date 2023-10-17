@@ -6,7 +6,7 @@ import com.chutneytesting.campaign.infra.jpa.CampaignExecutionEntity;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -182,7 +182,7 @@ public class ScenarioExecutionEntity {
         return toDomain(null);
     }
 
-    public ExecutionHistory.ExecutionSummary toDomain(CampaignExecutionReport campaignReport) {
+    public ExecutionHistory.ExecutionSummary toDomain(CampaignExecution campaignReport) {
         return ImmutableExecutionHistory.ExecutionSummary.builder()
             .executionId(id)
             .time(Instant.ofEpochMilli(executionTime).atZone(ZoneId.systemDefault()).toLocalDateTime())

@@ -187,8 +187,6 @@ public class SecuredControllerSpringBootIntegrationTest {
             {POST, "/api/v2/targets", "ENVIRONMENT_ACCESS", "{\"name\":\"targetName\",\"url\":\"http://localhost\", \"environment\":\"secuenv\"}", OK},
             {PUT, "/api/v2/targets/targetName", "ENVIRONMENT_ACCESS", "{\"name\":\"targetName\",\"url\":\"https://localhost\", \"environment\":\"secuenv\"}", OK},
 
-            {POST, "/api/v1/purge", "ADMIN_ACCESS", null, OK},
-
             // Must be at the end because the network configuration is in wrong staten, why ??
             {POST, "/api/v1/agentnetwork/wrapup", "ADMIN_ACCESS", "{\"agentsGraph\":{\"agents\":[]},\"networkConfiguration\":{\"creationDate\":\"2021-09-06T10:08:36.569227Z\",\"agentNetworkConfiguration\":[],\"environmentsConfiguration\":[]}}", OK},
         };

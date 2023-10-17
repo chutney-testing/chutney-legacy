@@ -5,14 +5,14 @@ import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus
 import java.util.Comparator;
 import java.util.Objects;
 
-public class ScenarioExecutionReportCampaign {
+public class ScenarioExecutionCampaign {
     public final String scenarioId;
     public final String scenarioName;
     public final ExecutionHistory.ExecutionSummary execution;
 
-    public ScenarioExecutionReportCampaign(String scenarioId,
-                                           String scenarioName,
-                                           ExecutionHistory.ExecutionSummary execution) {
+    public ScenarioExecutionCampaign(String scenarioId,
+                                     String scenarioName,
+                                     ExecutionHistory.ExecutionSummary execution) {
         this.scenarioId = scenarioId;
         this.scenarioName = scenarioName;
         this.execution = execution;
@@ -22,7 +22,7 @@ public class ScenarioExecutionReportCampaign {
         return execution.status();
     }
 
-    public static Comparator<ScenarioExecutionReportCampaign> executionIdComparator() {
+    public static Comparator<ScenarioExecutionCampaign> executionIdComparator() {
         return Comparator.comparingLong(value -> value.execution.executionId() > 0 ? value.execution.executionId() : Long.MAX_VALUE);
     }
 
@@ -30,7 +30,7 @@ public class ScenarioExecutionReportCampaign {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ScenarioExecutionReportCampaign that = (ScenarioExecutionReportCampaign) o;
+        ScenarioExecutionCampaign that = (ScenarioExecutionCampaign) o;
         return scenarioId.equals(that.scenarioId);
     }
 

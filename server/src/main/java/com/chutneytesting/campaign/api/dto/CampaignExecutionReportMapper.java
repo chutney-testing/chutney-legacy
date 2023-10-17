@@ -1,11 +1,11 @@
 package com.chutneytesting.campaign.api.dto;
 
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import java.util.stream.Collectors;
 
 public class CampaignExecutionReportMapper {
 
-    public static CampaignExecutionReportDto toDto(CampaignExecutionReport campaignReport) {
+    public static CampaignExecutionReportDto toDto(CampaignExecution campaignReport) {
         return new CampaignExecutionReportDto(
             campaignReport.executionId,
             campaignReport.scenarioExecutionReports().stream()

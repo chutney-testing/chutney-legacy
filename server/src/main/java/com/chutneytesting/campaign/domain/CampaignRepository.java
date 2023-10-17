@@ -2,7 +2,7 @@ package com.chutneytesting.campaign.domain;
 
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import java.util.List;
 
 /**
@@ -14,7 +14,7 @@ public interface CampaignRepository {
 
     Campaign createOrUpdate(Campaign campaign);
 
-    void saveReport(Long campaignId, CampaignExecutionReport report);
+    void saveExecution(Long campaignId, CampaignExecution execution);
 
     boolean removeById(Long id);
 
@@ -24,9 +24,9 @@ public interface CampaignRepository {
 
     List<Campaign> findByName(String campaignName);
 
-    List<CampaignExecutionReport> findExecutionsById(Long campaignId);
+    List<CampaignExecution> findExecutionsById(Long campaignId);
 
-    List<CampaignExecutionReport> findLastExecutions(Long numberOfExecution);
+    List<CampaignExecution> findLastExecutions(Long numberOfExecution);
 
     List<String> findScenariosIds(Long campaignId);
 
@@ -34,5 +34,5 @@ public interface CampaignRepository {
 
     Long newCampaignExecution(Long campaignId);
 
-    CampaignExecutionReport findByExecutionId(Long campaignExecutionId);
+    CampaignExecution findByExecutionId(Long campaignExecutionId);
 }

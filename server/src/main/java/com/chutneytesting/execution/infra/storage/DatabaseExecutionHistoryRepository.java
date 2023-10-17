@@ -3,7 +3,6 @@ package com.chutneytesting.execution.infra.storage;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toUnmodifiableSet;
 
 import com.chutneytesting.campaign.infra.CampaignExecutionJpaRepository;
 import com.chutneytesting.campaign.infra.CampaignJpaRepository;
@@ -21,7 +20,7 @@ import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionR
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -107,10 +106,10 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     private ExecutionSummary scenarioExecutionToExecutionSummary(ScenarioExecutionEntity scenarioExecution) {
-        CampaignExecutionReport campaignExecutionReport = ofNullable(scenarioExecution.campaignExecution())
+        CampaignExecution campaignExecution = ofNullable(scenarioExecution.campaignExecution())
             .map(ce -> ce.toDomain(campaignJpaRepository.findById(ce.campaignId()).get(), false, null))
             .orElse(null);
-        return scenarioExecution.toDomain(campaignExecutionReport);
+        return scenarioExecution.toDomain(campaignExecution);
     }
 
     @Override
@@ -186,21 +185,9 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     @Override
-    public ExecutionSummary deleteExecution(Long executionId) {
-        ExecutionSummary executionSummary = getExecutionSummary(executionId);
-        scenarioExecutionsJpaRepository.deleteById(executionId);
-        scenarioExecutionReportJpaRepository.deleteById(executionId);
-        return executionSummary;
-    }
-
-    @Override
-    public Set<ExecutionSummary> deleteExecutions(Set<Long> executionsIds) {
-        Set<ExecutionSummary> deletedExecutions = executionsIds.stream()
-            .map(this::getExecutionSummary)
-            .collect(toUnmodifiableSet());
+    public void deleteExecutions(Set<Long> executionsIds) {
         scenarioExecutionsJpaRepository.deleteAllByIdInBatch(executionsIds);
         scenarioExecutionReportJpaRepository.deleteAllById(executionsIds);
-        return deletedExecutions;
     }
 
     private void updateExecutionsToKO(List<ExecutionSummary> executions) {

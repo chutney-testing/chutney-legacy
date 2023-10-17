@@ -17,7 +17,7 @@ import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 public class PurgeServiceImpl implements PurgeService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PurgeServiceImpl.class);
-    private final PurgeExecutionService<Campaign, Long, CampaignExecutionReport> campaignPurgeService;
+    private final PurgeExecutionService<Campaign, Long, CampaignExecution> campaignPurgeService;
     private final PurgeExecutionService<TestCaseMetadata, String, ExecutionSummary> scenarioPurgeService;
 
     public PurgeServiceImpl(
@@ -44,10 +45,12 @@ public class PurgeServiceImpl implements PurgeService {
         Integer maxScenarioExecutionsConfiguration,
         Integer maxCampaignExecutionsConfiguration
     ) {
-        validateConfigurationLimits(maxScenarioExecutionsConfiguration, maxCampaignExecutionsConfiguration);
+
+        Integer maxScenarioExecutions = validateConfigurationLimit(maxScenarioExecutionsConfiguration, "maxScenarioExecutions");
+        Integer maxCampaignExecutions = validateConfigurationLimit(maxCampaignExecutionsConfiguration, "maxCampaignExecutions");
 
         this.scenarioPurgeService = new PurgeExecutionService<>(
-            maxScenarioExecutionsConfiguration,
+            maxScenarioExecutions,
             testCaseRepository::findAll,
             TestCaseMetadata::id,
             executionsRepository::getExecutions,
@@ -59,30 +62,36 @@ public class PurgeServiceImpl implements PurgeService {
             executionsRepository::deleteExecutions
         );
 
-        this.campaignPurgeService = new PurgeExecutionService<>(
-            maxCampaignExecutionsConfiguration,
+      this.campaignPurgeService = new PurgeExecutionService<>(
+            maxCampaignExecutions,
             campaignRepository::findAll,
             campaign -> campaign.id,
             campaignRepository::findExecutionsById,
             cer -> true,
             cer -> cer.executionId,
             cer -> cer.startDate,
-            CampaignExecutionReport::getStatus,
+            CampaignExecution::getStatus,
             cer -> cer.executionEnvironment,
             campaignExecutionRepository::deleteExecutions
         ) {
-            private Map<Boolean, List<CampaignExecutionReport>> campaignExecutionsByPartialExecution;
+            private Map<Boolean, List<CampaignExecution>> campaignExecutionsByPartialExecution;
 
+            /**
+             * Transform executions to filter only those that are not manual replays.
+             */
             @Override
-            public List<CampaignExecutionReport> handleExecutionsForOneEnvironment(List<CampaignExecutionReport> executionsFromOneEnvironment) {
+            public List<CampaignExecution> handleExecutionsForOneEnvironment(List<CampaignExecution> executionsFromOneEnvironment) {
                 campaignExecutionsByPartialExecution = executionsFromOneEnvironment.stream()
                     .collect(groupingBy(cer -> cer.partialExecution));
                 return campaignExecutionsByPartialExecution.get(false);
             }
 
+            /**
+             * Select all manual replays (for deletion) that are older than the oldest campaign execution kept.
+             */
             @Override
-            public Collection<Long> findExtraExecutionsIdsToDelete(List<CampaignExecutionReport> timeSortedExecutionsForOneEnvironment) {
-                var oldestCampaignExecutionToKept = timeSortedExecutionsForOneEnvironment.get(maxCampaignExecutionsConfiguration - 1);
+            public Collection<Long> findExtraExecutionsIdsToDelete(List<CampaignExecution> timeSortedExecutionsForOneEnvironment) {
+                var oldestCampaignExecutionToKept = timeSortedExecutionsForOneEnvironment.get(maxCampaignExecutions - 1);
                 return ofNullable(campaignExecutionsByPartialExecution.get(true)).orElse(emptyList()).stream()
                     .filter(cer -> cer.startDate.isBefore(oldestCampaignExecutionToKept.startDate))
                     .map(cer -> cer.executionId)
@@ -91,10 +100,12 @@ public class PurgeServiceImpl implements PurgeService {
         };
     }
 
-    private void validateConfigurationLimits(Integer maxScenarioExecutionsConfiguration, Integer maxCampaignExecutionsConfiguration) {
-        if (maxScenarioExecutionsConfiguration <= 0 || maxCampaignExecutionsConfiguration <= 0) {
-            throw new IllegalArgumentException("Purge configuration limits must be positives.");
+    private static Integer validateConfigurationLimit(Integer configurationLimit, String configName) {
+        if (configurationLimit <= 0) {
+            LOGGER.warn("Purge configuration limit must be positive. Defaulting {} to {}", configName, 10);
+            return 10;
         }
+        return configurationLimit;
     }
 
     @Override
@@ -110,7 +121,7 @@ public class PurgeServiceImpl implements PurgeService {
      *
      * @see #purgeExecutions()
      */
-    private static class PurgeExecutionService<ObjectType, ObjectIdType, ExecutionReportType> {
+    private static class PurgeExecutionService<Base, BaseId, Execution> {
         /**
          * The configuration defining the number of executions to keep
          */
@@ -121,51 +132,51 @@ public class PurgeServiceImpl implements PurgeService {
          * @see TestCaseMetadata
          * @see Campaign
          */
-        private final Supplier<List<ObjectType>> baseObject;
+        private final Supplier<List<Base>> baseObject;
         /**
          * A mapper function extracting the domain object id
          */
-        private final Function<ObjectType, ObjectIdType> idFunction;
+        private final Function<Base, BaseId> idFunction;
         /**
          * A function returning all executions given an ObjectTypeId
          */
-        private final Function<ObjectIdType, List<ExecutionReportType>> executionsFunction;
+        private final Function<BaseId, List<Execution>> executionsFunction;
         /**
          * An optional executions filter used in {@link #purgeExecutions()} before grouping by environment
          */
-        private final Predicate<ExecutionReportType> executionsFilter;
+        private final Predicate<Execution> executionsFilter;
         /**
          * A mapper function extracting the execution id
          */
-        private final Function<ExecutionReportType, Long> executionIdFunction;
+        private final Function<Execution, Long> executionIdFunction;
         /**
          * A mapper function extracting the execution date for sorting
          */
-        private final Function<ExecutionReportType, LocalDateTime> executionDateFunction;
+        private final Function<Execution, LocalDateTime> executionDateFunction;
         /**
          * A mapper function extracting the execution status for keeping the last success one
          */
-        private final Function<ExecutionReportType, ServerReportStatus> statusFunction;
+        private final Function<Execution, ServerReportStatus> statusFunction;
         /**
          * A mapper function extracting the execution environment
          */
-        private final Function<ExecutionReportType, String> environmentFunction;
+        private final Function<Execution, String> environmentFunction;
         /**
          * A function deleting executions by ids
          */
-        private final Function<Set<Long>, Set<ExecutionReportType>> deleteFunction;
+        private final Consumer<Set<Long>> deleteFunction;
 
         private PurgeExecutionService(
             int maxExecutionsToKeep,
-            Supplier<List<ObjectType>> baseObjectSupplier,
-            Function<ObjectType, ObjectIdType> idFunction,
-            Function<ObjectIdType, List<ExecutionReportType>> executionsFunction,
-            Predicate<ExecutionReportType> executionsFilter,
-            Function<ExecutionReportType, Long> executionIdFunction,
-            Function<ExecutionReportType, LocalDateTime> executionDateFunction,
-            Function<ExecutionReportType, ServerReportStatus> statusFunction,
-            Function<ExecutionReportType, String> environmentFunction,
-            Function<Set<Long>, Set<ExecutionReportType>> deleteFunction
+            Supplier<List<Base>> baseObjectSupplier,
+            Function<Base, BaseId> idFunction,
+            Function<BaseId, List<Execution>> executionsFunction,
+            Predicate<Execution> executionsFilter,
+            Function<Execution, Long> executionIdFunction,
+            Function<Execution, LocalDateTime> executionDateFunction,
+            Function<Execution, ServerReportStatus> statusFunction,
+            Function<Execution, String> environmentFunction,
+            Consumer<Set<Long>> deleteFunction
         ) {
             this.maxExecutionsToKeep = maxExecutionsToKeep;
             this.baseObject = baseObjectSupplier;
@@ -198,7 +209,7 @@ public class PurgeServiceImpl implements PurgeService {
                     var executionsByEnvironment = executionsReports.stream()
                         .filter(executionsFilter)
                         .collect(groupingBy(environmentFunction));
-                    for (List<ExecutionReportType> executionsOneEnvironment : executionsByEnvironment.values()) {
+                    for (List<Execution> executionsOneEnvironment : executionsByEnvironment.values()) {
                         deletedExecutionsIds.addAll(
                             purgeOldestExecutionsFromOneEnvironment(
                                 handleExecutionsForOneEnvironment(executionsOneEnvironment)
@@ -220,12 +231,12 @@ public class PurgeServiceImpl implements PurgeService {
          *
          * @return The list of deleted executions ids.
          */
-        private Set<Long> purgeOldestExecutionsFromOneEnvironment(List<ExecutionReportType> executionsFromOneEnvironment) {
+        private Set<Long> purgeOldestExecutionsFromOneEnvironment(List<Execution> executionsFromOneEnvironment) {
             if (executionsFromOneEnvironment.size() <= maxExecutionsToKeep) {
                 return emptySet();
             }
 
-            List<ExecutionReportType> timeSortedExecutionsForOneEnvironment = executionsFromOneEnvironment.stream()
+            List<Execution> timeSortedExecutionsForOneEnvironment = executionsFromOneEnvironment.stream()
                 .sorted(comparing(executionDateFunction).reversed())
                 .toList();
 
@@ -240,12 +251,12 @@ public class PurgeServiceImpl implements PurgeService {
             );
 
             if (!deletedExecutionsIdsTmp.isEmpty()) {
-                deleteFunction.apply(deletedExecutionsIdsTmp);
+                deleteFunction.accept(deletedExecutionsIdsTmp);
             }
             return deletedExecutionsIdsTmp;
         }
 
-        private Collection<Long> findOldestExecutionsIdsWhileKeepingTheLastSuccess(List<ExecutionReportType> timeSortedExecutions) {
+        private Collection<Long> findOldestExecutionsIdsWhileKeepingTheLastSuccess(List<Execution> timeSortedExecutions) {
             Long youngestSuccessExecutionIdToDelete = youngestSuccessExecutionIdToDelete(timeSortedExecutions);
             return timeSortedExecutions.stream()
                 .skip(maxExecutionsToKeep)
@@ -255,7 +266,7 @@ public class PurgeServiceImpl implements PurgeService {
         }
 
         // The list parameter must be sorted from younger to oldest
-        private Long youngestSuccessExecutionIdToDelete(List<ExecutionReportType> timeSortedExecutions) {
+        private Long youngestSuccessExecutionIdToDelete(List<Execution> timeSortedExecutions) {
             boolean isSuccessExecutionKept = timeSortedExecutions.stream()
                 .limit(maxExecutionsToKeep)
                 .map(statusFunction)
@@ -279,7 +290,7 @@ public class PurgeServiceImpl implements PurgeService {
          *
          * @return Default implementation returns the same list.
          */
-        protected List<ExecutionReportType> handleExecutionsForOneEnvironment(List<ExecutionReportType> executionsFromOneEnvironment) {
+        protected List<Execution> handleExecutionsForOneEnvironment(List<Execution> executionsFromOneEnvironment) {
             return executionsFromOneEnvironment;
         }
 
@@ -289,7 +300,7 @@ public class PurgeServiceImpl implements PurgeService {
          * @param timeSortedExecutionsForOneEnvironment The current list of executions processed by {@link #purgeOldestExecutionsFromOneEnvironment(List)}, sorted by {@link #executionDateFunction}
          * @return Default implementation returns a {@link Collections#emptySet()}
          */
-        protected Collection<Long> findExtraExecutionsIdsToDelete(List<ExecutionReportType> timeSortedExecutionsForOneEnvironment) {
+        protected Collection<Long> findExtraExecutionsIdsToDelete(List<Execution> timeSortedExecutionsForOneEnvironment) {
             return emptySet();
         }
     }

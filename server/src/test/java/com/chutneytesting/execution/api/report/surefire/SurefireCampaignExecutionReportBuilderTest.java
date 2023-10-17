@@ -12,8 +12,8 @@ import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutio
 import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
-import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionCampaign;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import java.io.ByteArrayInputStream;
@@ -60,7 +60,7 @@ public class SurefireCampaignExecutionReportBuilderTest {
             .user("")
             .build();
 
-        ScenarioExecutionReportCampaign scenarioExecutionReportOK = new ScenarioExecutionReportCampaign("123", "test ♥ Scenario Title ok", success_execution.summary());
+        ScenarioExecutionCampaign scenarioExecutionReportOK = new ScenarioExecutionCampaign("123", "test ♥ Scenario Title ok", success_execution.summary());
         when(executionHistoryRepository.getExecution(scenarioExecutionReportOK.scenarioId, success_report.executionId)).thenReturn(success_execution);
 
         // And a failure scenario execution
@@ -83,15 +83,15 @@ public class SurefireCampaignExecutionReportBuilderTest {
             .user("")
             .build();
 
-        ScenarioExecutionReportCampaign scenarioExecutionReportKO = new ScenarioExecutionReportCampaign("123", "test Scenario Title ko", failure_execution.summary());
+        ScenarioExecutionCampaign scenarioExecutionReportKO = new ScenarioExecutionCampaign("123", "test Scenario Title ko", failure_execution.summary());
         when(executionHistoryRepository.getExecution(scenarioExecutionReportKO.scenarioId, failure_report.executionId)).thenReturn(failure_execution);
 
         // And a campaign report with previous scenario executions
-        CampaignExecutionReport campaignExecutionReport1 = new CampaignExecutionReport(1L, 1L, Arrays.asList(scenarioExecutionReportOK, scenarioExecutionReportKO), "test Campaign Title", false, "", null, null, "");
-        CampaignExecutionReport campaignExecutionReport2 = new CampaignExecutionReport(1L, 1L, Arrays.asList(scenarioExecutionReportOK, scenarioExecutionReportKO), "test Campaign Title 2", false, "", null, null, "");
+        CampaignExecution campaignExecution1 = new CampaignExecution(1L, 1L, Arrays.asList(scenarioExecutionReportOK, scenarioExecutionReportKO), "test Campaign Title", false, "", null, null, "");
+        CampaignExecution campaignExecution2 = new CampaignExecution(1L, 1L, Arrays.asList(scenarioExecutionReportOK, scenarioExecutionReportKO), "test Campaign Title 2", false, "", null, null, "");
 
         // When we zip it
-        byte[] zip = surefireCampaignExecutionReportBuilder.createReport(Lists.list(campaignExecutionReport1, campaignExecutionReport2));
+        byte[] zip = surefireCampaignExecutionReportBuilder.createReport(Lists.list(campaignExecution1, campaignExecution2));
 
         // Then it produces a zip with correct content
         ByteArrayInputStream bais = new ByteArrayInputStream(zip);

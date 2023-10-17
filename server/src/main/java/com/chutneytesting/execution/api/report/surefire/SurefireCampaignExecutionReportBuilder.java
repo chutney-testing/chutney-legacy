@@ -1,7 +1,7 @@
 package com.chutneytesting.execution.api.report.surefire;
 
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
-import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionCampaign;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -29,8 +29,8 @@ public class SurefireCampaignExecutionReportBuilder {
         this.surefireScenarioExecutionReportBuilder = surefireScenarioExecutionReportBuilder;
     }
 
-    public byte[] createReport(List<CampaignExecutionReport> campaignExecutionReports) {
-        List<CampaignReportFolder> campaignReportFolders = campaignExecutionReports.stream()
+    public byte[] createReport(List<CampaignExecution> campaignExecutions) {
+        List<CampaignReportFolder> campaignReportFolders = campaignExecutions.stream()
             .map(this::createReport)
             .collect(Collectors.toList());
         return marshall(campaignReportFolders);
@@ -77,11 +77,11 @@ public class SurefireCampaignExecutionReportBuilder {
         }
     }
 
-    private CampaignReportFolder createReport(CampaignExecutionReport campaignExecutionReport) {
-        return new CampaignReportFolder(campaignExecutionReport.campaignName, testsuite(campaignExecutionReport.scenarioExecutionReports()));
+    private CampaignReportFolder createReport(CampaignExecution campaignExecution) {
+        return new CampaignReportFolder(campaignExecution.campaignName, testsuite(campaignExecution.scenarioExecutionReports()));
     }
 
-    private Set<Testsuite> testsuite(List<ScenarioExecutionReportCampaign> scenarioExecutionHistory) {
+    private Set<Testsuite> testsuite(List<ScenarioExecutionCampaign> scenarioExecutionHistory) {
         return scenarioExecutionHistory
             .stream()
             .map(surefireScenarioExecutionReportBuilder::create)

@@ -2,7 +2,7 @@ package com.chutneytesting.campaign.domain;
 
 import static java.util.stream.Collectors.toList;
 
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import java.util.List;
 
 public class CampaignService {
@@ -13,14 +13,14 @@ public class CampaignService {
         this.campaignRepository = campaignRepository;
     }
 
-    public CampaignExecutionReport findByExecutionId(Long campaignExecutionId) {
-        CampaignExecutionReport report = campaignRepository.findByExecutionId(campaignExecutionId);
+    public CampaignExecution findByExecutionId(Long campaignExecutionId) {
+        CampaignExecution report = campaignRepository.findByExecutionId(campaignExecutionId);
         return report.withoutRetries();
     }
 
-    public List<CampaignExecutionReport> findExecutionsById(Long campaignId) {
+    public List<CampaignExecution> findExecutionsById(Long campaignId) {
         return campaignRepository.findExecutionsById(campaignId).stream()
-            .map(CampaignExecutionReport::withoutRetries)
+            .map(CampaignExecution::withoutRetries)
             .collect(toList());
     }
 }

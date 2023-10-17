@@ -26,8 +26,8 @@ import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundExce
 import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
-import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionCampaign;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
@@ -328,12 +328,12 @@ public class DatabaseExecutionHistoryRepositoryTest {
             CampaignEntity campaign = givenCampaign(scenarioEntity);
 
             ScenarioExecutionEntity scenarioExecutionOne = givenScenarioExecution(scenarioEntity.getId(), FAILURE);
-            ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenarioEntity.getId().toString(), scenarioEntity.getTitle(), scenarioExecutionOne.toDomain());
+            ScenarioExecutionCampaign scenarioExecutionOneReport = new ScenarioExecutionCampaign(scenarioEntity.getId().toString(), scenarioEntity.getTitle(), scenarioExecutionOne.toDomain());
             ScenarioExecutionEntity scenarioExecutionTwo = givenScenarioExecution(scenarioEntity.getId(), SUCCESS);
 
             Long campaignExecutionId = campaignExecutionDBRepository.generateCampaignExecutionId(campaign.id());
-            CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
-            campaignExecutionDBRepository.saveCampaignReport(campaign.id(), campaignExecutionReport);
+            CampaignExecution campaignExecution = new CampaignExecution(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
+            campaignExecutionDBRepository.saveCampaignExecution(campaign.id(), campaignExecution);
 
             // When
             List<ExecutionSummary> executions = sut.getExecutions(scenarioEntity.getId().toString());
@@ -356,12 +356,12 @@ public class DatabaseExecutionHistoryRepositoryTest {
             CampaignEntity campaign = givenCampaign(scenarioEntity);
 
             ScenarioExecutionEntity scenarioExecutionOne = givenScenarioExecution(scenarioEntity.getId(), FAILURE);
-            ScenarioExecutionReportCampaign scenarioExecutionOneReport = new ScenarioExecutionReportCampaign(scenarioEntity.getId().toString(), scenarioEntity.getTitle(), scenarioExecutionOne.toDomain());
+            ScenarioExecutionCampaign scenarioExecutionOneReport = new ScenarioExecutionCampaign(scenarioEntity.getId().toString(), scenarioEntity.getTitle(), scenarioExecutionOne.toDomain());
             givenScenarioExecution(scenarioEntity.getId(), SUCCESS);
 
             Long campaignExecutionId = campaignExecutionDBRepository.generateCampaignExecutionId(campaign.id());
-            CampaignExecutionReport campaignExecutionReport = new CampaignExecutionReport(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
-            campaignExecutionDBRepository.saveCampaignReport(campaign.id(), campaignExecutionReport);
+            CampaignExecution campaignExecution = new CampaignExecution(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
+            campaignExecutionDBRepository.saveCampaignExecution(campaign.id(), campaignExecution);
 
             // When
             ExecutionSummary executionSummary = sut.getExecutionSummary(scenarioExecutionOne.id());
@@ -376,27 +376,13 @@ public class DatabaseExecutionHistoryRepositoryTest {
         }
 
         @Test
-        void deletes_execution_by_id() {
-            String scenarioId = givenScenarioId();
-            Execution exec = sut.store(scenarioId, buildDetachedExecution(SUCCESS, "exec1", ""));
-
-            ExecutionSummary deletedExecution = sut.deleteExecution(exec.executionId());
-
-            assertThat(deletedExecution.executionId()).isEqualTo(exec.executionId());
-            assertThatThrownBy(() ->
-                sut.getExecutionSummary(exec.executionId())
-            ).isInstanceOf(ReportNotFoundException.class);
-        }
-
-        @Test
         void deletes_executions_by_ids() {
             String scenarioId = givenScenarioId();
             Execution exec1 = sut.store(scenarioId, buildDetachedExecution(SUCCESS, "exec1", ""));
             Execution exec2 = sut.store(scenarioId, buildDetachedExecution(SUCCESS, "exec2", ""));
 
-            Set<ExecutionSummary> deletedExecutions = sut.deleteExecutions(Set.of(exec1.executionId(), exec2.executionId()));
+            sut.deleteExecutions(Set.of(exec1.executionId(), exec2.executionId()));
 
-            assertThat(deletedExecutions).extracting(ExecutionSummary::executionId).containsExactlyInAnyOrder(exec1.executionId(), exec2.executionId());
             List.of(exec1.executionId(), exec2.executionId()).forEach(executionId -> {
                 assertThatThrownBy(() ->
                     sut.getExecutionSummary(executionId)

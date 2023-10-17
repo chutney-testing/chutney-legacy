@@ -20,7 +20,7 @@ import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class CampaignExecutionReport {
+public class CampaignExecution {
 
     // Mandatory
     public final Long executionId;
@@ -34,21 +34,21 @@ public class CampaignExecutionReport {
     // Not mandatory
     public final LocalDateTime startDate;
     private ServerReportStatus status;
-    private final List<ScenarioExecutionReportCampaign> scenarioExecutionReports;
+    private final List<ScenarioExecutionCampaign> scenarioExecutions;
     public final Long campaignId;
 
-    public CampaignExecutionReport(Long executionId,
-                                   String campaignName,
-                                   boolean partialExecution,
-                                   String executionEnvironment,
-                                   String dataSetId,
-                                   Integer dataSetVersion,
-                                   String userId) {
+    public CampaignExecution(Long executionId,
+                             String campaignName,
+                             boolean partialExecution,
+                             String executionEnvironment,
+                             String dataSetId,
+                             Integer dataSetVersion,
+                             String userId) {
         this.executionId = executionId;
         this.campaignId = null;
         this.partialExecution = partialExecution;
         this.executionEnvironment = executionEnvironment;
-        this.scenarioExecutionReports = new ArrayList<>();
+        this.scenarioExecutions = new ArrayList<>();
         this.campaignName = campaignName;
         this.startDate = now();
         this.status = RUNNING;
@@ -57,21 +57,21 @@ public class CampaignExecutionReport {
         this.userId = userId;
     }
 
-    public CampaignExecutionReport(Long executionId,
-                                   Long campaignId,
-                                   List<ScenarioExecutionReportCampaign> scenarioExecutionReports,
-                                   String campaignName,
-                                   boolean partialExecution,
-                                   String executionEnvironment,
-                                   String dataSetId,
-                                   Integer dataSetVersion,
-                                   String userId) {
+    public CampaignExecution(Long executionId,
+                             Long campaignId,
+                             List<ScenarioExecutionCampaign> scenarioExecutions,
+                             String campaignName,
+                             boolean partialExecution,
+                             String executionEnvironment,
+                             String dataSetId,
+                             Integer dataSetVersion,
+                             String userId) {
         this.executionId = executionId;
         this.campaignId = campaignId;
         this.campaignName = campaignName;
-        this.scenarioExecutionReports = scenarioExecutionReports;
-        this.startDate = findStartDate(scenarioExecutionReports);
-        this.status = findStatus(scenarioExecutionReports);
+        this.scenarioExecutions = scenarioExecutions;
+        this.startDate = findStartDate(scenarioExecutions);
+        this.status = findStatus(scenarioExecutions);
         this.partialExecution = partialExecution;
         this.executionEnvironment = executionEnvironment;
         this.dataSetId = ofNullable(dataSetId);
@@ -79,7 +79,7 @@ public class CampaignExecutionReport {
         this.userId = userId;
     }
 
-    CampaignExecutionReport(
+    CampaignExecution(
         Long executionId,
         Long campaignId,
         String campaignName,
@@ -90,7 +90,7 @@ public class CampaignExecutionReport {
         Optional<Integer> dataSetVersion,
         LocalDateTime startDate,
         ServerReportStatus status,
-        List<ScenarioExecutionReportCampaign> scenarioExecutionReports
+        List<ScenarioExecutionCampaign> scenarioExecutions
     ) {
         this.executionId = executionId;
         this.campaignId = campaignId;
@@ -101,21 +101,21 @@ public class CampaignExecutionReport {
         this.dataSetVersion = dataSetVersion;
         this.userId = userId;
 
-        if (scenarioExecutionReports == null) {
+        if (scenarioExecutions == null) {
             this.startDate = ofNullable(startDate).orElse(now());
             this.status = ofNullable(status).orElse(RUNNING);
-            this.scenarioExecutionReports = null;
+            this.scenarioExecutions = null;
         } else {
-            this.startDate = findStartDate(scenarioExecutionReports);
-            this.status = findStatus(scenarioExecutionReports);
-            this.scenarioExecutionReports = scenarioExecutionReports;
+            this.startDate = findStartDate(scenarioExecutions);
+            this.status = findStatus(scenarioExecutions);
+            this.scenarioExecutions = scenarioExecutions;
         }
     }
 
     public void initExecution(List<TestCase> testCases, String executionEnvironment, String userId) {
         testCases.forEach(testCase ->
-            this.scenarioExecutionReports.add(
-                new ScenarioExecutionReportCampaign(
+            this.scenarioExecutions.add(
+                new ScenarioExecutionCampaign(
                     testCase.id(),
                     testCase.metadata().title(),
                     ImmutableExecutionHistory.ExecutionSummary.builder()
@@ -132,11 +132,11 @@ public class CampaignExecutionReport {
     }
 
     public void startScenarioExecution(TestCase testCase, String executionEnvironment, String userId) throws UnsupportedOperationException {
-        OptionalInt indexOpt = IntStream.range(0, this.scenarioExecutionReports.size())
-            .filter(i -> this.scenarioExecutionReports.get(i).scenarioId.equals(testCase.id()))
+        OptionalInt indexOpt = IntStream.range(0, this.scenarioExecutions.size())
+            .filter(i -> this.scenarioExecutions.get(i).scenarioId.equals(testCase.id()))
             .findFirst();
-        this.scenarioExecutionReports.set(indexOpt.getAsInt(),
-            new ScenarioExecutionReportCampaign(
+        this.scenarioExecutions.set(indexOpt.getAsInt(),
+            new ScenarioExecutionCampaign(
                 testCase.id(),
                 testCase.metadata().title(),
                 ImmutableExecutionHistory.ExecutionSummary.builder()
@@ -152,14 +152,14 @@ public class CampaignExecutionReport {
                     .build()));
     }
 
-    public void endScenarioExecution(ScenarioExecutionReportCampaign scenarioExecutionReportCampaign) throws UnsupportedOperationException {
-        int index = this.scenarioExecutionReports.indexOf(scenarioExecutionReportCampaign);
-        this.scenarioExecutionReports.set(index, scenarioExecutionReportCampaign);
+    public void endScenarioExecution(ScenarioExecutionCampaign scenarioExecutionCampaign) throws UnsupportedOperationException {
+        int index = this.scenarioExecutions.indexOf(scenarioExecutionCampaign);
+        this.scenarioExecutions.set(index, scenarioExecutionCampaign);
     }
 
     public void endCampaignExecution() {
         if (!this.status.isFinal()) {
-            this.status = findStatus(this.scenarioExecutionReports);
+            this.status = findStatus(this.scenarioExecutions);
         }
     }
 
@@ -167,11 +167,11 @@ public class CampaignExecutionReport {
         return status;
     }
 
-    public List<ScenarioExecutionReportCampaign> scenarioExecutionReports() {
-        if (findStatus(scenarioExecutionReports).isFinal()) {
-            scenarioExecutionReports.sort(ScenarioExecutionReportCampaign.executionIdComparator());
+    public List<ScenarioExecutionCampaign> scenarioExecutionReports() {
+        if (findStatus(scenarioExecutions).isFinal()) {
+            scenarioExecutions.sort(ScenarioExecutionCampaign.executionIdComparator());
         }
-        return unmodifiableList(scenarioExecutionReports);
+        return unmodifiableList(scenarioExecutions);
     }
 
     public ServerReportStatus status() {
@@ -179,7 +179,7 @@ public class CampaignExecutionReport {
     }
 
     public long getDuration() {
-        Optional<LocalDateTime> latestExecutionEndDate = scenarioExecutionReports.stream()
+        Optional<LocalDateTime> latestExecutionEndDate = scenarioExecutions.stream()
             .map(report -> report.execution.time().plus(report.execution.duration(), ChronoUnit.MILLIS))
             .max(LocalDateTime::compareTo);
 
@@ -188,7 +188,7 @@ public class CampaignExecutionReport {
             .orElse(0L);
     }
 
-    private LocalDateTime findStartDate(List<ScenarioExecutionReportCampaign> scenarioExecutionReports) {
+    private LocalDateTime findStartDate(List<ScenarioExecutionCampaign> scenarioExecutionReports) {
         return scenarioExecutionReports.stream()
             .filter(Objects::nonNull)
             .map(report -> report.execution)
@@ -205,9 +205,9 @@ public class CampaignExecutionReport {
             .orElse(LocalDateTime.MIN);
     }
 
-    private ServerReportStatus findStatus(List<ScenarioExecutionReportCampaign> scenarioExecutionReports) {
+    private ServerReportStatus findStatus(List<ScenarioExecutionCampaign> scenarioExecutionReports) {
 
-        List<ScenarioExecutionReportCampaign> filteredReports = filterRetry(scenarioExecutionReports);
+        List<ScenarioExecutionCampaign> filteredReports = filterRetry(scenarioExecutionReports);
 
         ServerReportStatus foundStatus = filteredReports.stream()
             .map(report -> report.execution)
@@ -220,7 +220,7 @@ public class CampaignExecutionReport {
         return foundStatus;
     }
 
-    private List<ScenarioExecutionReportCampaign> filterRetry(List<ScenarioExecutionReportCampaign> scenarioExecutionReports) {
+    private List<ScenarioExecutionCampaign> filterRetry(List<ScenarioExecutionCampaign> scenarioExecutionReports) {
         return scenarioExecutionReports.stream()
             .filter(Objects::nonNull)
             .collect(Collectors.groupingBy(s -> s.scenarioId))
@@ -229,7 +229,7 @@ public class CampaignExecutionReport {
             .toList();
     }
 
-    public CampaignExecutionReport withoutRetries() {
+    public CampaignExecution withoutRetries() {
         return CampaignExecutionReportBuilder.builder()
             .setExecutionId(executionId)
             .setCampaignId(campaignId)
@@ -241,13 +241,13 @@ public class CampaignExecutionReport {
             .setUserId(userId)
             .setStartDate(startDate)
             .setStatus(status)
-            .setScenarioExecutionReport(filterRetry(scenarioExecutionReports))
+            .setScenarioExecutionReport(filterRetry(scenarioExecutions))
             .build();
     }
 
     @Override
     public String toString() {
-        return "CampaignExecutionReport{" +
+        return "CampaignExecution{" +
             "executionId=" + executionId +
             '}';
     }
@@ -256,7 +256,7 @@ public class CampaignExecutionReport {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CampaignExecutionReport that = (CampaignExecutionReport) o;
+        CampaignExecution that = (CampaignExecution) o;
         return Objects.equals(executionId, that.executionId);
     }
 
