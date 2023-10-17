@@ -16,14 +16,14 @@ export class ReportPreviewComponent {
         this.execution = null;
         this.scenarioName = '';
         file.text()
-        .then( data =>  {
-                this.execution = Execution.deserialize(JSON.parse(data));    
+            .then(data => {
+                this.execution = Execution.deserialize(JSON.parse(data));
                 this.scenarioName = JSON.parse(this.execution.report).scenarioName;
                 this.errorMessage = null;
             }
-        )
-        .catch( error => {
-            this.errorMessage = error;
-        });
+            )
+            .catch(error => {
+                this.errorMessage = error;
+            });
     }
 }
