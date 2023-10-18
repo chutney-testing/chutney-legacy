@@ -16,19 +16,19 @@ import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 
-public class SeleniumFirefoxInitAction extends AbstractSeleniumDriverInitAction {
+public class SeleniumFirefoxDriverInitAction extends AbstractSeleniumDriverInitAction {
 
     private final String firefoxProfile;
     private final Map<String, Object> firefoxPreferences;
 
-    public SeleniumFirefoxInitAction(FinallyActionRegistry finallyActionRegistry,
-                                     Logger logger,
-                                     @Input("hub") String hubUrl,
-                                     @Input("headless") Boolean headless,
-                                     @Input("driverPath") String driverPath,
-                                     @Input("browserPath") String browserPath,
-                                     @Input("firefoxProfile")String firefoxProfile,
-                                     @Input("firefoxPreferences")Map<String, Object> firefoxPreferences) {
+    public SeleniumFirefoxDriverInitAction(FinallyActionRegistry finallyActionRegistry,
+                                           Logger logger,
+                                           @Input("hub") String hubUrl,
+                                           @Input("headless") Boolean headless,
+                                           @Input("driverPath") String driverPath,
+                                           @Input("browserPath") String browserPath,
+                                           @Input("firefoxProfile")String firefoxProfile,
+                                           @Input("firefoxPreferences")Map<String, Object> firefoxPreferences) {
         super(finallyActionRegistry, logger, hubUrl, headless, driverPath, browserPath);
         this.firefoxProfile = firefoxProfile;
         this.firefoxPreferences = ofNullable(firefoxPreferences).orElse(emptyMap());
@@ -59,6 +59,6 @@ public class SeleniumFirefoxInitAction extends AbstractSeleniumDriverInitAction 
 
     @Override
     protected Class<?> getChildClass() {
-        return SeleniumFirefoxInitAction.class;
+        return SeleniumFirefoxDriverInitAction.class;
     }
 }

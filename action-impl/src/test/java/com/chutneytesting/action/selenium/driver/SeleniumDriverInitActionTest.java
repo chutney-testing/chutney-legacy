@@ -40,7 +40,7 @@ public class SeleniumDriverInitActionTest {
         TestLogger logger = new TestLogger();
         TestFinallyActionRegistry finallyActionRegistry = spy(new TestFinallyActionRegistry());
 
-        SeleniumFirefoxInitAction localFirefoxAction = spy(new SeleniumFirefoxInitAction(finallyActionRegistry, logger, "", false, "driverPath", "browserPath", null, null));
+        SeleniumFirefoxDriverInitAction localFirefoxAction = spy(new SeleniumFirefoxDriverInitAction(finallyActionRegistry, logger, "", false, "driverPath", "browserPath", null, null));
         SeleniumChromeDriverInitAction localChromeAction = spy(new SeleniumChromeDriverInitAction(finallyActionRegistry, logger, "", false, "driverPath", "browserPath", null));
 
         WebDriver firefoxDriver = mock(FirefoxDriver.class);
@@ -51,7 +51,7 @@ public class SeleniumDriverInitActionTest {
         doReturn(chromeDriver)
             .when(localChromeAction).localWebDriver(any());
 
-        SeleniumFirefoxInitAction remoteFirefoxAction = spy(new SeleniumFirefoxInitAction(finallyActionRegistry, logger, "http://hub:99", false, "", "", null, null));
+        SeleniumFirefoxDriverInitAction remoteFirefoxAction = spy(new SeleniumFirefoxDriverInitAction(finallyActionRegistry, logger, "http://hub:99", false, "", "", null, null));
         SeleniumChromeDriverInitAction remoteChromeAction = spy(new SeleniumChromeDriverInitAction(finallyActionRegistry, logger, "http://hub:99", false, "", "", null));
 
         RemoteWebDriver firefoxRemoteWebDriver = mock(RemoteWebDriver.class);
@@ -106,11 +106,11 @@ public class SeleniumDriverInitActionTest {
     }
 
     public static Stream<Arguments> parametersForshould_retun_error_when_wrong_input() {
-        Action everyInputEmpty = new SeleniumFirefoxInitAction(mock(FinallyActionRegistry.class), null, "", false, "", "", null, null);
+        Action everyInputEmpty = new SeleniumFirefoxDriverInitAction(mock(FinallyActionRegistry.class), null, "", false, "", "", null, null);
         Action driverPathOKBrowserPathEmpty = new SeleniumChromeDriverInitAction(mock(FinallyActionRegistry.class), null, "", false, "driverPath", "", null);
         Action driverPathEmptyBrowserPathOK = new SeleniumChromeDriverInitAction(mock(FinallyActionRegistry.class), null, "", false, "", "browserPath", null);
 
-        Action everyInputNull = new SeleniumFirefoxInitAction(mock(FinallyActionRegistry.class), null, null, false, null, null, null, null);
+        Action everyInputNull = new SeleniumFirefoxDriverInitAction(mock(FinallyActionRegistry.class), null, null, false, null, null, null, null);
         Action driverPathOKBrowserPathNull = new SeleniumChromeDriverInitAction(mock(FinallyActionRegistry.class), null, null, false, "driverPath", null, null);
         Action driverPathNullBrowserPathOK = new SeleniumChromeDriverInitAction(mock(FinallyActionRegistry.class), null, null, false, null, "", null);
 
