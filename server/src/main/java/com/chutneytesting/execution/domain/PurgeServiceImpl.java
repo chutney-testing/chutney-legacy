@@ -210,14 +210,20 @@ public class PurgeServiceImpl implements PurgeService {
                         .filter(executionsFilter)
                         .collect(groupingBy(environmentFunction));
                     for (List<Execution> executionsOneEnvironment : executionsByEnvironment.values()) {
-                        deletedExecutionsIds.addAll(
-                            purgeOldestExecutionsFromOneEnvironment(
-                                handleExecutionsForOneEnvironment(executionsOneEnvironment)
-                            )
-                        );
+                        purgeOneBaseObjectExecutionsForOneEnvironment(executionsOneEnvironment, deletedExecutionsIds);
                     }
                 });
             return deletedExecutionsIds;
+        }
+
+        private void purgeOneBaseObjectExecutionsForOneEnvironment(List<Execution> executionsOneEnvironment, Set<Long> deletedExecutionsIds) {
+            try {
+                List<Execution> executionsToDelete = handleExecutionsForOneEnvironment(executionsOneEnvironment);
+                Set<Long> deleteExecutionsIds = purgeOldestExecutionsFromOneEnvironment(executionsToDelete);
+                deletedExecutionsIds.addAll(deleteExecutionsIds);
+            } catch (Exception e) {
+                LOGGER.error("Cannot purge executions {}", executionsOneEnvironment, e);
+            }
         }
 
         /**
