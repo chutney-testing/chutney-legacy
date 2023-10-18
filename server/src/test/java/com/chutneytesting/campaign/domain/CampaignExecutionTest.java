@@ -1,6 +1,9 @@
 package com.chutneytesting.campaign.domain;
 
 import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.FAILURE;
+import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.NOT_EXECUTED;
+import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.RUNNING;
+import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.STOPPED;
 import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.SUCCESS;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -69,7 +72,7 @@ public class CampaignExecutionTest {
         CampaignExecution campaignReport = new CampaignExecution(1L, "...", false, "", null, null, "");
         // Then
         assertThat(campaignReport.startDate).isAfter(beforeInstanciation);
-        assertThat(campaignReport.status()).isEqualTo(ServerReportStatus.RUNNING);
+        assertThat(campaignReport.status()).isEqualTo(RUNNING);
     }
 
     @Test
@@ -77,7 +80,7 @@ public class CampaignExecutionTest {
         // When
         CampaignExecution campaignReport = new CampaignExecution(1L, 1L, emptyList(), "...", false, "", null, null, "");
         // Then
-        assertThat(campaignReport.status()).isEqualTo(ServerReportStatus.SUCCESS);
+        assertThat(campaignReport.status()).isEqualTo(SUCCESS);
     }
 
     @Test
@@ -86,7 +89,7 @@ public class CampaignExecutionTest {
         ScenarioExecutionCampaign execution_noStatus = new ScenarioExecutionCampaign("1", "...", mock(ExecutionHistory.ExecutionSummary.class));
 
         ExecutionHistory.ExecutionSummary execution_SUCESS = mock(ExecutionHistory.ExecutionSummary.class);
-        when(execution_SUCESS.status()).thenReturn(ServerReportStatus.SUCCESS);
+        when(execution_SUCESS.status()).thenReturn(SUCCESS);
         ScenarioExecutionCampaign scenarioReport_SUCCESS = new ScenarioExecutionCampaign("2", "...", execution_SUCESS);
 
         ExecutionHistory.ExecutionSummary execution_FAILURE = mock(ExecutionHistory.ExecutionSummary.class);
@@ -115,7 +118,7 @@ public class CampaignExecutionTest {
         assertThat(startedScenarioExecution.scenarioName).isEqualTo(testCase.metadata().title());
         assertThat(startedScenarioExecution.execution.executionId()).isEqualTo(-1L);
         assertThat(startedScenarioExecution.execution.time()).isAfter(beforeStartExecution);
-        assertThat(startedScenarioExecution.execution.status()).isEqualTo(ServerReportStatus.NOT_EXECUTED);
+        assertThat(startedScenarioExecution.execution.status()).isEqualTo(NOT_EXECUTED);
         assertThat(startedScenarioExecution.execution.environment()).isEqualTo("env");
         assertThat(startedScenarioExecution.execution.datasetId()).isEqualTo(campaignReport.dataSetId);
         assertThat(startedScenarioExecution.execution.datasetVersion()).isEqualTo(campaignReport.dataSetVersion);
@@ -131,7 +134,7 @@ public class CampaignExecutionTest {
         assertThat(startedScenarioExecution.scenarioName).isEqualTo(testCase.metadata().title());
         assertThat(startedScenarioExecution.execution.executionId()).isEqualTo(-1L);
         assertThat(startedScenarioExecution.execution.time()).isAfter(beforeStartExecution);
-        assertThat(startedScenarioExecution.execution.status()).isEqualTo(ServerReportStatus.RUNNING);
+        assertThat(startedScenarioExecution.execution.status()).isEqualTo(RUNNING);
         assertThat(startedScenarioExecution.execution.environment()).isEqualTo("env");
         assertThat(startedScenarioExecution.execution.user()).isEqualTo(campaignReport.userId);
         assertThat(startedScenarioExecution.execution.datasetId()).isEqualTo(campaignReport.dataSetId);
@@ -146,21 +149,21 @@ public class CampaignExecutionTest {
         campaignReport.initExecution(singletonList(testCase), "env", "user");
         campaignReport.startScenarioExecution(testCase, "env", "user");
 
-        ScenarioExecutionCampaign scenarioReport_SUCCESS = buildScenarioReportFromMockedExecution(testCase.id(), testCase.metadata().title(), ServerReportStatus.SUCCESS);
+        ScenarioExecutionCampaign scenarioReport_SUCCESS = buildScenarioReportFromMockedExecution(testCase.id(), testCase.metadata().title(), SUCCESS);
 
         // When
         campaignReport.endScenarioExecution(scenarioReport_SUCCESS);
 
         // Then
         assertThat(campaignReport.scenarioExecutionReports()).hasSize(1);
-        assertThat(campaignReport.scenarioExecutionReports().get(0).execution.status()).isEqualTo(ServerReportStatus.SUCCESS);
+        assertThat(campaignReport.scenarioExecutionReports().get(0).execution.status()).isEqualTo(SUCCESS);
     }
 
     @Test
     public void should_compute_status_from_scenarios_when_end_campaign_execution() {
         // Given
         CampaignExecution campaignReport = new CampaignExecution(1L, "...", false, "", null, null, "");
-        addScenarioExecutions(campaignReport, "1", "title1", ServerReportStatus.SUCCESS);
+        addScenarioExecutions(campaignReport, "1", "title1", SUCCESS);
         addScenarioExecutions(campaignReport, "2", "title2", FAILURE);
 
         // When
@@ -175,15 +178,15 @@ public class CampaignExecutionTest {
     public void should_calculate_stop_final_status_when_having_not_executed_scenario() {
         // Given
         CampaignExecution campaignReport = new CampaignExecution(1L, "...", false, "", null, null, "");
-        addScenarioExecutions(campaignReport, "1", "title1", ServerReportStatus.SUCCESS);
-        addScenarioExecutions(campaignReport, "2", "title2", ServerReportStatus.NOT_EXECUTED);
+        addScenarioExecutions(campaignReport, "1", "title1", SUCCESS);
+        addScenarioExecutions(campaignReport, "2", "title2", NOT_EXECUTED);
 
         // When
         campaignReport.endCampaignExecution();
 
         // Then
         assertThat(campaignReport.scenarioExecutionReports()).hasSize(2);
-        assertThat(campaignReport.status()).isEqualTo(ServerReportStatus.STOPPED);
+        assertThat(campaignReport.status()).isEqualTo(STOPPED);
     }
 
     @Test
@@ -289,7 +292,7 @@ public class CampaignExecutionTest {
 
         campaignReport.endScenarioExecution(scenarioReport_FAILURE);
 
-        assertThat(campaignReport.status()).isEqualTo(ServerReportStatus.RUNNING);
+        assertThat(campaignReport.status()).isEqualTo(RUNNING);
     }
 
     private ScenarioExecutionCampaign buildScenarioReportFromMockedExecution(String scenarioId, String scenarioTitle, ServerReportStatus scenarioExecutionStatus) {
