@@ -29,7 +29,7 @@ public class SeleniumChromeDriverInitAction extends AbstractSeleniumDriverInitAc
     }
 
     @Override
-    protected MutableCapabilities buildWebDriver() {
+    protected MutableCapabilities buildOptions() {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
         if (headless) {

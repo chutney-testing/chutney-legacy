@@ -24,7 +24,7 @@ public class SeleniumGenericDriverInitAction extends AbstractSeleniumDriverInitA
     }
 
     @Override
-    protected MutableCapabilities buildWebDriver() {
+    protected MutableCapabilities buildOptions() {
         Map<String, Object> readFromJson;
         try {
             readFromJson = mapper.readValue(seleniumConfigurationAsJson, new TypeReference<>() {

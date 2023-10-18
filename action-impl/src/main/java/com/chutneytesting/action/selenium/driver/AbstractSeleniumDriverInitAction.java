@@ -47,7 +47,7 @@ public abstract class AbstractSeleniumDriverInitAction implements Action {
         this.browserPath = browserPath;
     }
 
-    protected abstract MutableCapabilities buildWebDriver();
+    protected abstract MutableCapabilities buildOptions();
 
     protected abstract WebDriver localWebDriver(Capabilities capabilities);
 
@@ -62,16 +62,16 @@ public abstract class AbstractSeleniumDriverInitAction implements Action {
 
     @Override
     public ActionExecutionResult execute() {
-        MutableCapabilities capabilities = buildWebDriver();
+        MutableCapabilities capabilities = buildOptions();
 
-        WebDriver webDriver = createRemoteWebDriver(capabilities);
+        WebDriver webDriver = createWebDriver(capabilities);
         configureWebDriver(webDriver);
         logger.info("RemoteWebDriver created : " + webDriver);
         createQuitFinallyAction(webDriver);
         return ActionExecutionResult.ok(toOutputs(webDriver));
     }
 
-    WebDriver createRemoteWebDriver(Capabilities capabilities) {
+    WebDriver createWebDriver(Capabilities capabilities) {
         try {
             if (isNotEmpty(hubUrl)) {
                 return new RemoteWebDriver(new URL(hubUrl), capabilities);

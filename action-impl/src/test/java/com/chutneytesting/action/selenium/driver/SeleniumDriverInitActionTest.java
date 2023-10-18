@@ -57,16 +57,16 @@ public class SeleniumDriverInitActionTest {
         RemoteWebDriver firefoxRemoteWebDriver = mock(RemoteWebDriver.class);
         RemoteWebDriver chromeRemoteWebDriver = mock(RemoteWebDriver.class);
         doReturn(firefoxRemoteWebDriver)
-            .when(remoteFirefoxAction).createRemoteWebDriver(any());
+            .when(remoteFirefoxAction).createWebDriver(any());
         doReturn(chromeRemoteWebDriver)
-            .when(remoteChromeAction).createRemoteWebDriver(any());
+            .when(remoteChromeAction).createWebDriver(any());
 
         String firefoxJsonConfiguration ="{\"acceptInsecureCerts\":true,\"browserName\":\"firefox\",\"moz:debuggerAddress\":true,\"moz:firefoxOptions\":{\"args\":[\"-headless\"],\"binary\":\"browserPath\",\"log\":{\"level\":\"debug\"}}}";
         SeleniumGenericDriverInitAction firefoxGenericSeleniumAction = spy(new SeleniumGenericDriverInitAction(finallyActionRegistry, logger, "http://hub:99", firefoxJsonConfiguration));
 
         RemoteWebDriver genericFirefoxRemoteWebDriver = mock(RemoteWebDriver.class);
         doReturn(genericFirefoxRemoteWebDriver)
-            .when(firefoxGenericSeleniumAction).createRemoteWebDriver(any());
+            .when(firefoxGenericSeleniumAction).createWebDriver(any());
 
         return Stream.of(
             of(localFirefoxAction, firefoxDriver, finallyActionRegistry),

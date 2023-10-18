@@ -19,7 +19,7 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 public class SeleniumFirefoxDriverInitAction extends AbstractSeleniumDriverInitAction {
 
     private final String firefoxProfile;
-    private final Map<String, Object> firefoxPreferences;
+    private final Map<String, String> firefoxPreferences;
 
     public SeleniumFirefoxDriverInitAction(FinallyActionRegistry finallyActionRegistry,
                                            Logger logger,
@@ -28,14 +28,14 @@ public class SeleniumFirefoxDriverInitAction extends AbstractSeleniumDriverInitA
                                            @Input("driverPath") String driverPath,
                                            @Input("browserPath") String browserPath,
                                            @Input("firefoxProfile")String firefoxProfile,
-                                           @Input("firefoxPreferences")Map<String, Object> firefoxPreferences) {
+                                           @Input("firefoxPreferences")Map<String, String> firefoxPreferences) {
         super(finallyActionRegistry, logger, hubUrl, headless, driverPath, browserPath);
         this.firefoxProfile = firefoxProfile;
         this.firefoxPreferences = ofNullable(firefoxPreferences).orElse(emptyMap());
     }
 
     @Override
-    protected MutableCapabilities buildWebDriver() {
+    protected MutableCapabilities buildOptions() {
         FirefoxOptions firefoxOptions = new FirefoxOptions();
         firefoxOptions.addArguments("-headless");
         firefoxOptions.setLogLevel(FirefoxDriverLogLevel.FATAL);
