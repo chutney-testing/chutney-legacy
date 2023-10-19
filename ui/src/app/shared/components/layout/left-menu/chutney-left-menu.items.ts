@@ -76,6 +76,12 @@ export const allMenuItems: MenuItem [] = [
                 link: '/configurationAgent',
                 iconClass: 'fa fa-bars',
                 authorizations: [Authorization.ADMIN_ACCESS]
+            },
+            {
+                label: 'menu.principal.previewReport',
+                link: '/scenario/report-preview',
+                iconClass: 'fa fa-clipboard',
+                authorizations: [Authorization.ADMIN_ACCESS]
             }
         ]
     }

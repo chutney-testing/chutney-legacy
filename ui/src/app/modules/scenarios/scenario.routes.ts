@@ -11,6 +11,7 @@ import {
 } from '@modules/scenarios/components/execution/sub/right-side-bar/scenario-execution-menu.component';
 import { FeaturesGuard } from '@core/guards/features.guard';
 import { FeatureName } from '@core/feature/feature.model';
+import { ReportPreviewComponent } from './components/execution/preview/report-preview.component';
 
 export const scenarioRoute: Routes = [
 
@@ -49,5 +50,11 @@ export const scenarioRoute: Routes = [
         canDeactivate: [CanDeactivateGuard],
         canActivate: [AuthGuard],
         data: {'authorizations': [Authorization.SCENARIO_WRITE]}
+    },
+    {
+        path: 'report-preview',
+        component: ReportPreviewComponent,
+        canActivate: [AuthGuard],
+        data: {'authorizations': [Authorization.ADMIN_ACCESS]}
     }
 ];

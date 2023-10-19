@@ -1,0 +1,9 @@
+<chutney-import-button label="admin.previewReport.load.title" acceptedTypes="application/json" (submitEvent)="preview($event)"></chutney-import-button>
+<div *ngIf="errorMessage" class="alert alert-dismissible alert-danger mt-4">
+    <button type="button" class="btn-close" data-bs-dismiss="alert" (click)="errorMessage = null"></button>
+    {{ errorMessage }}
+</div>
+<ng-container *ngIf="execution">
+    <h5 [innerHTML]="scenarioName"></h5>
+    <chutney-scenario-execution [execution]="execution"></chutney-scenario-execution>
+</ng-container>

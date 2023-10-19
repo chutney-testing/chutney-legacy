@@ -40,6 +40,7 @@ import {
     ScenarioExecutionMenuComponent
 } from '@modules/scenarios/components/execution/sub/right-side-bar/scenario-execution-menu.component';
 import { StepDetailsComponent } from './components/execution/detail/sub/step-details/step-details.component';
+import { ReportPreviewComponent } from './components/execution/preview/report-preview.component';
 const ROUTES = [
     ...scenarioRoute
 ];
@@ -80,7 +81,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         GwtReadComponent,
         AuthoringInfoComponent,
         EditionInfoComponent,
-        ScenarioExecutionsComponent
+        ScenarioExecutionsComponent,
+        ReportPreviewComponent
     ],
     providers: [
         {
