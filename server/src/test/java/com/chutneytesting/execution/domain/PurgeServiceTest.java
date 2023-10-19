@@ -752,7 +752,7 @@ public class PurgeServiceTest {
             ExecutionSummary se54_ce8 = scenarioExecutionBuilder().executionId(37L).time(now.minusSeconds(195)).environment(env2).build();
             ExecutionSummary se55_ce9 = scenarioExecutionBuilder().executionId(36L).time(now.minusSeconds(205)).environment(env2).status(FAILURE).build();
             ExecutionSummary se56 = scenarioExecutionBuilder().executionId(35L).time(now.minusSeconds(215)).environment(env1).status(FAILURE).build();
-            ExecutionSummary se57 = scenarioExecutionBuilder().executionId(34L).time(now.minusSeconds(225)).environment(env1).build();
+            ExecutionSummary se57_ce14 = scenarioExecutionBuilder().executionId(34L).time(now.minusSeconds(225)).environment(env1).build();
             ExecutionSummary se58_ce14 = scenarioExecutionBuilder().executionId(33L).time(now.minusSeconds(235)).environment(env1).status(FAILURE).build();
             ExecutionSummary se59_ce18 = scenarioExecutionBuilder().executionId(32L).time(now.minusSeconds(245)).environment(env2).build();
             ExecutionSummary se60 = scenarioExecutionBuilder().executionId(31L).time(now.minusSeconds(255)).environment(env3).build();
@@ -775,7 +775,7 @@ public class PurgeServiceTest {
             CampaignExecution ce11 = buildCampaignExecution(8L, campaignId2, tuple(scenarioId1, se8_ce11), tuple(scenarioId2, se35_ce11));
             CampaignExecution ce12 = buildCampaignExecution(7L, campaignId2, true, tuple(scenarioId1, se16_ce12)); // manual-retry (partial execution) of ce13
             CampaignExecution ce13 = buildCampaignExecution(6L, campaignId2, tuple(scenarioId1, se17_ce13), tuple(scenarioId2, se37_ce13));
-            CampaignExecution ce14 = buildCampaignExecution(5L, campaignId2, tuple(scenarioId1, se26_ce14), tuple(scenarioId2, se58_ce14), tuple(scenarioId2, se58_ce14)); // auto-retry
+            CampaignExecution ce14 = buildCampaignExecution(5L, campaignId2, tuple(scenarioId1, se26_ce14), tuple(scenarioId2, se57_ce14), tuple(scenarioId2, se58_ce14)); // auto-retry
             // Second campaign executions - env2 (all failures except last one)
             CampaignExecution ce15 = buildCampaignExecution(4L, campaignId2, tuple(scenarioId1, se9_ce15), tuple(scenarioId2, se39_ce15));
             CampaignExecution ce16 = buildCampaignExecution(3L, campaignId2, tuple(scenarioId1, se11_ce16), tuple(scenarioId2, se43_ce16));
@@ -804,10 +804,10 @@ public class PurgeServiceTest {
                 se20, se21, se22,
                 se23_ce18.withCampaignReport(ce18),
                 se24, se25,
-                se26_ce14.withCampaignReport(ce14),
+                se26_ce14, // se26_ce14.withCampaignReport(ce14), after campaign deletion
                 se27,
-                se28_ce9.withCampaignReport(ce9),
-                se29_ce4.withCampaignReport(ce4)
+                se28_ce9, // se28_ce9.withCampaignReport(ce9), after campaign deletion
+                se29_ce4 // se29_ce4.withCampaignReport(ce4) after campaign deletion
             ));
             when(executionsRepository.getExecutions(scenarioId2)).thenReturn(List.of(
                 se30_ce1.withCampaignReport(ce1),
@@ -827,13 +827,14 @@ public class PurgeServiceTest {
                 se51,
                 se52_ce17.withCampaignReport(ce17),
                 se53,
-                se54_ce8.withCampaignReport(ce8),
-                se55_ce9.withCampaignReport(ce9),
-                se56, se57,
-                se58_ce14.withCampaignReport(ce14),
+                se54_ce8, // se54_ce8.withCampaignReport(ce8), after campaign deletion
+                se55_ce9, // se55_ce9.withCampaignReport(ce9), after campaign deletion
+                se56,
+                se57_ce14, // se57_ce14.withCampaignReport(ce14), after campaign deletion
+                se58_ce14, // se58_ce14.withCampaignReport(ce14), after campaign deletion
                 se59_ce18.withCampaignReport(ce18),
                 se60,
-                se61_ce4.withCampaignReport(ce4)
+                se61_ce4 // se61_ce4.withCampaignReport(ce4) after campaign deletion
             ));
 
             // Campaigns executions stub
@@ -854,11 +855,13 @@ public class PurgeServiceTest {
             verify(campaignExecutionRepository).deleteExecutions(Set.of(15L)); // first campaign env1
             verify(campaignExecutionRepository).deleteExecutions(Set.of(10L, 11L)); // first campaign env2
             verify(campaignExecutionRepository).deleteExecutions(Set.of(5L)); // second campaign env1
-            verify(executionsRepository, times(2)).deleteExecutions(anySet());
-            verify(executionsRepository).deleteExecutions(Set.of(31L)); // second scenario env3
-            verify(executionsRepository).deleteExecutions(Set.of(34L)); // second scenario env1
-            assertThat(report.scenariosExecutionsIds()).containsExactlyInAnyOrder(31L, 34L);
             assertThat(report.campaignsExecutionsIds()).containsExactlyInAnyOrder(5L, 10L, 11L, 15L);
+
+            verify(executionsRepository, times(3)).deleteExecutions(anySet());
+            verify(executionsRepository).deleteExecutions(Set.of(31L)); // second scenario env3
+            verify(executionsRepository).deleteExecutions(Set.of(30L, 33L, 34L)); // second scenario env1
+            verify(executionsRepository).deleteExecutions(Set.of(2L)); // first scenario env2
+            assertThat(report.scenariosExecutionsIds()).containsExactlyInAnyOrder(2L, 30L, 31L, 33L, 34L);
         }
     }
 
