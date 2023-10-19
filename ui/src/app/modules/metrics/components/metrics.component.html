@@ -1,0 +1,81 @@
+<div class="row justify-content-md-end py-3">
+    <div class="col-6">
+        <chutney-forms-search-field [id]="'metrics-search'" [placeholder]="'metrics.search.placeholder' | translate"
+            [searchInput]="textFilter" (searchInputEvent)="updateTextFilter($event)"></chutney-forms-search-field>
+    </div>
+    <div class="col-3">
+        <div class="form-check form-switch float-end">
+            <input class="form-check-input" type="checkbox" id="autoRefreshSwitch" (change)="onRefreshSwitchChange()">
+            <label class="form-check-label" for="autoRefreshSwitch">Actualisation automatique (10s)</label>
+        </div>
+    </div>
+
+</div>
+<div>
+    <ul ngbNav #nav="ngbNav" [activeId]="activeTab" (navChange)="onTabChange($event)" class="nav-tabs">
+        <li [ngbNavItem]="'chutneyMetrics'" [destroyOnHide]="false">
+            <a ngbNavLink>
+                {{'metrics.tab.chutney' | translate}}
+            </a>
+            <ng-template ngbNavContent>
+                <div class="row">
+                    <table class="table table-sm table-striped table-hover">
+                        <thead>
+                            <tr class="headers-labels">
+                                <th>
+                                    <span>{{'metrics.list.header.name' | translate}}</span>
+                                </th>
+                                <th>
+                                    <span>{{'metrics.list.header.tags' | translate}}</span>
+                                </th>
+                                <th>
+                                    <span>{{'metrics.list.header.value' | translate}}</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let metric of filtredChutneyMetrics">
+                                <td>{{metric.name}}</td>
+                                <td>{{metric.tags}}</td>
+                                <td>{{metric.value}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-template>
+        </li>
+        <li [ngbNavItem]="'globalMetrics'" [destroyOnHide]="false">
+            <a ngbNavLink>
+                {{'metrics.tab.global' | translate}}
+            </a>
+            <ng-template ngbNavContent>
+                <div class="row">
+                    <table class="metric-table table table-responsive table-sm table-striped table-hover">
+                        <thead>
+                            <tr class="headers-labels">
+                                <th scope="col">
+                                    <span>{{'metrics.list.header.name' | translate}}</span>
+                                </th>
+                                <th scope="col">
+                                    <span>{{'metrics.list.header.tags' | translate}}</span>
+                                </th>
+                                <th scope="col">
+                                    <span>{{'metrics.list.header.value' | translate}}</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let metric of filtredMetrics">
+                                <td>{{metric.name}}</td>
+                                <td>{{metric.tags}}</td>
+                                <td>{{metric.value}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-template>
+        </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="mt-2">
+    </div>
+</div>

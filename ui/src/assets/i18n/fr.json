@@ -22,7 +22,8 @@
             "lightMode": "Thème clair",
             "feedback": "Donner un avis",
             "notif": "Notifications",
-            "previewReport": "Visualiser une exécution"
+            "previewReport": "Visualiser une exécution",
+            "metrics": "Metriques"
         }
     },
     "scenarios": {
@@ -130,7 +131,7 @@
                     }
                 }
             },
-            "authoring" : {
+            "authoring": {
                 "author": "Auteur",
                 "created": "Création",
                 "update": "Mise à jour"
@@ -247,10 +248,10 @@
             "deletion.suffix": " ?"
         },
         "scheduling": {
-            "title" : "Planifier une nouvelle execution de campagne",
+            "title": "Planifier une nouvelle execution de campagne",
             "schedule": "Planifier",
             "back": "Retour",
-            "campaign" : "Campagne",
+            "campaign": "Campagne",
             "schedulingDate": "Date planifiée",
             "frequency": "Frequence",
             "required": {
@@ -368,7 +369,6 @@
             "ongoing": {
                 "saving": "Sauvegarde ..."
             },
-
             "search": "Rechercher",
             "global-search": "Recherche globale",
             "add": "Ajouter",
@@ -395,7 +395,6 @@
             "pause": "Suspendre",
             "help": "Aide",
             "select": "Sélectionner",
-
             "done": {
                 "saved": "Sauvegarde réalisée"
             }
@@ -415,7 +414,7 @@
             "descending": "Descendant"
         },
         "confirm": {
-            "question" : "Etes-vous sûr de vouloir",
+            "question": "Etes-vous sûr de vouloir",
             "page.deactivate": "Vous avez des changements non sauvegardés ! Si vous quittez cette page, vos changements seront perdus.",
             "delete": "Confirmez-vous votre demande de suppression ?",
             "yes": "Oui",
@@ -427,6 +426,18 @@
             "by": "par",
             "at": "à",
             "key": "Clé",
+            "value": "Valeur"
+        }
+    },
+    "metrics": {
+        "search.placeholder": "Rechercher metrique (nom et tags)",
+        "tab": {
+            "chutney": "Metriques chutney",
+            "global": "Metriques globales"
+        },
+        "list.header": {
+            "name": "Metrique",
+            "tags": "Tags",
             "value": "Valeur"
         }
     }

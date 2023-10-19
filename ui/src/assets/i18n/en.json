@@ -22,7 +22,8 @@
             "lightMode": "Light mode",
             "feedback": "Feedback",
             "notif": "Notifications",
-            "previewReport": "Preview execution"
+            "previewReport": "Preview execution",
+            "metrics": "Metrics"
         }
     },
     "scenarios": {
@@ -130,7 +131,7 @@
                     }
                 }
             },
-            "authoring" : {
+            "authoring": {
                 "author": "Author",
                 "created": "Creation",
                 "update": "Update"
@@ -247,10 +248,10 @@
             "deletion.suffix": "?"
         },
         "scheduling": {
-            "title" : "Schedule a new campaign execution",
+            "title": "Schedule a new campaign execution",
             "schedule": "Schedule",
             "back": "Back",
-            "campaign" : "Campaign",
+            "campaign": "Campaign",
             "schedulingDate": "Scheduling date",
             "frequency": "Frequency",
             "required": {
@@ -368,7 +369,6 @@
             "ongoing": {
                 "saving": "Saving ..."
             },
-
             "search": "Search",
             "global-search": "Global search",
             "add": "Add",
@@ -395,7 +395,6 @@
             "pause": "Pause",
             "help": "Help",
             "select": "Select",
-
             "done": {
                 "saved": "Saved"
             }
@@ -415,7 +414,7 @@
             "descending": "Descending"
         },
         "confirm": {
-            "question" : "Are you sure you want to",
+            "question": "Are you sure you want to",
             "page.deactivate": "You have unsaved changes! If you leave this page, your changes will be lost.",
             "delete": "Do you confirm your deletion request ?",
             "yes": "Yes",
@@ -427,6 +426,18 @@
             "by": "by",
             "at": "at",
             "key": "Key",
+            "value": "Value"
+        }
+    },
+    "metrics": {
+        "search.placeholder": "Search for metrics (name and tags)",
+        "tab": {
+            "chutney": "Chutney metrics ",
+            "global": "Global Metrics"
+        },
+        "list.header": {
+            "name": "Metric",
+            "tags": "Tags",
             "value": "Value"
         }
     }
