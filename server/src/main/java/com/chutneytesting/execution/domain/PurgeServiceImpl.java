@@ -45,11 +45,27 @@ public class PurgeServiceImpl implements PurgeService {
         Integer maxScenarioExecutionsConfiguration,
         Integer maxCampaignExecutionsConfiguration
     ) {
-
         Integer maxScenarioExecutions = validateConfigurationLimit(maxScenarioExecutionsConfiguration, "maxScenarioExecutions");
         Integer maxCampaignExecutions = validateConfigurationLimit(maxCampaignExecutionsConfiguration, "maxCampaignExecutions");
 
-        this.scenarioPurgeService = new PurgeExecutionService<>(
+        this.scenarioPurgeService = buildScenarioService(testCaseRepository, executionsRepository, maxScenarioExecutions);
+        this.campaignPurgeService = buildCampaignService(campaignRepository, campaignExecutionRepository, maxCampaignExecutions);
+    }
+
+    private static Integer validateConfigurationLimit(Integer configurationLimit, String configName) {
+        if (configurationLimit <= 0) {
+            LOGGER.warn("Purge configuration limit must be positive. Defaulting {} to {}", configName, 10);
+            return 10;
+        }
+        return configurationLimit;
+    }
+
+    private static PurgeExecutionService<TestCaseMetadata, String, ExecutionSummary> buildScenarioService(
+        TestCaseRepository testCaseRepository,
+        ExecutionHistoryRepository executionsRepository,
+        Integer maxScenarioExecutions
+    ) {
+        return new PurgeExecutionService<>(
             maxScenarioExecutions,
             testCaseRepository::findAll,
             TestCaseMetadata::id,
@@ -61,8 +77,10 @@ public class PurgeServiceImpl implements PurgeService {
             ExecutionSummary::environment,
             executionsRepository::deleteExecutions
         );
+    }
 
-      this.campaignPurgeService = new PurgeExecutionService<>(
+    private PurgeExecutionService<Campaign, Long, CampaignExecution> buildCampaignService(CampaignRepository campaignRepository, CampaignExecutionRepository campaignExecutionRepository, Integer maxCampaignExecutions) {
+        return new PurgeExecutionService<>(
             maxCampaignExecutions,
             campaignRepository::findAll,
             campaign -> campaign.id,
@@ -98,14 +116,6 @@ public class PurgeServiceImpl implements PurgeService {
                     .toList();
             }
         };
-    }
-
-    private static Integer validateConfigurationLimit(Integer configurationLimit, String configName) {
-        if (configurationLimit <= 0) {
-            LOGGER.warn("Purge configuration limit must be positive. Defaulting {} to {}", configName, 10);
-            return 10;
-        }
-        return configurationLimit;
     }
 
     @Override
