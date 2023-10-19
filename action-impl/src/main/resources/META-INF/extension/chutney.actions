@@ -55,7 +55,10 @@ com.chutneytesting.action.jms.JmsBrokerStopAction
 
 com.chutneytesting.action.sql.SqlAction
 
-com.chutneytesting.action.selenium.SeleniumDriverInitAction
+com.chutneytesting.action.selenium.driver.SeleniumChromeDriverInitAction
+com.chutneytesting.action.selenium.driver.SeleniumFirefoxDriverInitAction
+com.chutneytesting.action.selenium.driver.SeleniumGenericDriverInitAction
+
 com.chutneytesting.action.selenium.SeleniumClickAction
 com.chutneytesting.action.selenium.SeleniumCloseAction
 com.chutneytesting.action.selenium.SeleniumGetAction
@@ -68,7 +71,6 @@ com.chutneytesting.action.selenium.SeleniumSwitchToAction
 com.chutneytesting.action.selenium.SeleniumWaitAction
 com.chutneytesting.action.selenium.SeleniumHoverThenClickAction
 com.chutneytesting.action.selenium.SeleniumScrollToAction
-com.chutneytesting.action.selenium.SeleniumRemoteDriverInitAction
 com.chutneytesting.action.selenium.SeleniumSetBrowserSizeAction
 
 com.chutneytesting.action.assertion.JsonAssertAction
