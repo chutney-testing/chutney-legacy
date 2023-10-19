@@ -15,13 +15,12 @@ export class ReportPreviewComponent {
     preview(file: File) {
         this.execution = null;
         this.scenarioName = '';
+        this.errorMessage = null;
         file.text()
             .then(data => {
                 this.execution = Execution.deserialize(JSON.parse(data));
                 this.scenarioName = JSON.parse(this.execution.report).scenarioName;
-                this.errorMessage = null;
-            }
-            )
+            })
             .catch(error => {
                 this.errorMessage = error;
             });
