@@ -264,6 +264,7 @@ public class PurgeServiceTest {
                     // The oldest campaign's execution is deleted
                     // The associated scenario's execution is kept
                     verify(executionsRepository, times(0)).deleteExecutions(anySet());
+                    verify(campaignExecutionRepository).deleteExecutions(anySet());
                     verify(campaignExecutionRepository).deleteExecutions(Set.of(oldestCampaignExecutionId));
                     assertThat(report.scenariosExecutionsIds()).isEmpty();
                     assertThat(report.campaignsExecutionsIds()).containsExactly(oldestCampaignExecutionId);
@@ -324,6 +325,7 @@ public class PurgeServiceTest {
                     // The oldest campaign's execution on the environment with two executions is deleted
                     // The associated scenario's execution is kept
                     verify(executionsRepository, times(0)).deleteExecutions(anySet());
+                    verify(campaignExecutionRepository).deleteExecutions(anySet());
                     verify(campaignExecutionRepository).deleteExecutions(Set.of(oldestCampaignExecutionId));
                     assertThat(report.scenariosExecutionsIds()).isEmpty();
                     assertThat(report.campaignsExecutionsIds()).containsExactly(oldestCampaignExecutionId);
@@ -446,6 +448,7 @@ public class PurgeServiceTest {
 
                 // Then
                 // The oldest scenario's execution is deleted
+                verify(executionsRepository).deleteExecutions(anySet());
                 verify(executionsRepository).deleteExecutions(Set.of(3L, 1L));
                 assertThat(report.scenariosExecutionsIds()).containsExactlyInAnyOrder(3L, 1L);
             }
@@ -510,6 +513,7 @@ public class PurgeServiceTest {
                 // The oldest campaign's execution is deleted
                 // The associated scenario's execution is kept
                 verify(executionsRepository, times(0)).deleteExecutions(anySet());
+                verify(campaignExecutionRepository).deleteExecutions(anySet());
                 verify(campaignExecutionRepository).deleteExecutions(Set.of(3L, 1L));
                 assertThat(report.scenariosExecutionsIds()).isEmpty();
                 assertThat(report.campaignsExecutionsIds()).containsExactlyInAnyOrder(3L, 1L);
@@ -571,6 +575,7 @@ public class PurgeServiceTest {
             // Then
             // The oldest scenario's execution is deleted
             // The scenario's execution which was retried is kept
+            verify(executionsRepository).deleteExecutions(anySet());
             verify(executionsRepository).deleteExecutions(Set.of(oldestScenarioExecutionId));
             verify(campaignExecutionRepository, times(0)).deleteExecutions(anySet());
             assertThat(report.scenariosExecutionsIds()).containsExactly(oldestScenarioExecutionId);
@@ -650,6 +655,7 @@ public class PurgeServiceTest {
             // The oldest first campaign and second campaign's executions are deleted
             // The first campaign partial execution is deleted and the second is kept
             verify(executionsRepository, times(0)).deleteExecutions(anySet());
+            verify(campaignExecutionRepository, times(2)).deleteExecutions(anySet());
             verify(campaignExecutionRepository).deleteExecutions(Set.of(1L, 3L));
             verify(campaignExecutionRepository).deleteExecutions(Set.of(2L));
             assertThat(report.scenariosExecutionsIds()).isEmpty();
