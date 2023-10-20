@@ -1,6 +1,7 @@
 package com.chutneytesting.admin.api;
 
-import static com.chutneytesting.ServerConfiguration.SERVER_INSTANCE_NAME_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.SERVER_INSTANCE_NAME_VALUE;
+import static com.chutneytesting.admin.api.InfoController.BASE_URL;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/info")
+@RequestMapping(BASE_URL)
 @CrossOrigin(origins = "*")
 public class InfoController {
 

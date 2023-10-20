@@ -1,6 +1,6 @@
 package com.chutneytesting.agent.infra;
 
-import static com.chutneytesting.ServerConfiguration.AGENT_NETWORK_CONNECTION_CHECK_TIMEOUT_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.AGENT_NETWORK_CONNECTION_CHECK_TIMEOUT_SPRING_VALUE;
 
 import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;

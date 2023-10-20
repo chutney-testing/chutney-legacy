@@ -17,7 +17,7 @@ import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase.GwtTestCaseBuilder;
-import com.chutneytesting.scenario.infra.jpa.Scenario;
+import com.chutneytesting.scenario.infra.jpa.ScenarioEntity;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
@@ -166,24 +166,24 @@ public class DatabaseTestCaseRepositoryTest {
         @Test
         public void should_not_find_removed_scenario_used_in_campaign() {
             // Given: a scenarioTemplate in the repository with campaign association and existing execution
-            Scenario scenario = givenScenario();
-            CampaignEntity campaign = givenCampaign(scenario);
+            ScenarioEntity scenarioEntity = givenScenario();
+            CampaignEntity campaign = givenCampaign(scenarioEntity);
 
-            ScenarioExecutionEntity scenarioExecution = givenScenarioExecution(scenario.getId(), ServerReportStatus.NOT_EXECUTED);
+            ScenarioExecutionEntity scenarioExecution = givenScenarioExecution(scenarioEntity.getId(), ServerReportStatus.NOT_EXECUTED);
 
             // When: the scenarioTemplate is removed
-            sut.removeById(scenario.getId().toString());
+            sut.removeById(scenarioEntity.getId().toString());
 
             // Then: the scenarioTemplate is not found in the repository
-            Optional<GwtTestCase> noScenario = sut.findById(scenario.getId().toString());
+            Optional<GwtTestCase> noScenario = sut.findById(scenarioEntity.getId().toString());
             assertThat(noScenario).isEmpty();
 
             Number executionsCount = (Number) entityManager.createNativeQuery(
-                "SELECT count(*) as count FROM SCENARIO_EXECUTIONS WHERE SCENARIO_ID = '" + scenario.getId() + "'").getSingleResult();
+                "SELECT count(*) as count FROM SCENARIO_EXECUTIONS WHERE SCENARIO_ID = '" + scenarioEntity.getId() + "'").getSingleResult();
             assertThat(executionsCount.intValue()).isOne();
 
             Number campaignAssociationCount = (Number) entityManager.createNativeQuery(
-                "SELECT count(*) as count FROM CAMPAIGN_SCENARIOS WHERE SCENARIO_ID = '" + scenario.getId() + "'").getSingleResult();
+                "SELECT count(*) as count FROM CAMPAIGN_SCENARIOS WHERE SCENARIO_ID = '" + scenarioEntity.getId() + "'").getSingleResult();
             assertThat(campaignAssociationCount.intValue()).isZero();
         }
 

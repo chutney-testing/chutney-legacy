@@ -12,7 +12,7 @@ import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import com.chutneytesting.security.infra.SpringUserService;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
@@ -64,15 +64,15 @@ public class CampaignExecutionUiController {
     @PreAuthorize("hasAuthority('CAMPAIGN_READ')")
     @GetMapping(path = {"/{campaignName}/lastExecution", "/{campaignName}/{env}/lastExecution"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignExecutionReportSummaryDto getLastCampaignExecution(@PathVariable("campaignId") Long campaignId) {
-        CampaignExecutionReport lastCampaignExecutionReport = campaignExecutionEngine.getLastCampaignExecutionReport(campaignId);
-        return campaignExecutionApiMapper.toCompaignExecutionReportSummaryDto(lastCampaignExecutionReport);
+        CampaignExecution lastCampaignExecution = campaignExecutionEngine.getLastCampaignExecution(campaignId);
+        return campaignExecutionApiMapper.toCompaignExecutionReportSummaryDto(lastCampaignExecution);
     }
 
 
     @PreAuthorize("hasAuthority('CAMPAIGN_EXECUTE')")
     @GetMapping(path = {"/{campaignName}", "/{campaignName}/{env}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CampaignExecutionReportDto> executeCampaignByName(@PathVariable("campaignName") String campaignName, @PathVariable("env") Optional<String> environment) {
-        List<CampaignExecutionReport> reports;
+        List<CampaignExecution> reports;
         String userId = userService.currentUser().getId();
         if (environment.isPresent()) {
             reports = campaignExecutionEngine.executeByName(campaignName, environment.get(), userId);
@@ -87,12 +87,12 @@ public class CampaignExecutionUiController {
     @PreAuthorize("hasAuthority('CAMPAIGN_EXECUTE')")
     @PostMapping(path = {"/replay/{campaignExecutionId}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignExecutionReportDto replayFailedScenario(@PathVariable("campaignExecutionId") Long campaignExecutionId) {
-        CampaignExecutionReport campaignExecutionReport = campaignService.findByExecutionId(campaignExecutionId);
+        CampaignExecution campaignExecution = campaignService.findByExecutionId(campaignExecutionId);
         String userId = userService.currentUser().getId();
-        List<String> failedIds = campaignExecutionReport.scenarioExecutionReports().stream().filter(s -> !ServerReportStatus.SUCCESS.equals(s.execution.status())).map(s -> s.scenarioId).collect(Collectors.toList());
-        Campaign campaign = campaignRepository.findById(campaignExecutionReport.campaignId);
-        campaign.executionEnvironment(campaignExecutionReport.executionEnvironment);
-        CampaignExecutionReport newExecution = campaignExecutionEngine.executeScenarioInCampaign(failedIds, campaign, userId);
+        List<String> failedIds = campaignExecution.scenarioExecutionReports().stream().filter(s -> !ServerReportStatus.SUCCESS.equals(s.execution.status())).map(s -> s.scenarioId).collect(Collectors.toList());
+        Campaign campaign = campaignRepository.findById(campaignExecution.campaignId);
+        campaign.executionEnvironment(campaignExecution.executionEnvironment);
+        CampaignExecution newExecution = campaignExecutionEngine.executeScenarioInCampaign(failedIds, campaign, userId);
         return toDto(newExecution);
     }
 
@@ -101,7 +101,7 @@ public class CampaignExecutionUiController {
     public byte[] executeCampaignsByPatternWithSurefireReport(HttpServletResponse response, @PathVariable("campaignPattern") String campaignPattern, @PathVariable("env") Optional<String> environment) {
         String userId = userService.currentUser().getId();
         response.addHeader("Content-Disposition", "attachment; filename=\"surefire-report.zip\"");
-        List<CampaignExecutionReport> reports;
+        List<CampaignExecution> reports;
         if (environment.isPresent()) {
             reports = campaignExecutionEngine.executeByName(campaignPattern, environment.get(), userId);
         } else {
@@ -122,7 +122,7 @@ public class CampaignExecutionUiController {
     @GetMapping(path = {"/byID/{campaignId}", "/byID/{campaignId}/{env}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public CampaignExecutionReportDto executeCampaignById(@PathVariable("campaignId") Long campaignId, @PathVariable("env") Optional<String> environment) {
         String userId = userService.currentUser().getId();
-        CampaignExecutionReport report;
+        CampaignExecution report;
         if (environment.isPresent()) {
             report = campaignExecutionEngine.executeById(campaignId, environment.get(), userId);
         } else {

@@ -1,9 +1,9 @@
 package com.chutneytesting.agent;
 
-import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
-import static com.chutneytesting.ServerConfiguration.LOCAL_AGENT_DEFAULT_HOSTNAME_SPRING_VALUE;
-import static com.chutneytesting.ServerConfiguration.LOCAL_AGENT_DEFAULT_NAME_SPRING_VALUE;
-import static com.chutneytesting.ServerConfiguration.SERVER_PORT_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.CONFIGURATION_FOLDER_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.LOCAL_AGENT_DEFAULT_HOSTNAME_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.LOCAL_AGENT_DEFAULT_NAME_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.SERVER_PORT_SPRING_VALUE;
 
 import com.chutneytesting.agent.domain.AgentClient;
 import com.chutneytesting.agent.domain.configure.ConfigureService;

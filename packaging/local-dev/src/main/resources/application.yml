@@ -77,6 +77,10 @@ chutney:
       fixed-rate: 60000
       executor:
         pool-size: 20
+    schedule-purge:
+      cron: 0 0 1 * * *
+      max-scenario-executions: 10
+      max-campaign-executions: 10
     agent:
 #      name:
 #      hostname:

@@ -86,7 +86,7 @@ public class ScenarioExecutionEngineAsync {
      */
     public Long execute(ExecutionRequest executionRequest) {
         // Compile testcase for execution
-        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.userId, executionRequest.dataset, executionRequest.campaignExecutionReport);
+        ExecutionRequest executionRequestProcessed = new ExecutionRequest(testCasePreProcessors.apply(executionRequest), executionRequest.environment, executionRequest.userId, executionRequest.dataset, executionRequest.campaignExecution);
         // Initialize execution history
         ExecutionHistory.Execution storedExecution = storeInitialReport(executionRequestProcessed);
         // Start engine execution
@@ -114,7 +114,7 @@ public class ScenarioExecutionEngineAsync {
             .testCaseTitle(executionRequest.testCase.metadata().title())
             .environment(executionRequest.environment)
             .user(executionRequest.userId)
-            .campaignReport(ofNullable(executionRequest.campaignExecutionReport))
+            .campaignReport(ofNullable(executionRequest.campaignExecution))
             .build();
 
         return executionHistoryRepository.store(executionRequest.testCase.id(), detachedExecution);

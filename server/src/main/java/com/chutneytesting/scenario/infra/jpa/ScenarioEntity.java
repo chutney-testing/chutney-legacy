@@ -25,7 +25,7 @@ import java.time.Instant;
 import java.util.Map;
 
 @Entity(name = "SCENARIO")
-public class Scenario {
+public class ScenarioEntity {
 
     private static final GwtScenarioMarshaller marshaller = new GwtScenarioMapper();
 
@@ -69,10 +69,10 @@ public class Scenario {
     @Column(name = "DEFAULT_DATASET_ID")
     private String defaultDataset;
 
-    public Scenario() {
+    public ScenarioEntity() {
     }
 
-    public Scenario(Long id, String title, String description, String tags, Long creationDate, String dataset, Boolean activated, String userId, Long updateDate, Integer version, String defaultDataset) {
+    public ScenarioEntity(Long id, String title, String description, String tags, Long creationDate, String dataset, Boolean activated, String userId, Long updateDate, Integer version, String defaultDataset) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -86,7 +86,7 @@ public class Scenario {
         this.defaultDataset = defaultDataset;
     }
 
-    public Scenario(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String userId, Instant updateDate, Integer version, String defaultDataset) {
+    public ScenarioEntity(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String userId, Instant updateDate, Integer version, String defaultDataset) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -153,8 +153,8 @@ public class Scenario {
         activated = false;
     }
 
-    public static Scenario fromGwtTestCase(GwtTestCase testCase) {
-        return new Scenario(
+    public static ScenarioEntity fromGwtTestCase(GwtTestCase testCase) {
+        return new ScenarioEntity(
             Long.valueOf(testCase.id()),
             testCase.metadata().title(),
             testCase.metadata().description(),

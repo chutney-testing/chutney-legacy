@@ -1,8 +1,8 @@
 package com.chutneytesting;
 
-import static com.chutneytesting.ServerConfiguration.SERVER_HTTP_INTERFACE_SPRING_VALUE;
-import static com.chutneytesting.ServerConfiguration.SERVER_HTTP_PORT_SPRING_VALUE;
-import static com.chutneytesting.ServerConfiguration.SERVER_PORT_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.SERVER_HTTP_INTERFACE_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.SERVER_HTTP_PORT_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.SERVER_PORT_SPRING_VALUE;
 
 import io.undertow.servlet.api.SecurityConstraint;
 import io.undertow.servlet.api.SecurityInfo;

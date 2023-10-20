@@ -2,11 +2,11 @@ package com.chutneytesting.execution.infra.storage.jpa;
 
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
+import com.chutneytesting.campaign.infra.jpa.CampaignExecutionEntity;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -34,7 +34,7 @@ public class ScenarioExecutionEntity {
 
     @ManyToOne
     @JoinColumn(name = "CAMPAIGN_EXECUTION_ID")
-    private CampaignExecution campaignExecution;
+    private CampaignExecutionEntity campaignExecution;
 
     @Column(name = "EXECUTION_TIME")
     private Long executionTime;
@@ -74,7 +74,7 @@ public class ScenarioExecutionEntity {
     public ScenarioExecutionEntity() {
     }
 
-    public ScenarioExecutionEntity(Long id, String scenarioId, CampaignExecution campaignExecution, Long executionTime, Long duration, ServerReportStatus status, String information, String error, String scenarioTitle, String environment, String userId, String datasetId, Integer datasetVersion, Integer version) {
+    public ScenarioExecutionEntity(Long id, String scenarioId, CampaignExecutionEntity campaignExecution, Long executionTime, Long duration, ServerReportStatus status, String information, String error, String scenarioTitle, String environment, String userId, String datasetId, Integer datasetVersion, Integer version) {
         this.id = id;
         this.scenarioId = scenarioId;
         this.campaignExecution = campaignExecution;
@@ -99,12 +99,12 @@ public class ScenarioExecutionEntity {
         return scenarioId;
     }
 
-    public CampaignExecution campaignExecution() {
+    public CampaignExecutionEntity campaignExecution() {
         return campaignExecution;
     }
 
-    public void forCampaignExecution(CampaignExecution campaignExecution) {
-        this.campaignExecution = campaignExecution;
+    public void forCampaignExecution(CampaignExecutionEntity campaignExecutionEntity) {
+        this.campaignExecution = campaignExecutionEntity;
     }
 
     public void clearCampaignExecution() {
@@ -182,7 +182,7 @@ public class ScenarioExecutionEntity {
         return toDomain(null);
     }
 
-    public ExecutionHistory.ExecutionSummary toDomain(CampaignExecutionReport campaignReport) {
+    public ExecutionHistory.ExecutionSummary toDomain(CampaignExecution campaignReport) {
         return ImmutableExecutionHistory.ExecutionSummary.builder()
             .executionId(id)
             .time(Instant.ofEpochMilli(executionTime).atZone(ZoneId.systemDefault()).toLocalDateTime())

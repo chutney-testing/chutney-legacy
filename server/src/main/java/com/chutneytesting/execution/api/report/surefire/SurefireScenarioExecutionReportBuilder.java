@@ -7,7 +7,7 @@ import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryR
 import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
-import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionCampaign;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class SurefireScenarioExecutionReportBuilder {
         this.executionHistoryRepository = executionHistoryRepository;
     }
 
-    Testsuite create(ScenarioExecutionReportCampaign scenarioExecutionReport) {
+    Testsuite create(ScenarioExecutionCampaign scenarioExecutionReport) {
         Testsuite testsuite = objectFactory.createTestsuite();
         testsuite.setName(scenarioExecutionReport.scenarioId + "_" + scenarioExecutionReport.scenarioName);
         testsuite.setTime(toSurefireDuration(scenarioExecutionReport.execution.duration()));

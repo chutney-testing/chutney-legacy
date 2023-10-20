@@ -1,6 +1,6 @@
 package com.chutneytesting.security.infra;
 
-import static com.chutneytesting.ServerConfiguration.CONFIGURATION_FOLDER_SPRING_VALUE;
+import static com.chutneytesting.ServerConfigurationValues.CONFIGURATION_FOLDER_SPRING_VALUE;
 import static com.chutneytesting.tools.file.FileUtils.initFolder;
 
 import com.chutneytesting.security.api.AuthorizationMapper;

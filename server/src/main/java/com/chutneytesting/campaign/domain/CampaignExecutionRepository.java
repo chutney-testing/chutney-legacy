@@ -1,17 +1,20 @@
 package com.chutneytesting.campaign.domain;
 
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface CampaignExecutionRepository {
-    Optional<CampaignExecutionReport> currentExecution(Long campaignId);
+    Optional<CampaignExecution> currentExecution(Long campaignId);
 
-    List<CampaignExecutionReport> currentExecutions();
+    List<CampaignExecution> currentExecutions();
 
-    void startExecution(Long campaignId, CampaignExecutionReport campaignExecutionReport);
+    void startExecution(Long campaignId, CampaignExecution campaignExecution);
 
     void stopExecution(Long campaignId);
 
-    CampaignExecutionReport getLastExecutionReport(Long campaignId);
+    CampaignExecution getLastExecution(Long campaignId);
+
+    void deleteExecutions(Set<Long> executionsIds);
 }

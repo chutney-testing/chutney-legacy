@@ -13,8 +13,7 @@ import jakarta.persistence.ManyToOne;
 import java.util.Set;
 
 @Entity(name = "CAMPAIGN_PARAMETERS")
-public class CampaignParameter {
-
+public class CampaignParameterEntity {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,14 +29,14 @@ public class CampaignParameter {
     @Column(name = "PARAMETER_VALUE")
     private String value;
 
-    CampaignParameter() {
+    CampaignParameterEntity() {
     }
 
-    public CampaignParameter(String parameter, String value) {
+    public CampaignParameterEntity(String parameter, String value) {
         this(null, parameter, value);
     }
 
-    public CampaignParameter(CampaignEntity campaign, String parameter, String value) {
+    public CampaignParameterEntity(CampaignEntity campaign, String parameter, String value) {
         this.campaign = campaign;
         this.parameter = parameter;
         this.value = value;
@@ -55,9 +54,9 @@ public class CampaignParameter {
         this.campaign = campaign;
     }
 
-    public static Set<CampaignParameter> fromDomain(com.chutneytesting.server.core.domain.scenario.campaign.Campaign campaign) {
+    public static Set<CampaignParameterEntity> fromDomain(com.chutneytesting.server.core.domain.scenario.campaign.Campaign campaign) {
         return campaign.executionParameters.entrySet().stream()
-            .map(e -> new CampaignParameter(e.getKey(), e.getValue()))
+            .map(e -> new CampaignParameterEntity(e.getKey(), e.getValue()))
             .collect(toSet());
     }
 }

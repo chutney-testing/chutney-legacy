@@ -13,7 +13,7 @@ import com.chutneytesting.server.core.domain.execution.history.ImmutableExecutio
 import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
-import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionReportCampaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionCampaign;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
@@ -51,11 +51,11 @@ public class SurefireScenarioExecutionReportBuilderTest {
             .user("user")
             .build();
 
-        ScenarioExecutionReportCampaign scenarioExecutionReportCampaign = new ScenarioExecutionReportCampaign("123", "test1", execution.summary());
-        when(executionHistoryRepository.getExecution(scenarioExecutionReportCampaign.scenarioId, report.executionId)).thenReturn(execution);
+        ScenarioExecutionCampaign scenarioExecutionCampaign = new ScenarioExecutionCampaign("123", "test1", execution.summary());
+        when(executionHistoryRepository.getExecution(scenarioExecutionCampaign.scenarioId, report.executionId)).thenReturn(execution);
 
         // When
-        Testsuite testsuite = sut.create(scenarioExecutionReportCampaign);
+        Testsuite testsuite = sut.create(scenarioExecutionCampaign);
 
         // Then
         assertThat(testsuite.getName()).isEqualTo("123_test1");
@@ -104,11 +104,11 @@ public class SurefireScenarioExecutionReportBuilderTest {
             .user("user")
             .build();
 
-        ScenarioExecutionReportCampaign scenarioExecutionReportCampaign = new ScenarioExecutionReportCampaign("123", "test2", execution.summary());
-        when(executionHistoryRepository.getExecution(scenarioExecutionReportCampaign.scenarioId, report.executionId)).thenReturn(execution);
+        ScenarioExecutionCampaign scenarioExecutionCampaign = new ScenarioExecutionCampaign("123", "test2", execution.summary());
+        when(executionHistoryRepository.getExecution(scenarioExecutionCampaign.scenarioId, report.executionId)).thenReturn(execution);
 
         // When
-        Testsuite testsuite = sut.create(scenarioExecutionReportCampaign);
+        Testsuite testsuite = sut.create(scenarioExecutionCampaign);
 
         // Then
         assertThat(testsuite.getName()).isEqualTo("123_test2");

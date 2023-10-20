@@ -56,10 +56,10 @@ public class CampaignEntity implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "campaign")
     @OrderBy("rank ASC")
-    private List<CampaignScenario> campaignScenarios;
+    private List<CampaignScenarioEntity> campaignScenarios;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "campaign")
-    private Set<CampaignParameter> parameters;
+    private Set<CampaignParameterEntity> parameters;
 
     public CampaignEntity() {
     }
@@ -68,11 +68,11 @@ public class CampaignEntity implements Serializable {
         this(null, title, "", null, false, false, null, null, null, null, null);
     }
 
-    public CampaignEntity(String title, List<CampaignScenario> scenarios) {
+    public CampaignEntity(String title, List<CampaignScenarioEntity> scenarios) {
         this(null, title, "", null, false, false, null, null, null, scenarios, null);
     }
 
-    public CampaignEntity(Long id, String title, String description, String environment, boolean parallelRun, boolean retryAuto, String datasetId, List<String> tags, Integer version, List<CampaignScenario> campaignScenarios, Set<CampaignParameter> parameters) {
+    public CampaignEntity(Long id, String title, String description, String environment, boolean parallelRun, boolean retryAuto, String datasetId, List<String> tags, Integer version, List<CampaignScenarioEntity> campaignScenarios, Set<CampaignParameterEntity> parameters) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -97,25 +97,25 @@ public class CampaignEntity implements Serializable {
             campaign.externalDatasetId,
             campaign.tags,
             version,
-            CampaignScenario.fromDomain(campaign),
-            CampaignParameter.fromDomain(campaign)
+            CampaignScenarioEntity.fromDomain(campaign),
+            CampaignParameterEntity.fromDomain(campaign)
         );
     }
 
-    private void fromCampaignScenarios(List<CampaignScenario> campaignScenarios) {
+    private void fromCampaignScenarios(List<CampaignScenarioEntity> campaignScenarioEntities) {
         initCampaignScenarios();
-        if (campaignScenarios != null && !campaignScenarios.isEmpty()) {
+        if (campaignScenarioEntities != null && !campaignScenarioEntities.isEmpty()) {
             this.campaignScenarios.clear();
-            this.campaignScenarios.addAll(campaignScenarios);
+            this.campaignScenarios.addAll(campaignScenarioEntities);
             attachCampaignScenarios();
         }
     }
 
-    private void fromCampaignParameters(Set<CampaignParameter> campaignParameters) {
+    private void fromCampaignParameters(Set<CampaignParameterEntity> campaignParameterEntities) {
         initParameters();
-        if (campaignParameters != null && !campaignParameters.isEmpty()) {
+        if (campaignParameterEntities != null && !campaignParameterEntities.isEmpty()) {
             this.parameters.clear();
-            this.parameters.addAll(campaignParameters);
+            this.parameters.addAll(campaignParameterEntities);
             attachParameters();
         }
     }
@@ -125,8 +125,8 @@ public class CampaignEntity implements Serializable {
             id,
             title,
             description,
-            campaignScenarios.stream().map(CampaignScenario::scenarioId).toList(),
-            parameters.stream().collect(toMap(CampaignParameter::parameter, CampaignParameter::value)),
+            campaignScenarios.stream().map(CampaignScenarioEntity::scenarioId).toList(),
+            parameters.stream().collect(toMap(CampaignParameterEntity::parameter, CampaignParameterEntity::value)),
             environment,
             parallelRun,
             retryAuto,
@@ -143,11 +143,11 @@ public class CampaignEntity implements Serializable {
         return title;
     }
 
-    public List<CampaignScenario> campaignScenarios() {
+    public List<CampaignScenarioEntity> campaignScenarios() {
         return campaignScenarios;
     }
 
-    public Set<CampaignParameter> parameters() {
+    public Set<CampaignParameterEntity> parameters() {
         return parameters;
     }
 
@@ -156,11 +156,11 @@ public class CampaignEntity implements Serializable {
     }
 
     public void removeScenario(String scenarioId) {
-        Optional<CampaignScenario> campaignScenario = campaignScenarios.stream()
+        Optional<CampaignScenarioEntity> campaignScenario = campaignScenarios.stream()
             .filter(cs -> cs.scenarioId().equals(scenarioId))
             .findFirst();
         if (campaignScenario.isPresent()) {
-            CampaignScenario cs = campaignScenario.get();
+            CampaignScenarioEntity cs = campaignScenario.get();
             campaignScenarios.remove(cs.rank().intValue());
             for (int i = cs.rank(); i < campaignScenarios.size(); i++) {
                 campaignScenarios.get(i).rank(i);

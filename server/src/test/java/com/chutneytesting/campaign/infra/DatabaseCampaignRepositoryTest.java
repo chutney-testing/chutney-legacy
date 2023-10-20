@@ -4,8 +4,8 @@ import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.campaign.domain.CampaignRepository;
-import com.chutneytesting.campaign.infra.jpa.CampaignParameter;
-import com.chutneytesting.scenario.infra.jpa.Scenario;
+import com.chutneytesting.campaign.infra.jpa.CampaignParameterEntity;
+import com.chutneytesting.scenario.infra.jpa.ScenarioEntity;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import java.util.HashMap;
 import java.util.List;
@@ -50,8 +50,8 @@ public class DatabaseCampaignRepositoryTest {
 
         @Test
         public void should_find_a_campaign_by_id() {
-            Scenario s1 = givenScenario();
-            Scenario s2 = givenScenario();
+            ScenarioEntity s1 = givenScenario();
+            ScenarioEntity s2 = givenScenario();
 
             HashMap<String, String> dataSet = new HashMap<>();
             dataSet.put("param1", "val1");
@@ -67,8 +67,8 @@ public class DatabaseCampaignRepositoryTest {
 
         @Test
         public void should_remove_a_campaign_by_id_and_all_its_parameters() {
-            Scenario s1 = givenScenario();
-            Scenario s2 = givenScenario();
+            ScenarioEntity s1 = givenScenario();
+            ScenarioEntity s2 = givenScenario();
 
             HashMap<String, String> dataSet = new HashMap<>();
             dataSet.put("param1", "val1");
@@ -78,7 +78,7 @@ public class DatabaseCampaignRepositoryTest {
 
             boolean result = sut.removeById(campaign.id);
             List<?> actualParameters =
-                entityManager.createNativeQuery("select * from campaign_parameters where campaign_id = :id", CampaignParameter.class)
+                entityManager.createNativeQuery("select * from campaign_parameters where campaign_id = :id", CampaignParameterEntity.class)
                     .setParameter("id", campaign.id)
                     .getResultList();
 
@@ -88,10 +88,10 @@ public class DatabaseCampaignRepositoryTest {
 
         @Test
         public void should_find_scenario_order_by_index() {
-            Scenario s1 = givenScenario();
-            Scenario s2 = givenScenario();
-            Scenario s3 = givenScenario();
-            Scenario s4 = givenScenario();
+            ScenarioEntity s1 = givenScenario();
+            ScenarioEntity s2 = givenScenario();
+            ScenarioEntity s3 = givenScenario();
+            ScenarioEntity s4 = givenScenario();
 
             List<String> scenarioIds = scenariosIds(s4, s2, s3, s1);
             Campaign campaign = new Campaign(null, "test", "lol", scenarioIds, emptyMap(), "env", false, false, null, null);
@@ -107,8 +107,8 @@ public class DatabaseCampaignRepositoryTest {
 
         @Test
         public void should_find_a_campaign_by_name() {
-            Scenario s1 = givenScenario();
-            Scenario s2 = givenScenario();
+            ScenarioEntity s1 = givenScenario();
+            ScenarioEntity s2 = givenScenario();
 
             List<String> scenarioIds = scenariosIds(s1, s2);
             Campaign campaign = new Campaign(null, "campaignName", "lol", scenarioIds, emptyMap(), "env", false, false, null, null);
@@ -122,8 +122,8 @@ public class DatabaseCampaignRepositoryTest {
         @Test
         public void should_update_a_campaign() {
             // Given
-            Scenario s1 = givenScenario();
-            Scenario s2 = givenScenario();
+            ScenarioEntity s1 = givenScenario();
+            ScenarioEntity s2 = givenScenario();
             List<String> scenarioIds = scenariosIds(s1, s2);
             Campaign unsavedCampaign = new Campaign(null, "campaignName", "lol", scenarioIds, emptyMap(), "env", false, false, null, null);
             Campaign savedCampaign = sut.createOrUpdate(unsavedCampaign);
@@ -136,7 +136,7 @@ public class DatabaseCampaignRepositoryTest {
 
             String newTitle = "new title";
             String newDescription = "new description";
-            Scenario s3 = givenScenario();
+            ScenarioEntity s3 = givenScenario();
             List<String> newScenarios = scenariosIds(s3);
             String newEnvironment = "newEnv";
             Campaign updatedCampaign = new Campaign(savedCampaign.id, newTitle, newDescription, newScenarios, emptyMap(), newEnvironment, true, true, null, null);
@@ -157,10 +157,10 @@ public class DatabaseCampaignRepositoryTest {
         @Test
         public void should_find_campaigns_related_to_a_given_scenario() {
             // Given
-            Scenario s1 = givenScenario();
-            Scenario s2 = givenScenario();
-            Scenario s3 = givenScenario();
-            Scenario s4 = givenScenario();
+            ScenarioEntity s1 = givenScenario();
+            ScenarioEntity s2 = givenScenario();
+            ScenarioEntity s3 = givenScenario();
+            ScenarioEntity s4 = givenScenario();
             Campaign campaign1 = new Campaign(null, "campaignTestName1", "campaignDesc1", scenariosIds(s1, s2), emptyMap(), "env", false, false, null, null);
             Campaign campaign2 = new Campaign(null, "campaignTestName2", "campaignDesc2", scenariosIds(s2, s1), emptyMap(), "env", false, false, null, null);
             Campaign campaign3 = new Campaign(null, "campaignTestName3", "campaignDesc3", scenariosIds(s1, s3), emptyMap(), "env", false, false, null, null);
@@ -186,7 +186,7 @@ public class DatabaseCampaignRepositoryTest {
         @Test
         public void should_find_no_campaign_related_to_an_orphan_scenario() {
             // Given
-            Scenario s1 = givenScenario();
+            ScenarioEntity s1 = givenScenario();
             Campaign campaign1 = new Campaign(null, "campaignTestName1", "campaignDesc1", scenariosIds(s1), emptyMap(), "env", false, false, null, null);
             sut.createOrUpdate(campaign1);
 

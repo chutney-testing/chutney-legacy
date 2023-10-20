@@ -6,7 +6,7 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.campaign.infra.CampaignExecutionJpaRepository;
 import com.chutneytesting.campaign.infra.CampaignJpaRepository;
-import com.chutneytesting.campaign.infra.jpa.CampaignExecution;
+import com.chutneytesting.campaign.infra.jpa.CampaignExecutionEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionReportEntity;
 import com.chutneytesting.scenario.infra.raw.ScenarioJpaRepository;
@@ -20,12 +20,13 @@ import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionR
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
@@ -80,8 +81,16 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         if (invalidScenarioId(scenarioId)) {
             return emptyList();
         }
-        List<ScenarioExecutionEntity> scenarioExecutions = scenarioExecutionsJpaRepository.findFirst20ByScenarioIdOrderByIdDesc(scenarioId);
+        List<ScenarioExecutionEntity> scenarioExecutions = scenarioExecutionsJpaRepository.findByScenarioIdOrderByIdDesc(scenarioId);
         return scenarioExecutions.stream()
+            .map(this::scenarioExecutionToExecutionSummary)
+            .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ExecutionSummary> getExecutions() {
+        return scenarioExecutionsJpaRepository.findAll().stream()
             .map(this::scenarioExecutionToExecutionSummary)
             .toList();
     }
@@ -97,10 +106,10 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     private ExecutionSummary scenarioExecutionToExecutionSummary(ScenarioExecutionEntity scenarioExecution) {
-        CampaignExecutionReport campaignExecutionReport = ofNullable(scenarioExecution.campaignExecution())
+        CampaignExecution campaignExecution = ofNullable(scenarioExecution.campaignExecution())
             .map(ce -> ce.toDomain(campaignJpaRepository.findById(ce.campaignId()).get(), false, null))
             .orElse(null);
-        return scenarioExecution.toDomain(campaignExecutionReport);
+        return scenarioExecution.toDomain(campaignExecution);
     }
 
     @Override
@@ -110,7 +119,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         }
         ScenarioExecutionEntity scenarioExecution = ScenarioExecutionEntity.fromDomain(scenarioId, detachedExecution);
         if (detachedExecution.campaignReport().isPresent()) {
-            Optional<CampaignExecution> campaignExecution = campaignExecutionJpaRepository.findById(detachedExecution.campaignReport().get().executionId.longValue());
+            Optional<CampaignExecutionEntity> campaignExecution = campaignExecutionJpaRepository.findById(detachedExecution.campaignReport().get().executionId.longValue());
             scenarioExecution.forCampaignExecution(campaignExecution.get());
         }
         scenarioExecution = scenarioExecutionsJpaRepository.save(scenarioExecution);
@@ -173,6 +182,12 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     @Transactional(readOnly = true)
     public List<ExecutionSummary> getExecutionsWithStatus(ServerReportStatus status) {
         return scenarioExecutionsJpaRepository.findByStatus(status).stream().map(ScenarioExecutionEntity::toDomain).toList();
+    }
+
+    @Override
+    public void deleteExecutions(Set<Long> executionsIds) {
+        scenarioExecutionsJpaRepository.deleteAllByIdInBatch(executionsIds);
+        scenarioExecutionReportJpaRepository.deleteAllById(executionsIds);
     }
 
     private void updateExecutionsToKO(List<ExecutionSummary> executions) {

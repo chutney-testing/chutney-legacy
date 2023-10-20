@@ -7,9 +7,9 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
-import com.chutneytesting.campaign.infra.jpa.CampaignScenario;
+import com.chutneytesting.campaign.infra.jpa.CampaignScenarioEntity;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecutionReport;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import java.util.List;
 import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Repository;
@@ -46,8 +46,8 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     }
 
     @Override
-    public void saveReport(Long campaignId, CampaignExecutionReport report) {
-        campaignExecutionRepository.saveCampaignReport(campaignId, report);
+    public void saveExecution(Long campaignId, CampaignExecution execution) {
+        campaignExecutionRepository.saveCampaignExecution(campaignId, execution);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CampaignExecutionReport> findLastExecutions(Long numberOfExecution) {
+    public List<CampaignExecution> findLastExecutions(Long numberOfExecution) {
         return campaignExecutionRepository.findLastExecutions(numberOfExecution);
     }
 
@@ -89,7 +89,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     public List<String> findScenariosIds(Long campaignId) {
         return campaignJpaRepository.findById(campaignId)
             .map(c -> c.campaignScenarios().stream()
-                .map(CampaignScenario::scenarioId)
+                .map(CampaignScenarioEntity::scenarioId)
                 .toList()
             )
             .orElseThrow(() -> new CampaignNotFoundException(campaignId));
@@ -110,7 +110,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CampaignExecutionReport> findExecutionsById(Long campaignId) {
+    public List<CampaignExecution> findExecutionsById(Long campaignId) {
         return campaignExecutionRepository.findExecutionHistory(campaignId);
     }
 
@@ -122,14 +122,14 @@ public class DatabaseCampaignRepository implements CampaignRepository {
         }
 
         return campaignScenarioJpaRepository.findAllByScenarioId(scenarioId).stream()
-            .map(CampaignScenario::campaign)
+            .map(CampaignScenarioEntity::campaign)
             .map(CampaignEntity::toDomain)
             .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public CampaignExecutionReport findByExecutionId(Long campaignExecutionId) {
-        return campaignExecutionRepository.getCampaignExecutionReportsById(campaignExecutionId);
+    public CampaignExecution findByExecutionId(Long campaignExecutionId) {
+        return campaignExecutionRepository.getCampaignExecutionById(campaignExecutionId);
     }
 }
