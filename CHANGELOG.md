@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.3.0](https://github.com/chutney-testing/chutney/tree/2.3.0)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/2.2.2...2.3.0)
+
+## What's Changed
+### 🚀 Implemented enhancements:
+* Endpoint to get the last campaign execution for a given campaign by @DelaunayAlex in https://github.com/chutney-testing/chutney/pull/1142
+* Preview imported execution by @rbenyoussef in https://github.com/chutney-testing/chutney/pull/1158
+* Add headless for selenium action by @nbrouand in https://github.com/chutney-testing/chutney/pull/1157
+* Executions purge by @boddissattva in https://github.com/chutney-testing/chutney/pull/1144
+* if strategy by @nbrouand in https://github.com/chutney-testing/chutney/pull/1159
+### 🐛 Fixed bugs:
+* Scenarios with same name bug on surefire campaign report by @rbenyoussef in https://github.com/chutney-testing/chutney/pull/1156
+### 🔧 Technical enhancements:
+* Remove components by @nbrouand in https://github.com/chutney-testing/chutney/pull/1143
+* Chore debt on webconfig by @DelaunayAlex in https://github.com/chutney-testing/chutney/pull/1155
+* Fix Windows build and actions-impl dependency by @boddissattva in https://github.com/chutney-testing/chutney/pull/1138
+* Add unsecure api only packaging by @boddissattva in https://github.com/chutney-testing/chutney/pull/1141
+### 👒 Dependencies:
+* chore(deps-dev): Bump net.jqwik:jqwik from 1.7.4 to 1.8.0 by @dependabot in https://github.com/chutney-testing/chutney/pull/1154
+* chore(deps): Bump org.apache.maven.plugins:maven-javadoc-plugin from 3.4.1 to 3.6.0 by @dependabot in https://github.com/chutney-testing/chutney/pull/1149
+* chore(deps): Bump qpid-broker.version from 9.0.0 to 9.1.0 by @dependabot in https://github.com/chutney-testing/chutney/pull/1147
+
 ## [2.2.2](https://github.com/chutney-testing/chutney/tree/2.2.2)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/2.2.1...2.2.2)
