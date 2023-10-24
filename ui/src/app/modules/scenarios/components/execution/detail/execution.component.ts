@@ -47,6 +47,9 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     Authorization = Authorization;
 
+    active = 1;
+    JSON = JSON;
+
     constructor(
         private eventManager: EventManagerService,
         private scenarioExecutionService: ScenarioExecutionService,
@@ -286,4 +289,73 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         this.fileSaverService.saveText(JSON.stringify(this.execution), fileName);
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+
+    copy(e: any) {
+        var text = e.value;
+        if (text instanceof Object) {
+            text = JSON.stringify(text);
+        }
+        navigator.clipboard.writeText(text);
+    }
+
+    inputsToggle = true;
+    inputsDNoneToggle = true;
+    toggleInputs(dNone: boolean) {
+        if (dNone) {
+            this.inputsDNoneToggle = !this.inputsDNoneToggle;
+            document.querySelectorAll('.report-raw .inputs').forEach(e => {
+                if (this.inputsDNoneToggle) {
+                    e.className = 'inputs';
+                } else {
+                    e.className = 'inputs d-none';
+                }
+            });
+        } else {
+            this.inputsToggle = !this.inputsToggle;
+            document.querySelectorAll('.report-raw .inputs pre').forEach(e => {
+                if (this.inputsToggle) {
+                    e.className = 'm-0 text-wrap text-break';
+                } else {
+                    e.className = 'm-0 text-truncate';
+                }
+            });
+        }
+    }
+
+    outputsToggle = true;
+    outputsDNoneToggle = true;
+    toggleOutputs(dNone: boolean) {
+        if (dNone) {
+            this.outputsDNoneToggle = !this.outputsDNoneToggle;
+            document.querySelectorAll('.report-raw .outputs').forEach(e => {
+                if (this.outputsDNoneToggle) {
+                    e.className = 'outputs';
+                } else {
+                    e.className = 'outputs d-none';
+                }
+            });
+        } else {
+            this.outputsToggle = !this.outputsToggle;
+            document.querySelectorAll('.report-raw .outputs pre').forEach(e => {
+                if (this.outputsToggle) {
+                    e.className = 'm-0 text-wrap text-break';
+                } else {
+                    e.className = 'm-0 text-truncate';
+                }
+            });
+        }
+    }
+
+    functionalToggle = true;
+    toggleFunctional() {
+        this.functionalToggle = !this.functionalToggle;
+            document.querySelectorAll('.report-raw :is(.success,.context-put,.fail,.debug,.sleep)').forEach(e => {
+                if (this.functionalToggle) {
+                    e.className = e.className.replace('d-none', '');
+                } else {
+                    e.className += ' d-none';
+                }
+            });
+    }
 }

@@ -1,3 +1,5 @@
+@import 'global/mixins';
+@import 'global/animations';
 
 button span:not(:first-child) {
     display: block;
@@ -72,4 +74,70 @@ div.step-container:hover {
 .highlight {
     color: white;
     background-color: var(--bs-primary) !important;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+.report-raw {
+
+    .step-header-success {
+        color: var(--bs-green);
+    }
+    .step-header-failure {
+        color: var(--bs-red);
+    }
+    .step-header-stopped {
+        color: var(--bs-gray-600);
+    }
+    .step-header-not-executed {
+        color: var(--bs-purple);
+    }
+    .step-header-running {
+        @include animation(
+            $animation_name: step-header-running-anim,
+            $animation_duration: 1000ms,
+            $animation_timing-function: linear,
+            $animation_iteration-count: infinite,
+            $animation_direction: alternate);
+    }
+
+    .step-info {
+        color: var(--bs-cyan);
+    }
+    .step-error {
+        color: var(--bs-red);
+    }
+
+    @include color-animation(
+        $animation_name: step-header-running-anim,
+        $fromColor: var(--bs-yellow),
+        $toColor: var(--bs-grey-400)
+    );
+
+    .copy-row {
+        .copy {
+            visibility: hidden;
+        }
+
+        &:hover {
+            .copy {
+                visibility: visible;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.ctx-var-raw {
+    .copy-row {
+        .copy {
+            visibility: hidden;
+        }
+
+        &:hover {
+            .copy {
+                visibility: visible;
+                cursor: pointer;
+            }
+        }
+    }
 }
