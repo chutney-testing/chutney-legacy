@@ -51,7 +51,7 @@ public class StepDataEvaluator {
         return evaluatedNamedData;
     }
 
-    public String evaluate(final String s, final Map<String, Object> contextVariables) throws EvaluationException {
+    public String evaluateString(final String s, final Map<String, Object> contextVariables) throws EvaluationException {
         return (String) this.evaluate((Object) s, contextVariables);
     }
 
