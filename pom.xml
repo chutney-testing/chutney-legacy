@@ -95,7 +95,6 @@
         <commonsio.version>2.11.0</commonsio.version>
         <glacio.version>0.0.1</glacio.version>
         <hjson.version>3.0.1</hjson.version>
-        <orientdb.version>3.2.12</orientdb.version> <!-- Divergence on dependencies istack-commons-runtime and asm-->
         <jsr305.version>3.0.2</jsr305.version>
         <liquibase.version>4.24.0</liquibase.version>
 
@@ -308,36 +307,6 @@
                 <version>${mapstruct.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.orientechnologies</groupId>
-                <artifactId>orientdb-core</artifactId>
-                <version>${orientdb.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.graalvm.tools</groupId>
-                        <artifactId>profiler</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.graalvm.tools</groupId>
-                        <artifactId>chromeinspector</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.orientechnologies</groupId>
-                <artifactId>orientdb-lucene</artifactId>
-                <version>${orientdb.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.graalvm.tools</groupId>
-                        <artifactId>profiler</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.graalvm.tools</groupId>
-                        <artifactId>chromeinspector</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>${jsr305.version}</version>
@@ -468,7 +437,7 @@
                 <version>9.3</version>
                 <scope>compile</scope>
             </dependency>
-            
+
             <!-- Jira -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>

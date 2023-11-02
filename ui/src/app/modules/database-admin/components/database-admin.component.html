@@ -16,8 +16,6 @@
         <div class="d-inline">
             <a class="fs-6 fst-italic" *ngIf="database === 'jdbc'"
                href="https://en.wikibooks.org/wiki/Structured_Query_Language" target="_blank" rel="noopener noreferrer">query syntax</a>
-            <a class="fs-6 fst-italic" *ngIf="database === 'orient'" href="https://orientdb.com/docs/3.0.x/sql/"
-               target="_blank" rel="noopener noreferrer">query syntax</a>
             <textarea id="statement" class="form-control" rows="5" [(ngModel)]="statement"></textarea>
         </div>
         <div class="text-center my-2">

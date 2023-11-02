@@ -44,7 +44,6 @@ Main class : com.chutneytesting.ServerBootstrap
 * server: Main module that
     * Back-end for front-end
     * Store scenarios (json), execution report and campaigns in jdbc database
-    * Store scenarios in Orient database for composed scenarios
     * Store in files target and environment information
     * Send scenarios to the execution engine and retrieve reports
 * action-impl: Default implementation of task (Sql, Http, Jms,...)
