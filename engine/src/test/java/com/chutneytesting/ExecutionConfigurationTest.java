@@ -1,5 +1,6 @@
 package com.chutneytesting;
 
+import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.action.domain.ActionTemplate;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.assertj.core.util.Maps;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -119,6 +122,19 @@ public class ExecutionConfigurationTest {
         //T
         assertThat(result).hasFieldOrPropertyWithValue("status", StatusDto.FAILURE);
         assertThat(result.errors.get(0)).isEqualTo("Action [error] failed: Should be catch by fault barrier");
+    }
+
+    @Test
+    public void should_shutdown_threads_on_close() throws Exception {
+        //G
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ExecutionConfiguration executionConfiguration = new ExecutionConfiguration(5L, executorService, emptyMap(), null, null);
+
+        //W
+        executionConfiguration.embeddedTestEngine().close();
+
+        //T
+        assertThat(executorService.isShutdown()).isTrue();
     }
 
     private StepDefinitionRequestDto createSucessStep() {

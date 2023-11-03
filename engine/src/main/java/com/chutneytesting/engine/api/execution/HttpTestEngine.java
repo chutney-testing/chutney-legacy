@@ -55,4 +55,9 @@ public class HttpTestEngine implements TestEngine {
     public void stopExecution(Long executionId) {
         throw new IllegalArgumentException();
     }
+
+    @Override
+    public void close() throws Exception {
+        testEngine.close();
+    }
 }

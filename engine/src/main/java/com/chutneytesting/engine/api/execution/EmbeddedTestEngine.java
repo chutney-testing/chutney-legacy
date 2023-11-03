@@ -59,4 +59,9 @@ public final class EmbeddedTestEngine implements TestEngine {
     public void stopExecution(Long executionId) {
         executionManager.stopExecution(executionId);
     }
+
+    @Override
+    public void close() {
+        engine.shutdown();
+    }
 }
