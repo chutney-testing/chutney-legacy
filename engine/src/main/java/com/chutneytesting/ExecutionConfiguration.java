@@ -4,6 +4,14 @@ import static com.chutneytesting.tools.Streams.identity;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 
+import com.chutneytesting.action.domain.ActionTemplateLoader;
+import com.chutneytesting.action.domain.ActionTemplateLoaders;
+import com.chutneytesting.action.domain.ActionTemplateParserV2;
+import com.chutneytesting.action.domain.ActionTemplateRegistry;
+import com.chutneytesting.action.domain.DefaultActionTemplateRegistry;
+import com.chutneytesting.action.infra.DefaultActionTemplateLoader;
+import com.chutneytesting.action.spi.Action;
+import com.chutneytesting.action.spi.injectable.ActionsConfiguration;
 import com.chutneytesting.engine.api.execution.EmbeddedTestEngine;
 import com.chutneytesting.engine.api.execution.TestEngine;
 import com.chutneytesting.engine.domain.delegation.DelegationService;
@@ -18,20 +26,12 @@ import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrate
 import com.chutneytesting.engine.domain.execution.strategies.StepExecutionStrategy;
 import com.chutneytesting.engine.domain.report.Reporter;
 import com.chutneytesting.engine.infrastructure.delegation.HttpClient;
-import com.chutneytesting.action.domain.DefaultActionTemplateRegistry;
-import com.chutneytesting.action.domain.ActionTemplateLoader;
-import com.chutneytesting.action.domain.ActionTemplateLoaders;
-import com.chutneytesting.action.domain.ActionTemplateParserV2;
-import com.chutneytesting.action.domain.ActionTemplateRegistry;
-import com.chutneytesting.action.infra.DefaultActionTemplateLoader;
-import com.chutneytesting.action.spi.Action;
-import com.chutneytesting.action.spi.injectable.ActionsConfiguration;
 import com.chutneytesting.tools.ThrowingFunction;
 import com.chutneytesting.tools.loader.ExtensionLoaders;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -56,7 +56,7 @@ public class ExecutionConfiguration {
         this(5L, Executors.newFixedThreadPool(10), emptyMap(), null, null);
     }
 
-    public ExecutionConfiguration(Long reporterTTL, Executor actionExecutor, Map<String,String> actionsConfiguration, String user, String password) {
+    public ExecutionConfiguration(Long reporterTTL, ExecutorService actionExecutor, Map<String, String> actionsConfiguration, String user, String password) {
         this.reporterTTL = reporterTTL;
 
         ActionTemplateLoader actionTemplateLoaderV2 = createActionTemplateLoaderV2();
@@ -119,7 +119,7 @@ public class ExecutionConfiguration {
         return new Reporter(reporterTTL);
     }
 
-    private ExecutionEngine createExecutionEngine(Executor actionExecutor, String user, String password) {
+    private ExecutionEngine createExecutionEngine(ExecutorService actionExecutor, String user, String password) {
         return new DefaultExecutionEngine(
             new StepDataEvaluator(spelFunctions),
             new StepExecutionStrategies(stepExecutionStrategies),

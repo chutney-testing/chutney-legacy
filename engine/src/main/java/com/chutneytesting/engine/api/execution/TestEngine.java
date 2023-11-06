@@ -2,7 +2,16 @@ package com.chutneytesting.engine.api.execution;
 
 import io.reactivex.rxjava3.core.Observable;
 
-public interface TestEngine {
+/**
+ * Dont forget to use autocloseable resource :
+ * <pre>
+ *  try(testEngine) {
+ *    testEngine.execute(executionRequest)
+ *    ....
+ *  }
+ * </pre>
+ */
+public interface TestEngine extends AutoCloseable {
 
     StepExecutionReportDto execute(ExecutionRequestDto request);
 

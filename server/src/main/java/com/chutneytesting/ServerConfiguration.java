@@ -87,7 +87,7 @@ public class ServerConfiguration {
      * For com.chutneytesting.ServerConfiguration#executionConfiguration()
      */
     @Bean
-    public TaskExecutor engineExecutor(@Value(ENGINE_EXECUTOR_POOL_SIZE_SPRING_VALUE) Integer threadForEngine) {
+    public ThreadPoolTaskExecutor engineExecutor(@Value(ENGINE_EXECUTOR_POOL_SIZE_SPRING_VALUE) Integer threadForEngine) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(threadForEngine);
         executor.setMaxPoolSize(threadForEngine);
@@ -114,14 +114,14 @@ public class ServerConfiguration {
     @Bean
     public ExecutionConfiguration executionConfiguration(
         @Value(ENGINE_REPORTER_PUBLISHER_TTL_SPRING_VALUE) Long reporterTTL,
-        @Qualifier("engineExecutor") TaskExecutor engineExecutor,
+        @Qualifier("engineExecutor") ThreadPoolTaskExecutor engineExecutor,
         @Value(TASK_SQL_NB_LOGGED_ROW_SPRING_VALUE) String nbLoggedRow,
         @Value(ENGINE_DELEGATION_USER_SPRING_VALUE) String delegateUser,
         @Value(ENGINE_DELEGATION_PASSWORD_SPRING_VALUE) String delegatePassword
     ) {
         Map<String, String> actionsConfiguration = new HashMap<>();
         actionsConfiguration.put(TASK_SQL_NB_LOGGED_ROW, nbLoggedRow);
-        return new ExecutionConfiguration(reporterTTL, engineExecutor, actionsConfiguration, delegateUser, delegatePassword);
+        return new ExecutionConfiguration(reporterTTL, engineExecutor.getThreadPoolExecutor(), actionsConfiguration, delegateUser, delegatePassword);
     }
 
     @Bean

@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExecutionEngine.class);
 
-    private final Executor actionExecutor;
+    private final ExecutorService actionExecutor;
 
     private final StepDataEvaluator dataEvaluator;
     private final StepExecutionStrategies stepExecutionStrategies;
@@ -49,7 +49,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
                                   StepExecutionStrategies stepExecutionStrategies,
                                   DelegationService delegationService,
                                   Reporter reporter,
-                                  Executor actionExecutor) {
+                                  ExecutorService actionExecutor) {
         this.dataEvaluator = dataEvaluator;
         this.stepExecutionStrategies = stepExecutionStrategies != null ? stepExecutionStrategies : new StepExecutionStrategies();
         this.delegationService = delegationService;
@@ -94,6 +94,11 @@ public class DefaultExecutionEngine implements ExecutionEngine {
         });
 
         return execution.executionId;
+    }
+
+    @Override
+    public void shutdown() {
+        actionExecutor.shutdown();
     }
 
     private Map<String, ?> evaluateDatasetConstants(Dataset dataset, ScenarioContext scenarioContext) {

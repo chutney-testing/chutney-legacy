@@ -6,4 +6,5 @@ public interface ExecutionEngine {
 
     Long execute(StepDefinition stepDefinition, Dataset dataset, ScenarioExecution execution);
 
+    void shutdown();
 }

@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -48,7 +48,7 @@ class DefaultExecutionEngineTest {
     private final StepExecutionStrategies stepExecutionStrategies = mock(StepExecutionStrategies.class);
     private final DelegationService delegationService = mock(DelegationService.class);
     private final String fakeEnvironment = "env";
-    private final Executor actionExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService actionExecutor = Executors.newSingleThreadExecutor();
     public static final String tearDownRootNodeName = "TearDown";
     private static final String throwableToCatchMessage = "Should be caught by fault barrier";
     private final Dataset emptyDataset = new Dataset(emptyMap(), emptyList());
