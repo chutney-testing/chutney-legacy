@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Metric } from '@core/model/metric.model';
 import { PrometheusService } from '@core/services/prometheus.service';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { filterOnTextContent } from '@shared/tools';
-import { interval, Observable, Subscription } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
     selector: 'chutney-metrics',
@@ -60,27 +61,13 @@ export class MetricsComponent implements OnInit, OnDestroy {
     }
 
     refreshMetrics() {
-        const metricRegex = new RegExp('(?<name>[^{]*)(?<tags>{.*})? (?<value>.*)');
         const chutneyMetricPattern = '^scenario|^campaign';
         this.prometheusService.getMetrics()
             .subscribe(result => {
-                this.metrics = result.split('\n')
-                    .filter(element => element && !element.startsWith('#'))
-                    .map(element => {
-                        const [, name, tags, value] = metricRegex.exec(element) || [];
-                        return new Metric(name, tags, value);
-                    });
+                this.metrics = result;
                 this.chutneyMetrics = this.metrics.filter(metric => metric.name.match(chutneyMetricPattern));
                 this.metrics = this.metrics.filter(metric => !metric.name.match(chutneyMetricPattern));
                 this.updateTextFilter(this.textFilter);
             });
     }
-}
-
-class Metric {
-    constructor(
-        public name: string,
-        public tags: string,
-        public value: string
-    ) { }
 }

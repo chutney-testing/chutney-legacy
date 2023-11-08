@@ -23,7 +23,7 @@
             "feedback": "Donner un avis",
             "notif": "Notifications",
             "previewReport": "Visualiser une exécution",
-            "metrics": "Metriques"
+            "metrics": "Métriques"
         }
     },
     "scenarios": {
@@ -430,13 +430,13 @@
         }
     },
     "metrics": {
-        "search.placeholder": "Rechercher metrique (nom et tags)",
+        "search.placeholder": "Rechercher métrique (nom et tags)",
         "tab": {
-            "chutney": "Metriques chutney",
-            "global": "Metriques globales"
+            "chutney": "Métriques chutney",
+            "global": "Métriques globales"
         },
         "list.header": {
-            "name": "Metrique",
+            "name": "Métrique",
             "tags": "Tags",
             "value": "Valeur"
         }

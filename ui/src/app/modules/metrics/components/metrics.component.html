@@ -12,36 +12,38 @@
 
 </div>
 <div>
+    <ng-template #metricsTable let-metrics="metrics">
+        <table class="metric-table table table-responsive table-sm table-striped table-hover">
+            <thead>
+                <tr class="headers-labels">
+                    <th scope="col">
+                        <span>{{'metrics.list.header.name' | translate}}</span>
+                    </th>
+                    <th scope="col">
+                        <span>{{'metrics.list.header.tags' | translate}}</span>
+                    </th>
+                    <th scope="col">
+                        <span>{{'metrics.list.header.value' | translate}}</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let metric of metrics">
+                    <td>{{metric.name}}</td>
+                    <td>{{metric.tags}}</td>
+                    <td>{{metric.value}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </ng-template>
     <ul ngbNav #nav="ngbNav" [activeId]="activeTab" (navChange)="onTabChange($event)" class="nav-tabs">
         <li [ngbNavItem]="'chutneyMetrics'" [destroyOnHide]="false">
             <a ngbNavLink>
                 {{'metrics.tab.chutney' | translate}}
             </a>
             <ng-template ngbNavContent>
-                <div class="row">
-                    <table class="table table-sm table-striped table-hover">
-                        <thead>
-                            <tr class="headers-labels">
-                                <th>
-                                    <span>{{'metrics.list.header.name' | translate}}</span>
-                                </th>
-                                <th>
-                                    <span>{{'metrics.list.header.tags' | translate}}</span>
-                                </th>
-                                <th>
-                                    <span>{{'metrics.list.header.value' | translate}}</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let metric of filtredChutneyMetrics">
-                                <td>{{metric.name}}</td>
-                                <td>{{metric.tags}}</td>
-                                <td>{{metric.value}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <ng-container *ngTemplateOutlet="metricsTable; context: {metrics: filtredChutneyMetrics}">
+                </ng-container>
             </ng-template>
         </li>
         <li [ngbNavItem]="'globalMetrics'" [destroyOnHide]="false">
@@ -49,30 +51,7 @@
                 {{'metrics.tab.global' | translate}}
             </a>
             <ng-template ngbNavContent>
-                <div class="row">
-                    <table class="metric-table table table-responsive table-sm table-striped table-hover">
-                        <thead>
-                            <tr class="headers-labels">
-                                <th scope="col">
-                                    <span>{{'metrics.list.header.name' | translate}}</span>
-                                </th>
-                                <th scope="col">
-                                    <span>{{'metrics.list.header.tags' | translate}}</span>
-                                </th>
-                                <th scope="col">
-                                    <span>{{'metrics.list.header.value' | translate}}</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let metric of filtredMetrics">
-                                <td>{{metric.name}}</td>
-                                <td>{{metric.tags}}</td>
-                                <td>{{metric.value}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <ng-container *ngTemplateOutlet="metricsTable; context: {metrics: filtredMetrics}"></ng-container>
             </ng-template>
         </li>
     </ul>
