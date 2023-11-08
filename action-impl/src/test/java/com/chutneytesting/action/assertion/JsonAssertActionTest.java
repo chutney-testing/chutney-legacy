@@ -5,6 +5,8 @@ import static com.chutneytesting.action.spi.ActionExecutionResult.Status.Success
 import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import com.chutneytesting.action.TestLogger;
 import com.chutneytesting.action.assertion.JsonCompareAction.COMPARE_MODE;
@@ -160,6 +162,30 @@ public class JsonAssertActionTest {
 
         // Then
         assertThat(result.status).isEqualTo(Success);
+    }
+
+    @Test
+    void should_execute_all_assertions_after_assertion_fail() {
+        Map<String, Object> expected = new HashMap<>();
+        expected.put("$.something.value", 2);
+        expected.put("$.something_else.value", 5);
+        expected.put("$.a_thing.type", "my_type");
+        expected.put("$.a_thing.not.existing", null);
+
+        // Given
+        String fakeActualResult = "{\"something\":{\"value\":3},\"something_else\":{\"value\":5},\"a_thing\":{\"type\":\"my_type\"}}";
+        Logger logger = mock(Logger.class);
+
+        // When
+        JsonAssertAction jsonAssertAction = new JsonAssertAction(logger, fakeActualResult, expected);
+        ActionExecutionResult result = jsonAssertAction.execute();
+
+        // Then
+        assertThat(result.status).isEqualTo(Failure);
+        verify(logger, times(1)).error("On path [$.something.value], found [3], expected was [2]");
+        verify(logger, times(1)).info("On path [$.something_else.value], found [5]");
+        verify(logger, times(1)).info("On path [$.a_thing.type], found [my_type]");
+        verify(logger, times(1)).info("On path [$.a_thing.not.existing], found [null]");
     }
 
     @Nested

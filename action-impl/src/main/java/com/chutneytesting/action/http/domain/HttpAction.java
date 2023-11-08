@@ -13,6 +13,7 @@ public class HttpAction {
     public static ActionExecutionResult httpCall(Logger logger, Supplier<ResponseEntity<String>> caller) {
         try {
             ResponseEntity<String> response = caller.get();
+            logger.info("HTTP call status :" + response.getStatusCode().value());
             return ActionExecutionResult.ok(toOutputs(response));
         }
         catch (ResourceAccessException e) {
