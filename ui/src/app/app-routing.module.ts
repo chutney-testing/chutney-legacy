@@ -89,6 +89,12 @@ export const appRoutes: Routes = [
                 loadChildren: () => import('./modules/roles/roles.module').then(m => m.RolesModule),
                 canActivate: [AuthGuard],
                 data: {'authorizations': [Authorization.ADMIN_ACCESS]}
+            },
+            {
+                path: 'metrics',
+                loadChildren: () => import('./modules/metrics/metrics.module').then(m => m.MetricsModule),
+                canActivate: [AuthGuard],
+                data: {'authorizations': [Authorization.ADMIN_ACCESS]}
             }
         ]
     },

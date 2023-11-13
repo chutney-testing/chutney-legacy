@@ -82,6 +82,12 @@ export const allMenuItems: MenuItem [] = [
                 link: '/scenario/report-preview',
                 iconClass: 'fa fa-clipboard',
                 authorizations: [Authorization.ADMIN_ACCESS]
+            },
+            {
+                label: 'menu.principal.metrics',
+                link: '/metrics',
+                iconClass: 'fa fa-chart-simple',
+                authorizations: [Authorization.ADMIN_ACCESS]
             }
         ]
     }
