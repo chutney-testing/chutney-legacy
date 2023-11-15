@@ -30,16 +30,12 @@ import { AuthoringInfoComponent } from './components/edition/authoring-info/auth
 import { EditionInfoComponent } from './components/edition/edition-info/edition-info.component';
 import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 import { ScenarioExecutionComponent } from '@modules/scenarios/components/execution/detail/execution.component';
-import { StepReportComponent } from '@modules/scenarios/components/execution/detail/step-report/step-report.component';
-import { StepComponent } from '@modules/scenarios/components/execution/detail/step/step.component';
-import { GwtReadComponent } from '@modules/scenarios/components/execution/detail/gwt-read/gwt-read.component';
 import {
     ScenarioExecutionsComponent
 } from '@modules/scenarios/components/execution/history/list/scenario-executions.component';
 import {
     ScenarioExecutionMenuComponent
 } from '@modules/scenarios/components/execution/sub/right-side-bar/scenario-execution-menu.component';
-import { StepDetailsComponent } from './components/execution/detail/sub/step-details/step-details.component';
 import { ReportPreviewComponent } from './components/execution/preview/report-preview.component';
 const ROUTES = [
     ...scenarioRoute
@@ -71,14 +67,10 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     declarations: [
         ScenariosComponent,
         ScenarioExecutionComponent,
-        StepReportComponent,
-        StepDetailsComponent,
-        StepComponent,
         ScenarioCampaignsComponent,
         ScenarioExecutionsHistoryComponent,
         RawEditionComponent,
         ScenarioExecutionMenuComponent,
-        GwtReadComponent,
         AuthoringInfoComponent,
         EditionInfoComponent,
         ScenarioExecutionsComponent,

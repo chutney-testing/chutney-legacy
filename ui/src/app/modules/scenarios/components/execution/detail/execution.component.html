@@ -1,350 +1,254 @@
 <div>
-    <ul ngbNav #executionNav="ngbNav" [(activeId)]="active" class="nav-tabs">
-        <li [ngbNavItem]="1">
-            <a ngbNavLink>
-                Raw
-            </a>
-            <ng-template ngbNavContent>
-                <div class="row">
-                    <div class="col-6 badge-container" *ngIf="scenarioExecutionReport?.report">
-                    <span>
-                    <chutney-execution-badge [status]="scenarioExecutionReport.report.status"
-                                             [spin]="true"></chutney-execution-badge>
-                        <small class="text-muted ms-2">
-                            {{'global.time.in' | translate}} {{scenarioExecutionReport.report.duration | duration}}
-                        </small>
-                        <small class="text-muted ms-2">
-                            {{'global.time.at' | translate}} {{scenarioExecutionReport.report.startDate | date:'medium'}}
-                        </small>
-                        <small *ngIf="scenarioExecutionReport.user" class="text-muted ms-2">
-                            {{'global.smallword.by' | translate}} : <b>{{scenarioExecutionReport.user}}</b>
-                        </small>
-                        <small class="text-muted ms-2">
-                            -  {{'admin.targets.environment' | translate}} : <b>{{scenarioExecutionReport.environment}}</b>
-                        </small>
-                        <small class="text-muted ms-2">
-                            <ng-container *ngIf="execution.campaignExecutionReport">
-                                -  {{ 'scenarios.execution.history.campaign' | translate }} :
-                                <ng-container *hasAuthorization="[Authorization.CAMPAIGN_READ]">
-                                        <a [routerLink]="['/campaign', execution.campaignExecutionReport.campaignId, 'execution', execution.campaignExecutionReport.executionId]">
-                                            {{execution.campaignExecutionReport.campaignName}}
-                                        </a>
-                                </ng-container>
-                                <ng-container *hasAuthorization="{not: true, authorizations: [Authorization.CAMPAIGN_READ]}">
-                                    <span>{{execution.campaignExecutionReport.campaignName}}</span>
-                                </ng-container>
-                            </ng-container>
-                        </small>
-                    </span>
-                    </div>
-                    <div class="col text-sm-center align-self-center" *hasAuthorization="[Authorization.SCENARIO_EXECUTE]">
-                        <ng-container *ngIf="scenario">
-                            <div *ngIf="isRunning() || isPaused()"
-                                 class="btn-group btn-group-sm mt-1 justify-content-center position-relative">
-                                <button type="button" class="btn btn-primary" (click)="stopScenario()"
-                                        [disabled]="!isRunning()">
-                                    <span class="fa fa-stop"></span>
-                                    <span class="btn-label">{{'global.actions.stop' | translate}}</span>
-                                </button>
-
-                                <button type="button" class="btn btn-primary mx-1" (click)="pauseScenario()"
-                                        [disabled]="!isRunning()">
-                                    <span class="fa fa-pause"></span>
-                                    <span class="btn-label">{{'global.actions.pause' | translate}}</span>
-                                </button>
-
-                                <button type="button" class="btn btn-primary" (click)="resumeScenario()"
-                                        [disabled]="!isPaused()">
-                                    <span class="fa fa-play"></span>
-                                    <span class="btn-label">{{'global.actions.resume' | translate}}</span>
-                                </button>
-                            </div>
-                            <div>
-                                <button type="button" class="btn btn-primary" (click)="toggleFunctional()">
-                                    <span class="fa fa-heart"></span>
-                                </button>
-                                <button type="button" class="btn btn-primary" (click)="toggleInputs(false)">
-                                    <span class="fa fa-circle-arrow-left"></span>
-                                </button>
-                                <button type="button" class="btn btn-primary" (click)="toggleOutputs(false)">
-                                    <span class="fa fa-circle-arrow-right"></span>
-                                </button>
-                                <button type="button" class="btn btn-primary" (click)="toggleInputs(true)">
-                                    <span class="fa fa-circle-left"></span>
-                                </button>
-                                <button type="button" class="btn btn-primary" (click)="toggleOutputs(true)">
-                                    <span class="fa fa-circle-right"></span>
-                                </button>
-                                <ng-container *ngIf="!isRunning() && !isPaused()">
-                                    <button type="button" class="btn btn-primary" (click)="exportReport()">
-                                        <span class="fa fa-download"></span>
-                                    </button>
-                                </ng-container>
-                            </div>
-                        </ng-container>
-                    </div>
-                </div>
-                <div class="row ctx-var-raw mb-2" *ngIf="hasContextVariables && !isRunning()">
-                    <div class="col">
-                        <fieldset [ngClass]="collapseContextVariables ? 'border-top ps-2' : 'border p-2'">
-                            <legend class="fs-6 px-3 mb-0 float-none" (click)="switchCollapseContextVariables()">
-                            <span>{{'scenarios.execution.contextVariables' | translate}}</span>
-                            <button class="btn btn-sm btn-light btn-outline-dark ms-sm-1 border-0" type="button"
-                                    title="{{(collapseContextVariables ? 'global.actions.show' : 'global.actions.hide') | translate}}">
-                                <span class="fa" [ngClass]="collapseContextVariables ? 'fa-eye' : 'fa-eye-slash'"></span>
-                            </button>
-                            </legend>
-                            <div *ngIf="!collapseContextVariables">
-                                <div *ngFor="let entry of scenarioExecutionReport.contextVariables | objectAsEntryList ">
-                                    <div class="row copy-row">
-                                        <div class="col-2">
-                                            <span class="fw-bold">{{ entry.key }}</span>
-                                            <span title="copy value" class="float-end copy" (click)="copy(entry)">
-                                                <i class="fa-sm fa-regular fa-copy"></i>
-                                            </span>
-                                        </div>
-                                        <div class="col-10 align-self-center">
-                                            <pre class="m-0 text-wrap text-break">{{entry.value | stringify}}</pre>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-                </div>
-                <div class="row report-raw" *ngIf="scenarioExecutionReport?.report">
-                    <div class="col report-bg">
-                        <ng-template ngFor
-                                    [ngForTemplate]="stepReport"
-                                    [ngForOf]="scenarioExecutionReport.report.steps">
-                        </ng-template>
-                    </div>
-                </div>
-            </ng-template>
-            <ng-template #stepReport let-step>
-                <div class="row" [class]="step.type">
-                    <div class="col">
-                        <div class="fw-bold"
-                            [ngClass]="{
-                                'step-header-success': step.status == 'SUCCESS',
-                                'step-header-failure': step.status == 'FAILURE',
-                                'step-header-stopped': step.status == 'STOPPED',
-                                'step-header-not-executed': step.status == 'NOT_EXECUTED',
-                                'step-header-running': step.status == 'RUNNING' || step.status == 'PAUSED'}"
-                        >
-                            {{ step.name }}
-                        </div>
-                        <div class="ps-2">
-                            <div *ngIf="step.type">
-                                <span *ngIf="step.strategy != 'sequential'" class="fw-bold">[{{ step.strategy }}]</span>
-                                <span class="fw-bold"> {{ step.type }}</span>
-                                <ng-container *ngIf="step.targetName"> on {{ step.targetName }} - {{ step.targetUrl }}</ng-container>
-                            </div>
-                            <div *ngIf="step.evaluatedInputs" class="inputs">
-                                <div *ngFor="let input of step.evaluatedInputs | objectAsEntryList">
-                                    <div class="row copy-row">
-                                        <div class="col-2 text-wrap text-break">
-                                            <i class="fa-xs fa-solid fa-circle-arrow-left"></i>&nbsp;<span class="fw-bold">{{ input.key }}</span>
-                                            <span title="copy value" class="float-end copy" (click)="copy(input)">
-                                                <i class="fa-sm fa-regular fa-copy"></i>
-                                            </span>
-                                        </div>
-                                        <div class="col-10 align-self-center">
-                                            <pre class="m-0 text-wrap text-break">{{input.value | stringify | prettyPrint}}</pre>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div *ngIf="step.information && step.information.length > 0">
-                                <div *ngFor="let info of step.information" class="step-info fw-bold">>> {{ info }}</div>
-                            </div>
-                            <div *ngIf="step.errors && step.errors.length > 0">
-                                <div *ngFor="let error of step.errors" class="step-error fw-bold">>> {{ error }}</div>
-                            </div>
-                            <div *ngIf="step.stepOutputs" class="outputs">
-                                <div *ngFor="let output of step.stepOutputs | objectAsEntryList">
-                                    <div class="row copy-row">
-                                        <div class="col-2 text-wrap text-break">
-                                            <i class="fa-xs fa-solid fa-circle-arrow-right"></i>&nbsp;<span class="fw-bold">{{ output.key }}</span>
-                                            <span title="copy value" class="float-end copy" (click)="copy(output)">
-                                                <i class="fa-sm fa-regular fa-copy"></i>
-                                            </span>
-                                        </div>
-                                        <div class="col-10 align-self-center">
-                                            <pre class="m-0 text-wrap text-break">{{output.value | stringify | prettyPrint}}</pre>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="ps-2" *ngIf="step.steps && step.steps.length > 0">
-                            <div class="row">
-                                <div class="col">
-                                    <ng-template ngFor
-                                            [ngForTemplate]="stepReport"
-                                            [ngForOf]="step.steps">
-                                    </ng-template>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
-        </li>
-        <li [ngbNavItem]="2">
-            <a ngbNavLink>
-                Hierarchy
-            </a>
-            <ng-template ngbNavContent>
-                <div>
-                    <div class="row">
-                        <div class="col-6 badge-container" *ngIf="scenarioExecutionReport?.report">
-                        <span>
-                        <chutney-execution-badge [status]="scenarioExecutionReport.report.status"
-                                                 [spin]="true"></chutney-execution-badge>
-                            <small class="text-muted ms-2">
-                                {{'global.time.in' | translate}} {{scenarioExecutionReport.report.duration | duration}}
-                            </small>
-                            <small class="text-muted ms-2">
-                                {{'global.time.at' | translate}} {{scenarioExecutionReport.report.startDate | date:'medium'}}
-                            </small>
-                            <small *ngIf="scenarioExecutionReport.user" class="text-muted ms-2">
-                                {{'global.smallword.by' | translate}} : <b>{{scenarioExecutionReport.user}}</b>
-                            </small>
-                            <small class="text-muted ms-2">
-                                -  {{'admin.targets.environment' | translate}} : <b>{{scenarioExecutionReport.environment}}</b>
-                            </small>
-                            <small class="text-muted ms-2">
-                                <ng-container *ngIf="execution.campaignExecutionReport">
-                                    -  {{ 'scenarios.execution.history.campaign' | translate }} :
-                                    <ng-container *hasAuthorization="[Authorization.CAMPAIGN_READ]">
-                                            <a [routerLink]="['/campaign', execution.campaignExecutionReport.campaignId, 'execution', execution.campaignExecutionReport.executionId]">
-                                                {{execution.campaignExecutionReport.campaignName}}
-                                            </a>
-                                    </ng-container>
-                                    <ng-container *hasAuthorization="{not: true, authorizations: [Authorization.CAMPAIGN_READ]}">
-                                        <span>{{execution.campaignExecutionReport.campaignName}}</span>
-                                    </ng-container>
-                                </ng-container>
-                            </small>
-                        </span>
-                        </div>
-                        <div class="col text-sm-center" *hasAuthorization="[Authorization.SCENARIO_EXECUTE]">
-                            <ng-container *ngIf="scenario">
-                                <div *ngIf="isRunning() || isPaused()"
-                                     class="btn-group btn-group-sm mt-1 justify-content-center position-relative">
-                                    <button type="button" class="btn btn-primary" (click)="stopScenario()"
-                                            [disabled]="!isRunning()">
-                                        <span class="fa fa-stop"></span>
-                                        <span class="btn-label">{{'global.actions.stop' | translate}}</span>
-                                    </button>
-
-                                    <button type="button" class="btn btn-primary mx-1" (click)="pauseScenario()"
-                                            [disabled]="!isRunning()">
-                                        <span class="fa fa-pause"></span>
-                                        <span class="btn-label">{{'global.actions.pause' | translate}}</span>
-                                    </button>
-
-                                    <button type="button" class="btn btn-primary" (click)="resumeScenario()"
-                                            [disabled]="!isPaused()">
-                                        <span class="fa fa-play"></span>
-                                        <span class="btn-label">{{'global.actions.resume' | translate}}</span>
-                                    </button>
-                                </div>
-                                <div *ngIf="!isRunning() && !isPaused()">
-                                    <button type="button" class="btn btn-primary" (click)="exportReport()">
-                                        <span class="fa fa-download"></span>
-                                    </button>
-                                </div>
-                            </ng-container>
-                        </div>
-                    </div>
-
-                    <div class="row pb-2" *ngIf="hasContextVariables && !isRunning()">
-                        <div class="col">
-                            <fieldset [ngClass]="collapseContextVariables ? 'border-top ps-2' : 'border p-2'">
-                                <legend class="fs-6 px-3 mb-0 float-none" (click)="switchCollapseContextVariables()">
-                                <span>
-                                    {{'scenarios.execution.contextVariables' | translate}}
-                                </span>
-                                <button class="btn btn-sm btn-light btn-outline-dark ms-sm-1 border-0" type="button"
-                                        title="{{(collapseContextVariables ? 'global.actions.show' : 'global.actions.hide') | translate}}">
-                                    <span class="fa" [ngClass]="collapseContextVariables ? 'fa-eye' : 'fa-eye-slash'"></span>
-                                </button>
-                                </legend>
-                                <div *ngIf="!collapseContextVariables" class="form-group mb-0">
-                                    <table class="context-variables-table table table-sm table-borderless table-hover">
-                                        <tbody>
-                                        <tr *ngFor="let entry of scenarioExecutionReport.contextVariables | objectAsEntryList ">
-                                            <td>{{entry.key}}</td>
-                                            <td>{{entry.value | stringify | prettyPrint}}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </fieldset>
-                        </div>
-                    </div>
-
-                    <ng-container *ngIf="scenarioExecutionReport?.report">
-                        <div class="row">
-
-                        </div>
+    <div class="row report-header bg-body shadow sticky-top mb-2">
+        <div class="col-6 badge-container" *ngIf="scenarioExecutionReport?.report">
+        <span>
+        <chutney-execution-badge [status]="scenarioExecutionReport.report.status"
+                                [spin]="true"></chutney-execution-badge>
+            <small class="text-muted ms-2">
+                {{'global.time.in' | translate}} {{scenarioExecutionReport.report.duration | duration}}
+            </small>
+            <small class="text-muted ms-2">
+                {{'global.time.at' | translate}} {{scenarioExecutionReport.report.startDate | date:'medium'}}
+            </small>
+            <small *ngIf="scenarioExecutionReport.user" class="text-muted ms-2">
+                {{'global.smallword.by' | translate}} : <b>{{scenarioExecutionReport.user}}</b>
+            </small>
+            <small class="text-muted ms-2">
+                -  {{'admin.targets.environment' | translate}} : <b>{{scenarioExecutionReport.environment}}</b>
+            </small>
+            <small class="text-muted ms-2">
+                <ng-container *ngIf="execution.campaignExecutionReport">
+                    -  {{ 'scenarios.execution.history.campaign' | translate }} :
+                    <ng-container *hasAuthorization="[Authorization.CAMPAIGN_READ]">
+                            <a [routerLink]="['/campaign', execution.campaignExecutionReport.campaignId, 'execution', execution.campaignExecutionReport.executionId]">
+                                {{execution.campaignExecutionReport.campaignName}}
+                            </a>
                     </ng-container>
-                    <div class="row mt-2">
-                        <div class="col">
-                            <div class="d-flex flex-column">
-                                <div *ngIf="scenarioExecutionReport?.report">
-                                    <button *ngIf="hasSubSteps()" class="btn btn-sm btn-outline-primary float-end" (click)="expandAll()">
-                                        {{isAllStepsCollapsed ? ('scenarios.execution.actions.steps.show' | translate) :
-                                        ('scenarios.execution.actions.steps.hide' | translate)}}
-                                    </button>
-                                </div>
-                                <div *ngIf="parseError">
-                                    <div class="error">
-                                        <em>{{'scenarios.execution.errors.parse' | translate}} : {{parseError}}</em>
-                                    </div>
-                                </div>
-                                <div *ngIf="executionError">
-                                    <div class="error">
-                                        <em>{{executionError}}</em>
-                                    </div>
-                                </div>
+                    <ng-container *hasAuthorization="{not: true, authorizations: [Authorization.CAMPAIGN_READ]}">
+                        <span>{{execution.campaignExecutionReport.campaignName}}</span>
+                    </ng-container>
+                </ng-container>
+            </small>
+        </span>
+        </div>
+        <div class="col text-sm-center align-self-center">
+            <div class="btn-toolbar justify-content-center align-items-center" role="toolbar" aria-label="Report toolbar">
+                <ng-container *hasAuthorization="[Authorization.SCENARIO_EXECUTE]">
+                    <div *ngIf="isRunning() || isPaused()" class="shadow btn-group btn-group-sm me-4" role="group" aria-label="Running actions">
+                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                title="{{'global.actions.stop' | translate}}"
+                                (click)="stopScenario()" [disabled]="!isRunning()">
+                            <span class="fa fa-stop"></span>
+                        </button>
 
-                                <ng-container *ngIf="scenarioExecutionReport?.report">
-                                    <div class="step-container-wrapper cursor-pointer" (click)="showRootStep()">
-                                        <div class="row step-container ps-3 py-2 text-center" [class.highlight]="isRootStepSelected()">
-                                            <span>{{ 'scenarios.execution.actions.details.show' | translate }}</span>
-                                        </div>
-                                    </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary mx-1"
+                                title="{{'global.actions.pause' | translate}}"
+                                (click)="pauseScenario()" [disabled]="!isRunning()">
+                            <span class="fa fa-pause"></span>
+                        </button>
 
-                                    <chutney-scenario-step-report
-                                        *ngFor="let report of scenarioExecutionReport.report.steps; let i = index"
-                                        [executionId]="execution.executionId"
-                                        [id]="i"
-                                        [step]="report"></chutney-scenario-step-report>
-                                </ng-container>
-                            </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                title="{{'global.actions.resume' | translate}}"
+                                (click)="resumeScenario()" [disabled]="!isPaused()">
+                            <span class="fa fa-play"></span>
+                        </button>
+                    </div>
+                </ng-container>
+                <div class="shadow btn-group btn-group-sm" role="group" aria-label="Report view actions">
+                    <button type="button" class="btn btn-sm btn-outline-primary"
+                            title="Collapse all steps" (click)="setAllStepsCollapsed(true)">
+                        <span class="fa fa-fw fa-chevron-right"></span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary"
+                            title="Expand all steps" (click)="setAllStepsCollapsed(false)">
+                        <span class="fa fa-fw fa-chevron-down"></span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary"
+                            title="Select root step" (click)="selectStep()">
+                        <span class="fa-regular fa-fw fa-eye"></span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary ms-1"
+                            title="Toggle view panels" (click)="togglePanels()">
+                        <span class="fa fa-fw fa-table-columns"></span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="button"
+                            title="Toggle inputs/outputs" (click)="toggleInputsOutputs()">
+                        <span class="fa fa-fw fa-right-left"></span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="button"
+                            title="Toggle infos/errors" (click)="toggleInfosErrors()">
+                        <span class="fa fa-fw fa-info"></span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="button"
+                            title="Toggle pretty print" (click)="togglePayloads()">
+                        <span class="fa fa-fw fa-pen-fancy"></span>
+                    </button>
+                    <button *ngIf="!isRunning() && !isPaused()" type="button" class="btn btn-sm btn-outline-primary ms-1"
+                            title="Export raw report" (click)="exportReport()" [disabled]="!scenario">
+                        <span class="fa fa-fw fa-download"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row ctx-var-raw mb-2" *ngIf="hasContextVariables && !isRunning()">
+        <div class="col justify-content-center">
+            <div class="hr-fa float-start align-self-center" (click)="toggleContextVariables()">
+                <i class="fa-solid fa-sm fa-fw" [ngClass]="collapseContextVariables ? 'fa-chevron-right' : 'fa-chevron-down'"></i>
+            </div>
+            <hr class="hr-text" attr.data-content="{{'scenarios.execution.contextVariables' | translate}}" (click)="toggleContextVariables()">
+            <div [ngbCollapse]="collapseContextVariables" [animation]="false">
+                <div *ngFor="let entry of scenarioExecutionReport.contextVariables | objectAsEntryList ">
+                    <div class="row copy-row">
+                        <div>
+                            <span class="fw-bold text-wrap text-break">{{ entry.key }}</span>
+                            <span title="copy value" class="ms-3 copy" (click)="copy(entry)">
+                                <i class="fa-sm fa-regular fa-copy"></i>
+                            </span>
                         </div>
-                        <div class="col-6">
-                            <div class="sticky-top">
-                                <div class="d-flex flex-column">
-                                    <div class="mb-2" *ngIf="scenarioExecutionReport?.report">
-                                        <button *ngIf="hasInputOutputs(selectedStep)" class="btn btn-sm btn-outline-primary float-end" (click)="toggleDetails()">
-                                            {{showDetails? ('scenarios.execution.actions.input-output.hide' | translate) :
-                                            ('scenarios.execution.actions.input-output.show' | translate)}}
-                                        </button>
-                                    </div>
-                                    <chutney-scenario-step-details [executionId]="execution.executionId"
-                                                                   [step]="selectedStep"
-                                                                   [showDetails]="showDetails"></chutney-scenario-step-details>
-                                </div>
+                        <div class="align-self-center">
+                            <pre class="m-0 text-wrap text-break"><code [innerHTML]="entry.value | stringify | prettyPrint"></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="report-raw d-flex flex-row" resize [left]="leftPanel" [right]="rightPanel" [grab]="grab">
+        <div #leftPanel class="report-raw-left pe-1 w30 report-bg border-top border-end sticky-top align-self-start">
+            <ng-container *ngIf="scenarioExecutionReport?.report">
+                <ng-container *ngFor="let step of scenarioExecutionReport.report.steps">
+                    <ng-container [ngTemplateOutlet]="stepFunc" [ngTemplateOutletContext]="{$implicit: step}"></ng-container>
+                </ng-container>
+            </ng-container>
+        </div>
+        <div #grab class="report-raw-grab resize">&nbsp;</div>
+        <div #rightPanel class="report-raw-right w70 report-bg border-top border-start">
+            <ng-container *ngIf="scenarioExecutionReport?.report">
+                <ng-container *ngIf="selectedStep">
+                    <ng-container *ngTemplateOutlet="stepAsText; context: {$implicit: selectedStep}"></ng-container>
+                </ng-container>
+                <ng-container *ngIf="!selectedStep">
+                    <ng-template ngFor
+                                [ngForTemplate]="stepAsText"
+                                [ngForOf]="scenarioExecutionReport.report.steps">
+                    </ng-template>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+<ng-template #stepFunc let-step>
+    <div [id]="step.rowId" class="d-flex flex-column" [class]="step.type">
+        <div class="step-header text-nowrap mb-1"
+            [ngClass]="{'bg-info bg-gradient bg-opacity-25': this.selectedStep == step}"
+            [title]="step.name" (click)="selectStep(step)">
+            <span (click)="toggleStepCollapsed(step, $event)">
+                <ng-container *ngIf="step.steps && step.steps.length > 0">
+                    <i class="fa-solid fa-sm fa-fw" [ngClass]="isStepCollapsed(step) ? 'fa-chevron-right' : 'fa-chevron-down'"></i>
+                </ng-container>
+                <ng-container *ngIf="!(step.steps && step.steps.length > 0)">
+                    <i class="fa-solid fa-sm fa-fw"></i>
+                </ng-container>
+            </span>
+            <span>
+                <span class="mr-1">
+                    <i class="fa-solid fa-2xs fa-fw"
+                        [ngClass]="{
+                            'fa-circle': step.status == 'SUCCESS' || step.status == 'NOT_EXECUTED',
+                            'step-header-success': step.status == 'SUCCESS',
+                            'fa-circle-xmark step-header-failure': step.status == 'FAILURE',
+                            'fa-circle-stop step-header-stopped': step.status == 'STOPPED',
+                            'step-header-not-executed': step.status == 'NOT_EXECUTED',
+                            'fa-spinner fa-spin step-header-running': step.status == 'RUNNING',
+                            'fa-circle-pause step-header-running': step.status == 'PAUSED'
+                        }">
+                    </i>
+                </span>
+                {{ step.name }}
+            </span>
+        </div>
+        <div class="d-flex flex-column ps-3" *ngIf="step.steps && step.steps.length > 0" [ngbCollapse]="isStepCollapsed(step)" [animation]="false">
+            <ng-container *ngFor="let sstep of step.steps; index as sidx;">
+                <ng-container [ngTemplateOutlet]="stepFunc" [ngTemplateOutletContext]="{$implicit: sstep}"></ng-container>
+            </ng-container>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #stepAsText let-step>
+    <div class="d-flex flex-column p-1 pe-0" [class]="step.type">
+        <div class="fw-bold"
+            [ngClass]="{
+                'step-header-success': step.status == 'SUCCESS',
+                'step-header-failure': step.status == 'FAILURE',
+                'step-header-stopped': step.status == 'STOPPED',
+                'step-header-not-executed': step.status == 'NOT_EXECUTED',
+                'step-header-running': step.status == 'RUNNING' || step.status == 'PAUSED'}"
+        >
+            {{ step.name }}
+            <span *ngIf="step.status != 'NOT_EXECUTED'" [ngbTooltip]="step.duration | duration" placement="left" class="float-end small">
+                <em>{{step.duration | duration}}</em>
+            </span>
+        </div>
+        <div class="ps-4">
+            <div *ngIf="step.type" class="type">
+                <span *ngIf="step.strategy != 'sequential'">[<span class="fw-bold">{{ step.strategy }}</span>]</span>
+                <span class="fw-bold"> {{ step.type }}</span>
+                <ng-container *ngIf="step.targetName"> on <span class="fw-bold">{{ step.targetName }}</span> - {{ step.targetUrl }}</ng-container>
+            </div>
+            <ng-cntainer *ngIf="step.evaluatedInputs && Object.keys(step.evaluatedInputs).length > 0">
+                <hr class="inputs hr-text" data-content="Entrées">
+                <div class="inputs">
+                    <div *ngFor="let input of step.evaluatedInputs | objectAsEntryList">
+                        <div class="row copy-row">
+                            <div class="pe-0">
+                                <span class="fw-bold">{{ input.key }}</span>
+                                <span title="copy value" class="ms-3 copy" (click)="copy(input)">
+                                    <i class="fa-sm fa-regular fa-copy"></i>
+                                </span>
+                            </div>
+                            <div class="align-self-center">
+                                <pre class="m-0 text-break text-wrap"><code [innerHTML]="input.value | stringify | prettyPrint"></code></pre>
                             </div>
                         </div>
                     </div>
                 </div>
+            </ng-cntainer>
+            <ng-container *ngIf="(step.information && step.information.length > 0) || (step.errors && step.errors.length > 0)">
+                <hr class="infos hr-text">
+            </ng-container>
+            <ng-container *ngIf="step.information && step.information.length > 0">
+                <div class="infos">
+                    <div *ngFor="let info of step.information" class="step-info text-wrap text-break">>> {{ info }}</div>
+                </div>
+            </ng-container>
+            <div *ngIf="step.errors && step.errors.length > 0" class="errors">
+                <div *ngFor="let error of step.errors" class="step-error text-wrap text-break">>> {{ error }}</div>
+            </div>
+            <ng-container *ngIf="step.stepOutputs && Object.keys(step.stepOutputs).length > 0">
+                <hr class="outputs hr-text" data-content="Sorties">
+                <div class="outputs">
+                    <div *ngFor="let output of step.stepOutputs | objectAsEntryList">
+                        <div class="row copy-row">
+                            <div class="pe-0">
+                                <span class="fw-bold">{{ output.key }}</span>
+                                <span title="copy value" class="ms-3 copy" (click)="copy(output)">
+                                    <i class="fa-sm fa-regular fa-copy"></i>
+                                </span>
+                            </div>
+                            <div class="align-self-center">
+                                <pre class="m-0 text-break text-wrap"><code [innerHTML]="output.value | stringify | prettyPrint"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+        <div class="d-flex flex-column ps-2 pe-0" *ngIf="step.steps && step.steps.length > 0">
+            <ng-template ngFor [ngForTemplate]="stepAsText" [ngForOf]="step.steps">
             </ng-template>
-        </li>
-    </ul>
-    <div [ngbNavOutlet]="executionNav"></div>
-</div>
+        </div>
+    </div>
+</ng-template>

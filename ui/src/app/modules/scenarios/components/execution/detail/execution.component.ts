@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Renderer2, OnDestroy, OnInit, Output, AfterViewInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, fromEvent, merge, timer } from 'rxjs';
 import { debounceTime, delay } from 'rxjs/operators';
-
-import { EventManagerService } from '@shared/event-manager.service';
+import { FileSaverService } from 'ngx-filesaver';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 
 import {
     Authorization,
@@ -14,65 +14,82 @@ import {
 } from '@model';
 import { ScenarioExecutionService } from '@modules/scenarios/services/scenario-execution.service';
 import { ExecutionStatus } from '@core/model/scenario/execution-status';
-import { ObjectAsEntryListPipe } from '@shared/pipes';
-import { FileSaverService } from 'ngx-filesaver';
+import { StringifyPipe, PrettyPrintPipe } from '@shared/pipes';
+import { findScrollContainer } from '@shared/tools';
 
 @Component({
     selector: 'chutney-scenario-execution',
-    providers: [Location],
+    providers: [
+        Location,
+        PrettyPrintPipe,
+        StringifyPipe
+    ],
     templateUrl: './execution.component.html',
     styleUrls: ['./execution.component.scss']
 })
-export class ScenarioExecutionComponent implements OnInit, OnDestroy {
+export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() execution: Execution;
     @Input() scenario: GwtTestCase;
     @Output() onExecutionStatusUpdate = new EventEmitter<{ status: ExecutionStatus, error: string }>();
 
+    Object = Object;
     ExecutionStatus = ExecutionStatus;
+    Authorization = Authorization;
 
-    parseError: String;
     executionError: String;
 
     scenarioExecutionReport: ScenarioExecutionReport;
     selectedStep: StepExecutionReport;
-    selectedStepId: number;
 
     isAllStepsCollapsed = true;
     hasContextVariables = false;
     collapseContextVariables = true;
-    showDetails = true;
 
     private scenarioExecutionAsyncSubscription: Subscription;
-    private stepDetailsSubscription: Subscription;
+    private resizeLeftPanelSubscription: Subscription;
 
-    Authorization = Authorization;
-
-    active = 1;
-    JSON = JSON;
+    private leftPanel: HTMLElement;
+    private grabPanel: HTMLElement;
+    private rightPanel: HTMLElement;
+    private reportHeader: HTMLElement;
 
     constructor(
-        private eventManager: EventManagerService,
         private scenarioExecutionService: ScenarioExecutionService,
-        private fileSaverService: FileSaverService) {
+        private fileSaverService: FileSaverService,
+        private stringify: StringifyPipe,
+        private prettyPrint: PrettyPrintPipe,
+        private renderer: Renderer2) {
     }
 
     ngOnInit() {
         if (this.scenario) {
             this.loadScenarioExecution(this.execution.executionId);
-        }
-        else {
+        } else {
             this.scenarioExecutionReport = JSON.parse(this.execution.report);
+            this.hasContextVariables = this.scenarioExecutionReport.contextVariables && Object.getOwnPropertyNames(this.scenarioExecutionReport.contextVariables).length > 0;
+            this.computeAllStepRowId();
+            this.selectFailedStep();
         }
-        this.stepDetailsSubscription = this.eventManager.subscribe('selectStepEvent_' + this.execution.executionId, (data) => {
-            this.selectedStep = data.step;
-            this.selectedStepId = data.stepId;
-            this.showDetails = !this.isRootStepSelected();
-        });
+    }
+
+    ngAfterViewInit(): void {
+        this.leftPanel = document.querySelector('.report-raw-left');
+        this.grabPanel = document.querySelector('.report-raw-grab');
+        this.rightPanel = document.querySelector('.report-raw-right');
+        this.reportHeader = document.querySelector('.report-header');
+
+        this.setLefPanelHeight();
+        this.setLefPanelTop();
+
+        this.resizeLeftPanelSubscription = merge(
+            fromEvent(window, 'resize'),
+            fromEvent(findScrollContainer(this.leftPanel),'scroll')
+        ).subscribe(() => {this.setLefPanelHeight();this.setLefPanelTop();});
     }
 
     ngOnDestroy() {
         this.unsubscribeScenarioExecutionAsyncSubscription();
-        this.eventManager.destroy(this.stepDetailsSubscription);
+        if (this.resizeLeftPanelSubscription) this.resizeLeftPanelSubscription.unsubscribe();
     }
 
     loadScenarioExecution(executionId: number) {
@@ -86,12 +103,8 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                     } else {
                         this.scenarioExecutionReport = scenarioExecutionReport;
                         this.hasContextVariables = this.scenarioExecutionReport.contextVariables && Object.getOwnPropertyNames(this.scenarioExecutionReport.contextVariables).length > 0;
-                        let failedStep = this.getFailureSteps(this.scenarioExecutionReport);
-                        if (failedStep?.length > 0) {
-                            this.eventManager.broadcast({ name: 'selectStepEvent_' + this.execution.executionId, step: failedStep[0], stepId: this.scenarioExecutionReport.report.steps.indexOf(failedStep[0]) });
-                        } else {
-                            this.showRootStep();
-                        }
+                        this.computeAllStepRowId();
+                        this.selectFailedStep();
                     }
                 },
                 error: error => {
@@ -102,33 +115,30 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
             });
     }
 
-    expandAll() {
-        this.isAllStepsCollapsed = !this.isAllStepsCollapsed;
-        this.eventManager.broadcast({ name: 'toggleScenarioStep_' + this.execution.executionId, expand: this.isAllStepsCollapsed });
-    }
-
-    toggleDetails() {
-        this.showDetails = !this.showDetails;
-    }
-
-    showRootStep() {
-        this.eventManager.broadcast({ name: 'selectStepEvent_' + this.execution.executionId, step: this.scenarioExecutionReport?.report, stepId: -1 });
+    private selectFailedStep() {
+        let failedStep = this.getFailureSteps(this.scenarioExecutionReport);
+        if (failedStep?.length > 0) {
+            timer(500).subscribe(() => {
+                this.selectStep(failedStep[failedStep.length-1], true);
+            });
+        }
     }
 
     stopScenario() {
-        this.scenarioExecutionService.stopScenario(this.scenario.id, this.execution.executionId).subscribe(() => {
-        }, error => {
-            const body = JSON.parse(error._body);
-            this.executionError = 'Cannot stop scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
-        }, () => {
+        this.scenarioExecutionService.stopScenario(this.scenario.id, this.execution.executionId).subscribe({
+            error: (error) => {
+                const body = JSON.parse(error._body);
+                this.executionError = 'Cannot stop scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
+            }
         });
     }
 
     pauseScenario() {
-        this.scenarioExecutionService.pauseScenario(this.scenario.id, this.execution.executionId).subscribe(() => {
-        }, error => {
-            const body = JSON.parse(error._body);
-            this.executionError = 'Cannot pause scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
+        this.scenarioExecutionService.pauseScenario(this.scenario.id, this.execution.executionId).subscribe({
+            error: (error) => {
+                const body = JSON.parse(error._body);
+                this.executionError = 'Cannot pause scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
+            }
         });
     }
 
@@ -137,13 +147,13 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
             .pipe(
                 delay(1000)
             )
-            .subscribe(
-                () => this.loadScenarioExecution(Number(this.execution.executionId)),
-                error => {
+            .subscribe({
+                next: () => this.loadScenarioExecution(Number(this.execution.executionId)),
+                error: (error) => {
                     const body = JSON.parse(error._body);
                     this.executionError = 'Cannot resume scenario : ' + error.status + ' ' + error.statusText + ' ' + body.message;
                 }
-            );
+            });
     }
 
     isRunning() {
@@ -154,23 +164,9 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         return ExecutionStatus.PAUSED === this.scenarioExecutionReport?.report?.status;
     }
 
-    hasSubSteps() {
-        return this.scenarioExecutionReport
-            .report
-            .steps
-            .filter((step) => step.steps.length > 0)
-            .length > 0;
-    }
-
-    hasInputOutputs(step: StepExecutionReport) {
-        if (step?.steps.length) {
-            return step.steps.filter((s) => this.hasInputOutputs(s)).length > 0;
-        }
-        return step && (Object.getOwnPropertyNames(step.evaluatedInputs).length > 0 || Object.getOwnPropertyNames(step.stepOutputs).length > 0);
-    }
-
-    private switchCollapseContextVariables() {
+    toggleContextVariables() {
         this.collapseContextVariables = !this.collapseContextVariables;
+        timer(250).subscribe(() => this.setLefPanelHeight());
     }
 
     private observeScenarioExecution(executionId: number) {
@@ -194,9 +190,6 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                         this.updateStepExecutionReport(this.scenarioExecutionReport.report, scenarioExecutionReport.report, []);
                     } else {
                         this.scenarioExecutionReport = scenarioExecutionReport;
-                    }
-                    if (this.isRootStepSelected()) {
-                        this.showRootStep();
                     }
                 },
                 error: (error) => {
@@ -228,14 +221,8 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
             .filter((step) => step.status === ExecutionStatus.FAILURE);
     }
 
-    private isRootStepSelected() {
-        return this.selectedStepId === -1;
-    }
-
     private unsubscribeScenarioExecutionAsyncSubscription() {
-        if (this.scenarioExecutionAsyncSubscription) {
-            this.scenarioExecutionAsyncSubscription.unsubscribe();
-        }
+        if (this.scenarioExecutionAsyncSubscription) this.scenarioExecutionAsyncSubscription.unsubscribe();
     }
 
     private updateStepExecutionReport(oldStepExecutionReport: StepExecutionReport, newStepExecutionReport: StepExecutionReport, depths: Array<number>) {
@@ -283,7 +270,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
         }
     }
 
-    private exportReport() {
+    exportReport() {
         const fileName = `${this.scenario.title}.execution.${this.execution.executionId}.chutney.json`;
         this.execution.report = JSON.stringify(this.scenarioExecutionReport);
         this.fileSaverService.saveText(JSON.stringify(this.execution), fileName);
@@ -291,24 +278,82 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    copy(e: any) {
-        var text = e.value;
-        if (text instanceof Object) {
-            text = JSON.stringify(text);
-        }
-        navigator.clipboard.writeText(text);
+    private setLefPanelHeight() {
+        this.renderer.setStyle(this.leftPanel, 'height', `calc(100vh - ${this.leftPanel.getBoundingClientRect().y}px)`);
     }
 
-    inputsToggle = true;
-    inputsDNoneToggle = true;
-    toggleInputs(dNone: boolean) {
+    private setLefPanelTop() {
+        this.renderer.setStyle(this.leftPanel, 'top', `calc(-1.5rem + ${this.reportHeader.offsetHeight}px + 0.5rem)`);
+    }
+
+    copy(e: any) {
+        var text = e.value;
+        navigator.clipboard.writeText(
+            this.prettyPrint.transform(
+                this.stringify.transform(text)
+            )
+        );
+    }
+
+    private panelState = 1;
+    togglePanels() {
+        this.panelState = (this.panelState + 1) % 3;
+        switch (this.panelState) {
+            case 0:
+                this.leftPanel.className = this.leftPanel.className.replace(/ d-none/g, '');
+                this.leftPanel.style.width = '100%';
+                this.grabPanel.className += ' d-none';
+                this.rightPanel.className += ' d-none';
+                break;
+            case 1:
+                this.leftPanel.className = this.leftPanel.className.replace(/ d-none/g, '');
+                this.leftPanel.style.width = '30%';
+                this.grabPanel.className = this.grabPanel.className.replace(/ d-none/g, '');
+                this.rightPanel.className = this.rightPanel.className.replace(/ d-none/g, '');
+                this.rightPanel.style.width = '70%';
+                break;
+            case 2:
+                this.leftPanel.className += ' d-none';
+                this.grabPanel.className += ' d-none';
+                this.rightPanel.className = this.rightPanel.className.replace(/ d-none/g, '');
+                this.rightPanel.style.width = '100%';
+                break;
+        }
+    }
+
+    togglePayloads() {
+        this.toggleCtxVars();
+        this.toggleInputs(false);
+        this.toggleOutputs(false);
+    }
+
+    private ctxVarsToggle = true;
+    private toggleCtxVars() {
+        this.ctxVarsToggle = !this.ctxVarsToggle;
+            document.querySelectorAll('.ctx-var-raw pre').forEach(e => {
+                if (this.ctxVarsToggle) {
+                    e.className = 'm-0 text-wrap text-break';
+                } else {
+                    e.className = 'm-0 d-block overflow-auto';
+                }
+            });
+    }
+
+    toggleInputsOutputs() {
+        this.toggleInputs(true);
+        this.toggleOutputs(true);
+    }
+
+    private inputsToggle = true;
+    private inputsDNoneToggle = true;
+    private toggleInputs(dNone: boolean) {
         if (dNone) {
             this.inputsDNoneToggle = !this.inputsDNoneToggle;
             document.querySelectorAll('.report-raw .inputs').forEach(e => {
                 if (this.inputsDNoneToggle) {
-                    e.className = 'inputs';
+                    e.className = e.className.replace('inputs d-none', 'inputs');
                 } else {
-                    e.className = 'inputs d-none';
+                    e.className = e.className.replace('inputs', 'inputs d-none');
                 }
             });
         } else {
@@ -317,22 +362,22 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                 if (this.inputsToggle) {
                     e.className = 'm-0 text-wrap text-break';
                 } else {
-                    e.className = 'm-0 text-truncate';
+                    e.className = 'm-0 d-block overflow-auto'; // text-truncate
                 }
             });
         }
     }
 
-    outputsToggle = true;
-    outputsDNoneToggle = true;
-    toggleOutputs(dNone: boolean) {
+    private outputsToggle = true;
+    private outputsDNoneToggle = true;
+    private toggleOutputs(dNone: boolean) {
         if (dNone) {
             this.outputsDNoneToggle = !this.outputsDNoneToggle;
             document.querySelectorAll('.report-raw .outputs').forEach(e => {
                 if (this.outputsDNoneToggle) {
-                    e.className = 'outputs';
+                    e.className = e.className.replace('outputs d-none', 'outputs');
                 } else {
-                    e.className = 'outputs d-none';
+                    e.className = e.className.replace('outputs', 'outputs d-none');
                 }
             });
         } else {
@@ -341,21 +386,88 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy {
                 if (this.outputsToggle) {
                     e.className = 'm-0 text-wrap text-break';
                 } else {
-                    e.className = 'm-0 text-truncate';
+                    e.className = 'm-0 d-block overflow-auto'; // text-truncate
                 }
             });
         }
     }
 
-    functionalToggle = true;
-    toggleFunctional() {
-        this.functionalToggle = !this.functionalToggle;
-            document.querySelectorAll('.report-raw :is(.success,.context-put,.fail,.debug,.sleep)').forEach(e => {
-                if (this.functionalToggle) {
+    toggleInfosErrors() {
+        this.toggleInfos();
+        this.toggleErrors();
+    }
+
+    private infosToggle = true;
+    private toggleInfos() {
+        this.infosToggle = !this.infosToggle;
+            document.querySelectorAll('.report-raw .infos').forEach(e => {
+                if (this.infosToggle) {
                     e.className = e.className.replace('d-none', '');
                 } else {
                     e.className += ' d-none';
                 }
             });
+    }
+
+    private errorsToggle = true;
+    private toggleErrors() {
+        this.errorsToggle = !this.errorsToggle;
+            document.querySelectorAll('.report-raw .errors').forEach(e => {
+                if (this.errorsToggle) {
+                    e.className = e.className.replace('d-none', '');
+                } else {
+                    e.className += ' d-none';
+                }
+            });
+    }
+
+    toggleStepCollapsed(step: any, event: Event = null) {
+        if (event != null) event.stopPropagation();
+        step.collapsed = !step.collapsed;
+    }
+
+    isStepCollapsed(step: any): boolean {
+        if ('collapsed' in step) {
+            return step.collapsed as boolean;
+        } else {
+            step.collapsed = false;
+            return false;
+        }
+    }
+
+    setAllStepsCollapsed(collapsed: boolean, parentStep: StepExecutionReport = null) {
+        if (parentStep == null) {
+            this.scenarioExecutionReport.report.steps.forEach(step => {
+                step['collapsed'] = collapsed;
+                this.setAllStepsCollapsed(collapsed, step);
+            });
+        } else {
+            parentStep['collapsed'] = collapsed;
+            parentStep.steps.forEach(step => {
+                step['collapsed'] = collapsed;
+                this.setAllStepsCollapsed(collapsed, step);
+            });
+        }
+    }
+
+    selectStep(step: StepExecutionReport = null, scrollIntoView: boolean = false) {
+        this.selectedStep = step;
+        if (scrollIntoView && step) {
+            document.getElementById(step['rowId']).scrollIntoView({behavior: 'smooth', block: 'center'});
+        }
+    }
+
+    private computeAllStepRowId() {
+        this.scenarioExecutionReport.report.steps.forEach((s, i) => {
+            this.computeStepRowId(s, `${i}`);
+        });
+    }
+
+    private computeStepRowId(step: StepExecutionReport, parentId: string) {
+        step['rowId'] = `${parentId}`;
+        step.steps.forEach((s, i) => {
+            s['rowId'] = `${parentId}-${i}`;
+            this.computeStepRowId(s, s['rowId']);
+        });
     }
 }

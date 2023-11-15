@@ -11,6 +11,6 @@ $info:#3190d0;
     background-color: $light;
 }
 
-.report-bg {
-    background-color: var(--bs-gray-100) !important;
+:root {
+    --chutney-report-bg-color: #{$gray-100};
 }

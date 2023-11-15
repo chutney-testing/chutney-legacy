@@ -33,6 +33,6 @@ $table-striped-bg:$dark;
     background-color: $info !important;
 }
 
-.report-bg {
-    background-color: $dark !important;
+:root {
+    --chutney-report-bg-color: #{$dark};
 }

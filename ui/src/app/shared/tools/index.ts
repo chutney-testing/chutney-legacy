@@ -6,3 +6,4 @@ export * from './number-utils';
 export * from './object-utils';
 export * from './regexp-utils';
 export * from './string-utils';
+export * from './dom-utils';

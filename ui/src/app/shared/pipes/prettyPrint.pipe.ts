@@ -19,9 +19,9 @@ export class PrettyPrintPipe implements PipeTransform {
         content = json;
         throw new Error('');
       } else if (Array.isArray(json)) {
-          let b = '[';
+          let b = '[\n';
           for (let i = 0 ; i < json.length ; i++) {
-              b += this.beautify(json[i]);
+              b += this.beautify(JSON.stringify(json[i]));
               b += '\n';
           }
           return b + ']';

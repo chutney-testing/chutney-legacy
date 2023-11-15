@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { DatasetSelectionComponent } from '@shared/components/dataset-selection/dataset-selection.component';
-import { InputFocusDirective } from '@shared/directives';
 import { ThumbnailPipe } from '@shared/pipes/thumbnail.pipe';
 import { MomentModule } from 'ngx-moment';
 import { AlertService } from './alert.service';
@@ -14,7 +13,12 @@ import {
     EnvironmentComboComponent,
     ExecutionBadgeComponent
 } from './components';
-import { ImplementationHostDirective, HasAuthorizationDirective } from './directives';
+import {
+    ImplementationHostDirective,
+    HasAuthorizationDirective,
+    InputFocusDirective,
+    ResizeDirective
+} from './directives';
 import { EventManagerService } from './event-manager.service';
 import {
     ComponentSearchPipe,
@@ -65,6 +69,7 @@ import { DistinctPipe } from './pipes/distinct.pipe';
         ExecutionBadgeComponent,
         ImplementationHostDirective,
         InputFocusDirective,
+        ResizeDirective,
         ObjectAsEntryListPipe,
         PrettyPrintPipe,
         SafePipe,
@@ -93,6 +98,7 @@ import { DistinctPipe } from './pipes/distinct.pipe';
         ExecutionBadgeComponent,
         ImplementationHostDirective,
         InputFocusDirective,
+        ResizeDirective,
         ObjectAsEntryListPipe,
         PrettyPrintPipe,
         SafePipe,
