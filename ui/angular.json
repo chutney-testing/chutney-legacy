@@ -152,5 +152,8 @@
       }
     }
   },
-  "defaultProject": "chutney"
+  "defaultProject": "chutney",
+  "cli": {
+    "analytics": false
+  }
 }

@@ -7,6 +7,8 @@ import {
     FormGroup,
     NG_VALIDATORS,
     NG_VALUE_ACCESSOR,
+    UntypedFormArray,
+    UntypedFormGroup,
     ValidationErrors
 } from '@angular/forms';
 import { KeyValue } from '@model';
@@ -203,7 +205,7 @@ export class FormsDataGridComponent implements ControlValueAccessor {
     }
 
     private createLine(line: Array<KeyValue>): FormArray {
-        let lineArray = this.fb.array([]);
+        let lineArray = this.fb.array([]) as UntypedFormArray;
         line.map(kv => this.createKeyValue(kv.key, kv.value))
             .forEach(cell => {
                 lineArray.push(cell);
