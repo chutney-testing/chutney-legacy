@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Renderer2, OnDestroy, OnInit, Output, AfterViewInit, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, Input, Renderer2, OnDestroy, OnInit, Output, AfterViewInit, TemplateRef, ElementRef } from '@angular/core';
 import { Location } from '@angular/common';
 import { Observable, Subscription, fromEvent, merge, timer } from 'rxjs';
 import { debounceTime, delay } from 'rxjs/operators';
@@ -68,7 +68,8 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         private stringify: StringifyPipe,
         private prettyPrint: PrettyPrintPipe,
         private renderer: Renderer2,
-        private offcanvasService: NgbOffcanvas) {
+        private offcanvasService: NgbOffcanvas,
+        private elementRef: ElementRef) {
     }
 
     ngOnInit() {
@@ -83,10 +84,10 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     ngAfterViewInit(): void {
-        this.leftPanel = document.querySelector('.report-raw-left');
-        this.grabPanel = document.querySelector('.report-raw-grab');
-        this.rightPanel = document.querySelector('.report-raw-right');
-        this.reportHeader = document.querySelector('.report-header');
+        this.leftPanel = this.querySelector('.report-raw-left', false);
+        this.grabPanel = this.querySelector('.report-raw-grab', false);
+        this.rightPanel = this.querySelector('.report-raw-right', false);
+        this.reportHeader = this.querySelector('.report-header', false);
 
         this.setLefPanelHeight();
         this.setLefPanelTop();
@@ -341,7 +342,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     private ctxVarsToggle = true;
     private toggleCtxVars() {
         this.ctxVarsToggle = !this.ctxVarsToggle;
-            document.querySelectorAll('.ctx-var-raw pre').forEach(e => {
+            this.querySelector('.ctx-var-raw pre').forEach(e => {
                 if (this.ctxVarsToggle) {
                     e.className = 'm-0 text-wrap text-break';
                 } else {
@@ -360,7 +361,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     private toggleInputs(dNone: boolean) {
         if (dNone) {
             this.inputsDNoneToggle = !this.inputsDNoneToggle;
-            document.querySelectorAll('.report-raw .inputs').forEach(e => {
+            this.querySelector('.report-raw .inputs').forEach(e => {
                 if (this.inputsDNoneToggle) {
                     e.className = e.className.replace('inputs d-none', 'inputs');
                 } else {
@@ -369,7 +370,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
             });
         } else {
             this.inputsToggle = !this.inputsToggle;
-            document.querySelectorAll('.report-raw .inputs pre').forEach(e => {
+            this.querySelector('.report-raw .inputs pre').forEach(e => {
                 if (this.inputsToggle) {
                     e.className = 'm-0 text-wrap text-break';
                 } else {
@@ -384,7 +385,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     private toggleOutputs(dNone: boolean) {
         if (dNone) {
             this.outputsDNoneToggle = !this.outputsDNoneToggle;
-            document.querySelectorAll('.report-raw .outputs').forEach(e => {
+            this.querySelector('.report-raw .outputs').forEach(e => {
                 if (this.outputsDNoneToggle) {
                     e.className = e.className.replace('outputs d-none', 'outputs');
                 } else {
@@ -393,7 +394,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
             });
         } else {
             this.outputsToggle = !this.outputsToggle;
-            document.querySelectorAll('.report-raw .outputs pre').forEach(e => {
+            this.querySelector('.report-raw .outputs pre').forEach(e => {
                 if (this.outputsToggle) {
                     e.className = 'm-0 text-wrap text-break';
                 } else {
@@ -411,7 +412,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     private infosToggle = true;
     private toggleInfos() {
         this.infosToggle = !this.infosToggle;
-            document.querySelectorAll('.report-raw .infos').forEach(e => {
+        this.querySelector('.report-raw .infos').forEach(e => {
                 if (this.infosToggle) {
                     e.className = e.className.replace('d-none', '');
                 } else {
@@ -423,7 +424,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     private errorsToggle = true;
     private toggleErrors() {
         this.errorsToggle = !this.errorsToggle;
-            document.querySelectorAll('.report-raw .errors').forEach(e => {
+        this.querySelector('.report-raw .errors').forEach(e => {
                 if (this.errorsToggle) {
                     e.className = e.className.replace('d-none', '');
                 } else {
@@ -480,6 +481,14 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
             s['rowId'] = `${parentId}-${i}`;
             this.computeStepRowId(s, s['rowId']);
         });
+    }
+
+    private querySelector(selectors: any, all: boolean = true): any | [any] {
+        if (all) {
+            return this.elementRef.nativeElement.querySelectorAll(selectors);
+        } else {
+            return this.elementRef.nativeElement.querySelector(selectors);
+        }
     }
 
 ////////////////////////////////////////////////////// MONACO canva view
