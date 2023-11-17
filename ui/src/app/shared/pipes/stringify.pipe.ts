@@ -7,7 +7,7 @@ export class StringifyPipe implements PipeTransform {
 
   transform(value: any, args?: any): any {
     if (value instanceof Object) {
-        return JSON.stringify(value);
+        return JSON.stringify(value, args?.replacer, args?.space);
     } else {
         return value;
     }

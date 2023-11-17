@@ -105,9 +105,12 @@
                             <span title="copy value" class="ms-3 copy" (click)="copy(entry)">
                                 <i class="fa-sm fa-regular fa-copy"></i>
                             </span>
+                            <span *ngIf="enableEditorView(entry)" title="read value" class="ms-3 copy" (click)="openOffCanva(monaco, entry)">
+                                <i class="fa-sm fa-regular fa-eye"></i>
+                            </span>
                         </div>
                         <div class="align-self-center">
-                            <pre class="m-0 text-wrap text-break"><code [innerHTML]="entry.value | stringify | prettyPrint"></code></pre>
+                            <pre class="m-0 text-wrap text-break"><code [innerHTML]="entry.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
                         </div>
                     </div>
                 </div>
@@ -208,9 +211,12 @@
                                 <span title="copy value" class="ms-3 copy" (click)="copy(input)">
                                     <i class="fa-sm fa-regular fa-copy"></i>
                                 </span>
+                                <span *ngIf="enableEditorView(input)" title="read value" class="ms-3 copy" (click)="openOffCanva(monaco, input)">
+                                    <i class="fa-sm fa-regular fa-eye"></i>
+                                </span>
                             </div>
                             <div class="align-self-center">
-                                <pre class="m-0 text-break text-wrap"><code [innerHTML]="input.value | stringify | prettyPrint"></code></pre>
+                                <pre class="m-0 text-break text-wrap"><code [innerHTML]="input.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
                             </div>
                         </div>
                     </div>
@@ -221,11 +227,15 @@
             </ng-container>
             <ng-container *ngIf="step.information && step.information.length > 0">
                 <div class="infos">
-                    <div *ngFor="let info of step.information" class="step-info text-wrap text-break">>> {{ info }}</div>
+                    <pre *ngFor="let info of step.information" class="step-info text-wrap text-break mb-0"
+                        [innerHTML]="('>> ' + (info | prettyPrint: true | thumbnail) | safe: 'html')">
+                    </pre>
                 </div>
             </ng-container>
             <div *ngIf="step.errors && step.errors.length > 0" class="errors">
-                <div *ngFor="let error of step.errors" class="step-error text-wrap text-break">>> {{ error }}</div>
+                <pre *ngFor="let error of step.errors" class="step-error text-wrap text-break mb-0"
+                        [innerHTML]="('>> ' + (error | prettyPrint: true | thumbnail) | safe: 'html')">
+                </pre>
             </div>
             <ng-container *ngIf="step.stepOutputs && Object.keys(step.stepOutputs).length > 0">
                 <hr class="outputs hr-text" data-content="Sorties">
@@ -237,9 +247,12 @@
                                 <span title="copy value" class="ms-3 copy" (click)="copy(output)">
                                     <i class="fa-sm fa-regular fa-copy"></i>
                                 </span>
+                                <span *ngIf="enableEditorView(output)" title="read value" class="ms-3 copy" (click)="openOffCanva(monaco, output)">
+                                    <i class="fa-sm fa-regular fa-eye"></i>
+                                </span>
                             </div>
                             <div class="align-self-center">
-                                <pre class="m-0 text-break text-wrap"><code [innerHTML]="output.value | stringify | prettyPrint"></code></pre>
+                                <pre class="m-0 text-break text-wrap"><code [innerHTML]="output.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
                             </div>
                         </div>
                     </div>
@@ -249,6 +262,56 @@
         <div class="d-flex flex-column ps-2 pe-0" *ngIf="step.steps && step.steps.length > 0">
             <ng-template ngFor [ngForTemplate]="stepAsText" [ngForOf]="step.steps">
             </ng-template>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #monaco let-offcanvas>
+    <div class="p-1 h-100 d-flex flex-column">
+        <div class="offcanva-header pb-1">
+            <div class="btn-toolbar d-flex flex-row" role="toolbar" aria-label="Editor panel toolbar">
+                <div class="btn-group btn-group-sm align-self-center" role="group" aria-label="Editor configuration">
+                    <label>language</label>
+                    <select class="text-center mx-1" aria-label="Select language" [(ngModel)]="editorLanguage">
+                        <option value="plaintext">plaintext</option>
+                        <option value="json">json</option>
+                        <option value="xml">xml</option>
+                        <option value="xml">html</option>
+                        <option value="sql">sql</option>
+                        <!--ng-container *ngFor="let lang of monacoLanguages">
+                            <option [value]="lang">{{lang}}</option>
+                        </ng-container-->
+                    </select>
+                    <label>theme</label>
+                    <select class="text-center mx-1" aria-label="Select theme" [(ngModel)]="editorTheme">
+                        <option value="vs">vs</option>
+                        <option value="vs-dark">vs-dark</option>
+                        <option value="hc-light">hc-light</option>
+                        <option value="hc-black">hc-black</option>
+                    </select>
+                </div>
+                <div class="btn-group btn-group-sm flex-grow-1 align-self-center d-flex justify-content-center" role="group" aria-label="Editor panel actions">
+                    <div class="flex-grow-1 text-center">
+                        <button type="button" class="btn btn-sm btn-outline-primary p-0 w10"
+                                title="Export editor content" (click)="exportEditorContent()">
+                            <i class="fa fa-fw fa-download"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary ms-1 p-0 w10"
+                                title="Copy editor content" (click)="copyEditorContent()">
+                            <i class="fa fa-fw fa-copy"></i>
+                        </button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-outline-primary p-0"
+                                title="Close" (click)="offcanvas.dismiss()">
+                            <i class="fa fa-fw fa-rectangle-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex-fill">
+            <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="code" class="h-100"></ngx-monaco-editor>
         </div>
     </div>
 </ng-template>

@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, Renderer2, OnDestroy, OnInit, Output, AfterViewInit } from '@angular/core';
+import { Component, EventEmitter, Input, Renderer2, OnDestroy, OnInit, Output, AfterViewInit, TemplateRef } from '@angular/core';
 import { Location } from '@angular/common';
 import { Observable, Subscription, fromEvent, merge, timer } from 'rxjs';
 import { debounceTime, delay } from 'rxjs/operators';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import {NGX_MONACO_EDITOR_CONFIG } from 'ngx-monaco-editor-v2'
 
 import {
     Authorization,
@@ -22,7 +23,15 @@ import { findScrollContainer } from '@shared/tools';
     providers: [
         Location,
         PrettyPrintPipe,
-        StringifyPipe
+        StringifyPipe,
+        {
+            provide: NGX_MONACO_EDITOR_CONFIG,
+            useValue: {
+                defaultOptions: {
+                    // readOnly: true
+                }
+            }
+        }
     ],
     templateUrl: './execution.component.html',
     styleUrls: ['./execution.component.scss']
@@ -58,7 +67,8 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         private fileSaverService: FileSaverService,
         private stringify: StringifyPipe,
         private prettyPrint: PrettyPrintPipe,
-        private renderer: Renderer2) {
+        private renderer: Renderer2,
+        private offcanvasService: NgbOffcanvas) {
     }
 
     ngOnInit() {
@@ -203,6 +213,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
                 },
                 complete: () => {
                     this.onExecutionStatusUpdate.emit({ status: executionStatus, error: executionError });
+                    timer(500).subscribe(() => window.location.reload());
                 }
             });
     }
@@ -276,7 +287,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         this.fileSaverService.saveText(JSON.stringify(this.execution), fileName);
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////// REPORT new view
 
     private setLefPanelHeight() {
         this.renderer.setStyle(this.leftPanel, 'height', `calc(100vh - ${this.leftPanel.getBoundingClientRect().y}px)`);
@@ -469,5 +480,57 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
             s['rowId'] = `${parentId}-${i}`;
             this.computeStepRowId(s, s['rowId']);
         });
+    }
+
+////////////////////////////////////////////////////// MONACO canva view
+
+    enableEditorView(value: any) {
+        return this.stringify.transform(value).length > 200;
+    }
+
+    private _theme = 'hc-black';
+    get editorTheme(): string {
+        return this._theme;
+    }
+    set editorTheme(theme: string) {
+        this._theme = (theme && theme.trim()) || 'hc-black';
+        this.updateEditorOptions();
+    }
+
+    private _editorLanguage = 'json';
+    get editorLanguage(): string {
+        return this._editorLanguage;
+    }
+    set editorLanguage(lang: string) {
+        this._editorLanguage = (lang && lang.trim()) || 'json';
+        this.updateEditorOptions();
+    }
+
+    /*
+    get monacoLanguages(): Array<string> {
+        return ((window as any)?.monaco?.languages?.getLanguages().map(l => l.id)) || [];
+    }
+    */
+
+    editorOptions = {theme: this.editorTheme, language: this.editorLanguage};
+    code: string;
+
+    openOffCanva(content: TemplateRef<any>, value: any) {
+        this.code = this.prettyPrint.transform(
+            this.stringify.transform(value.value, {space: 4})
+        );
+		const ref = this.offcanvasService.open(content, { position: 'bottom', panelClass: 'offcanvas-panel-report' });
+	}
+
+    exportEditorContent() {
+        this.fileSaverService.saveText(this.code, 'content');
+    }
+
+    copyEditorContent() {
+        navigator.clipboard.writeText(this.code);
+    }
+
+    private updateEditorOptions() {
+        this.editorOptions = {theme: this.editorTheme, language: this.editorLanguage};
     }
 }

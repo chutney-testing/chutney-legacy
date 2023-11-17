@@ -14,6 +14,7 @@ import {
     PerfectScrollbarConfigInterface,
     PerfectScrollbarModule
 } from 'ngx-perfect-scrollbar';
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 // Internal common
 import { SharedModule } from '@shared/shared.module';
 // Internal
@@ -60,6 +61,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         PerfectScrollbarModule,
         DragulaModule,
         FileSaverModule,
+        MonacoEditorModule,
         // Internal common
         SharedModule,
         MoleculesModule
