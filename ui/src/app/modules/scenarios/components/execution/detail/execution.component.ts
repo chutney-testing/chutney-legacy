@@ -337,6 +337,8 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         this.toggleCtxVars();
         this.toggleInputs(false);
         this.toggleOutputs(false);
+
+        timer(250).subscribe(() => this.setLefPanelHeight());
     }
 
     private ctxVarsToggle = true;
