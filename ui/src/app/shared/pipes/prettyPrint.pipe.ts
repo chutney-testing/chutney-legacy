@@ -8,7 +8,7 @@ export class PrettyPrintPipe implements PipeTransform {
             return (
                 '[\n' +
                 value.map((v) => this.beautify(v, escapeHtml)).join(',\n') +
-                ']\n'
+                '\n]'
             );
         } else {
             return this.beautify(value, escapeHtml);
@@ -28,7 +28,7 @@ export class PrettyPrintPipe implements PipeTransform {
                     json
                         .map((v) => this.beautify(JSON.stringify(v)))
                         .join(',\n') +
-                    ']\n'
+                    '\n]'
                 );
             }
             return JSON.stringify(json, null, '  ');

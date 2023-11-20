@@ -197,7 +197,7 @@
         </div>
         <div class="ps-4">
             <div *ngIf="step.type" class="type">
-                <span *ngIf="step.strategy != 'sequential'">[<span class="fw-bold">{{ step.strategy }}</span>]</span>
+                <span *ngIf="step.strategy != 'sequential' && step.strategy.lenght > 0">[<span class="fw-bold">{{ step.strategy }}</span>]</span>
                 <span class="fw-bold"> {{ step.type }}</span>
                 <ng-container *ngIf="step.targetName"> on <span class="fw-bold">{{ step.targetName }}</span> - {{ step.targetUrl }}</ng-container>
             </div>
