@@ -38,6 +38,12 @@ public class IfStrategy implements StepExecutionStrategy {
             return DefaultStepExecutionStrategy.instance.execute(scenarioExecution, step, scenarioContext, localContext, strategies);
         } else {
             step.success();
+            if(step.isParentStep()) {
+                step.subSteps().forEach(subStep -> {
+                    subStep.addInformation("Step not executed");
+                    subStep.success();
+                });
+            }
         }
         return SUCCESS;
     }
