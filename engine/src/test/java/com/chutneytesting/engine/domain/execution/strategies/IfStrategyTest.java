@@ -131,7 +131,7 @@ public class IfStrategyTest {
 
     @ParameterizedTest(name = "#{index}: {0}")
     @MethodSource("datasetForIf_strategy_on_parent_stepnominal_cases")
-    void if_strategy_on_parent_stepnominal_cases(String testName, Object ifCondition, Integer stepExecutionNumber, Status expectedStatus) {
+    void if_strategy_on_parent_step_nominal_cases(String testName, Object ifCondition, Integer stepExecutionNumber, Status expectedStatus) {
 
         //Given
         StrategyProperties strategyProperties = new StrategyProperties();
