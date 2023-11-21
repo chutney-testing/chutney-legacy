@@ -78,10 +78,27 @@
                 "default-dataset": "Default dataset"
             },
             "step": {
+                "inputs": "Inputs",
+                "outputs": "Outputs",
                 "actions": {
-                    "details": "Details",
-                    "informations": "Informations",
-                    "errors": "Errors"
+                    "copy": "Copy value",
+                    "edit": "Edit value",
+                    "collapse.all": "Collapse all",
+                    "expand.all": "Expand all",
+                    "select.root": "See all steps",
+                    "export": "Export report",
+                    "toggle": {
+                        "view": "Toggle view panels",
+                        "inout": "Toggle inputs/outputs",
+                        "inferr": "Toggle infos/errors",
+                        "pretty": "Toggle pretty print"
+                    }
+                },
+                "editor": {
+                    "lang": "language",
+                    "theme": "theme",
+                    "copy": "Copy editor content",
+                    "export": "Export editor content"
                 }
             },
             "actions": {

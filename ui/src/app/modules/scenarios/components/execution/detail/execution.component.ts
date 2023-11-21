@@ -50,7 +50,6 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     scenarioExecutionReport: ScenarioExecutionReport;
     selectedStep: StepExecutionReport;
 
-    isAllStepsCollapsed = true;
     hasContextVariables = false;
     collapseContextVariables = true;
 
@@ -77,9 +76,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
             this.loadScenarioExecution(this.execution.executionId);
         } else {
             this.scenarioExecutionReport = JSON.parse(this.execution.report);
-            this.hasContextVariables = this.scenarioExecutionReport.contextVariables && Object.getOwnPropertyNames(this.scenarioExecutionReport.contextVariables).length > 0;
-            this.computeAllStepRowId();
-            this.selectFailedStep();
+            this.afterReportUpdate();
         }
     }
 
@@ -95,7 +92,10 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         this.resizeLeftPanelSubscription = merge(
             fromEvent(window, 'resize'),
             fromEvent(findScrollContainer(this.leftPanel),'scroll')
-        ).subscribe(() => {this.setLefPanelHeight();this.setLefPanelTop();});
+        ).subscribe(() => {
+            this.setLefPanelHeight();
+            this.setLefPanelTop();
+        });
     }
 
     ngOnDestroy() {
@@ -113,9 +113,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
                         this.observeScenarioExecution(executionId);
                     } else {
                         this.scenarioExecutionReport = scenarioExecutionReport;
-                        this.hasContextVariables = this.scenarioExecutionReport.contextVariables && Object.getOwnPropertyNames(this.scenarioExecutionReport.contextVariables).length > 0;
-                        this.computeAllStepRowId();
-                        this.selectFailedStep();
+                        this.afterReportUpdate();
                     }
                 },
                 error: error => {
@@ -124,6 +122,12 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
                     this.scenarioExecutionReport = null;
                 }
             });
+    }
+
+    private afterReportUpdate() {
+        this.hasContextVariables = this.scenarioExecutionReport.contextVariables && Object.getOwnPropertyNames(this.scenarioExecutionReport.contextVariables).length > 0;
+        this.computeAllStepRowId();
+        this.selectFailedStep();
     }
 
     private selectFailedStep() {
@@ -202,6 +206,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
                     } else {
                         this.scenarioExecutionReport = scenarioExecutionReport;
                     }
+                    this.afterReportUpdate();
                 },
                 error: (error) => {
                     if (error.status) {
@@ -214,7 +219,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
                 },
                 complete: () => {
                     this.onExecutionStatusUpdate.emit({ status: executionStatus, error: executionError });
-                    timer(500).subscribe(() => window.location.reload());
+                    this.ngOnInit();
                 }
             });
     }
@@ -455,6 +460,11 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
                 step['collapsed'] = collapsed;
                 this.setAllStepsCollapsed(collapsed, step);
             });
+            if (!collapsed) {
+                timer(500).subscribe(() => {
+                    this.selectStep(this.selectedStep, true);
+                });
+            }
         } else {
             parentStep['collapsed'] = collapsed;
             parentStep.steps.forEach(step => {
@@ -467,7 +477,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     selectStep(step: StepExecutionReport = null, scrollIntoView: boolean = false) {
         this.selectedStep = step;
         if (scrollIntoView && step) {
-            document.getElementById(step['rowId']).scrollIntoView({behavior: 'smooth', block: 'center'});
+            document.getElementById(step['rowId']).scrollIntoView({behavior: 'smooth', block: 'start'});
         }
     }
 

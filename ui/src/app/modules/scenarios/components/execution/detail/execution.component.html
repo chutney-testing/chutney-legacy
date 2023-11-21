@@ -56,35 +56,35 @@
                 </ng-container>
                 <div class="shadow btn-group btn-group-sm" role="group" aria-label="Report view actions">
                     <button type="button" class="btn btn-sm btn-outline-primary"
-                            title="Collapse all steps" (click)="setAllStepsCollapsed(true)">
+                            title="{{'scenarios.execution.step.actions.collapse.all' | translate}}" (click)="setAllStepsCollapsed(true)">
                         <span class="fa fa-fw fa-chevron-right"></span>
                     </button>
                     <button type="button" class="btn btn-sm btn-outline-primary"
-                            title="Expand all steps" (click)="setAllStepsCollapsed(false)">
+                            title="{{'scenarios.execution.step.actions.expand.all' | translate}}" (click)="setAllStepsCollapsed(false)">
                         <span class="fa fa-fw fa-chevron-down"></span>
                     </button>
                     <button type="button" class="btn btn-sm btn-outline-primary"
-                            title="Select root step" (click)="selectStep()">
+                            title="{{'scenarios.execution.step.actions.select.root' | translate}}" (click)="selectStep()">
                         <span class="fa-regular fa-fw fa-eye"></span>
                     </button>
                     <button type="button" class="btn btn-sm btn-outline-primary ms-1"
-                            title="Toggle view panels" (click)="togglePanels()">
+                            title="{{'scenarios.execution.step.actions.toggle.view' | translate}}" (click)="togglePanels()">
                         <span class="fa fa-fw fa-table-columns"></span>
                     </button>
                     <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="button"
-                            title="Toggle inputs/outputs" (click)="toggleInputsOutputs()">
+                            title="{{'scenarios.execution.step.actions.toggle.inout' | translate}}" (click)="toggleInputsOutputs()">
                         <span class="fa fa-fw fa-right-left"></span>
                     </button>
                     <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="button"
-                            title="Toggle infos/errors" (click)="toggleInfosErrors()">
+                            title="{{'scenarios.execution.step.actions.toggle.inferr' | translate}}" (click)="toggleInfosErrors()">
                         <span class="fa fa-fw fa-info"></span>
                     </button>
                     <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="button"
-                            title="Toggle pretty print" (click)="togglePayloads()">
+                            title="{{'scenarios.execution.step.actions.toggle.pretty' | translate}}" (click)="togglePayloads()">
                         <span class="fa fa-fw fa-pen-fancy"></span>
                     </button>
                     <button *ngIf="!isRunning() && !isPaused()" type="button" class="btn btn-sm btn-outline-primary ms-1"
-                            title="Export raw report" (click)="exportReport()" [disabled]="!scenario">
+                            title="{{'scenarios.execution.step.actions.export' | translate}}" (click)="exportReport()" [disabled]="!scenario">
                         <span class="fa fa-fw fa-download"></span>
                     </button>
                 </div>
@@ -202,16 +202,16 @@
                 <ng-container *ngIf="step.targetName"> on <span class="fw-bold">{{ step.targetName }}</span> - {{ step.targetUrl }}</ng-container>
             </div>
             <ng-cntainer *ngIf="step.evaluatedInputs && Object.keys(step.evaluatedInputs).length > 0">
-                <hr class="inputs hr-text" data-content="Entrées">
+                <hr class="inputs hr-text" data-content="{{'scenarios.execution.step.inputs' | translate}}">
                 <div class="inputs">
                     <div *ngFor="let input of step.evaluatedInputs | objectAsEntryList">
                         <div class="row copy-row">
                             <div class="pe-0">
                                 <span class="fw-bold">{{ input.key }}</span>
-                                <span title="copy value" class="ms-3 copy" (click)="copy(input)">
+                                <span title="{{'scenarios.execution.step.actions.copy' | translate}}" class="ms-3 copy" (click)="copy(input)">
                                     <i class="fa-sm fa-regular fa-copy"></i>
                                 </span>
-                                <span *ngIf="enableEditorView(input)" title="read value" class="ms-3 copy" (click)="openOffCanva(monaco, input)">
+                                <span *ngIf="enableEditorView(input)" title="{{'scenarios.execution.step.actions.edit' | translate}}" class="ms-3 copy" (click)="openOffCanva(monaco, input)">
                                     <i class="fa-sm fa-regular fa-eye"></i>
                                 </span>
                             </div>
@@ -238,16 +238,16 @@
                 </pre>
             </div>
             <ng-container *ngIf="step.stepOutputs && Object.keys(step.stepOutputs).length > 0">
-                <hr class="outputs hr-text" data-content="Sorties">
+                <hr class="outputs hr-text" data-content="{{'scenarios.execution.step.outputs' | translate}}">
                 <div class="outputs">
                     <div *ngFor="let output of step.stepOutputs | objectAsEntryList">
                         <div class="row copy-row">
                             <div class="pe-0">
                                 <span class="fw-bold">{{ output.key }}</span>
-                                <span title="copy value" class="ms-3 copy" (click)="copy(output)">
+                                <span title="{{'scenarios.execution.step.actions.copy' | translate}}" class="ms-3 copy" (click)="copy(output)">
                                     <i class="fa-sm fa-regular fa-copy"></i>
                                 </span>
-                                <span *ngIf="enableEditorView(output)" title="read value" class="ms-3 copy" (click)="openOffCanva(monaco, output)">
+                                <span *ngIf="enableEditorView(output)" title="{{'scenarios.execution.step.actions.edit' | translate}}" class="ms-3 copy" (click)="openOffCanva(monaco, output)">
                                     <i class="fa-sm fa-regular fa-eye"></i>
                                 </span>
                             </div>
@@ -271,7 +271,7 @@
         <div class="offcanva-header pb-1">
             <div class="btn-toolbar d-flex flex-row" role="toolbar" aria-label="Editor panel toolbar">
                 <div class="btn-group btn-group-sm align-self-center" role="group" aria-label="Editor configuration">
-                    <label>language</label>
+                    <label>{{'scenarios.execution.step.editor.lang' | translate}}</label>
                     <select class="text-center mx-1" aria-label="Select language" [(ngModel)]="editorLanguage">
                         <option value="plaintext">plaintext</option>
                         <option value="json">json</option>
@@ -282,7 +282,7 @@
                             <option [value]="lang">{{lang}}</option>
                         </ng-container-->
                     </select>
-                    <label>theme</label>
+                    <label>{{'scenarios.execution.step.editor.theme' | translate}}</label>
                     <select class="text-center mx-1" aria-label="Select theme" [(ngModel)]="editorTheme">
                         <option value="vs">vs</option>
                         <option value="vs-dark">vs-dark</option>
@@ -293,17 +293,17 @@
                 <div class="btn-group btn-group-sm flex-grow-1 align-self-center d-flex justify-content-center" role="group" aria-label="Editor panel actions">
                     <div class="flex-grow-1 text-center">
                         <button type="button" class="btn btn-sm btn-outline-primary p-0 w10"
-                                title="Export editor content" (click)="exportEditorContent()">
+                                title="{{'scenarios.execution.step.editor.export' | translate}}" (click)="exportEditorContent()">
                             <i class="fa fa-fw fa-download"></i>
                         </button>
                         <button type="button" class="btn btn-sm btn-outline-primary ms-1 p-0 w10"
-                                title="Copy editor content" (click)="copyEditorContent()">
+                                title="{{'scenarios.execution.step.editor.copy' | translate}}" (click)="copyEditorContent()">
                             <i class="fa fa-fw fa-copy"></i>
                         </button>
                     </div>
                     <div>
                         <button type="button" class="btn btn-sm btn-outline-primary p-0"
-                                title="Close" (click)="offcanvas.dismiss()">
+                                title="{{'global.actions.close' | translate}}" (click)="offcanvas.dismiss()">
                             <i class="fa fa-fw fa-rectangle-xmark"></i>
                         </button>
                     </div>
