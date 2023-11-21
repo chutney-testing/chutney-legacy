@@ -22,12 +22,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.slf4j.Logger;
@@ -58,7 +62,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
     public void updateRequest(Xray xray) {
         String updateUri = jiraTargetConfiguration.url() + "/rest/raven/1.0/import/execution";
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username(), jiraTargetConfiguration.password());
+        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration);
 
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(updateUri, xray, String.class);
@@ -80,7 +84,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         String uriTemplate = jiraTargetConfiguration.url() + "/rest/raven/1.0/api/%s/%s/test";
         String uri = String.format(uriTemplate, isTestPlan(xrayId) ? "testplan" : "testexec", xrayId);
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username(), jiraTargetConfiguration.password());
+        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration);
         try {
             ResponseEntity<XrayTestExecTest[]> response = restTemplate.getForEntity(uri, XrayTestExecTest[].class);
             if (response.getStatusCode().equals(HttpStatus.OK) && response.getBody() != null) {
@@ -100,7 +104,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         String uriTemplate = jiraTargetConfiguration.url() + "/rest/raven/1.0/api/testrun/%s/status?status=%s";
         String uri = String.format(uriTemplate, testRuntId, executionStatus);
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username(), jiraTargetConfiguration.password());
+        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration);
         try {
             restTemplate.put(uri, null);
         } catch (RestClientException e) {
@@ -113,7 +117,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         String uriTemplate = jiraTargetConfiguration.url() + "/rest/raven/1.0/api/testplan/%s/testexecution";
         String uri = String.format(uriTemplate, testPlanId);
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username(), jiraTargetConfiguration.password());
+        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration);
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(uri, Map.of("add", List.of(testExecutionId)), String.class);
             if (response.getStatusCode().equals(HttpStatus.OK)) {
@@ -165,7 +169,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         String uri = jiraTargetConfiguration.url() + "/rest/api/latest/issuetype";
         Optional<JiraIssueType> issueTypeOptional = Optional.empty();
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration.username(), jiraTargetConfiguration.password());
+        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration);
         try {
             ResponseEntity<JiraIssueType[]> response = restTemplate.getForEntity(uri, JiraIssueType[].class);
             if (response.getStatusCode().equals(HttpStatus.OK) && response.getBody() != null) {
@@ -191,7 +195,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         }
     }
 
-    private RestTemplate buildRestTemplate(String username, String password) {
+    private RestTemplate buildRestTemplate(JiraTargetConfiguration jiraTargetConfiguration) {
         RestTemplate restTemplate;
         SSLContext sslContext = buildSslContext();
         SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
@@ -199,13 +203,25 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
             .setSSLSocketFactory(socketFactory)
             .setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(MS_TIMEOUT, TimeUnit.MILLISECONDS).build())
             .build();
-        CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connectionManager).build();
 
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        HttpClientBuilder httpClientBuilder = HttpClients.custom().setConnectionManager(connectionManager);
+
+
+        if (jiraTargetConfiguration.hasProxy()) {
+            BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
+            credsProvider.setCredentials(
+                new AuthScope(jiraTargetConfiguration.urlProxy(), jiraTargetConfiguration.portProxy()),
+                new UsernamePasswordCredentials(jiraTargetConfiguration.userProxy(), jiraTargetConfiguration.passwordProxy().toCharArray())
+            );
+            HttpHost myProxy = new HttpHost(jiraTargetConfiguration.urlProxy(), jiraTargetConfiguration.portProxy());
+            httpClientBuilder.setProxy(myProxy).setDefaultCredentialsProvider(credsProvider);
+        }
+
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClientBuilder.build());
         requestFactory.setConnectTimeout(MS_TIMEOUT);
 
         restTemplate = new RestTemplate(requestFactory);
-        restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(username, password));
+        restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(jiraTargetConfiguration.username(), jiraTargetConfiguration.password()));
 
         return restTemplate;
     }
