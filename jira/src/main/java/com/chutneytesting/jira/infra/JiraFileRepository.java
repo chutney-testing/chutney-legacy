@@ -103,7 +103,7 @@ public class JiraFileRepository implements JiraRepository {
     @Override
     public JiraTargetConfiguration loadServerConfiguration() {
         JiraTargetConfigurationDto dto = doLoadServerConfiguration();
-        return new JiraTargetConfiguration(dto.url, dto.username, dto.password);
+        return new JiraTargetConfiguration(dto.url, dto.username, dto.password, null, null, null);
     }
 
     @Override

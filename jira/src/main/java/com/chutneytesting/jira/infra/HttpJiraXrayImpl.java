@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,6 +34,7 @@ import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -206,15 +208,20 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
 
         HttpClientBuilder httpClientBuilder = HttpClients.custom().setConnectionManager(connectionManager);
 
-
         if (jiraTargetConfiguration.hasProxy()) {
-            BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-            credsProvider.setCredentials(
-                new AuthScope(jiraTargetConfiguration.urlProxy(), jiraTargetConfiguration.portProxy()),
-                new UsernamePasswordCredentials(jiraTargetConfiguration.userProxy(), jiraTargetConfiguration.passwordProxy().toCharArray())
-            );
-            HttpHost myProxy = new HttpHost(jiraTargetConfiguration.urlProxy(), jiraTargetConfiguration.portProxy());
-            httpClientBuilder.setProxy(myProxy).setDefaultCredentialsProvider(credsProvider);
+            try {
+                URI proxyUri = new URI(jiraTargetConfiguration.urlProxy());
+                HttpHost proxyHttpHost = HttpHost.create(proxyUri);
+              BasicCredentialsProvider credentialsProvider = getBasicCredentialsProvider(jiraTargetConfiguration, proxyHttpHost);
+              String proxyAuthorization = Base64.getEncoder()
+                  .encodeToString((jiraTargetConfiguration.userProxy() + ":" + jiraTargetConfiguration.passwordProxy()).getBytes());
+              httpClientBuilder
+                  .setProxy(proxyHttpHost)
+                  .setDefaultCredentialsProvider(credentialsProvider)
+                  .setDefaultHeaders(List.of(new BasicHeader("Proxy-Authorization", "Basic " + proxyAuthorization)));
+            } catch (URISyntaxException e) {
+                LOGGER.error("Unexpected proxy url", e);
+            }
         }
 
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClientBuilder.build());
@@ -226,7 +233,16 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         return restTemplate;
     }
 
-    private JiraRestClient getJiraRestClient() {
+  private BasicCredentialsProvider getBasicCredentialsProvider(JiraTargetConfiguration jiraTargetConfiguration, HttpHost proxyHttpHost) {
+    BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+    credentialsProvider.setCredentials(
+        new AuthScope(proxyHttpHost),
+        new UsernamePasswordCredentials(jiraTargetConfiguration.userProxy(), jiraTargetConfiguration.passwordProxy().toCharArray())
+    );
+    return credentialsProvider;
+  }
+
+  private JiraRestClient getJiraRestClient() {
         try {
             AsynchronousJiraRestClientFactory asynchronousJiraRestClientFactory = new AsynchronousJiraRestClientFactory();
             return asynchronousJiraRestClientFactory

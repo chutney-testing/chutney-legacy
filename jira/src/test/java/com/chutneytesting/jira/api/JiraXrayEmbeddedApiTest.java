@@ -37,7 +37,7 @@ class JiraXrayEmbeddedApiTest {
     private final JiraXrayApi jiraXrayApiMock = mock(JiraXrayApi.class);
     private final JiraXrayClientFactory jiraXrayFactory = mock(JiraXrayClientFactory.class);
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
-    private final JiraTargetConfiguration jiraTargetConfiguration = new JiraTargetConfiguration("an url", "a username", "a password");
+    private final JiraTargetConfiguration jiraTargetConfiguration = new JiraTargetConfiguration("an url", "a username", "a password", null, null, null);
 
     private JiraXrayEmbeddedApi jiraXrayEmbeddedApi;
     private JiraRepository jiraRepository;

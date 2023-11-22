@@ -50,7 +50,7 @@ class JiraModuleControllerTest {
 
         when(jiraXrayFactory.create(any())).thenReturn(mockJiraXrayApi);
 
-        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("an url", "a username", "a password"));
+        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("an url", "a username", "a password", null, null, null));
         jiraRepository.saveForCampaign("10", "JIRA-10");
         jiraRepository.saveForCampaign("20", "JIRA-20");
         jiraRepository.saveForScenario("1", "SCE-1");
@@ -63,7 +63,7 @@ class JiraModuleControllerTest {
 
     @Test
     void should_not_create_HttpJiraXrayImpl_if_url_not_exist(){
-        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("", "a username", "a password"));
+        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("", "a username", "a password", null, null, null));
 
         assertThatExceptionOfType(RuntimeException.class)
             .isThrownBy(() -> getJiraController("/api/ui/jira/v1/testexec/JIRA-10", new TypeReference<>() {}))
@@ -205,7 +205,7 @@ class JiraModuleControllerTest {
 
     @Test
     void saveConfiguration() throws Exception {
-        JiraTargetConfiguration newConfiguration = new JiraTargetConfiguration("a new url", "a new username", "a new password");
+        JiraTargetConfiguration newConfiguration = new JiraTargetConfiguration("a new url", "a new username", "a new password", null, null, null);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/ui/jira/v1/configuration")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
