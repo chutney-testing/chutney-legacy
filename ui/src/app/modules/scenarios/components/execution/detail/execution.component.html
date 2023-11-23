@@ -1,5 +1,5 @@
 <div>
-    <div class="row report-header bg-body shadow sticky-top mb-2">
+    <div #reportHeader class="row report-header bg-body shadow sticky-top mb-2">
         <div class="col-6 badge-container" *ngIf="scenarioExecutionReport?.report">
         <span>
         <chutney-execution-badge [status]="scenarioExecutionReport.report.status"
@@ -110,7 +110,7 @@
                             </span>
                         </div>
                         <div class="align-self-center">
-                            <pre class="m-0 text-wrap text-break"><code [innerHTML]="entry.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
+                            <pre [class]="inOutCtxToggleClass(ctxVarsToggle)"><code [innerHTML]="entry.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
                         </div>
                     </div>
                 </div>
@@ -202,8 +202,8 @@
                 <ng-container *ngIf="step.targetName"> on <span class="fw-bold">{{ step.targetName }}</span> - {{ step.targetUrl }}</ng-container>
             </div>
             <ng-cntainer *ngIf="step.evaluatedInputs && Object.keys(step.evaluatedInputs).length > 0">
-                <hr class="inputs hr-text" data-content="{{'scenarios.execution.step.inputs' | translate}}">
-                <div class="inputs">
+                <hr class="inputs hr-text" [ngClass]="{'d-none': !inputsDNoneToggle}" attr.data-content="{{'scenarios.execution.step.inputs' | translate}}">
+                <div class="inputs" [ngClass]="{'d-none': !inputsDNoneToggle}">
                     <div *ngFor="let input of step.evaluatedInputs | objectAsEntryList">
                         <div class="row copy-row">
                             <div class="pe-0">
@@ -216,30 +216,30 @@
                                 </span>
                             </div>
                             <div class="align-self-center">
-                                <pre class="m-0 text-break text-wrap"><code [innerHTML]="input.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
+                                <pre [class]="inOutCtxToggleClass(inputsToggle)"><code [innerHTML]="input.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
                             </div>
                         </div>
                     </div>
                 </div>
             </ng-cntainer>
             <ng-container *ngIf="(step.information && step.information.length > 0) || (step.errors && step.errors.length > 0)">
-                <hr class="infos hr-text">
+                <hr class="infos hr-text" [ngClass]="{'d-none': !infosToggle}">
             </ng-container>
             <ng-container *ngIf="step.information && step.information.length > 0">
-                <div class="infos">
+                <div class="infos" [ngClass]="{'d-none': !infosToggle}">
                     <pre *ngFor="let info of step.information" class="step-info text-wrap text-break mb-0"
                         [innerHTML]="('>> ' + (info | prettyPrint: true | thumbnail) | safe: 'html')">
                     </pre>
                 </div>
             </ng-container>
-            <div *ngIf="step.errors && step.errors.length > 0" class="errors">
+            <div *ngIf="step.errors && step.errors.length > 0" class="errors" [ngClass]="{'d-none': !errorsToggle}">
                 <pre *ngFor="let error of step.errors" class="step-error text-wrap text-break mb-0"
                         [innerHTML]="('>> ' + (error | prettyPrint: true | thumbnail) | safe: 'html')">
                 </pre>
             </div>
             <ng-container *ngIf="step.stepOutputs && Object.keys(step.stepOutputs).length > 0">
-                <hr class="outputs hr-text" data-content="{{'scenarios.execution.step.outputs' | translate}}">
-                <div class="outputs">
+                <hr class="outputs hr-text" [ngClass]="{'d-none': !outputsDNoneToggle}" attr.data-content="{{'scenarios.execution.step.outputs' | translate}}">
+                <div class="outputs" [ngClass]="{'d-none': !outputsDNoneToggle}">
                     <div *ngFor="let output of step.stepOutputs | objectAsEntryList">
                         <div class="row copy-row">
                             <div class="pe-0">
@@ -252,7 +252,7 @@
                                 </span>
                             </div>
                             <div class="align-self-center">
-                                <pre class="m-0 text-break text-wrap"><code [innerHTML]="output.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
+                                <pre [class]="inOutCtxToggleClass(outputsToggle)"><code [innerHTML]="output.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
                             </div>
                         </div>
                     </div>

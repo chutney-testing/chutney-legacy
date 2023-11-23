@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, Renderer2, OnDestroy, OnInit, Output, AfterViewInit, TemplateRef, ElementRef } from '@angular/core';
+import { Component, EventEmitter, Input, Renderer2, OnDestroy, OnInit, Output, AfterViewInit, TemplateRef, ElementRef, AfterViewChecked, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Observable, Subscription, fromEvent, merge, timer } from 'rxjs';
-import { debounceTime, delay } from 'rxjs/operators';
+import { debounceTime, delay, throttleTime } from 'rxjs/operators';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import {NGX_MONACO_EDITOR_CONFIG } from 'ngx-monaco-editor-v2'
@@ -36,7 +36,7 @@ import { findScrollContainer } from '@shared/tools';
     templateUrl: './execution.component.html',
     styleUrls: ['./execution.component.scss']
 })
-export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
     @Input() execution: Execution;
     @Input() scenario: GwtTestCase;
     @Output() onExecutionStatusUpdate = new EventEmitter<{ status: ExecutionStatus, error: string }>();
@@ -56,10 +56,10 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     private scenarioExecutionAsyncSubscription: Subscription;
     private resizeLeftPanelSubscription: Subscription;
 
-    private leftPanel: HTMLElement;
-    private grabPanel: HTMLElement;
-    private rightPanel: HTMLElement;
-    private reportHeader: HTMLElement;
+    @ViewChild('leftPanel') leftPanel;
+    @ViewChild('grab') grabPanel;
+    @ViewChild('rightPanel') rightPanel;
+    @ViewChild('reportHeader') reportHeader;
 
     constructor(
         private scenarioExecutionService: ScenarioExecutionService,
@@ -81,21 +81,19 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     ngAfterViewInit(): void {
-        this.leftPanel = this.querySelector('.report-raw-left', false);
-        this.grabPanel = this.querySelector('.report-raw-grab', false);
-        this.rightPanel = this.querySelector('.report-raw-right', false);
-        this.reportHeader = this.querySelector('.report-header', false);
-
-        this.setLefPanelHeight();
-        this.setLefPanelTop();
-
         this.resizeLeftPanelSubscription = merge(
             fromEvent(window, 'resize'),
-            fromEvent(findScrollContainer(this.leftPanel),'scroll')
+            fromEvent(findScrollContainer(this.leftPanel.nativeElement),'scroll')
+        ).pipe(
+            throttleTime(150),
+            debounceTime(150)
         ).subscribe(() => {
-            this.setLefPanelHeight();
-            this.setLefPanelTop();
+            this.setLeftPanelStyle();
         });
+    }
+
+    ngAfterViewChecked(): void {
+        this.setLeftPanelStyle();
     }
 
     ngOnDestroy() {
@@ -134,7 +132,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         let failedStep = this.getFailureSteps(this.scenarioExecutionReport);
         if (failedStep?.length > 0) {
             timer(500).subscribe(() => {
-                this.selectStep(failedStep[failedStep.length-1], true);
+                this.selectStep(failedStep[0], true);
             });
         }
     }
@@ -295,12 +293,27 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
 
 ////////////////////////////////////////////////////// REPORT new view
 
-    private setLefPanelHeight() {
-        this.renderer.setStyle(this.leftPanel, 'height', `calc(100vh - ${this.leftPanel.getBoundingClientRect().y}px)`);
+    private setLeftPanelStyle() {
+        this.setLefPanelHeight();
+        this.setLefPanelTop();
     }
 
+    private leftPanelHeight = 0;
+    private setLefPanelHeight() {
+        const leftPanelCH = this.leftPanel.nativeElement.getBoundingClientRect().y;
+        if (this.leftPanelHeight != leftPanelCH) {
+            this.leftPanelHeight = leftPanelCH;
+            this.renderer.setStyle(this.leftPanel.nativeElement, 'height', `calc(100vh - ${this.leftPanelHeight}px)`);
+        }
+    }
+
+    private reportHeaderHeight = 0;
     private setLefPanelTop() {
-        this.renderer.setStyle(this.leftPanel, 'top', `calc(-1.5rem + ${this.reportHeader.offsetHeight}px + 0.5rem)`);
+        const reportHeaderCH = this.reportHeader.nativeElement.offsetHeight;
+        if (this.reportHeaderHeight != reportHeaderCH) {
+            this.reportHeaderHeight = reportHeaderCH;
+            this.renderer.setStyle(this.leftPanel.nativeElement, 'top', `calc(-1.5rem + ${this.reportHeaderHeight}px + 0.5rem)`);
+        }
     }
 
     copy(e: any) {
@@ -317,23 +330,23 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         this.panelState = (this.panelState + 1) % 3;
         switch (this.panelState) {
             case 0:
-                this.leftPanel.className = this.leftPanel.className.replace(/ d-none/g, '');
-                this.leftPanel.style.width = '100%';
-                this.grabPanel.className += ' d-none';
-                this.rightPanel.className += ' d-none';
+                this.leftPanel.nativeElement.className = this.leftPanel.nativeElement.className.replace(/ d-none/g, '');
+                this.leftPanel.nativeElement.style.width = '100%';
+                this.grabPanel.nativeElement.className += ' d-none';
+                this.rightPanel.nativeElement.className += ' d-none';
                 break;
             case 1:
-                this.leftPanel.className = this.leftPanel.className.replace(/ d-none/g, '');
-                this.leftPanel.style.width = '30%';
-                this.grabPanel.className = this.grabPanel.className.replace(/ d-none/g, '');
-                this.rightPanel.className = this.rightPanel.className.replace(/ d-none/g, '');
-                this.rightPanel.style.width = '70%';
+                this.leftPanel.nativeElement.className = this.leftPanel.nativeElement.className.replace(/ d-none/g, '');
+                this.leftPanel.nativeElement.style.width = '30%';
+                this.grabPanel.nativeElement.className = this.grabPanel.nativeElement.className.replace(/ d-none/g, '');
+                this.rightPanel.nativeElement.className = this.rightPanel.nativeElement.className.replace(/ d-none/g, '');
+                this.rightPanel.nativeElement.style.width = '70%';
                 break;
             case 2:
-                this.leftPanel.className += ' d-none';
-                this.grabPanel.className += ' d-none';
-                this.rightPanel.className = this.rightPanel.className.replace(/ d-none/g, '');
-                this.rightPanel.style.width = '100%';
+                this.leftPanel.nativeElement.className += ' d-none';
+                this.grabPanel.nativeElement.className += ' d-none';
+                this.rightPanel.nativeElement.className = this.rightPanel.nativeElement.className.replace(/ d-none/g, '');
+                this.rightPanel.nativeElement.style.width = '100%';
                 break;
         }
     }
@@ -346,15 +359,17 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         timer(250).subscribe(() => this.setLefPanelHeight());
     }
 
-    private ctxVarsToggle = true;
+    private inOutCtxToggle_onClass = 'm-0 text-wrap text-break';
+    private inOutCtxToggle_offClass = 'm-0 d-block overflow-auto';
+    inOutCtxToggleClass(toggleValue: boolean): string {
+        return toggleValue ? this.inOutCtxToggle_onClass : this.inOutCtxToggle_offClass;
+    }
+
+    ctxVarsToggle = true;
     private toggleCtxVars() {
         this.ctxVarsToggle = !this.ctxVarsToggle;
             this.querySelector('.ctx-var-raw pre').forEach(e => {
-                if (this.ctxVarsToggle) {
-                    e.className = 'm-0 text-wrap text-break';
-                } else {
-                    e.className = 'm-0 d-block overflow-auto';
-                }
+                e.className = this.inOutCtxToggleClass(this.ctxVarsToggle);
             });
     }
 
@@ -363,50 +378,34 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         this.toggleOutputs(true);
     }
 
-    private inputsToggle = true;
-    private inputsDNoneToggle = true;
+    inputsToggle = true;
+    inputsDNoneToggle = true;
     private toggleInputs(dNone: boolean) {
         if (dNone) {
             this.inputsDNoneToggle = !this.inputsDNoneToggle;
             this.querySelector('.report-raw .inputs').forEach(e => {
-                if (this.inputsDNoneToggle) {
-                    e.className = e.className.replace('inputs d-none', 'inputs');
-                } else {
-                    e.className = e.className.replace('inputs', 'inputs d-none');
-                }
+                this.toggleDisplayNone(e, this.inputsDNoneToggle);
             });
         } else {
             this.inputsToggle = !this.inputsToggle;
             this.querySelector('.report-raw .inputs pre').forEach(e => {
-                if (this.inputsToggle) {
-                    e.className = 'm-0 text-wrap text-break';
-                } else {
-                    e.className = 'm-0 d-block overflow-auto'; // text-truncate
-                }
+                e.className = this.inOutCtxToggleClass(this.inputsToggle);
             });
         }
     }
 
-    private outputsToggle = true;
-    private outputsDNoneToggle = true;
+    outputsToggle = true;
+    outputsDNoneToggle = true;
     private toggleOutputs(dNone: boolean) {
         if (dNone) {
             this.outputsDNoneToggle = !this.outputsDNoneToggle;
             this.querySelector('.report-raw .outputs').forEach(e => {
-                if (this.outputsDNoneToggle) {
-                    e.className = e.className.replace('outputs d-none', 'outputs');
-                } else {
-                    e.className = e.className.replace('outputs', 'outputs d-none');
-                }
+                this.toggleDisplayNone(e, this.outputsDNoneToggle);
             });
         } else {
             this.outputsToggle = !this.outputsToggle;
             this.querySelector('.report-raw .outputs pre').forEach(e => {
-                if (this.outputsToggle) {
-                    e.className = 'm-0 text-wrap text-break';
-                } else {
-                    e.className = 'm-0 d-block overflow-auto'; // text-truncate
-                }
+                e.className = this.inOutCtxToggleClass(this.outputsToggle);
             });
         }
     }
@@ -416,28 +415,28 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         this.toggleErrors();
     }
 
-    private infosToggle = true;
+    infosToggle = true;
     private toggleInfos() {
         this.infosToggle = !this.infosToggle;
         this.querySelector('.report-raw .infos').forEach(e => {
-                if (this.infosToggle) {
-                    e.className = e.className.replace('d-none', '');
-                } else {
-                    e.className += ' d-none';
-                }
-            });
+            this.toggleDisplayNone(e, this.infosToggle);
+        });
     }
 
-    private errorsToggle = true;
+    errorsToggle = true;
     private toggleErrors() {
         this.errorsToggle = !this.errorsToggle;
         this.querySelector('.report-raw .errors').forEach(e => {
-                if (this.errorsToggle) {
-                    e.className = e.className.replace('d-none', '');
-                } else {
-                    e.className += ' d-none';
-                }
-            });
+            this.toggleDisplayNone(e, this.errorsToggle);
+        });
+    }
+
+    private toggleDisplayNone(elem: any, on: boolean) {
+        if (on) {
+            elem.className = elem.className.replace(' d-none', '');
+        } else {
+            elem.className += ' d-none';
+        }
     }
 
     toggleStepCollapsed(step: any, event: Event = null) {
