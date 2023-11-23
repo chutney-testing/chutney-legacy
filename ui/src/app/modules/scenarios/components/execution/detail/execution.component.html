@@ -98,7 +98,7 @@
             </div>
             <hr class="hr-text" attr.data-content="{{'scenarios.execution.contextVariables' | translate}}" (click)="toggleContextVariables()">
             <div [ngbCollapse]="collapseContextVariables" [animation]="false">
-                <div *ngFor="let entry of scenarioExecutionReport.contextVariables | objectAsEntryList ">
+                <div *rxFor="let entry of scenarioExecutionReport.contextVariables | objectAsEntryList ">
                     <div class="row copy-row">
                         <div>
                             <span class="fw-bold text-wrap text-break">{{ entry.key }}</span>
@@ -120,7 +120,7 @@
     <div class="report-raw d-flex flex-row" resize [left]="leftPanel" [right]="rightPanel" [grab]="grab">
         <div #leftPanel class="report-raw-left pe-1 w30 report-bg border-top border-end sticky-top align-self-start">
             <ng-container *ngIf="scenarioExecutionReport?.report">
-                <ng-container *ngFor="let step of scenarioExecutionReport.report.steps">
+                <ng-container *rxFor="let step of scenarioExecutionReport.report.steps">
                     <ng-container [ngTemplateOutlet]="stepFunc" [ngTemplateOutletContext]="{$implicit: step}"></ng-container>
                 </ng-container>
             </ng-container>
@@ -132,9 +132,9 @@
                     <ng-container *ngTemplateOutlet="stepAsText; context: {$implicit: selectedStep}"></ng-container>
                 </ng-container>
                 <ng-container *ngIf="!selectedStep">
-                    <ng-template ngFor
-                                [ngForTemplate]="stepAsText"
-                                [ngForOf]="scenarioExecutionReport.report.steps">
+                    <ng-template rxFor
+                        [rxForTemplate]="stepAsText"
+                        [rxForOf]="scenarioExecutionReport.report.steps">
                     </ng-template>
                 </ng-container>
             </ng-container>
@@ -173,7 +173,7 @@
             </span>
         </div>
         <div class="d-flex flex-column ps-3" *ngIf="step.steps && step.steps.length > 0" [ngbCollapse]="isStepCollapsed(step)" [animation]="false">
-            <ng-container *ngFor="let sstep of step.steps; index as sidx;">
+            <ng-container *rxFor="let sstep of step.steps; index as sidx;">
                 <ng-container [ngTemplateOutlet]="stepFunc" [ngTemplateOutletContext]="{$implicit: sstep}"></ng-container>
             </ng-container>
         </div>
@@ -204,7 +204,7 @@
             <ng-cntainer *ngIf="step.evaluatedInputs && Object.keys(step.evaluatedInputs).length > 0">
                 <hr class="inputs hr-text" [ngClass]="{'d-none': !inputsDNoneToggle}" attr.data-content="{{'scenarios.execution.step.inputs' | translate}}">
                 <div class="inputs" [ngClass]="{'d-none': !inputsDNoneToggle}">
-                    <div *ngFor="let input of step.evaluatedInputs | objectAsEntryList">
+                    <div *rxFor="let input of step.evaluatedInputs | objectAsEntryList">
                         <div class="row copy-row">
                             <div class="pe-0">
                                 <span class="fw-bold">{{ input.key }}</span>
@@ -227,20 +227,20 @@
             </ng-container>
             <ng-container *ngIf="step.information && step.information.length > 0">
                 <div class="infos" [ngClass]="{'d-none': !infosToggle}">
-                    <pre *ngFor="let info of step.information" class="step-info text-wrap text-break mb-0"
+                    <pre *rxFor="let info of step.information" class="step-info text-wrap text-break mb-0"
                         [innerHTML]="('>> ' + (info | prettyPrint: true | thumbnail) | safe: 'html')">
                     </pre>
                 </div>
             </ng-container>
             <div *ngIf="step.errors && step.errors.length > 0" class="errors" [ngClass]="{'d-none': !errorsToggle}">
-                <pre *ngFor="let error of step.errors" class="step-error text-wrap text-break mb-0"
+                <pre *rxFor="let error of step.errors" class="step-error text-wrap text-break mb-0"
                         [innerHTML]="('>> ' + (error | prettyPrint: true | thumbnail) | safe: 'html')">
                 </pre>
             </div>
             <ng-container *ngIf="step.stepOutputs && Object.keys(step.stepOutputs).length > 0">
                 <hr class="outputs hr-text" [ngClass]="{'d-none': !outputsDNoneToggle}" attr.data-content="{{'scenarios.execution.step.outputs' | translate}}">
                 <div class="outputs" [ngClass]="{'d-none': !outputsDNoneToggle}">
-                    <div *ngFor="let output of step.stepOutputs | objectAsEntryList">
+                    <div *rxFor="let output of step.stepOutputs | objectAsEntryList">
                         <div class="row copy-row">
                             <div class="pe-0">
                                 <span class="fw-bold">{{ output.key }}</span>
@@ -260,7 +260,7 @@
             </ng-container>
         </div>
         <div class="d-flex flex-column ps-2 pe-0" *ngIf="step.steps && step.steps.length > 0">
-            <ng-template ngFor [ngForTemplate]="stepAsText" [ngForOf]="step.steps">
+            <ng-template rxFor [rxForTemplate]="stepAsText" [rxForOf]="step.steps">
             </ng-template>
         </div>
     </div>

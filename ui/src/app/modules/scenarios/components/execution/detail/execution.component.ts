@@ -4,7 +4,7 @@ import { Observable, Subscription, fromEvent, merge, timer } from 'rxjs';
 import { debounceTime, delay, throttleTime } from 'rxjs/operators';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
-import {NGX_MONACO_EDITOR_CONFIG } from 'ngx-monaco-editor-v2'
+import { NGX_MONACO_EDITOR_CONFIG } from 'ngx-monaco-editor-v2';
 
 import {
     Authorization,
