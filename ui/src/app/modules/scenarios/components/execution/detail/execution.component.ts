@@ -475,9 +475,13 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
 
     selectStep(step: StepExecutionReport = null, scrollIntoView: boolean = false) {
         this.selectedStep = step;
+        if (this.ctxVarsToggle) {
+            this.toggleCtxVars();
+        }
         if (scrollIntoView && step) {
             document.getElementById(step['rowId']).scrollIntoView({behavior: 'smooth', block: 'start'});
         }
+        this.elementRef.nativeElement.scrollIntoView({behavior: 'smooth', block: 'start'});
     }
 
     private computeAllStepRowId() {

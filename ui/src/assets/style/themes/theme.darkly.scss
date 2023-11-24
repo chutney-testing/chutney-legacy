@@ -10,9 +10,14 @@ $dropdown-link-color:#cdcdcd;
 $table-hover-bg: $primary;
 $table-striped-bg: $dark;
 $table-color: $white;
+$tooltip-color: $white;
 
 @import "~bootstrap/scss/bootstrap";
 @import "~bootswatch/dist/darkly/bootswatch";
+
+.form-floating > label {
+    color: #{$gray-600} !important;
+}
 
 .bg-primary {
     background-color: black !important;

@@ -191,7 +191,7 @@
                 'step-header-running': step.status == 'RUNNING' || step.status == 'PAUSED'}"
         >
             {{ step.name }}
-            <span *ngIf="step.status != 'NOT_EXECUTED'" [ngbTooltip]="step.duration | duration" placement="left" class="float-end small">
+            <span *ngIf="step.status != 'NOT_EXECUTED'" placement="left" class="float-end small">
                 <em>{{step.duration | duration}}</em>
             </span>
         </div>
