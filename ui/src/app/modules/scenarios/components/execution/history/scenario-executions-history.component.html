@@ -10,7 +10,7 @@
         <span>{{'scenarios.execution.history.default-dataset' | translate}} : {{scenario.defaultDataset}}</span>
     </div>
 
-    <ul ngbNav #nav="ngbNav" [activeId]="getActiveTab()" (navChange)="onTabChange($event)" class="nav-tabs">
+    <ul ngbNav #nav="ngbNav" [activeId]="getActiveTab()" (navChange)="onTabChange($event)" class="executions-tabs nav-tabs sticky-top">
         <li [ngbNavItem]="'0'" [destroyOnHide]="false">
             <a ngbNavLink>
                 {{'scenarios.execution.history.title' | translate}}
@@ -30,6 +30,8 @@
             <ng-template ngbNavContent>
                 <chutney-scenario-execution [scenario]="scenario"
                                             [execution]="exec"
+                                            [stickyTop]="'-1.5rem'"
+                                            [stickyTopElementSelector]="'.executions-tabs'"
                                             (onExecutionStatusUpdate)="updateExecutionStatus(exec.executionId, $event)">
 
                 </chutney-scenario-execution>

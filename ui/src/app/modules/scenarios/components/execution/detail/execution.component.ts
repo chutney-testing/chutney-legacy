@@ -39,6 +39,8 @@ import { findScrollContainer } from '@shared/tools';
 export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
     @Input() execution: Execution;
     @Input() scenario: GwtTestCase;
+    @Input() stickyTop: string = '0';
+    @Input() stickyTopElementSelector: string;
     @Output() onExecutionStatusUpdate = new EventEmitter<{ status: ExecutionStatus, error: string }>();
 
     Object = Object;
@@ -60,6 +62,10 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     @ViewChild('grab') grabPanel;
     @ViewChild('rightPanel') rightPanel;
     @ViewChild('reportHeader') reportHeader;
+
+    private stickyTopElement: HTMLElement;
+    private stickyTopElementHeight: number = 0;
+    private stickyTopElementResizeObserver: ResizeObserver;
 
     constructor(
         private scenarioExecutionService: ScenarioExecutionService,
@@ -90,6 +96,30 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         ).subscribe(() => {
             this.setLeftPanelStyle();
         });
+
+        this.setReportHeaderTop();
+
+        if (this.stickyTopElementSelector) {
+            this.stickyTopElement = document.querySelector(this.stickyTopElementSelector) as HTMLElement;
+            this.stickyTopElementHeight = this.stickyTopElement.offsetHeight;
+
+            this.stickyTopElementResizeObserver = new ResizeObserver((entries) => {
+                this.stickyTopElementHeight = this.stickyTopElement.offsetHeight;
+                this.setReportHeaderTop();
+                this.setLeftPanelStyle();
+            });
+            this.stickyTopElementResizeObserver.observe(this.stickyTopElement);
+        }
+    }
+
+    private setReportHeaderTop() {
+        var top = '0px';
+        if (this.stickyTopElement) {
+            const elemHeight = this.stickyTopElement.offsetHeight;
+            top += ` + ${elemHeight}px`;
+        }
+        top += ` + (${this.stickyTop})`;
+        this.renderer.setStyle(this.reportHeader.nativeElement, 'top', `calc(${top})`);
     }
 
     ngAfterViewChecked(): void {
@@ -99,6 +129,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     ngOnDestroy() {
         this.unsubscribeScenarioExecutionAsyncSubscription();
         if (this.resizeLeftPanelSubscription) this.resizeLeftPanelSubscription.unsubscribe();
+        if (this.stickyTopElementResizeObserver) this.stickyTopElementResizeObserver.unobserve(this.stickyTopElement);
     }
 
     loadScenarioExecution(executionId: number) {
@@ -307,12 +338,12 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         }
     }
 
-    private reportHeaderHeight = 0;
+    private leftPanelTopStateHeight = 0;
     private setLefPanelTop() {
-        const reportHeaderCH = this.reportHeader.nativeElement.offsetHeight;
-        if (this.reportHeaderHeight != reportHeaderCH) {
-            this.reportHeaderHeight = reportHeaderCH;
-            this.renderer.setStyle(this.leftPanel.nativeElement, 'top', `calc(-1.5rem + ${this.reportHeaderHeight}px + 0.5rem)`);
+        const newHeight = this.reportHeader.nativeElement.offsetHeight + this.stickyTopElementHeight;
+        if (this.leftPanelTopStateHeight != newHeight) {
+            this.leftPanelTopStateHeight = newHeight;
+            this.renderer.setStyle(this.leftPanel.nativeElement, 'top', `calc(${this.stickyTop}  + ${newHeight}px + 0.5rem)`);
         }
     }
 
@@ -475,13 +506,15 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
 
     selectStep(step: StepExecutionReport = null, scrollIntoView: boolean = false) {
         this.selectedStep = step;
-        if (this.ctxVarsToggle) {
-            this.toggleCtxVars();
+        if (!this.collapseContextVariables) {
+            this.toggleContextVariables();
         }
         if (scrollIntoView && step) {
             document.getElementById(step['rowId']).scrollIntoView({behavior: 'smooth', block: 'start'});
         }
-        this.elementRef.nativeElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+        timer(1000).subscribe(() =>
+            this.elementRef.nativeElement.scrollIntoView({behavior: 'smooth', block: 'start'})
+        );
     }
 
     private computeAllStepRowId() {

@@ -5,7 +5,6 @@
 
 .report-header {
     z-index: 1021; // > bootstrap sticky-top default z-index
-    top: -1.5rem; // app_main_inner padding top
 
     .btn:focus {
         box-shadow: none;
