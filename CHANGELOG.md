@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.4.0](https://github.com/chutney-testing/chutney/tree/2.4.0)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/2.3.0...2.4.0)
+
+## What's Changed
+### 🚀 Implemented enhancements:
+* feat(ui): add metrics page by @rbenyoussef in [#1173](https://github.com/chutney-testing/chutney/pull/1173)
+* bugfix(engine): Manage parent step on ifStrategy by @nbrouand in [#1175](https://github.com/chutney-testing/chutney/pull/1175)
+* feat(action-impl): soft assert for jsonAssertAction by @rbenyoussef in [#1176](https://github.com/chutney-testing/chutney/pull/1176)
+* New scenario execution report view by @boddissattva in [#1174](https://github.com/chutney-testing/chutney/pull/1174)
+### 🔧 Technical enhancements:
+* chore: Remove last orient dependency by @nbrouand in [#1171](https://github.com/chutney-testing/chutney/pull/1171)
+* Add closeable on TestEngine by @nbrouand in [#1172](https://github.com/chutney-testing/chutney/pull/1172)
+### 👒 Dependencies:
+* chore(deps): Bump sshd.version from 2.9.2 to 2.11.0 by @dependabot in [#1162](https://github.com/chutney-testing/chutney/pull/1162)
+* chore(deps-dev): Bump net.jqwik:jqwik from 1.8.0 to 1.8.1 by @dependabot in [#1169](https://github.com/chutney-testing/chutney/pull/1169)
+* chore(deps): Bump org.liquibase:liquibase-core from 4.23.0 to 4.24.0 by @dependabot in [#1170](https://github.com/chutney-testing/chutney/pull/1170)
+
+
+
+
 ## [2.3.0](https://github.com/chutney-testing/chutney/tree/2.3.0)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/2.2.2...2.3.0)
