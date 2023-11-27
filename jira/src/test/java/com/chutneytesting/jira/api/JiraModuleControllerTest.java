@@ -205,7 +205,7 @@ class JiraModuleControllerTest {
 
     @Test
     void saveConfiguration() throws Exception {
-        JiraTargetConfiguration newConfiguration = new JiraTargetConfiguration("a new url", "a new username", "a new password", null, null, null);
+        JiraTargetConfiguration newConfiguration = new JiraTargetConfiguration("a new url", "a new username", "a new password", "", "", "");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/ui/jira/v1/configuration")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
