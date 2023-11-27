@@ -269,7 +269,7 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
             this.router.navigateByUrl(`/scenario/${this.scenarioId}/execute/${env}`,);
         } else {
             this.scenarioExecutionService
-                .executeScenarioAsync(this.scenarioId, [], env)
+                .executeScenarioAsync(this.scenarioId, env)
                 .pipe(
                     delay(1000),
                     switchMap(executionId => this.findScenarioExecutionSummary(+executionId)))

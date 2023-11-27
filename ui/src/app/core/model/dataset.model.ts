@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { KeyValue } from './component-task.model';
-import { areEquals } from '@shared';
+import { areEquals, Clonable, cloneAsPossible } from '@shared';
 
 export class Dataset {
     constructor(
@@ -43,5 +42,27 @@ export class Dataset {
             && areEquals(this.tags, obj.tags)
             && areEquals(this.uniqueValues, obj.uniqueValues)
             && areEquals(this.multipleValues, obj.multipleValues);
+    }
+}
+
+export class KeyValue implements Clonable<KeyValue> {
+
+    constructor(
+        public key: string,
+        public value: any
+    ) {
+    }
+
+    public clone(): KeyValue {
+        return new KeyValue(
+            cloneAsPossible(this.key),
+            cloneAsPossible(this.value)
+        );
+    }
+
+    public equals(obj: KeyValue): boolean {
+        return obj
+            && areEquals(this.key, obj.key)
+            && areEquals(this.value, obj.value);
     }
 }

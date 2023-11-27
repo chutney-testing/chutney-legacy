@@ -17,7 +17,6 @@
 export * from './agent-network';
 export * from './campaign';
 export * from './chutney-state.model';
-export * from './component-task.model';
 export * from './dataset.model';
 export * from './entry.model';
 export * from './environment.model';

@@ -17,7 +17,7 @@
 import { areEquals, Equals } from '@shared/equals';
 import { Clonable, cloneAsPossible } from '@shared/clonable';
 
-import { KeyValue } from '@core/model/component-task.model';
+import { KeyValue } from '@core/model/dataset.model';
 import { Execution } from '@core/model/scenario/execution.model';
 
 export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
@@ -69,7 +69,7 @@ export class TestCase implements Equals<TestCase>, Clonable<TestCase> {
     hasParameters(): boolean {
         return (this.computedParameters && this.computedParameters.length > 0);
     }
-    
+
     static fromRaw(raw: any): TestCase {
         return new TestCase(
             raw.id,
