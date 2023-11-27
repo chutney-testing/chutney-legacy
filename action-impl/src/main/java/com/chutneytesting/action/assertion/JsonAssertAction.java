@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class JsonAssertAction implements Action {
 
@@ -27,8 +28,8 @@ public class JsonAssertAction implements Action {
     private final Map<String, Object> mapExpectedResults;
 
     public JsonAssertAction(Logger logger,
-                          @Input("document") String document,
-                          @Input("expected") Map<String, Object> mapExpectedResults) {
+                            @Input("document") String document,
+                            @Input("expected") Map<String, Object> mapExpectedResults) {
         this.logger = logger;
         this.document = document;
         this.mapExpectedResults = mapExpectedResults;
@@ -47,7 +48,8 @@ public class JsonAssertAction implements Action {
         try {
             ReadContext json = JsonPath.parse(document, Configuration.defaultConfiguration().addOptions(Option.SUPPRESS_EXCEPTIONS));
 
-            boolean matchesOk = mapExpectedResults.entrySet().stream().allMatch(entry -> {
+            AtomicBoolean matchesOk = new AtomicBoolean(true);
+            mapExpectedResults.entrySet().stream().forEach(entry -> {
                     String path = entry.getKey();
                     Object expected = entry.getValue();
                     Object actualValue = json.read(path);
@@ -73,14 +75,16 @@ public class JsonAssertAction implements Action {
                             }
                         }
                     }
-                    if (!result) {
+                    if (result) {
+                        logger.info("On path [" + path + "], found [" + actualValue + "]");
+                    } else {
                         logger.error("On path [" + path + "], found [" + actualValue + "], expected was [" + expected + "]");
+                        matchesOk.set(false);
                     }
-                    return result;
                 }
             );
 
-            if (!matchesOk) {
+            if (!matchesOk.get()) {
                 return ActionExecutionResult.ko();
             }
             return ActionExecutionResult.ok();
