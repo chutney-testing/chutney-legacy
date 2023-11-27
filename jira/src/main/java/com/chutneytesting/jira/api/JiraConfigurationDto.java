@@ -14,4 +14,10 @@ public interface JiraConfigurationDto {
     String username();
 
     String password();
+
+    String urlProxy();
+
+    String userProxy();
+
+    String passwordProxy();
 }

@@ -14,7 +14,7 @@ import { ValidationService } from '../../../../molecules/validation/validation.s
 })
 export class JiraComponent implements OnInit {
 
-    configuration: JiraPluginConfiguration = new JiraPluginConfiguration('', '', '');
+    configuration: JiraPluginConfiguration = new JiraPluginConfiguration('', '', '', '', '', '');
     configurationForm: FormGroup;
 
     message;
@@ -31,7 +31,10 @@ export class JiraComponent implements OnInit {
         this.configurationForm = this.formBuilder.group({
             url: ['', Validators.required],
             username: '',
-            password: ''
+            password: '',
+            urlProxy: '',
+            userProxy: '',
+            passwordProxy: ''
         });
 
         this.loadConfiguration();
@@ -51,6 +54,9 @@ export class JiraComponent implements OnInit {
                 this.configurationForm.controls['url'].patchValue(config.url);
                 this.configurationForm.controls['username'].patchValue(config.username);
                 this.configurationForm.controls['password'].patchValue(config.password);
+                this.configurationForm.controls['urlProxy'].patchValue(config.urlProxy);
+                this.configurationForm.controls['userProxy'].patchValue(config.userProxy);
+                this.configurationForm.controls['passwordProxy'].patchValue(config.passwordProxy);
             },
             (error) => {
                 this.notify(error.error, true);
@@ -62,7 +68,10 @@ export class JiraComponent implements OnInit {
         const url = this.configurationForm.value['url'] ? this.configurationForm.value['url'] : '';
         const username = this.configurationForm.value['username'] ? this.configurationForm.value['username'] : '';
         const password = this.configurationForm.value['password'] ? this.configurationForm.value['password'] : '';
-        this.configuration = new JiraPluginConfiguration(url, username, password);
+        const urlProxy = this.configurationForm.value['urlProxy'] ? this.configurationForm.value['urlProxy'] : '';
+        const userProxy = this.configurationForm.value['userProxy'] ? this.configurationForm.value['userProxy'] : '';
+        const passwordProxy = this.configurationForm.value['passwordProxy'] ? this.configurationForm.value['passwordProxy'] : '';
+        this.configuration = new JiraPluginConfiguration(url, username, password, urlProxy, userProxy, passwordProxy);
 
         this.configurationService.save(this.configuration).subscribe(
             (res) => {

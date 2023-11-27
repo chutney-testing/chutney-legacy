@@ -103,12 +103,19 @@ public class JiraFileRepository implements JiraRepository {
     @Override
     public JiraTargetConfiguration loadServerConfiguration() {
         JiraTargetConfigurationDto dto = doLoadServerConfiguration();
-        return new JiraTargetConfiguration(dto.url, dto.username, dto.password, null, null, null);
+        return new JiraTargetConfiguration(dto.url, dto.username, dto.password, dto.urlProxy, dto.userProxy, dto.passwordProxy);
     }
 
     @Override
     public void saveServerConfiguration(JiraTargetConfiguration jiraTargetConfiguration) {
-        JiraTargetConfigurationDto jiraTargetConfigurationDto = new JiraTargetConfigurationDto(jiraTargetConfiguration.url(), jiraTargetConfiguration.username(), jiraTargetConfiguration.password());
+        JiraTargetConfigurationDto jiraTargetConfigurationDto = new JiraTargetConfigurationDto(
+            jiraTargetConfiguration.url(),
+            jiraTargetConfiguration.username(),
+            jiraTargetConfiguration.password(),
+            jiraTargetConfiguration.urlProxy(),
+            jiraTargetConfiguration.userProxy(),
+            jiraTargetConfiguration.passwordProxy()
+        );
         Path resolvedFilePath = storeFolderPath.resolve(CONFIGURATION_FILE);
         doSave(resolvedFilePath, jiraTargetConfigurationDto);
     }
