@@ -90,7 +90,7 @@ export class CampaignExecutionsHistoryComponent implements OnInit, OnDestroy {
         if (this.campaignReports.find(c => c.isRunning())) {
             if (!this.isRefreshActive()) {
                 this.refreshSubscription = this.campaign$().pipe(
-                    repeat({delay: 5000})
+                    repeat(5000)
                 ).subscribe();
             }
         } else {

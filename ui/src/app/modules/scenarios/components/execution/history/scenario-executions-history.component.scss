@@ -3,6 +3,13 @@
     opacity: 0.1;
     transition: opacity 0.3s;
 }
+
 .nav-link:hover > .close {
     opacity: 0.8;
+}
+
+.executions-tabs {
+    top: -1.5rem;
+    z-index: 1021;
+    background-color: var(--bs-body-bg) !important;
 }

@@ -7,11 +7,17 @@ $input-bg: #FAF9F6;
 $info:#3190d0;
 $dark:#161b22;
 $dropdown-link-color:#cdcdcd;
-$table-hover-bg:$primary;
-$table-striped-bg:$dark;
+$table-hover-bg: $primary;
+$table-striped-bg: $dark;
+$table-color: $white;
+$tooltip-color: $white;
 
 @import "~bootstrap/scss/bootstrap";
 @import "~bootswatch/dist/darkly/bootswatch";
+
+.form-floating > label {
+    color: #{$gray-600} !important;
+}
 
 .bg-primary {
     background-color: black !important;
@@ -31,4 +37,8 @@ $table-striped-bg:$dark;
 
 .execution-panel {
     background-color: $info !important;
+}
+
+:root {
+    --chutney-report-bg-color: #{$dark};
 }

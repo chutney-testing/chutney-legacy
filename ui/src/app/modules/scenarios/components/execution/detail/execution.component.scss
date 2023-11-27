@@ -1,75 +1,140 @@
-
-button span:not(:first-child) {
-    display: block;
-}
-
-.noselect {
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
-}
-
-:host ::ng-deep button.trash-btn {
-    height: 48px;
-    font-size: 25px;
-    color: white;
-}
-
 .badge-container {
     display: inline-block;
     margin: 10px 0 5px 20px;
 }
 
-.error {
-    color: var(--bs-warning);
-    margin-bottom: 30px;
+.report-header {
+    z-index: 1021; // > bootstrap sticky-top default z-index
+
+    .btn:focus {
+        box-shadow: none;
+    }
 }
 
-.background-white {
-    background-color: white;
+.report-raw {
+
+    .collapse {
+        &:not(.show) {
+            display: none !important;
+        }
+    }
+
+    .report-bg {
+        background-color: var(--chutney-report-bg-color) !important;
+    }
+
+    .report-raw-left {
+        cursor: default;
+        overflow-x: hidden;
+        overflow-y: visible;
+    }
+
+    .report-raw-right {
+        overflow-x: hidden;
+    }
+
+    .resize {
+        cursor: col-resize;
+
+        &.resizing {
+            border-left-style: double;
+            border-right-style: double;
+        }
+    }
+
+    .resizing {
+        cursor: col-resize;
+    }
+
+    .step-header {
+        overflow-x: hidden;
+    }
+
+    .step-header-success {
+        color: var(--bs-green);
+    }
+    .step-header-failure {
+        color: var(--bs-red);
+    }
+    .step-header-stopped {
+        color: var(--bs-gray-600);
+    }
+    .step-header-not-executed {
+        color: var(--bs-gray-600);
+    }
+
+    .step-info {
+        color: var(--bs-cyan);
+    }
+    .step-error {
+        color: var(--bs-red);
+    }
+
+    .copy-row {
+        .copy {
+            visibility: hidden;
+        }
+
+        &:hover {
+            .copy {
+                visibility: visible;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .hr-text {
+        text-align: center;
+        background-color: var(--chutney-report-bg-color);
+    }
 }
 
-.gwt::before {
-    //background: $neutral;
-    //color: $grisfonce;
-    font-size: 9px;
-    font-weight: bold;
-    padding: 3px 5px;
-    text-transform: uppercase;
+hr {
+    margin: 0;
 }
 
-#given::before {
-    content: "Given";
+.hr-fa {
+    color: #818078;
 }
 
-#when::before {
-    content: "When";
-}
+.hr-text {
+    position: relative;
+    outline: 0;
+    border: 0;
+    text-align: start;
+    &:before {
+      content: '';
+      // use the linear-gradient for the fading effect
+      // use a solid background color for a solid bar
+      background: linear-gradient(to right, transparent, #818078, transparent);
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 100%;
+      height: 1px;
+    }
+    &:after {
+      content: attr(data-content);
+      position: relative;
+      display: inline-block;
 
-#then::before {
-    content: "Then";
-}
+      padding: 0 .5em;
+      // this is really the only tricky part, you need to specify the background color of the container element...
+      background-color: var(--bs-body-bg);
+    }
+  }
 
-div.step-container-wrapper {
-    margin: 1px;
-    line-height: normal;
-    font-size: 14px;
-}
+.ctx-var-raw {
+    .copy-row {
+        .copy {
+            visibility: hidden;
+        }
 
-div.step-container {
-    margin: 5px 0 5px 0;
-    border-radius: 4px;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-div.step-container:hover {
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.highlight {
-    color: white;
-    background-color: var(--bs-primary) !important;
+        &:hover {
+            .copy {
+                visibility: visible;
+                cursor: pointer;
+            }
+        }
+    }
 }

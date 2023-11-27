@@ -28,7 +28,8 @@
             "assets": [
               "src/assets",
               "src/manifest.json",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              { "glob": "**/*", "input": "node_modules/monaco-editor", "output": "/assets/monaco/" }
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -117,7 +118,8 @@
             "assets": [
               "src/assets",
               "src/manifest.json",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              { "glob": "**/*", "input": "node_modules/monaco-editor", "output": "/assets/monaco/" }
             ]
           }
         },
@@ -152,5 +154,8 @@
       }
     }
   },
-  "defaultProject": "chutney"
+  "defaultProject": "chutney",
+  "cli": {
+    "analytics": false
+  }
 }

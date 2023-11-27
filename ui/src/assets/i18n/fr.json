@@ -78,10 +78,27 @@
                 "default-dataset": "Dataset par default"
             },
             "step": {
+                "inputs": "Entrées",
+                "outputs": "Sorties",
                 "actions": {
-                    "details": "Détails",
-                    "informations": "Informations",
-                    "errors": "Erreurs"
+                    "copy": "Copier la valeur",
+                    "edit": "Editer la valeur",
+                    "collapse.all": "Tout replier",
+                    "expand.all": "Tout déplier",
+                    "select.root": "Tout voir",
+                    "export": "Exporter le rapport complet",
+                    "toggle": {
+                        "view": "Alterner les vues",
+                        "inout": "Montrer/Cacher les entrées/sorties",
+                        "inferr": "Montrer/Cacher les infos/erreurs",
+                        "pretty": "Montrer/Cacher le formatage des entrées/sorties"
+                    }
+                },
+                "editor": {
+                    "lang": "langage",
+                    "theme": "thème",
+                    "copy": "Copier le contenu de l'éditeur",
+                    "export": "Exporter le contenu de l'éditeur"
                 }
             },
             "actions": {

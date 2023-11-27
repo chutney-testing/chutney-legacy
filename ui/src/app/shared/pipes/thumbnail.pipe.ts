@@ -13,7 +13,7 @@ export class ThumbnailPipe implements PipeTransform {
         const imgElements = doc.getElementsByTagName('img');
         for (let i = 0; i < imgElements.length; i++) {
             const imgElement = imgElements.item(i);
-            imgElement.classList.add('thumbnail');
+            imgElement.classList.add('img-thumbnail');
             imgElement.insertAdjacentHTML('beforebegin', '<a href="' + imgElement.src + '" target="_blank">' + imgElement.outerHTML + '</a>');
             imgElement.remove();
         }
