@@ -15,7 +15,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
-        <chutney.version>2.4.0</chutney.version>
+        <chutney.version>2.4.1-SNAPSHOT</chutney.version>
         <mainClass>com.chutneytesting.ServerBootstrap</mainClass>
         <spring-boot-maven.version>3.1.2</spring-boot-maven.version>
         <jasypt-spring-boot.version>3.0.5</jasypt-spring-boot.version>
