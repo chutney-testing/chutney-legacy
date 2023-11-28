@@ -87,15 +87,17 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     ngAfterViewInit(): void {
-        this.resizeLeftPanelSubscription = merge(
-            fromEvent(window, 'resize'),
-            fromEvent(findScrollContainer(this.leftPanel.nativeElement),'scroll')
-        ).pipe(
-            throttleTime(150),
-            debounceTime(150)
-        ).subscribe(() => {
-            this.setLeftPanelStyle();
-        });
+        if(this.leftPanel) {
+            this.resizeLeftPanelSubscription = merge(
+                fromEvent(window, 'resize'),
+                fromEvent(findScrollContainer(this.leftPanel.nativeElement),'scroll')
+            ).pipe(
+                throttleTime(150),
+                debounceTime(150)
+            ).subscribe(() => {
+                this.setLeftPanelStyle();
+            });
+        }
 
         this.setReportHeaderTop();
 
@@ -142,7 +144,9 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
                         this.observeScenarioExecution(executionId);
                     } else {
                         this.scenarioExecutionReport = scenarioExecutionReport;
-                        this.afterReportUpdate();
+                        if(scenarioExecutionReport?.report) {
+                            this.afterReportUpdate();
+                        }
                     }
                 },
                 error: error => {
@@ -325,8 +329,10 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
 ////////////////////////////////////////////////////// REPORT new view
 
     private setLeftPanelStyle() {
-        this.setLefPanelHeight();
-        this.setLefPanelTop();
+        if(this.leftPanel) {
+            this.setLefPanelHeight();
+            this.setLefPanelTop();
+        }
     }
 
     private leftPanelHeight = 0;
@@ -512,9 +518,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         if (scrollIntoView && step) {
             document.getElementById(step['rowId']).scrollIntoView({behavior: 'smooth', block: 'start'});
         }
-        timer(1000).subscribe(() =>
-            this.elementRef.nativeElement.scrollIntoView({behavior: 'smooth', block: 'start'})
-        );
+        this.elementRef.nativeElement.scrollIntoView({behavior: 'instant', block: 'start'})
     }
 
     private computeAllStepRowId() {

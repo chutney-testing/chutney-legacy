@@ -91,19 +91,32 @@ export class ScenarioExecutionService {
     }
 
     private buildExecutionReport(jsonResponse: any): ScenarioExecutionReport {
+        let report;
+        let contextVariables;
+        if(jsonResponse.report) {
+            report = JSON.parse(jsonResponse.report).report
+            contextVariables = JSON.parse(jsonResponse.report).contextVariables
+        }
         return new ScenarioExecutionReport(
             jsonResponse.executionId,
-            JSON.parse(jsonResponse.report).report,
+            jsonResponse.status,
+            jsonResponse.duration,
+            new Date(jsonResponse.time),
+            report,
             jsonResponse.environment,
             jsonResponse.user,
             jsonResponse.testCaseTitle,
-            JSON.parse(jsonResponse.report).contextVariables
+            jsonResponse.error,
+            contextVariables
         );
     }
 
     private buildExecutionReportFromEvent(jsonResponse: any): ScenarioExecutionReport {
         return new ScenarioExecutionReport(
             jsonResponse.executionId,
+            jsonResponse.status,
+            jsonResponse.duration,
+            new Date(jsonResponse.time),
             jsonResponse.report,
             jsonResponse.environment,
             jsonResponse.user,

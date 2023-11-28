@@ -1,14 +1,14 @@
 <div>
     <div #reportHeader class="row report-header bg-body shadow sticky-top mb-2">
-        <div class="col-6 badge-container" *ngIf="scenarioExecutionReport?.report">
+        <div class="col-6 badge-container" *ngIf="scenarioExecutionReport">
         <span>
-        <chutney-execution-badge [status]="scenarioExecutionReport.report.status"
+        <chutney-execution-badge [status]="scenarioExecutionReport.status"
                                 [spin]="true"></chutney-execution-badge>
             <small class="text-muted ms-2">
-                {{'global.time.in' | translate}} {{scenarioExecutionReport.report.duration | duration}}
+                {{'global.time.in' | translate}} {{scenarioExecutionReport.duration | duration}}
             </small>
             <small class="text-muted ms-2">
-                {{'global.time.at' | translate}} {{scenarioExecutionReport.report.startDate | date:'medium'}}
+                {{'global.time.at' | translate}} {{scenarioExecutionReport.startDate | date:'medium'}}
             </small>
             <small *ngIf="scenarioExecutionReport.user" class="text-muted ms-2">
                 {{'global.smallword.by' | translate}} : <b>{{scenarioExecutionReport.user}}</b>
@@ -54,7 +54,7 @@
                         </button>
                     </div>
                 </ng-container>
-                <div class="shadow btn-group btn-group-sm" role="group" aria-label="Report view actions">
+                <div class="shadow btn-group btn-group-sm" role="group" aria-label="Report view actions" *ngIf="scenarioExecutionReport?.report">
                     <button type="button" class="btn btn-sm btn-outline-primary"
                             title="{{'scenarios.execution.step.actions.collapse.all' | translate}}" (click)="setAllStepsCollapsed(true)">
                         <span class="fa fa-fw fa-chevron-right"></span>
@@ -117,7 +117,10 @@
             </div>
         </div>
     </div>
-    <div class="report-raw d-flex flex-row" resize [left]="leftPanel" [right]="rightPanel" [grab]="grab">
+    <div class="report-raw d-flex flex-row error" *ngIf="!scenarioExecutionReport?.report">
+        {{ scenarioExecutionReport?.error }}
+    </div>
+    <div class="report-raw d-flex flex-row" resize [left]="leftPanel" [right]="rightPanel" [grab]="grab" *ngIf="scenarioExecutionReport?.report">
         <div #leftPanel class="report-raw-left pe-1 w30 report-bg border-top border-end sticky-top align-self-start">
             <ng-container *ngIf="scenarioExecutionReport?.report">
                 <ng-container *rxFor="let step of scenarioExecutionReport.report.steps">
@@ -222,19 +225,19 @@
                     </div>
                 </div>
             </ng-cntainer>
-            <ng-container *ngIf="(step.information && step.information.length > 0) || (step.errors && step.errors.length > 0)">
-                <hr class="infos hr-text" [ngClass]="{'d-none': !infosToggle}">
+            <ng-container *ngIf="(step.information && step.information.length > 0) || (step.errors && step.errors.length > 0)" >
+                <hr class="infos hr-text" [ngClass]="{'d-none': !infosToggle}"  attr.data-content="{{'scenarios.execution.step.inferr' | translate}}">
             </ng-container>
             <ng-container *ngIf="step.information && step.information.length > 0">
                 <div class="infos" [ngClass]="{'d-none': !infosToggle}">
-                    <pre *rxFor="let info of step.information" class="step-info text-wrap text-break mb-0"
-                        [innerHTML]="('>> ' + (info | prettyPrint: true | thumbnail) | safe: 'html')">
+                    <pre *rxFor="let info of step.information" class="step-info mb-0"
+                        [innerHTML]="((info | prettyPrint: true | thumbnail) | safe: 'html')">
                     </pre>
                 </div>
             </ng-container>
             <div *ngIf="step.errors && step.errors.length > 0" class="errors" [ngClass]="{'d-none': !errorsToggle}">
-                <pre *rxFor="let error of step.errors" class="step-error text-wrap text-break mb-0"
-                        [innerHTML]="('>> ' + (error | prettyPrint: true | thumbnail) | safe: 'html')">
+                <pre *rxFor="let error of step.errors" class="step-error mb-0"
+                        [innerHTML]="((error | prettyPrint: true | thumbnail) | safe: 'html')">
                 </pre>
             </div>
             <ng-container *ngIf="step.stepOutputs && Object.keys(step.stepOutputs).length > 0">
