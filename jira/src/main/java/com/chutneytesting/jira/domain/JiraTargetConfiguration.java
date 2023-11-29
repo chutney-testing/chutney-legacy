@@ -9,6 +9,10 @@ public record JiraTargetConfiguration(String url, String username, String passwo
     }
 
     public boolean hasProxy() {
+        return StringUtils.isNotEmpty(urlProxy);
+    }
+
+    public boolean hasProxyWithAuth() {
         return StringUtils.isNotEmpty(urlProxy) &&
             StringUtils.isNotEmpty(userProxy) &&
             StringUtils.isNotEmpty(passwordProxy);

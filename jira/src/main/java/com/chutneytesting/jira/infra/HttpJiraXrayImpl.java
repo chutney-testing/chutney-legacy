@@ -212,13 +212,17 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
             try {
                 URI proxyUri = new URI(jiraTargetConfiguration.urlProxy());
                 HttpHost proxyHttpHost = HttpHost.create(proxyUri);
-              BasicCredentialsProvider credentialsProvider = getBasicCredentialsProvider(jiraTargetConfiguration, proxyHttpHost);
-              String proxyAuthorization = Base64.getEncoder()
-                  .encodeToString((jiraTargetConfiguration.userProxy() + ":" + jiraTargetConfiguration.passwordProxy()).getBytes());
-              httpClientBuilder
-                  .setProxy(proxyHttpHost)
-                  .setDefaultCredentialsProvider(credentialsProvider)
-                  .setDefaultHeaders(List.of(new BasicHeader("Proxy-Authorization", "Basic " + proxyAuthorization)));
+                httpClientBuilder.setProxy(proxyHttpHost);
+
+                if (jiraTargetConfiguration.hasProxyWithAuth()) {
+                    BasicCredentialsProvider credentialsProvider = getBasicCredentialsProvider(jiraTargetConfiguration, proxyHttpHost);
+                    String proxyAuthorization = Base64
+                        .getEncoder()
+                        .encodeToString((jiraTargetConfiguration.userProxy() + ":" + jiraTargetConfiguration.passwordProxy()).getBytes());
+                    httpClientBuilder
+                        .setDefaultCredentialsProvider(credentialsProvider)
+                        .setDefaultHeaders(List.of(new BasicHeader("Proxy-Authorization", "Basic " + proxyAuthorization)));
+                }
             } catch (URISyntaxException e) {
                 LOGGER.error("Unexpected proxy url", e);
             }
