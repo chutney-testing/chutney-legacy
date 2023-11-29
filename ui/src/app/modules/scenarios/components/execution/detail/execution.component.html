@@ -110,7 +110,7 @@
                             </span>
                         </div>
                         <div class="align-self-center">
-                            <pre [class]="inOutCtxToggleClass(ctxVarsToggle)"><code [innerHTML]="entry.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
+                            <pre [class]="inOutCtxToggleClass(prettyPrintToggle)"><code [innerHTML]="entry.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
                         </div>
                     </div>
                 </div>
@@ -219,7 +219,7 @@
                                 </span>
                             </div>
                             <div class="align-self-center">
-                                <pre [class]="inOutCtxToggleClass(inputsToggle)"><code [innerHTML]="input.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
+                                <pre [class]="inOutCtxToggleClass(prettyPrintToggle)"><code [innerHTML]="input.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
                             </div>
                         </div>
                     </div>
@@ -230,13 +230,13 @@
             </ng-container>
             <ng-container *ngIf="step.information && step.information.length > 0">
                 <div class="infos" [ngClass]="{'d-none': !infosToggle}">
-                    <pre *rxFor="let info of step.information" class="step-info mb-0"
+                    <pre *rxFor="let info of step.information" class="step-info mb-0" [class]="inOutCtxToggleClass(prettyPrintToggle)"
                         [innerHTML]="((info | prettyPrint: true | thumbnail) | safe: 'html')">
                     </pre>
                 </div>
             </ng-container>
             <div *ngIf="step.errors && step.errors.length > 0" class="errors" [ngClass]="{'d-none': !errorsToggle}">
-                <pre *rxFor="let error of step.errors" class="step-error mb-0"
+                <pre *rxFor="let error of step.errors" class="step-error mb-0" [class]="inOutCtxToggleClass(prettyPrintToggle)"
                         [innerHTML]="((error | prettyPrint: true | thumbnail) | safe: 'html')">
                 </pre>
             </div>
@@ -255,7 +255,7 @@
                                 </span>
                             </div>
                             <div class="align-self-center">
-                                <pre [class]="inOutCtxToggleClass(outputsToggle)"><code [innerHTML]="output.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
+                                <pre [class]="inOutCtxToggleClass(prettyPrintToggle)"><code [innerHTML]="output.value | stringify | prettyPrint: true | safe: 'html'"></code></pre>
                             </div>
                         </div>
                     </div>

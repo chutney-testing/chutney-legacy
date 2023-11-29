@@ -389,62 +389,37 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     togglePayloads() {
-        this.toggleCtxVars();
-        this.toggleInputs(false);
-        this.toggleOutputs(false);
+        this.prettyPrintToggle = !this.prettyPrintToggle;
 
         timer(250).subscribe(() => this.setLefPanelHeight());
     }
 
     private inOutCtxToggle_onClass = 'm-0 text-wrap text-break';
     private inOutCtxToggle_offClass = 'm-0 d-block overflow-auto';
+    prettyPrintToggle = true;
     inOutCtxToggleClass(toggleValue: boolean): string {
         return toggleValue ? this.inOutCtxToggle_onClass : this.inOutCtxToggle_offClass;
     }
 
-    ctxVarsToggle = true;
-    private toggleCtxVars() {
-        this.ctxVarsToggle = !this.ctxVarsToggle;
-            this.querySelector('.ctx-var-raw pre').forEach(e => {
-                e.className = this.inOutCtxToggleClass(this.ctxVarsToggle);
-            });
-    }
-
     toggleInputsOutputs() {
-        this.toggleInputs(true);
-        this.toggleOutputs(true);
+        this.toggleInputs();
+        this.toggleOutputs();
     }
 
-    inputsToggle = true;
     inputsDNoneToggle = true;
-    private toggleInputs(dNone: boolean) {
-        if (dNone) {
-            this.inputsDNoneToggle = !this.inputsDNoneToggle;
-            this.querySelector('.report-raw .inputs').forEach(e => {
-                this.toggleDisplayNone(e, this.inputsDNoneToggle);
-            });
-        } else {
-            this.inputsToggle = !this.inputsToggle;
-            this.querySelector('.report-raw .inputs pre').forEach(e => {
-                e.className = this.inOutCtxToggleClass(this.inputsToggle);
-            });
-        }
+    private toggleInputs() {
+        this.inputsDNoneToggle = !this.inputsDNoneToggle;
+        this.querySelector('.report-raw .inputs').forEach(e => {
+            this.toggleDisplayNone(e, this.inputsDNoneToggle);
+        });
     }
 
-    outputsToggle = true;
     outputsDNoneToggle = true;
-    private toggleOutputs(dNone: boolean) {
-        if (dNone) {
-            this.outputsDNoneToggle = !this.outputsDNoneToggle;
-            this.querySelector('.report-raw .outputs').forEach(e => {
-                this.toggleDisplayNone(e, this.outputsDNoneToggle);
-            });
-        } else {
-            this.outputsToggle = !this.outputsToggle;
-            this.querySelector('.report-raw .outputs pre').forEach(e => {
-                e.className = this.inOutCtxToggleClass(this.outputsToggle);
-            });
-        }
+    private toggleOutputs() {
+        this.outputsDNoneToggle = !this.outputsDNoneToggle;
+        this.querySelector('.report-raw .outputs').forEach(e => {
+            this.toggleDisplayNone(e, this.outputsDNoneToggle);
+        });
     }
 
     toggleInfosErrors() {
