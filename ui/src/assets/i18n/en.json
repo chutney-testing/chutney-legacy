@@ -80,6 +80,7 @@
             "step": {
                 "inputs": "Inputs",
                 "outputs": "Outputs",
+                "inferr": "Logs",
                 "actions": {
                     "copy": "Copy value",
                     "edit": "Edit value",
