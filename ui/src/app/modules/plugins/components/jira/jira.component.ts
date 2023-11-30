@@ -19,6 +19,15 @@ export class JiraComponent implements OnInit {
 
     message;
     private savedMessage: string;
+    public urlLabel: string;
+    public usernameLabel: string;
+    public passwordLabel: string;
+    public urlProxyLabel: string;
+    public userProxyLabel: string;
+    public passwordProxyLabel: string;
+    public configurationJiraLabel: string;
+    public saveLabel: string;
+
     isErrorNotification: boolean = false;
 
     constructor(private configurationService: JiraPluginConfigurationService,
@@ -44,6 +53,30 @@ export class JiraComponent implements OnInit {
     private initTranslation() {
         this.translate.get('global.actions.done.saved').subscribe((res: string) => {
             this.savedMessage = res;
+        });
+        this.translate.get('admin.plugins.jira.url').subscribe((res: string) => {
+            this.urlLabel = res;
+        });
+        this.translate.get('admin.plugins.jira.username').subscribe((res: string) => {
+            this.usernameLabel = res;
+        });
+        this.translate.get('admin.plugins.jira.password').subscribe((res: string) => {
+            this.passwordLabel = res;
+        });
+        this.translate.get('admin.plugins.jira.urlProxy').subscribe((res: string) => {
+            this.urlProxyLabel = res;
+        });
+        this.translate.get('admin.plugins.jira.usernameProxy').subscribe((res: string) => {
+            this.userProxyLabel = res;
+        });
+        this.translate.get('admin.plugins.jira.passwordProxy').subscribe((res: string) => {
+            this.passwordProxyLabel = res;
+        });
+        this.translate.get('admin.plugins.jira.configurationJira').subscribe((res: string) => {
+            this.configurationJiraLabel = res;
+        });
+        this.translate.get('global.actions.save').subscribe((res: string) => {
+            this.saveLabel = res;
         });
     }
 

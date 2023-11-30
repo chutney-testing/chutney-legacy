@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -203,14 +204,34 @@ class JiraModuleControllerTest {
         assertThat(url).isEqualTo("an url");
     }
 
+  @Test
+  void saveConfigurationNoProxy() throws Exception {
+    Map<String, String> jiraConfig = new HashMap<>();
+    jiraConfig.put("url", "a new url");
+    jiraConfig.put("username", "a new username");
+    jiraConfig.put("password", "a new password");
+
+    JiraTargetConfiguration expectedConfiguration = new JiraTargetConfiguration("a new url", "a new username", "a new password", "", "", "");
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/api/ui/jira/v1/configuration")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(om.writeValueAsString(jiraConfig))
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andDo(print())
+        .andExpect(MockMvcResultMatchers.status().isOk());
+
+    JiraTargetConfiguration expected = jiraRepository.loadServerConfiguration();
+    assertThat(expected).usingRecursiveComparison().isEqualTo(expectedConfiguration);
+  }
+
     @Test
     void saveConfiguration() throws Exception {
-        JiraTargetConfiguration newConfiguration = new JiraTargetConfiguration("a new url", "a new username", "a new password", "", "", "");
+      JiraTargetConfiguration newConfiguration = new JiraTargetConfiguration("a new url", "a new username", "a new password", "url proxy", "user proxy", "password proxy");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/ui/jira/v1/configuration")
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(om.writeValueAsString(newConfiguration))
-            .accept(MediaType.APPLICATION_JSON_VALUE))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(om.writeValueAsString(newConfiguration))
+                .accept(MediaType.APPLICATION_JSON_VALUE))
             .andDo(print())
             .andExpect(MockMvcResultMatchers.status().isOk());
 

@@ -179,9 +179,9 @@ public class JiraModuleController {
                 jiraConfigurationDto.url(),
                 jiraConfigurationDto.username(),
                 jiraConfigurationDto.password(),
-                jiraConfigurationDto.urlProxy(),
-                jiraConfigurationDto.userProxy(),
-                jiraConfigurationDto.passwordProxy()
+                jiraConfigurationDto.urlProxy().orElse(null),
+                jiraConfigurationDto.userProxy().orElse(null),
+                jiraConfigurationDto.passwordProxy().orElse(null)
             )
         );
     }

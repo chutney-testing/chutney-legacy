@@ -1,7 +1,7 @@
 package com.chutneytesting.jira.infra;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
@@ -38,11 +38,7 @@ public class HttpJiraXrayImplTest {
 
     wireMockServer.stubFor(
         post(urlPathMatching("/rest/raven/1.0/import/execution"))
-            .willReturn(
-                aResponse()
-                    .withHeader("Content-Type", "application/json")
-                    .withBody("1234")
-                    .withStatus(200))
+            .willReturn(okJson("1234"))
     );
 
     // When
@@ -76,11 +72,7 @@ public class HttpJiraXrayImplTest {
 
         wireMockServer.stubFor(
             post(urlPathMatching("/rest/raven/1.0/import/execution"))
-                .willReturn(
-                    aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBody("1234")
-                        .withStatus(200))
+                .willReturn(okJson("1234"))
         );
 
         String expectedProxyAuthorization = Base64.getEncoder()

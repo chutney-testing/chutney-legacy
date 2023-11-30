@@ -319,6 +319,17 @@
         "database": {
             "updated_rows": "ligne(s) mise(s) à jour"
         },
+        "plugins": {
+            "jira": {
+                "url": "URL",
+                "username": "Username",
+                "password": "Password",
+                "urlProxy": "Proxy URL",
+                "usernameProxy": "Proxy username",
+                "passwordProxy": "Proxy password",
+                "configurationJira": "Jira configuration"
+            }
+        },
         "backups": {
             "table": {
                 "time.title": "Creation date",

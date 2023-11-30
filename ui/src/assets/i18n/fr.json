@@ -319,6 +319,17 @@
         "database": {
             "updated_rows": "updated row(s)"
         },
+        "plugins": {
+            "jira": {
+                "url": "URL",
+                "username": "Nom d'utilisateur",
+                "password": "Mot de passe",
+                "urlProxy": "URL du proxy",
+                "usernameProxy": "Utilisateur proxy",
+                "passwordProxy": "Mot de passe proxy",
+                "configurationJira": "Configuration Jira"
+            }
+        },
         "backups": {
             "table": {
                 "time.title": "Date de création",

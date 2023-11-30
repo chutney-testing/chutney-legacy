@@ -209,23 +209,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         HttpClientBuilder httpClientBuilder = HttpClients.custom().setConnectionManager(connectionManager);
 
         if (jiraTargetConfiguration.hasProxy()) {
-            try {
-                URI proxyUri = new URI(jiraTargetConfiguration.urlProxy());
-                HttpHost proxyHttpHost = HttpHost.create(proxyUri);
-                httpClientBuilder.setProxy(proxyHttpHost);
-
-                if (jiraTargetConfiguration.hasProxyWithAuth()) {
-                    BasicCredentialsProvider credentialsProvider = getBasicCredentialsProvider(jiraTargetConfiguration, proxyHttpHost);
-                    String proxyAuthorization = Base64
-                        .getEncoder()
-                        .encodeToString((jiraTargetConfiguration.userProxy() + ":" + jiraTargetConfiguration.passwordProxy()).getBytes());
-                    httpClientBuilder
-                        .setDefaultCredentialsProvider(credentialsProvider)
-                        .setDefaultHeaders(List.of(new BasicHeader("Proxy-Authorization", "Basic " + proxyAuthorization)));
-                }
-            } catch (URISyntaxException e) {
-                LOGGER.error("Unexpected proxy url", e);
-            }
+            configureProxy(jiraTargetConfiguration, httpClientBuilder);
         }
 
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClientBuilder.build());
@@ -237,7 +221,27 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         return restTemplate;
     }
 
-  private BasicCredentialsProvider getBasicCredentialsProvider(JiraTargetConfiguration jiraTargetConfiguration, HttpHost proxyHttpHost) {
+    private void configureProxy(JiraTargetConfiguration jiraTargetConfiguration, HttpClientBuilder httpClientBuilder) {
+        try {
+            URI proxyUri = new URI(jiraTargetConfiguration.urlProxy());
+            HttpHost proxyHttpHost = HttpHost.create(proxyUri);
+            httpClientBuilder.setProxy(proxyHttpHost);
+
+            if (jiraTargetConfiguration.hasProxyWithAuth()) {
+                BasicCredentialsProvider credentialsProvider = getBasicCredentialsProvider(jiraTargetConfiguration, proxyHttpHost);
+                String proxyAuthorization = Base64
+                    .getEncoder()
+                    .encodeToString((jiraTargetConfiguration.userProxy() + ":" + jiraTargetConfiguration.passwordProxy()).getBytes());
+                httpClientBuilder
+                    .setDefaultCredentialsProvider(credentialsProvider)
+                    .setDefaultHeaders(List.of(new BasicHeader("Proxy-Authorization", "Basic " + proxyAuthorization)));
+            }
+        } catch (URISyntaxException e) {
+            LOGGER.error("Unexpected proxy url", e);
+        }
+    }
+
+    private BasicCredentialsProvider getBasicCredentialsProvider(JiraTargetConfiguration jiraTargetConfiguration, HttpHost proxyHttpHost) {
     BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
     credentialsProvider.setCredentials(
         new AuthScope(proxyHttpHost),
