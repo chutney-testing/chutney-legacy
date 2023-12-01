@@ -1,13 +1,14 @@
 { nixpkgs ? import <nixpkgs> {} }:
 with nixpkgs;
 let
+  unstable = import (fetchTarball https://nixos.org/channels/nixos-unstable/nixexprs.tar.xz) { };
   jdk = openjdk17;
   mvn = maven.override { jdk  = jdk; };
 in
 mkShell {
 
   buildInputs = [
-    nodejs-16_x
+    unstable.nodejs_20
     chromium
     geckodriver
     jdk
