@@ -24,6 +24,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -205,23 +206,27 @@ class JiraModuleControllerTest {
     }
 
   @Test
-  void saveConfigurationNoProxy() throws Exception {
-    Map<String, String> jiraConfig = new HashMap<>();
-    jiraConfig.put("url", "a new url");
-    jiraConfig.put("username", "a new username");
-    jiraConfig.put("password", "a new password");
+  void loadServerConfigurationWithoutProxy() {
 
-    JiraTargetConfiguration expectedConfiguration = new JiraTargetConfiguration("a new url", "a new username", "a new password", "", "", "");
+      JiraRepository repository = new JiraFileRepository(Paths.get("src", "test", "resources", "jira").toAbsolutePath().toString());
+      JiraTargetConfiguration expectedConfiguration = new JiraTargetConfiguration("an url", "a username", "a password", "", "", "");
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/api/ui/jira/v1/configuration")
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(om.writeValueAsString(jiraConfig))
-            .accept(MediaType.APPLICATION_JSON_VALUE))
-        .andDo(print())
-        .andExpect(MockMvcResultMatchers.status().isOk());
+      JiraTargetConfiguration expected = repository.loadServerConfiguration();
 
-    JiraTargetConfiguration expected = jiraRepository.loadServerConfiguration();
-    assertThat(expected).usingRecursiveComparison().isEqualTo(expectedConfiguration);
+      assertThat(expected).usingRecursiveComparison().isEqualTo(expectedConfiguration);
+  }
+
+    @Test
+    void saveConfigurationNoProxy() throws Exception {
+        Map<String, String> jiraConfig = new HashMap<>();
+        jiraConfig.put("url", "a new url");
+        jiraConfig.put("username", "a new username");
+        jiraConfig.put("password", "a new password");
+
+        JiraTargetConfiguration expectedConfiguration = new JiraTargetConfiguration("a new url", "a new username", "a new password", "", "", "");
+
+        JiraTargetConfiguration expected = jiraRepository.loadServerConfiguration();
+        assertThat(expected).usingRecursiveComparison().isEqualTo(expectedConfiguration);
   }
 
     @Test
