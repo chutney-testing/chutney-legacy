@@ -115,12 +115,14 @@
                     </div>
                 </td>
                 <td>
-                    <i class="fa-solid fa-lg"
+                    <i class="fa-lg"
                        [ngClass]="
-                                {'fa-circle-check icon-info': execution.status === ExecutionStatus.SUCCESS,
+                                {'fa-solid': execution.status !== ExecutionStatus.NOT_EXECUTED,
+                                'fa-circle-check icon-info': execution.status === ExecutionStatus.SUCCESS,
                                 'fa-circle-xmark icon-danger': execution.status === ExecutionStatus.FAILURE,
                                 'fa-spinner fa-pulse icon-warning': execution.status === ExecutionStatus.RUNNING || execution.status === ExecutionStatus.PAUSED,
-                                'fa-circle-exclamation icon-light': execution.status === ExecutionStatus.STOPPED}"
+                                'fa-circle-exclamation icon-light': execution.status === ExecutionStatus.STOPPED,
+                                'fa-regular fa-circle text-warning': execution.status === ExecutionStatus.NOT_EXECUTED}"
                        [ngbTooltip]="ExecutionStatus.toString(execution.status) | translate" placement="right"
                     ></i>
                 </td>
