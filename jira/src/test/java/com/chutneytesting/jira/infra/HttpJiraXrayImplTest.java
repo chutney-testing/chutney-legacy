@@ -33,8 +33,8 @@ public class HttpJiraXrayImplTest {
         "user",
         "password",
         wireMockServer.baseUrl(),
-        null,
-        null);
+        "",
+        "");
 
     wireMockServer.stubFor(
         post(urlPathMatching("/rest/raven/1.0/import/execution"))

@@ -5,44 +5,44 @@
 <div [formGroup]="configurationForm" class="mb-4">
     <fieldset class="w99 border p-2">
         <legend class="w-auto ps-3 pe-3 mb-0 float-none">
-            <span>{{configurationJiraLabel}}</span>
+            <span>{{'admin.plugins.jira.configurationJira' | translate}}</span>
         </legend>
 
         <div>
             <div class="row m-1">
-                <label class="col-2 col-form-label" for="url">{{urlLabel}}</label>
+                <label class="col-2 col-form-label" for="url">{{'admin.plugins.jira.url' | translate}}</label>
                 <div class="col-10">
                     <input type="text" class="form-control" id="url" formControlName="url"/>
                 </div>
             </div>
             <div class="row m-1">
-                <label class="col-2 col-form-label" for="username">{{usernameLabel}}</label>
+                <label class="col-2 col-form-label" for="username">{{'admin.plugins.jira.username' | translate}}</label>
                 <div class="col-10">
                     <input type="text" class="form-control" id="username" formControlName="username"/>
                 </div>
             </div>
             <div class="row m-1">
-                <label class="col-2 col-form-label" for="password">{{passwordLabel}}</label>
+                <label class="col-2 col-form-label" for="password">{{'admin.plugins.jira.password' | translate}}</label>
                 <div class="col-10">
                     <input type="password" class="form-control" id="password" formControlName="password"/>
                 </div>
             </div>
             <div class="row m-1">
-                <label class="col-2 col-form-label" for="urlProxy">{{urlProxyLabel}}</label>
+                <label class="col-2 col-form-label" for="urlProxy">{{'admin.plugins.jira.urlProxy' | translate}}</label>
                 <div class="col-10">
                     <input class="form-control" formControlName="urlProxy" id="urlProxy" placeholder="Optional"
                            type="text"/>
                 </div>
             </div>
             <div class="row m-1">
-                <label class="col-2 col-form-label" for="userProxy">{{userProxyLabel}}</label>
+                <label class="col-2 col-form-label" for="userProxy">{{'admin.plugins.jira.usernameProxy' | translate}}</label>
                 <div class="col-10">
                     <input class="form-control" formControlName="userProxy" id="userProxy" placeholder="Optional"
                            type="text"/>
                 </div>
             </div>
             <div class="row m-1">
-                <label class="col-2 col-form-label" for="passwordProxy">{{passwordProxyLabel}}</label>
+                <label class="col-2 col-form-label" for="passwordProxy">{{'admin.plugins.jira.passwordProxy' | translate}}</label>
                 <div class="col-10">
                     <input class="form-control" formControlName="passwordProxy" id="passwordProxy" placeholder="Optional"
                            type="password"/>
@@ -52,7 +52,7 @@
 
         <div class="box2">
             <button type="button" [disabled]="!isValid()" class="btn btn-success" (click)="save()">
-                {{saveLabel}}
+                {{'global.actions.done.saved' | translate}}
                 <span class="fa fa-check"></span>
             </button>
         </div>
