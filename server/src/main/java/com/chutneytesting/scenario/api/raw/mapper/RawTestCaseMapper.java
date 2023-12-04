@@ -27,7 +27,6 @@ import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.chutneytesting.server.core.domain.scenario.ScenarioNotParsableException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
-import com.chutneytesting.server.core.domain.tools.ui.KeyValue;
 import org.hjson.Stringify;
 
 public class RawTestCaseMapper {
@@ -50,7 +49,6 @@ public class RawTestCaseMapper {
                 .withVersion(testCase.metadata.version)
                 .build())
             .withScenario(gwtScenario)
-            .withExecutionParameters(testCase.executionParameters())
             .build();
     }
 
@@ -71,7 +69,6 @@ public class RawTestCaseMapper {
                 .withDefaultDataset(dto.defaultDataset().orElse(null))
                 .build())
             .withScenario(gwtScenario)
-            .withExecutionParameters(KeyValue.toMap(dto.parameters()))
             .build();
     }
 
@@ -104,7 +101,6 @@ public class RawTestCaseMapper {
             .scenario(readHjson(testCase.scenario).toString(Stringify.HJSON))
             .tags(testCase.metadata().tags())
             .creationDate(testCase.metadata().creationDate())
-            .parameters(KeyValue.fromMap(testCase.executionParameters()))
             .author(testCase.metadata.author)
             .updateDate(testCase.metadata.updateDate)
             .version(testCase.metadata.version)
@@ -120,7 +116,6 @@ public class RawTestCaseMapper {
             .scenario(readHjson(marshaller.serialize(testCase.scenario)).toString(Stringify.HJSON))
             .tags(testCase.metadata().tags())
             .creationDate(testCase.metadata().creationDate())
-            .parameters(KeyValue.fromMap(testCase.executionParameters))
             .author(testCase.metadata.author)
             .updateDate(testCase.metadata.updateDate)
             .version(testCase.metadata.version)

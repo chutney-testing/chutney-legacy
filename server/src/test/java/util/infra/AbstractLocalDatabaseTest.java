@@ -73,7 +73,6 @@ public abstract class AbstractLocalDatabaseTest {
         jdbcTemplate.execute("DELETE FROM CAMPAIGN_EXECUTIONS");
         jdbcTemplate.execute("DELETE FROM SCENARIO_EXECUTIONS");
         jdbcTemplate.execute("DELETE FROM CAMPAIGN_SCENARIOS");
-        jdbcTemplate.execute("DELETE FROM CAMPAIGN_PARAMETERS");
         jdbcTemplate.execute("DELETE FROM CAMPAIGN");
         jdbcTemplate.execute("DELETE FROM SCENARIO");
     }
@@ -86,7 +85,7 @@ public abstract class AbstractLocalDatabaseTest {
     }
 
     protected ScenarioEntity givenScenario() {
-        ScenarioEntity scenarioEntity = new ScenarioEntity(null, "", null, "{\"when\":{}}", null, now(), null, true, null, now(), null, null);
+        ScenarioEntity scenarioEntity = new ScenarioEntity(null, "", null, "{\"when\":{}}", null, now(), true, null, now(), null, null);
         return transactionTemplate.execute(ts -> {
             entityManager.persist(scenarioEntity);
             return scenarioEntity;

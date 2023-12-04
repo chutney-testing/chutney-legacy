@@ -17,7 +17,6 @@
 package com.chutneytesting.scenario.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -188,6 +187,5 @@ public class GwtTestCaseControllerTest {
 
         ArgumentCaptor<GwtTestCase> testCase = ArgumentCaptor.forClass(GwtTestCase.class);
         verify(testCaseRepository).save(testCase.capture());
-        assertThat(testCase.getValue().executionParameters()).containsOnly(entry("testcase parameter quote", "**escape.quote**"), entry("testcase parameter apostrophe", "**escape.apostrophe**"));
     }
 }

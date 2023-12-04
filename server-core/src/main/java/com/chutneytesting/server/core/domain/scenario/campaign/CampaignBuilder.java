@@ -17,14 +17,12 @@
 package com.chutneytesting.server.core.domain.scenario.campaign;
 
 import java.util.List;
-import java.util.Map;
 
 public class CampaignBuilder {
     private Long id;
     private String title;
     private String description;
     private List<String> scenarioIds;
-    private Map<String, String> executionParameters;
     private String environment;
     private boolean parallelRun;
     private boolean retryAuto;
@@ -58,11 +56,6 @@ public class CampaignBuilder {
         return this;
     }
 
-    public CampaignBuilder setExecutionParameters(Map<String, String> executionParameters) {
-        this.executionParameters = executionParameters;
-        return this;
-    }
-
     public CampaignBuilder setEnvironment(String environment) {
         this.environment = environment;
         return this;
@@ -89,6 +82,6 @@ public class CampaignBuilder {
     }
 
     public Campaign build() {
-        return new Campaign(id, title, description, scenarioIds, executionParameters, environment, parallelRun, retryAuto, externalDatasetId, tags);
+        return new Campaign(id, title, description, scenarioIds, environment, parallelRun, retryAuto, externalDatasetId, tags);
     }
 }

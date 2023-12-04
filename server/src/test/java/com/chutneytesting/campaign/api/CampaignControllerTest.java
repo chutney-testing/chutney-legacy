@@ -18,7 +18,6 @@ package com.chutneytesting.campaign.api;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,7 +50,6 @@ import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,7 +69,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class CampaignControllerTest {
 
     private static final CampaignDto SAMPLE_CAMPAIGN = new CampaignDto(null, "test", "desc", Lists.newArrayList("1", "2", "3"),
-        emptyMap(), emptyList(), "env", false, false, null, emptyList());
+        emptyList(), "env", false, false, null, emptyList());
     private static final String urlTemplate = "/api/ui/campaign/v1/";
 
     private final FakeCampaignRepository repository = new FakeCampaignRepository();
@@ -129,7 +127,6 @@ public class CampaignControllerTest {
             updatedTitle,
             existingCampaign.getDescription(),
             existingCampaign.getScenarioIds(),
-            new HashMap<>(),
             existingCampaign.getCampaignExecutionReports(),
             existingCampaign.getEnvironment(), false, false, null, emptyList());
 
@@ -150,7 +147,6 @@ public class CampaignControllerTest {
             existingCampaign.getTitle(),
             existingCampaign.getDescription(),
             updatedScenarioIds,
-            emptyMap(),
             existingCampaign.getCampaignExecutionReports(),
             existingCampaign.getEnvironment(), false, false, null, emptyList());
 
@@ -170,7 +166,6 @@ public class CampaignControllerTest {
             existingCampaign.getTitle(),
             existingCampaign.getDescription(),
             existingCampaign.getScenarioIds(),
-            new HashMap<>(),
             existingCampaign.getCampaignExecutionReports(),
             existingCampaign.getEnvironment(), false, false, null, Arrays.asList("Tag"));
 
@@ -211,7 +206,7 @@ public class CampaignControllerTest {
     @Test
     public void should_find_all_existing_campaign() throws Exception {
         // Given
-        CampaignDto anotherExistingCampaign = insertCampaign(new CampaignDto(42L, "title", "description", emptyList(), emptyMap(), emptyList(), "env", false, false, null, null));
+        CampaignDto anotherExistingCampaign = insertCampaign(new CampaignDto(42L, "title", "description", emptyList(), emptyList(), "env", false, false, null, null));
 
         // When
         execute(MockMvcRequestBuilders.get(urlTemplate))
@@ -220,7 +215,7 @@ public class CampaignControllerTest {
 
         // Then
         assertThat(campaigns)
-            .usingFieldByFieldElementComparator()
+            .usingRecursiveFieldByFieldElementComparator()
             .containsExactlyInAnyOrder(anotherExistingCampaign, existingCampaign);
     }
 
@@ -229,7 +224,7 @@ public class CampaignControllerTest {
         // Given
         removeCampaign(existingCampaign.getId());
         CampaignDto campaignToCreate = new CampaignDto(42L, "CAMPAIGN_LINKED_TO_SCENARIO", "description", Lists.newArrayList("4", "5", "6"),
-            emptyMap(), emptyList(), "env", false, false, null, null);
+            emptyList(), "env", false, false, null, null);
         insertCampaign(campaignToCreate);
 
         // When
@@ -243,7 +238,6 @@ public class CampaignControllerTest {
         Assertions.assertThat(campaignNames).containsExactly(
             "CAMPAIGN_LINKED_TO_SCENARIO"
         );
-
     }
 
     @Test
@@ -251,7 +245,7 @@ public class CampaignControllerTest {
         // Given
         removeCampaign(existingCampaign.getId());
         CampaignDto campaignToCreate = new CampaignDto(42L, "CAMPAIGN_WITHOUT_SCENARIO", "description", emptyList(),
-            emptyMap(), emptyList(), "env", false, false, null, null);
+            emptyList(), "env", false, false, null, null);
         insertCampaign(campaignToCreate);
 
         // When
@@ -263,7 +257,6 @@ public class CampaignControllerTest {
 
         // Then
         Assertions.assertThat(campaignNames).isEmpty();
-
     }
 
     @Test
@@ -282,7 +275,6 @@ public class CampaignControllerTest {
         repository.saveExecution(existingCampaign.getId(), report2);
         repository.saveExecution(existingCampaign.getId(), report3);
         repository.saveExecution(existingCampaign.getId(), report4);
-
 
         // When
         execute(MockMvcRequestBuilders.get(urlTemplate + existingCampaign.getId()))
@@ -320,7 +312,6 @@ public class CampaignControllerTest {
 
         assertThat(receivedCampaign.getCampaignExecutionReports().get(0).getUserId()).isEqualTo("user_1");
         assertThat(receivedCampaign.getCampaignExecutionReports().get(1).getUserId()).isEqualTo("user_2");
-
     }
 
     @Test
@@ -331,7 +322,7 @@ public class CampaignControllerTest {
         when(execution0.time()).thenReturn(LocalDateTime.now().minusDays(1));
         CampaignExecution campaignExecution0 = new CampaignExecution(1L, 1L, singletonList(new ScenarioExecutionCampaign("20", "...", execution0)), "title", false, "", null, null, "");
         CampaignDto anotherExistingCampaign = new CampaignDto(null, "title", "description", emptyList(),
-            emptyMap(), emptyList(), "env", false, false, null, null);
+            emptyList(), "env", false, false, null, null);
         anotherExistingCampaign = insertCampaign(anotherExistingCampaign);
         repository.saveExecution(anotherExistingCampaign.getId(), campaignExecution0);
 
@@ -360,7 +351,7 @@ public class CampaignControllerTest {
         // Given
         removeCampaign(existingCampaign.getId());
         CampaignDto campaignToCreate = new CampaignDto(42L, "CAMPAIGN_LINKED_TO_SCENARIO", "description", Lists.newArrayList("55", "44-44"),
-            emptyMap(), emptyList(), "env", false, false, null, null);
+            emptyList(), "env", false, false, null, null);
         insertCampaign(campaignToCreate);
 
         when(repositoryAggregator.findMetadataById("44-44"))
@@ -380,7 +371,6 @@ public class CampaignControllerTest {
         Assertions.assertThat(ids).containsExactly(
             "55", "44-44"
         );
-
     }
 
     private void createExistingCampaign() throws Exception {

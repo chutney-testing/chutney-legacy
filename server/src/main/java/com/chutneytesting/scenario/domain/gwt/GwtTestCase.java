@@ -16,26 +16,19 @@
 
 package com.chutneytesting.scenario.domain.gwt;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Optional.ofNullable;
-
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
-import java.util.Map;
 import java.util.Objects;
 
 public class GwtTestCase implements TestCase {
 
     public final TestCaseMetadataImpl metadata;
     public final GwtScenario scenario;
-    public final Map<String, String> executionParameters; /* used only for replacing non dynamic **parameters** */
 
-    private GwtTestCase(TestCaseMetadataImpl metadata, GwtScenario scenario, Map<String, String> executionParameters) {
+    private GwtTestCase(TestCaseMetadataImpl metadata, GwtScenario scenario) {
         this.metadata = metadata;
         this.scenario = scenario;
-        this.executionParameters = executionParameters;
     }
 
     @Override
@@ -44,25 +37,10 @@ public class GwtTestCase implements TestCase {
     }
 
     @Override
-    public Map<String, String> executionParameters() {
-        return executionParameters;
-    }
-
-    @Override
-    public TestCase usingExecutionParameters(Map<String, String> parameters) {
-        return builder()
-            .withMetadata(metadata)
-            .withScenario(scenario)
-            .withExecutionParameters(parameters)
-            .build();
-    }
-
-    @Override
     public String toString() {
         return "GwtTestCase{" +
             "metadata=" + metadata +
             ", scenario=" + scenario +
-            ", executionParameters=" + executionParameters +
             '}';
     }
 
@@ -72,13 +50,12 @@ public class GwtTestCase implements TestCase {
         if (o == null || getClass() != o.getClass()) return false;
         GwtTestCase that = (GwtTestCase) o;
         return metadata.equals(that.metadata) &&
-            scenario.equals(that.scenario) &&
-            executionParameters.equals(that.executionParameters);
+            scenario.equals(that.scenario);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(metadata, scenario, executionParameters);
+        return Objects.hash(metadata, scenario);
     }
 
     public static GwtTestCaseBuilder builder() {
@@ -89,15 +66,13 @@ public class GwtTestCase implements TestCase {
 
         private TestCaseMetadataImpl metadata;
         private GwtScenario scenario;
-        private Map<String, String> executionParameters;
 
         private GwtTestCaseBuilder() {}
 
         public GwtTestCase build() {
             return new GwtTestCase(
                 metadata,
-                scenario,
-                ofNullable(executionParameters).orElse(emptyMap())
+                scenario
             );
         }
 
@@ -111,15 +86,9 @@ public class GwtTestCase implements TestCase {
             return this;
         }
 
-        public GwtTestCaseBuilder withExecutionParameters(Map<String, String> parameters) {
-            this.executionParameters = unmodifiableMap(parameters);
-            return this;
-        }
-
         public GwtTestCaseBuilder from(GwtTestCase testCase) {
             withMetadata(testCase.metadata);
             withScenario(testCase.scenario);
-            withExecutionParameters(testCase.executionParameters);
             return this;
         }
     }

@@ -89,7 +89,6 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
             jiratags: [],
             campaignTags: '',
             scenarioIds: [],
-            parameters: this.formBuilder.array([]),
             parallelRun: false,
             retryAuto: false,
             jiraId: '',
@@ -333,15 +332,9 @@ export class CampaignEditionComponent implements OnInit, OnDestroy {
             return;
         }
 
-        const computedParameters = new Map();
-        formValue['parameters'].forEach((keyValue: KeyValue) => {
-            computedParameters[keyValue.key] = keyValue.value;
-        });
-
         this.campaign.title = formValue['title'];
         this.campaign.description = formValue['description'];
         this.campaign.scenarioIds = formValue['scenarioIds'];
-        this.campaign.computedParameters = computedParameters;
         this.campaign.environment = this.selectedEnvironment;
         this.campaign.parallelRun = formValue['parallelRun'];
         this.campaign.retryAuto = formValue['retryAuto'];

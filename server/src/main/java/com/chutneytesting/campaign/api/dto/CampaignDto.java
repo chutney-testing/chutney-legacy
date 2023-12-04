@@ -18,19 +18,17 @@ package com.chutneytesting.campaign.api.dto;
 
 import static java.util.Optional.ofNullable;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CampaignDto {
 
     private Long id;
     private String title;
     private String description;
     private List<String> scenarioIds;
-    @JsonProperty("computedParameters")
-    private Map<String, String> executionParameters;
     private List<CampaignExecutionReportDto> campaignExecutionReports;
     private String environment;
     private boolean parallelRun;
@@ -45,7 +43,6 @@ public class CampaignDto {
                        String title,
                        String description,
                        List<String> scenarioIds,
-                       Map<String, String> executionParameters,
                        List<CampaignExecutionReportDto> campaignExecutionReports,
                        String environment,
                        boolean parallelRun,
@@ -56,7 +53,6 @@ public class CampaignDto {
         this.title = title;
         this.description = description;
         this.scenarioIds = scenarioIds;
-        this.executionParameters = executionParameters;
         this.campaignExecutionReports = ofNullable(campaignExecutionReports).orElseGet(ArrayList::new);
         this.environment = environment;
         this.parallelRun = parallelRun;
@@ -79,10 +75,6 @@ public class CampaignDto {
 
     public List<String> getScenarioIds() {
         return scenarioIds;
-    }
-
-    public Map<String, String> getExecutionParameters() {
-        return executionParameters;
     }
 
     public List<CampaignExecutionReportDto> getCampaignExecutionReports() {

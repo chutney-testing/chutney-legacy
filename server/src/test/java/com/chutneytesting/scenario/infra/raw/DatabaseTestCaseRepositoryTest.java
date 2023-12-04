@@ -22,7 +22,6 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Assertions.within;
 import static util.WaitUtils.awaitDuring;
 
@@ -83,7 +82,6 @@ public class DatabaseTestCaseRepositoryTest {
 
         private static final GwtTestCase GWT_TEST_CASE = GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder().build())
-            .withExecutionParameters(Collections.emptyMap())
             .withScenario(
                 GwtScenario.builder().withWhen(GwtStep.NONE).build()
             ).build();
@@ -128,7 +126,6 @@ public class DatabaseTestCaseRepositoryTest {
                     .withAuthor("author")
                     .build())
                 .withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build())
-                .withExecutionParameters(Collections.singletonMap("aKey", "aValue"))
                 .build();
 
             String scenarioID = sut.save(aTestCase);
@@ -145,7 +142,6 @@ public class DatabaseTestCaseRepositoryTest {
             assertThat(testCase.metadata().tags()).containsExactly("TAG");
             assertThat(testCase.metadata().creationDate()).isEqualTo(creationTime);
             assertThat(testCase.scenario.when.implementation).isEmpty();
-            assertThat(testCase.executionParameters()).containsOnly(entry("aKey", "aValue"));
             assertThat(testCase.metadata().author()).isEqualTo("author");
             assertThat(testCase.metadata().updateDate()).isEqualTo(creationTime);
             assertThat(testCase.metadata().version()).isEqualTo(1);
@@ -250,9 +246,6 @@ public class DatabaseTestCaseRepositoryTest {
                 },
                 new Object[]{
                     "Modified tags", GwtTestCase.builder().from(GWT_TEST_CASE).withMetadata(metaBuilder.withTags(Arrays.asList("Modif T1", "Modif T2")).build()).build()
-                },
-                new Object[]{
-                    "Modified dataSet", GwtTestCase.builder().from(GWT_TEST_CASE).withExecutionParameters(Collections.singletonMap("aKey", "aValue")).build()
                 },
                 new Object[]{
                     "Modified author", GwtTestCase.builder().from(GWT_TEST_CASE).withMetadata(metaBuilder.withAuthor("newAuthor").build()).build()
@@ -432,7 +425,6 @@ public class DatabaseTestCaseRepositoryTest {
             GwtTestCase GWT_TEST_CASE = GwtTestCase.builder()
                 .withMetadata(TestCaseMetadataImpl.builder()
                     .build())
-                .withExecutionParameters(Collections.emptyMap())
                 .withScenario(
                     GwtScenario.builder()
                         .withGivens(List.of(GwtStep.builder().withDescription("chutney of momos").build()))

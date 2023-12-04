@@ -179,7 +179,7 @@ class TestInfraConfiguration {
         public Properties jpaProperties() {
             Properties jpaProperties = new Properties();
             jpaProperties.putAll(Map.of(
-                "hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect",
+                "hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect",
                 "hibernate.show_sql", "true"
             ));
             return jpaProperties;

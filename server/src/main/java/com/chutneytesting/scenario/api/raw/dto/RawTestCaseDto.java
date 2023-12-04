@@ -17,10 +17,8 @@
 package com.chutneytesting.scenario.api.raw.dto;
 
 import static java.time.Instant.now;
-import static java.util.Collections.emptyList;
 
 import com.chutneytesting.server.core.domain.security.User;
-import com.chutneytesting.server.core.domain.tools.ui.KeyValue;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -69,11 +67,4 @@ public interface RawTestCaseDto {
     default Integer version() {
         return 1;
     }
-
-    @Value.Default()
-    @JsonProperty("computedParameters")
-    default List<KeyValue> parameters() {
-        return emptyList();
-    }
-
 }

@@ -18,9 +18,7 @@ package com.chutneytesting.execution.domain.campaign;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
-import static java.util.Map.entry;
 import static java.util.Optional.of;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -401,13 +399,9 @@ public class CampaignExecutionEngineTest {
             "gwt key", "gwt specific value",
             "key", "gwt value"
         );
-        TestCase gwtTestCase = createGwtTestCase(gwtTestCaseDataSet);
+        TestCase gwtTestCase = createGwtTestCase();
 
-        Map<String, String> campaignDataSet = Maps.of(
-            "campaign key", "campaign specific value",
-            "key", "campaign value"
-        );
-        Campaign campaign = createCampaign(campaignDataSet, "campaignDataSetId", gwtTestCase);
+        Campaign campaign = createCampaign("campaignDataSetId", gwtTestCase);
 
         when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
         when(testCaseRepository.findExecutableById(gwtTestCase.id())).thenReturn(of(gwtTestCase));
@@ -422,11 +416,6 @@ public class CampaignExecutionEngineTest {
         verify(scenarioExecutionEngine, times(1)).execute(argumentCaptor.capture());
         List<ExecutionRequest> executionRequests = argumentCaptor.getAllValues();
         assertThat(executionRequests).hasSize(1);
-        assertThat(((GwtTestCase) executionRequests.get(0).testCase).executionParameters).containsOnly(
-            entry("gwt key", gwtTestCaseDataSet.get("gwt key")),
-            entry("key", campaignDataSet.get("key")),
-            entry("campaign key", "campaign specific value")
-        );
     }
 
     private final static Random campaignIdGenerator = new Random();
@@ -465,23 +454,22 @@ public class CampaignExecutionEngineTest {
         return GwtTestCase.builder().withMetadata(TestCaseMetadataImpl.builder().withId(id).build()).build();
     }
 
-    private GwtTestCase createGwtTestCase(Map<String, String> dataSet) {
+    private GwtTestCase createGwtTestCase() {
         return GwtTestCase.builder()
             .withMetadata(
                 TestCaseMetadataImpl.builder()
                     .withId("gwt")
                     .build()
             )
-            .withExecutionParameters(dataSet)
             .build();
     }
 
     private Campaign createCampaign() {
-        return new Campaign(generateId(), "...", null, null, null, "campaignEnv", false, false, null, null);
+        return new Campaign(generateId(), "...", null, null, "campaignEnv", false, false, null, null);
     }
 
     private Campaign createCampaign(Long idCampaign) {
-        return new Campaign(idCampaign, "campaign1", null, emptyList(), emptyMap(), "env", false, false, null, null);
+        return new Campaign(idCampaign, "campaign1", null, emptyList(), "env", false, false, null, null);
     }
 
     private Campaign createCampaign(TestCase firstTestCase, TestCase secondtTestCase) {
@@ -493,10 +481,10 @@ public class CampaignExecutionEngineTest {
     }
 
     private Campaign createCampaign(TestCase firstTestCase, TestCase secondtTestCase, boolean parallelRun, boolean retryAuto) {
-        return new Campaign(1L, "campaign1", null, Lists.list(firstTestCase.id(), secondtTestCase.id()), emptyMap(), "env", parallelRun, retryAuto, null, null);
+        return new Campaign(1L, "campaign1", null, Lists.list(firstTestCase.id(), secondtTestCase.id()), "env", parallelRun, retryAuto, null, null);
     }
 
-    private Campaign createCampaign(Map<String, String> dataSet, String dataSetId, TestCase... testCases) {
-        return new Campaign(generateId(), "...", null, stream(testCases).map(TestCase::id).collect(toList()), dataSet, "campaignEnv", false, false, dataSetId, null);
+    private Campaign createCampaign(String dataSetId, TestCase... testCases) {
+        return new Campaign(generateId(), "...", null, stream(testCases).map(TestCase::id).collect(toList()), "campaignEnv", false, false, dataSetId, null);
     }
 }

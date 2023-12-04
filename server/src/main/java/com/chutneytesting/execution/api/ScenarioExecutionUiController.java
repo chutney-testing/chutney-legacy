@@ -98,9 +98,9 @@ public class ScenarioExecutionUiController {
     @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
     @PostMapping(path = "/api/idea/scenario/execution/{env}")
     public String executeScenarioWitRawContent(@RequestBody IdeaRequest ideaRequest, @PathVariable("env") String env) throws IOException {
-        LOGGER.debug("execute Scenario v2 for content='{}' with parameters '{}'", ideaRequest.getContent(), ideaRequest.getParams());
+        LOGGER.debug("execute Scenario v2 for content='{}'", ideaRequest.content());
         String userId = userService.currentUser().getId();
-        GwtScenario gwtScenario = marshaller.deserialize("test title for idea", "test description for idea", ideaRequest.getContent());
+        GwtScenario gwtScenario = marshaller.deserialize("test title for idea", "test description for idea", ideaRequest.content());
 
         TestCase testCase = GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
@@ -108,7 +108,6 @@ public class ScenarioExecutionUiController {
                 .withTitle("test title for idea")
                 .build())
             .withScenario(gwtScenario)
-            .withExecutionParameters(ideaRequest.getParams())
             .build();
 
         ScenarioExecutionReport report = executionEngine.simpleSyncExecution(

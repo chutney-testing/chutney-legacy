@@ -47,7 +47,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -281,12 +280,10 @@ public class CampaignExecutionEngine {
     }
 
     private ExecutionRequest executionWithCombinedParametersFromCampaignAndTestCase(Campaign campaign, TestCase testCase, CampaignExecution campaignExecution) {
-        Map<String, String> executionParameters = new HashMap<>(testCase.executionParameters());
-        executionParameters.putAll(campaign.executionParameters);
         DataSet dataset = ofNullable(campaign.externalDatasetId)
             .map(datasetRepository::findById)
             .orElseGet(() -> datasetRepository.findById(testCase.metadata().defaultDataset()));
-        return new ExecutionRequest(testCase.usingExecutionParameters(executionParameters), campaign.executionEnvironment(), campaignExecution.userId, dataset, campaignExecution);
+        return new ExecutionRequest(testCase, campaign.executionEnvironment(), campaignExecution.userId, dataset, campaignExecution);
     }
 
     private CampaignExecution executeCampaign(Campaign campaign, String userId) {

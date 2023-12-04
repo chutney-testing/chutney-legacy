@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-export * from './example-parameters.model';
 export * from './execution.model';
 export * from './functional-step.model';
 export * from './gwt-test-case.model';

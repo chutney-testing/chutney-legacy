@@ -17,10 +17,7 @@
 package com.chutneytesting.server.core.domain.scenario.campaign;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public class Campaign {
 
@@ -28,7 +25,6 @@ public class Campaign {
     public final String title;
     public final String description;
     public final List<String> scenarioIds;
-    public final Map<String, String> executionParameters;
     public final boolean parallelRun;
     public final boolean retryAuto;
     public final String externalDatasetId;
@@ -40,7 +36,6 @@ public class Campaign {
                     String title,
                     String description,
                     List<String> scenarioIds,
-                    Map<String, String> executionParameters,
                     String environment,
                     boolean parallelRun,
                     boolean retryAuto,
@@ -50,16 +45,11 @@ public class Campaign {
         this.title = title;
         this.description = description;
         this.scenarioIds = initListNullOrEmpty(scenarioIds);
-        this.executionParameters = Optional.ofNullable(executionParameters).orElse(new HashMap<>());
         this.parallelRun = parallelRun;
         this.retryAuto = retryAuto;
         this.environment = environment;
         this.externalDatasetId = externalDatasetId;
         this.tags = tags;
-    }
-
-    public void addScenario(String scenarioId) {
-        scenarioIds.add(scenarioId);
     }
 
     public void executionEnvironment(String environment) {
@@ -76,6 +66,4 @@ public class Campaign {
         }
         return new ArrayList<>();
     }
-
-
 }

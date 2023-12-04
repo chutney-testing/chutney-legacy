@@ -21,10 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignExecutionEntity;
-import com.chutneytesting.campaign.infra.jpa.CampaignParameterEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.scenario.infra.jpa.ScenarioEntity;
-import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
@@ -131,15 +129,11 @@ class LiquibaseChangelogTest {
             @DisplayName("Set campaign sequences correctly")
             void set_campaign_sequence_value_after_migration() {
                 CampaignEntity campaign = transactionTemplate.execute(status -> {
-                    Set<CampaignParameterEntity> parameters = Set.of(
-                        new CampaignParameterEntity("param1", "val1")
-                    );
-                    CampaignEntity c = new CampaignEntity(null, "title", "", null, false, false, null, null, null, null, parameters);
+                    CampaignEntity c = new CampaignEntity(null, "title", "", null, false, false, null, null, null, null);
                     entityManager.persist(c);
                     return c;
                 });
                 assertThat(campaign.id()).isEqualTo(3);
-                assertThat(campaign.parameters()).hasSize(1).extracting("id").containsExactly(3L);
             }
 
             @Test

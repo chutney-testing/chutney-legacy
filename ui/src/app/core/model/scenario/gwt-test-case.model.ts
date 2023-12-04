@@ -17,7 +17,6 @@
 import { addOptionalParam } from '@shared/tools/object-utils';
 import { areEquals, Equals } from '@shared/equals';
 import { Clonable, cloneAsPossible } from '@shared/clonable';
-import { ExampleParameters } from '@core/model/scenario/example-parameters.model';
 import { Execution } from '@core/model/scenario/execution.model';
 import { Scenario } from '@core/model/scenario/scenario.model';
 
@@ -35,7 +34,6 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
         public executions: Array<Execution> = [],
         public tags?: Array<string>,
         public scenario: Scenario = new Scenario(),
-        public wrappedParams: ExampleParameters = new ExampleParameters(),
         public defaultDataset?: string,
     ) {
     }
@@ -53,7 +51,6 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
             Execution.deserializeExecutions(jsonObject.executions),
             jsonObject.tags,
             Scenario.deserialize(jsonObject.scenario),
-            ExampleParameters.deserialize(jsonObject.computedParameters),
             jsonObject.defaultDataset
         );
     }
@@ -72,7 +69,6 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
         jsonObject['executions'] = this.executions;
         addOptionalParam(jsonObject, 'tags', this.tags);
         jsonObject['scenario'] = this.scenario.serialize();
-        addOptionalParam(jsonObject, 'computedParameters', this.wrappedParams.serialize());
         addOptionalParam(jsonObject, 'defaultDataset', this.defaultDataset);
         return jsonObject;
     }
@@ -82,8 +78,7 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
             && areEquals(this.title, obj.title)
             && areEquals(this.description, obj.description)
             && areEquals(this.tags, obj.tags)
-            && areEquals(this.scenario, obj.scenario)
-            && areEquals(this.wrappedParams, obj.wrappedParams);
+            && areEquals(this.scenario, obj.scenario);
     }
 
     public clone(): GwtTestCase {
@@ -99,7 +94,6 @@ export class GwtTestCase implements Equals<GwtTestCase>, Clonable<GwtTestCase> {
             null,
             cloneAsPossible(this.tags),
             cloneAsPossible(this.scenario),
-            cloneAsPossible(this.wrappedParams),
             null
         );
     }

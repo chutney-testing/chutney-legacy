@@ -1,10 +1,6 @@
 {
     "title": "GWT testcase with parameters for global vars",
     "tags": [],
-    "computedParameters": {
-        "testcase parameter quote": "**escape.quote**",
-        "testcase parameter apostrophe": "**escape.apostrophe**"
-    },
     "scenario": {
         "when": {
             "sentence": "Putting variables with sensitive characters in context",
