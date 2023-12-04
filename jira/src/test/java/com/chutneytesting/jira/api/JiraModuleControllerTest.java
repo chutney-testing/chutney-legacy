@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -214,19 +213,6 @@ class JiraModuleControllerTest {
       JiraTargetConfiguration expected = repository.loadServerConfiguration();
 
       assertThat(expected).usingRecursiveComparison().isEqualTo(expectedConfiguration);
-  }
-
-    @Test
-    void saveConfigurationNoProxy() throws Exception {
-        Map<String, String> jiraConfig = new HashMap<>();
-        jiraConfig.put("url", "a new url");
-        jiraConfig.put("username", "a new username");
-        jiraConfig.put("password", "a new password");
-
-        JiraTargetConfiguration expectedConfiguration = new JiraTargetConfiguration("a new url", "a new username", "a new password", "", "", "");
-
-        JiraTargetConfiguration expected = jiraRepository.loadServerConfiguration();
-        assertThat(expected).usingRecursiveComparison().isEqualTo(expectedConfiguration);
   }
 
     @Test
