@@ -115,7 +115,7 @@
                         </ng-container>
                     </td>
                     <td class="align-middle">
-                        <span><small>{{ scenarioReportOutline.error }}</small></span>
+                        <span *ngIf="scenarioReportOutline.status !== ExecutionStatus.SUCCESS"><small>{{ scenarioReportOutline.error }}</small></span>
                     </td>
                     <td class="text-center align-middle text-nowrap">
                         <span><small>{{ scenarioReportOutline.duration | duration:'short' }}</small></span>
