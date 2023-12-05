@@ -228,6 +228,10 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         return ExecutionStatus.PAUSED === this.scenarioExecutionReport?.report?.status;
     }
 
+    hasNotBeenExecuted() {
+        return ExecutionStatus.NOT_EXECUTED === this.scenarioExecutionReport?.report?.status; 
+    }
+
     toggleContextVariables() {
         this.collapseContextVariables = !this.collapseContextVariables;
         timer(250).subscribe(() => this.setLefPanelHeight());

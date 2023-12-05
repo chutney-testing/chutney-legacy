@@ -54,7 +54,7 @@
                         </button>
                     </div>
                 </ng-container>
-                <div class="shadow btn-group btn-group-sm" role="group" aria-label="Report view actions" *ngIf="scenarioExecutionReport?.report">
+                <div class="shadow btn-group btn-group-sm" role="group" aria-label="Report view actions" *ngIf="scenarioExecutionReport?.report && !hasNotBeenExecuted()">
                     <button type="button" class="btn btn-sm btn-outline-primary"
                             title="{{'scenarios.execution.step.actions.collapse.all' | translate}}" (click)="setAllStepsCollapsed(true)">
                         <span class="fa fa-fw fa-chevron-right"></span>
@@ -120,7 +120,7 @@
     <div class="report-raw d-flex flex-row error" *ngIf="!scenarioExecutionReport?.report">
         {{ scenarioExecutionReport?.error }}
     </div>
-    <div class="report-raw d-flex flex-row" resize [left]="leftPanel" [right]="rightPanel" [grab]="grab" *ngIf="scenarioExecutionReport?.report">
+    <div class="report-raw d-flex flex-row" resize [left]="leftPanel" [right]="rightPanel" [grab]="grab" *ngIf="scenarioExecutionReport?.report && !hasNotBeenExecuted()">
         <div #leftPanel class="report-raw-left pe-1 w30 report-bg border-top border-end sticky-top align-self-start">
             <ng-container *ngIf="scenarioExecutionReport?.report">
                 <ng-container *rxFor="let step of scenarioExecutionReport.report.steps">
