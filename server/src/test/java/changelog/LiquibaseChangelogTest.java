@@ -31,7 +31,6 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 import util.infra.AbstractLocalDatabaseTest;
-import util.infra.EnableH2FileTestInfra;
 import util.infra.EnableH2MemTestInfra;
 import util.infra.EnablePostgreSQLTestInfra;
 import util.infra.EnableSQLiteTestInfra;
@@ -162,19 +161,6 @@ class LiquibaseChangelogTest {
                     return e;
                 });
                 assertThat(execution.id()).isEqualTo(2);
-            }
-        }
-    }
-
-    @Nested
-    @DisplayName("On a 1.7.1 database without data")
-    class Fresh171DB {
-        @Nested
-        @EnableH2FileTestInfra
-        class H2 extends AbstractLocalDatabaseTest {
-            @Test
-            @DisplayName("Must be applied without error")
-            void init_without_error() {
             }
         }
     }

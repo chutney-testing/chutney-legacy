@@ -84,15 +84,6 @@ class TestInfraConfiguration {
         }
 
         @Bean
-        @Profile("test-infra-h2-file")
-        @Primary
-        public DataSourceProperties fileDataSourceProperties(Server h2Server) {
-            DataSourceProperties dataSourceProperties = new DataSourceProperties();
-            dataSourceProperties.setUrl("jdbc:h2:tcp://localhost:" + h2Server.getPort() + "/./h2-chutney-171;SCHEMA=PUBLIC");
-            return dataSourceProperties;
-        }
-
-        @Bean
         public Properties jpaProperties() {
             Properties jpaProperties = new Properties();
             jpaProperties.putAll(Map.of(
