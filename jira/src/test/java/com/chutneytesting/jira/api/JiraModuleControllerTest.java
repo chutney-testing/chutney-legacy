@@ -40,6 +40,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ class JiraModuleControllerTest {
 
         when(jiraXrayFactory.create(any())).thenReturn(mockJiraXrayApi);
 
-        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("an url", "a username", "a password"));
+        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("an url", "a username", "a password", null, null, null));
         jiraRepository.saveForCampaign("10", "JIRA-10");
         jiraRepository.saveForCampaign("20", "JIRA-20");
         jiraRepository.saveForScenario("1", "SCE-1");
@@ -79,7 +80,7 @@ class JiraModuleControllerTest {
 
     @Test
     void should_not_create_HttpJiraXrayImpl_if_url_not_exist(){
-        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("", "a username", "a password"));
+        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration("", "a username", "a password", null, null, null));
 
         assertThatExceptionOfType(RuntimeException.class)
             .isThrownBy(() -> getJiraController("/api/ui/jira/v1/testexec/JIRA-10", new TypeReference<>() {}))
@@ -219,14 +220,25 @@ class JiraModuleControllerTest {
         assertThat(url).isEqualTo("an url");
     }
 
+  @Test
+  void loadServerConfigurationWithoutProxy() {
+
+      JiraRepository repository = new JiraFileRepository(Paths.get("src", "test", "resources", "jira").toAbsolutePath().toString());
+      JiraTargetConfiguration expectedConfiguration = new JiraTargetConfiguration("an url", "a username", "a password", "", "", "");
+
+      JiraTargetConfiguration expected = repository.loadServerConfiguration();
+
+      assertThat(expected).usingRecursiveComparison().isEqualTo(expectedConfiguration);
+  }
+
     @Test
     void saveConfiguration() throws Exception {
-        JiraTargetConfiguration newConfiguration = new JiraTargetConfiguration("a new url", "a new username", "a new password");
+      JiraTargetConfiguration newConfiguration = new JiraTargetConfiguration("a new url", "a new username", "a new password", "url proxy", "user proxy", "password proxy");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/ui/jira/v1/configuration")
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(om.writeValueAsString(newConfiguration))
-            .accept(MediaType.APPLICATION_JSON_VALUE))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(om.writeValueAsString(newConfiguration))
+                .accept(MediaType.APPLICATION_JSON_VALUE))
             .andDo(print())
             .andExpect(MockMvcResultMatchers.status().isOk());
 

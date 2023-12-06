@@ -153,7 +153,7 @@ public class SecuredControllerSpringBootIntegrationTest {
             {GET, "/api/ui/jira/v1/configuration", "ADMIN_ACCESS", null, OK},
             {GET, "/api/ui/jira/v1/configuration/url", "SCENARIO_READ", null, OK},
             {GET, "/api/ui/jira/v1/configuration/url", "CAMPAIGN_READ", null, OK},
-            {POST, "/api/ui/jira/v1/configuration", "ADMIN_ACCESS", "{\"url\":\"\",\"username\":\"\",\"password\":\"\"}", OK},
+            {POST, "/api/ui/jira/v1/configuration", "ADMIN_ACCESS", "{\"url\":\"\",\"username\":\"\",\"password\":\"\",\"urlProxy\":\"\",\"userProxy\":\"\",\"passwordProxy\":\"\"}", OK},
 
             {POST, "/api/v1/ui/plugins/linkifier/", "ADMIN_ACCESS", "{\"pattern\":\"\",\"link\":\"\",\"id\":\"\"}", OK},
             {DELETE, "/api/v1/ui/plugins/linkifier/id", "ADMIN_ACCESS", null, OK},

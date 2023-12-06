@@ -172,6 +172,9 @@ public class JiraModuleController {
             .url(jiraTargetConfiguration.url())
             .username(jiraTargetConfiguration.username())
             .password(jiraTargetConfiguration.password())
+            .urlProxy(jiraTargetConfiguration.urlProxy())
+            .userProxy(jiraTargetConfiguration.userProxy())
+            .passwordProxy(jiraTargetConfiguration.passwordProxy())
             .build();
     }
 
@@ -187,7 +190,16 @@ public class JiraModuleController {
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public void saveConfiguration(@RequestBody JiraConfigurationDto jiraConfigurationDto) {
-        jiraRepository.saveServerConfiguration(new JiraTargetConfiguration(jiraConfigurationDto.url(), jiraConfigurationDto.username(), jiraConfigurationDto.password()));
+        jiraRepository.saveServerConfiguration(
+            new JiraTargetConfiguration(
+                jiraConfigurationDto.url(),
+                jiraConfigurationDto.username(),
+                jiraConfigurationDto.password(),
+                jiraConfigurationDto.urlProxy().orElse(null),
+                jiraConfigurationDto.userProxy().orElse(null),
+                jiraConfigurationDto.passwordProxy().orElse(null)
+            )
+        );
     }
 
     @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
