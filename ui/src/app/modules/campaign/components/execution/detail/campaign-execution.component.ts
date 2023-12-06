@@ -42,6 +42,7 @@ export class CampaignExecutionComponent implements OnInit {
     private jiraScenarios: JiraScenario[] = [];
     UNSUPPORTED = 'UNSUPPORTED';
     selectedStatusByScenarioId: Map<string, string> = new Map();
+    showMore: boolean[] = [];
 
     orderBy: string;
     reverseOrder: boolean;
@@ -60,6 +61,7 @@ export class CampaignExecutionComponent implements OnInit {
             this.jiraScenarios = result.jirjiraTestExecutionScenarios.jiraScenarios;
             this.jiraTestExecutionId = result.jirjiraTestExecutionScenarios.id;
         });
+        this.report.report.scenarioExecutionReports.forEach((_report,index) => this.showMore[index]=false);
     }
 
     private cleanJiraUrl() {
