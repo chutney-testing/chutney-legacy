@@ -135,6 +135,8 @@ public class KafkaBasicConsumeAction implements Action {
         try {
             logger.info("Consuming message from topic " + topic);
             messageListenerContainer.start();
+            if(nbMessages == 0)
+                TimeUnit.MILLISECONDS.sleep(Duration.parse(timeout).toMilliseconds());
             countDownLatch.await(Duration.parse(timeout).toMilliseconds(), TimeUnit.MILLISECONDS);
             if (consumedMessages.size() != nbMessages) {
                 logger.error("Unable to get the expected number of messages [" + nbMessages + "] during " + timeout + " from topic " + topic + ".");
@@ -152,7 +154,7 @@ public class KafkaBasicConsumeAction implements Action {
 
     private MessageListener<String, String> createMessageListener() {
         return record -> {
-            if (countDownLatch.getCount() <= 0) {
+            if (countDownLatch.getCount() < 0) {
                 return;
             }
             final Map<String, Object> message = extractMessageFromRecord(record);
