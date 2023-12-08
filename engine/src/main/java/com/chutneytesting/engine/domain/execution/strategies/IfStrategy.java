@@ -54,14 +54,19 @@ public class IfStrategy implements StepExecutionStrategy {
             return DefaultStepExecutionStrategy.instance.execute(scenarioExecution, step, scenarioContext, localContext, strategies);
         } else {
             step.success();
-            if(step.isParentStep()) {
-                step.subSteps().forEach(subStep -> {
-                    subStep.addInformation("Step not executed");
-                    subStep.success();
-                });
-            }
+            skipAllSubSteps(step);
         }
         return SUCCESS;
+    }
+
+    private void skipAllSubSteps(Step step) {
+        if (step.isParentStep()) {
+            step.subSteps().forEach(subStep -> {
+                subStep.addInformation("Step not executed");
+                subStep.success();
+                skipAllSubSteps(subStep);
+            });
+        }
     }
 
     private static Boolean getCondition(ScenarioContext scenarioContext, Object conditionObject, StepDataEvaluator evaluator) {
