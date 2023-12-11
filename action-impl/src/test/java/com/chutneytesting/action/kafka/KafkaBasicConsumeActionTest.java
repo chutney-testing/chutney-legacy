@@ -307,6 +307,23 @@ public class KafkaBasicConsumeActionTest {
         assertThat(logger.errors).isNotEmpty();
     }
 
+    @Test
+    public void should_return_exactly_nb_message_asked() {
+        // Given
+        Action sut = givenKafkaConsumeAction(1, null, null, TEXT_PLAIN_VALUE, "3 sec");
+        givenActionReceiveMessages(sut,
+            buildRecord(FIRST_OFFSET, "KEY", "test message"),
+            buildRecord(FIRST_OFFSET + 1, "KEY2", "test message2")
+        );
+
+        // When
+        ActionExecutionResult actionExecutionResult = sut.execute();
+
+        // Then
+        assertThat(actionExecutionResult.status).isEqualTo(Success);
+        assertActionOutputsSize(actionExecutionResult, 1);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = APPLICATION_JSON_VALUE)
     @NullSource
