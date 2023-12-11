@@ -189,8 +189,8 @@ public class IfStrategyTest {
             verify(step).success();
             verify(step1).success();
             verify(step2).success();
-            verify(step1).addInformation(eq("Step not executed"));
-            verify(step2).addInformation(eq("Step not executed"));
+            verify(step1).addInformation(eq("Step skipped"));
+            verify(step2).addInformation(eq("Step skipped"));
         }
     }
 
@@ -256,7 +256,7 @@ public class IfStrategyTest {
             verify(ifStrategyStep).success();
             List.of(parentSubStep, parentSubStep1, parentSubStep2, simpleSubStep).forEach(subStep -> {
                 verify(subStep, times(0)).execute(any(), any(), any());
-                verify(subStep).addInformation("Step not executed");
+                verify(subStep).addInformation("Step skipped");
                 verify(subStep).success();
             });
         }

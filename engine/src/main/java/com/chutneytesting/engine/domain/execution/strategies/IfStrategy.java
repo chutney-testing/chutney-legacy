@@ -62,7 +62,7 @@ public class IfStrategy implements StepExecutionStrategy {
     private void skipAllSubSteps(Step step) {
         if (step.isParentStep()) {
             step.subSteps().forEach(subStep -> {
-                subStep.addInformation("Step not executed");
+                subStep.addInformation("Step skipped");
                 subStep.success();
                 skipAllSubSteps(subStep);
             });
