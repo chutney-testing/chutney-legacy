@@ -135,8 +135,6 @@ public class KafkaBasicConsumeAction implements Action {
         try {
             logger.info("Consuming message from topic " + topic);
             messageListenerContainer.start();
-            if(nbMessages == 0)
-                TimeUnit.MILLISECONDS.sleep(Duration.parse(timeout).toMilliseconds());
             countDownLatch.await(Duration.parse(timeout).toMilliseconds(), TimeUnit.MILLISECONDS);
             if (consumedMessages.size() != nbMessages) {
                 logger.error("Unable to get the expected number of messages [" + nbMessages + "] during " + timeout + " from topic " + topic + ".");
