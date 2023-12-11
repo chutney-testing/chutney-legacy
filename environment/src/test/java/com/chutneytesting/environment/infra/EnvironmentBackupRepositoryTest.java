@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.environment.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
 import com.chutneytesting.tools.Try;
 import java.io.IOException;
 import java.io.OutputStream;

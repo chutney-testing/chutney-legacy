@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.agent.AgentNetworkTestUtils;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.explore.ExploreAgentsService;
-import com.chutneytesting.environment.api.EnvironmentApi;
+import com.chutneytesting.environment.api.environment.EnvironmentApi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

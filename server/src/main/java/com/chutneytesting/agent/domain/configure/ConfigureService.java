@@ -22,8 +22,8 @@ import com.chutneytesting.agent.domain.explore.ExploreResult;
 import com.chutneytesting.agent.domain.network.AgentGraph;
 import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.environment.api.EnvironmentApi;
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.environment.EnvironmentApi;
+import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
 
 public class ConfigureService {
 

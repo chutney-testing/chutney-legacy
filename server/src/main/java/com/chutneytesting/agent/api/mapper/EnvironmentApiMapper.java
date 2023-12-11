@@ -21,8 +21,8 @@ import static java.util.stream.Collectors.toSet;
 
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.EnvironmentApiDto;
 import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.TargetsApiDto;
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
-import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.target.dto.TargetDto;
 import com.chutneytesting.tools.Entry;
 import java.util.LinkedHashMap;
 import java.util.List;

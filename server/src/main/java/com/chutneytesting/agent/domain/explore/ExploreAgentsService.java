@@ -29,7 +29,7 @@ import com.chutneytesting.agent.domain.explore.ImmutableExploreResult.Link;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.engine.domain.delegation.ConnectionChecker;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.environment.api.target.dto.TargetDto;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import java.util.function.Function;

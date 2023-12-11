@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.chutneytesting.environment.api;
+package com.chutneytesting.environment.api.environment;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
@@ -37,6 +37,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.chutneytesting.environment.api.EnvironmentRestExceptionHandler;
+import com.chutneytesting.environment.api.environment.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.environment.EnvironmentApi;
+import com.chutneytesting.environment.api.environment.HttpEnvironmentApi;
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.EnvironmentService;

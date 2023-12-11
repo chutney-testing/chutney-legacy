@@ -16,7 +16,7 @@
 
 package com.chutneytesting.execution.infra.execution;
 
-import static com.chutneytesting.environment.api.dto.NoTargetDto.NO_TARGET_DTO;
+import static com.chutneytesting.environment.api.target.dto.NoTargetDto.NO_TARGET_DTO;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
@@ -30,9 +30,9 @@ import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
-import com.chutneytesting.environment.api.EnvironmentApi;
-import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.environment.api.target.EmbeddedTargetApi;
+import com.chutneytesting.environment.api.target.TargetApi;
+import com.chutneytesting.environment.api.target.dto.TargetDto;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.gwt.Strategy;
@@ -50,12 +50,12 @@ import org.springframework.stereotype.Component;
 public class DefaultExecutionRequestMapper implements ExecutionRequestMapper {
 
     private final ObjectMapper objectMapper;
-    private final EnvironmentApi environmentApi;
+    private final TargetApi targetApi;
     private final CurrentNetworkDescription currentNetworkDescription;
 
-    public DefaultExecutionRequestMapper(ObjectMapper objectMapper, EmbeddedEnvironmentApi environmentApi, CurrentNetworkDescription currentNetworkDescription) {
+    public DefaultExecutionRequestMapper(ObjectMapper objectMapper, EmbeddedTargetApi targetApi, CurrentNetworkDescription currentNetworkDescription) {
         this.objectMapper = objectMapper; // TODO - Choose explicitly which mapper to use
-        this.environmentApi = environmentApi;
+        this.targetApi = targetApi;
         this.currentNetworkDescription = currentNetworkDescription;
     }
 
@@ -164,7 +164,7 @@ public class DefaultExecutionRequestMapper implements ExecutionRequestMapper {
         if (isBlank(targetName)) {
             return NO_TARGET_DTO;
         }
-        return environmentApi.getTarget(environmentName, targetName);
+        return targetApi.getTarget(environmentName, targetName);
     }
 
     private List<NamedHostAndPort> getAgents(TargetDto targetDto, String env) {

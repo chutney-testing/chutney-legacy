@@ -18,7 +18,7 @@ package com.chutneytesting.environment;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

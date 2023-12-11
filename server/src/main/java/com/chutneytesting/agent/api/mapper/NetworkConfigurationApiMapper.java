@@ -22,7 +22,7 @@ import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
 import java.time.Instant;
 import java.util.Set;
 import org.springframework.stereotype.Component;

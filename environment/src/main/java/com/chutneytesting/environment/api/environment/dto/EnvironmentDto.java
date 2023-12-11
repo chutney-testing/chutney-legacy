@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package com.chutneytesting.environment.api.dto;
+package com.chutneytesting.environment.api.environment.dto;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
+import com.chutneytesting.environment.api.target.dto.TargetDto;
 import com.chutneytesting.environment.domain.Environment;
 import java.util.Collections;
 import java.util.List;

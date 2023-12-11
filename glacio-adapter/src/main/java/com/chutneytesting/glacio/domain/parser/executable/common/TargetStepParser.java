@@ -20,8 +20,8 @@ import static com.chutneytesting.glacio.domain.parser.ParsingContext.PARSING_CON
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
-import com.chutneytesting.environment.api.EnvironmentApi;
-import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.environment.api.target.TargetApi;
+import com.chutneytesting.environment.api.target.dto.TargetDto;
 import com.chutneytesting.glacio.domain.parser.GlacioStepParser;
 import com.chutneytesting.glacio.domain.parser.ParsingContext;
 import com.chutneytesting.glacio.domain.parser.util.ParsingTools;
@@ -32,13 +32,13 @@ import java.util.stream.Collectors;
 
 public class TargetStepParser implements GlacioStepParser<TargetExecutionDto> {
 
-    private final EnvironmentApi environmentApplication;
+    private final TargetApi targetApi;
 
     private final Pattern startWithPredicate;
     private final Predicate<String> predicate;
 
-    public TargetStepParser(EnvironmentApi environmentApplication, String... startingWords) {
-        this.environmentApplication = environmentApplication;
+    public TargetStepParser(TargetApi targetApi, String... startingWords) {
+        this.targetApi = targetApi;
         this.startWithPredicate = Pattern.compile("^(?<keyword>" + ParsingTools.arrayToOrPattern(startingWords) + ")(?: .*)$");
         this.predicate = startWithPredicate.asPredicate();
     }
@@ -58,7 +58,7 @@ public class TargetStepParser implements GlacioStepParser<TargetExecutionDto> {
     }
 
     private TargetExecutionDto parseTargetStep(String environmentName, Step step) {
-        return toTarget(environmentApplication.getTarget(environmentName, step.getText().trim()));
+        return toTarget(targetApi.getTarget(environmentName, step.getText().trim()));
     }
 
     private TargetExecutionDto toTarget(TargetDto targetForExecution) {

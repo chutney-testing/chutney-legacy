@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.chutneytesting.environment.api.dto;
+package com.chutneytesting.environment.api.target.dto;
 
 public final class NoTargetDto {
 

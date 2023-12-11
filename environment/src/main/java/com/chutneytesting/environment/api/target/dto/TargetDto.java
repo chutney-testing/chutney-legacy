@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.chutneytesting.environment.api.dto;
+package com.chutneytesting.environment.api.target.dto;
 
 import static com.chutneytesting.tools.Entry.toEntrySet;
 import static java.util.Collections.emptyMap;

@@ -16,7 +16,8 @@
 
 package com.chutneytesting.environment;
 
-import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.environment.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.target.EmbeddedTargetApi;
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.EnvironmentService;
@@ -26,11 +27,13 @@ public class EnvironmentConfiguration {
 
     private final EnvironmentRepository environmentRepository;
     private final EmbeddedEnvironmentApi environmentApi;
+    private final EmbeddedTargetApi targetApi;
 
     public EnvironmentConfiguration(String storeFolderPath) {
         this.environmentRepository = createEnvironmentRepository(storeFolderPath);
         EnvironmentService environmentService = createEnvironmentService(environmentRepository);
         this.environmentApi = new EmbeddedEnvironmentApi(environmentService);
+        this.targetApi = new EmbeddedTargetApi(environmentService);
 
         createDefaultEnvironment(environmentService);
     }
@@ -51,5 +54,9 @@ public class EnvironmentConfiguration {
 
     public EmbeddedEnvironmentApi getEmbeddedEnvironmentApi() {
         return environmentApi;
+    }
+
+    public EmbeddedTargetApi getEmbeddedTargetApi() {
+        return targetApi;
     }
 }

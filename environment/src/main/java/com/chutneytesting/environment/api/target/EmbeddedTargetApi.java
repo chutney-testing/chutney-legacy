@@ -14,71 +14,26 @@
  * limitations under the License.
  */
 
-package com.chutneytesting.environment.api;
+package com.chutneytesting.environment.api.target;
 
 import static java.util.stream.Collectors.toList;
 
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
-import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.environment.api.target.dto.TargetDto;
 import com.chutneytesting.environment.domain.EnvironmentService;
 import com.chutneytesting.environment.domain.TargetFilter;
-import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
-import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentException;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
-import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-public class EmbeddedEnvironmentApi implements EnvironmentApi {
+public class EmbeddedTargetApi implements  TargetApi {
 
     private final EnvironmentService environmentService;
 
-    public EmbeddedEnvironmentApi(EnvironmentService environmentService) {
+    public EmbeddedTargetApi(EnvironmentService environmentService) {
         this.environmentService = environmentService;
-    }
-
-    @Override
-    public Set<EnvironmentDto> listEnvironments() {
-        return environmentService.listEnvironments().stream()
-            .map(EnvironmentDto::from)
-            .sorted(Comparator.comparing(e -> e.name))
-            .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    @Override
-    public Set<String> listEnvironmentsNames() {
-        return environmentService.listEnvironmentsNames();
-    }
-
-    @Override
-    public EnvironmentDto getEnvironment(String environmentName) throws EnvironmentNotFoundException {
-        return EnvironmentDto.from(environmentService.getEnvironment(environmentName));
-    }
-
-    @Override
-    public EnvironmentDto createEnvironment(EnvironmentDto environmentMetadataDto, boolean force) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
-        return EnvironmentDto.from(environmentService.createEnvironment(environmentMetadataDto.toEnvironment(), force));
-    }
-
-    @Override
-    public EnvironmentDto importEnvironment(EnvironmentDto environmentDto) throws UnsupportedOperationException {
-        environmentService.createEnvironment(environmentDto.toEnvironment());
-        return environmentDto;
-    }
-
-    @Override
-    public void deleteEnvironment(String environmentName) throws EnvironmentNotFoundException, CannotDeleteEnvironmentException {
-        environmentService.deleteEnvironment(environmentName);
-    }
-
-    @Override
-    public void updateEnvironment(String environmentName, EnvironmentDto environmentMetadataDto) throws InvalidEnvironmentNameException, EnvironmentNotFoundException {
-        environmentService.updateEnvironment(environmentName, environmentMetadataDto.toEnvironment());
     }
 
     @Override

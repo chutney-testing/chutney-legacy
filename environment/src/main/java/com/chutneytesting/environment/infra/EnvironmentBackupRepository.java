@@ -16,9 +16,9 @@
 
 package com.chutneytesting.environment.infra;
 
-import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
-import com.chutneytesting.environment.api.EnvironmentApi;
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.environment.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.environment.EnvironmentApi;
+import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
 import com.chutneytesting.server.core.domain.admin.Backupable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
