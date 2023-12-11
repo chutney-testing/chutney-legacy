@@ -1,5 +1,35 @@
 # Changelog
 
+## [2.5.0](https://github.com/chutney-testing/chutney/tree/2.5.0)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/2.4.0...2.5.0)
+
+## What's Changed
+### 🚀 Implemented enhancements:
+* Feature/add proxy jira by @DelaunayAlex in https://github.com/chutney-testing/chutney/pull/1177
+* Assert that no kafka message consumed by @owerfelli in https://github.com/chutney-testing/chutney/pull/1200
+* Show full execution error message from history by @rbenyoussef in https://github.com/chutney-testing/chutney/pull/1197
+### 🐛 Fixed bugs:
+* Empty report and info/error style by @nbrouand in https://github.com/chutney-testing/chutney/pull/1180
+* Fix icon "NOT_EXECUTED" for execution history by @DelaunayAlex in https://github.com/chutney-testing/chutney/pull/1190
+* Does not display action button and report if scenario was not … by @DelaunayAlex in https://github.com/chutney-testing/chutney/pull/1193
+* If strategy : Set correctly all substeps status by @boddissattva in https://github.com/chutney-testing/chutney/pull/1201
+### 🔧 Technical enhancements:
+* Copyright ALv2 header by @bessonm in https://github.com/chutney-testing/chutney/pull/1192
+* Bump nodejs from 16.19.1 to 20.10.0 by @bessonm in https://github.com/chutney-testing/chutney/pull/1191
+* Clean DB migration test and target security migration by @boddissattva in https://github.com/chutney-testing/chutney/pull/1195
+* Clean components relatives by @boddissattva in https://github.com/chutney-testing/chutney/pull/1194
+### 👒 Dependencies:
+* chore(deps): Bump com.github.eirslett:frontend-maven-plugin from 1.13.4 to 1.15.0 by @dependabot in https://github.com/chutney-testing/chutney/pull/1189
+* chore(deps): Bump org.codehaus.mojo:exec-maven-plugin from 3.1.0 to 3.1.1 by @dependabot in https://github.com/chutney-testing/chutney/pull/1188
+* chore(deps): Bump org.testcontainers:testcontainers-bom from 1.19.0 to 1.19.3 by @dependabot in https://github.com/chutney-testing/chutney/pull/1187
+* chore(deps): Bump org.jacoco:jacoco-maven-plugin from 0.8.10 to 0.8.11 by @dependabot in https://github.com/chutney-testing/chutney/pull/1184
+* chore(deps): Bump commons-logging:commons-logging from 1.2 to 1.3.0 by @dependabot in https://github.com/chutney-testing/chutney/pull/1182
+* chore(deps): Bump org.hjson:hjson from 3.0.1 to 3.1.0 by @dependabot in https://github.com/chutney-testing/chutney/pull/1165
+## New Contributors
+* @owerfelli made his first contribution in https://github.com/chutney-testing/chutney/pull/1200
+
+
 ## [2.4.0](https://github.com/chutney-testing/chutney/tree/2.4.0)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/2.3.0...2.4.0)
@@ -17,8 +47,6 @@
 * chore(deps): Bump sshd.version from 2.9.2 to 2.11.0 by @dependabot in [#1162](https://github.com/chutney-testing/chutney/pull/1162)
 * chore(deps-dev): Bump net.jqwik:jqwik from 1.8.0 to 1.8.1 by @dependabot in [#1169](https://github.com/chutney-testing/chutney/pull/1169)
 * chore(deps): Bump org.liquibase:liquibase-core from 4.23.0 to 4.24.0 by @dependabot in [#1170](https://github.com/chutney-testing/chutney/pull/1170)
-
-
 
 
 ## [2.3.0](https://github.com/chutney-testing/chutney/tree/2.3.0)
@@ -43,6 +71,7 @@
 * chore(deps-dev): Bump net.jqwik:jqwik from 1.7.4 to 1.8.0 by @dependabot in https://github.com/chutney-testing/chutney/pull/1154
 * chore(deps): Bump org.apache.maven.plugins:maven-javadoc-plugin from 3.4.1 to 3.6.0 by @dependabot in https://github.com/chutney-testing/chutney/pull/1149
 * chore(deps): Bump qpid-broker.version from 9.0.0 to 9.1.0 by @dependabot in https://github.com/chutney-testing/chutney/pull/1147
+
 
 ## [2.2.2](https://github.com/chutney-testing/chutney/tree/2.2.2)
 
