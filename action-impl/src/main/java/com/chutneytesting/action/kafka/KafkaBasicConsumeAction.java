@@ -107,7 +107,7 @@ public class KafkaBasicConsumeAction implements Action {
         this.contentType = ofNullable(contentType).map(ct -> defaultIfEmpty(ct, APPLICATION_JSON_VALUE)).map(MimeTypeUtils::parseMimeType).orElse(APPLICATION_JSON);
         this.timeout = defaultIfEmpty(timeout, "60 sec");
         this.target = target;
-        this.countDownLatch = new CountDownLatch(this.nbMessages);
+        this.countDownLatch = new CountDownLatch(this.nbMessages > 0 ? this.nbMessages : 1);
         this.group = group;
         this.logger = logger;
         this.properties = ofNullable(

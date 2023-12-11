@@ -277,6 +277,53 @@ public class KafkaBasicConsumeActionTest {
         assertThat(logger.errors).isEmpty();
     }
 
+    @Test
+    public void should_not_find_any_message() {
+        // Given
+        Action sut = givenKafkaConsumeAction(0, null, null, TEXT_PLAIN_VALUE, "3 sec");
+
+        // When
+        ActionExecutionResult actionExecutionResult = sut.execute();
+
+        // Then
+        assertThat(actionExecutionResult.status).isEqualTo(Success);
+        assertActionOutputsSize(actionExecutionResult, 0);
+        assertThat(logger.errors).isEmpty();
+    }
+
+    @Test
+    public void should_not_find_any_message_failed() {
+        // Given
+        Action sut = givenKafkaConsumeAction(0, null, null, TEXT_PLAIN_VALUE, "3 sec");
+        givenActionReceiveMessages(sut,
+            buildRecord(FIRST_OFFSET, "KEY", "test message")
+        );
+
+        // When
+        ActionExecutionResult actionExecutionResult = sut.execute();
+
+        // Then
+        assertThat(actionExecutionResult.status).isEqualTo(Failure);
+        assertThat(logger.errors).isNotEmpty();
+    }
+
+    @Test
+    public void should_return_exactly_nb_message_asked() {
+        // Given
+        Action sut = givenKafkaConsumeAction(1, null, null, TEXT_PLAIN_VALUE, "3 sec");
+        givenActionReceiveMessages(sut,
+            buildRecord(FIRST_OFFSET, "KEY", "test message"),
+            buildRecord(FIRST_OFFSET + 1, "KEY2", "test message2")
+        );
+
+        // When
+        ActionExecutionResult actionExecutionResult = sut.execute();
+
+        // Then
+        assertThat(actionExecutionResult.status).isEqualTo(Success);
+        assertActionOutputsSize(actionExecutionResult, 1);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = APPLICATION_JSON_VALUE)
     @NullSource
