@@ -20,18 +20,18 @@ import static java.time.Instant.now;
 
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
 import com.chutneytesting.server.core.domain.security.User;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.immutables.value.Value;
 
 @Value.Immutable
 @JsonSerialize(as = ImmutableGwtTestCaseDto.class)
 @JsonDeserialize(as = ImmutableGwtTestCaseDto.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Value.Style(jdkOnly = true)
 public interface GwtTestCaseDto {
 
@@ -52,9 +52,6 @@ public interface GwtTestCaseDto {
     GwtScenarioDto scenario();
 
     Optional<String> defaultDataset();
-
-    @JsonProperty("computedParameters")
-    Map<String, String> executionParameters();
 
     @Value.Default()
     default String author() {

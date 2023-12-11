@@ -16,8 +16,6 @@
 
 package com.chutneytesting.execution.api;
 
-import static java.util.Objects.requireNonNull;
-
 import com.chutneytesting.dataset.domain.DataSetRepository;
 import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
 import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
@@ -33,7 +31,6 @@ import com.chutneytesting.server.core.domain.scenario.ScenarioNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.TestCase;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
-import com.chutneytesting.server.core.domain.tools.ui.KeyValue;
 import com.chutneytesting.tools.ui.MyMixInForIgnoreType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -46,8 +43,6 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import io.reactivex.rxjava3.core.BackpressureStrategy;
 import io.reactivex.rxjava3.core.Observable;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -103,9 +98,9 @@ public class ScenarioExecutionUiController {
     @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
     @PostMapping(path = "/api/idea/scenario/execution/{env}")
     public String executeScenarioWitRawContent(@RequestBody IdeaRequest ideaRequest, @PathVariable("env") String env) throws IOException {
-        LOGGER.debug("execute Scenario v2 for content='{}' with parameters '{}'", ideaRequest.getContent(), ideaRequest.getParams());
+        LOGGER.debug("execute Scenario v2 for content='{}'", ideaRequest.content());
         String userId = userService.currentUser().getId();
-        GwtScenario gwtScenario = marshaller.deserialize("test title for idea", "test description for idea", ideaRequest.getContent());
+        GwtScenario gwtScenario = marshaller.deserialize("test title for idea", "test description for idea", ideaRequest.content());
 
         TestCase testCase = GwtTestCase.builder()
             .withMetadata(TestCaseMetadataImpl.builder()
@@ -113,7 +108,6 @@ public class ScenarioExecutionUiController {
                 .withTitle("test title for idea")
                 .build())
             .withScenario(gwtScenario)
-            .withExecutionParameters(ideaRequest.getParams())
             .build();
 
         ScenarioExecutionReport report = executionEngine.simpleSyncExecution(
@@ -125,13 +119,12 @@ public class ScenarioExecutionUiController {
 
     @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
     @PostMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}/{env}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String executeScenarioAsyncWithExecutionParameters(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env, @RequestBody List<KeyValue> executionParametersKV) {
-        LOGGER.debug("execute async scenario '{}' using parameters '{}'", scenarioId, executionParametersKV);
+    public String executeScenarioAsyncWithExecutionParameters(@PathVariable("scenarioId") String scenarioId, @PathVariable("env") String env) {
+        LOGGER.debug("execute async scenario '{}'", scenarioId);
         TestCase testCase = testCaseRepository.findExecutableById(scenarioId).orElseThrow(() -> new ScenarioNotFoundException(scenarioId));
-        Map<String, String> executionParameters = KeyValue.toMap(executionParametersKV);
         String userId = userService.currentUser().getId();
         DataSet dataset = getDataSet(testCase);
-        return executionEngineAsync.execute(new ExecutionRequest(requireNonNull(testCase.usingExecutionParameters(requireNonNull(executionParameters))), env, userId, dataset)).toString();
+        return executionEngineAsync.execute(new ExecutionRequest(testCase, env, userId, dataset)).toString();
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")

@@ -48,16 +48,21 @@ public class DataSetPreProcessorTest {
         Map<String, String> map = new HashMap<>();
         map.put("key.1", "value1");
         map.put("key.2", "value2");
+        map.put("aKey", "a value");
+        map.put("anotherKey", "another value");
+        map.put("titre", "newTitle");
+        map.put("description", "newDesc");
+        map.put("type", "StrategyType");
+        map.put("aParam", "a value");
         Mockito.when(globalvarRepository.getFlatMap()).thenReturn(map);
     }
 
     @Test
-    public void should_replace_raw_scenario_parameters_with_data_set_values() {
+    public void should_replace_raw_scenario_parameters_with_global_data_set_values() {
         // Given
         RawDataSetPreProcessor dataSetPreProcessor = new RawDataSetPreProcessor(globalvarRepository);
         RawTestCase fakeTestCase = RawTestCase.builder()
             .withScenario("a blabla step with **aKey** and **anotherKey** and **key.1**")
-            .withExecutionParameters(Maps.of("aKey", "a value", "anotherKey", "another value"))
             .build();
 
         // When
@@ -89,7 +94,6 @@ public class DataSetPreProcessorTest {
                 .withTitle(expected_title)
                 .withDescription(expected_description)
                 .build())
-            .withExecutionParameters(Maps.of("aKey", "a value", "anotherKey", "another value", "titre", "newTitle", "description", "newDesc", "type", expected_strategy_type))
             .withScenario(GwtScenario.builder()
                 .withWhen(
                     GwtStep.builder()
@@ -115,7 +119,6 @@ public class DataSetPreProcessorTest {
                 .withTitle(expected_title)
                 .withDescription(expected_description)
                 .build())
-            .withExecutionParameters(Maps.of("aKey", "a value", "anotherKey", "another value", "titre", "newTitle", "description", "newDesc", "type", expected_strategy_type))
             .withScenario(GwtScenario.builder()
                 .withWhen(
                     GwtStep.builder()

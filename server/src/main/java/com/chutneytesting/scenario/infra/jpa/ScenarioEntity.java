@@ -26,9 +26,6 @@ import com.chutneytesting.scenario.infra.raw.TagListMapper;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadata;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.security.User;
-import com.chutneytesting.tools.Try;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,7 +35,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Version;
 import java.time.Instant;
-import java.util.Map;
 
 @Entity(name = "SCENARIO")
 public class ScenarioEntity {
@@ -66,9 +62,6 @@ public class ScenarioEntity {
     @Column(name = "CREATION_DATE", updatable = false)
     private Long creationDate;
 
-    @Column(name = "DATASET")
-    private String dataset;
-
     @Column(name = "ACTIVATED")
     private Boolean activated;
 
@@ -88,13 +81,12 @@ public class ScenarioEntity {
     public ScenarioEntity() {
     }
 
-    public ScenarioEntity(Long id, String title, String description, String tags, Long creationDate, String dataset, Boolean activated, String userId, Long updateDate, Integer version, String defaultDataset) {
+    public ScenarioEntity(Long id, String title, String description, String tags, Long creationDate, Boolean activated, String userId, Long updateDate, Integer version, String defaultDataset) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.tags = tags;
         this.creationDate = creationDate;
-        this.dataset = dataset;
         this.activated = activated;
         this.userId = userId;
         this.updateDate = updateDate;
@@ -102,14 +94,13 @@ public class ScenarioEntity {
         this.defaultDataset = defaultDataset;
     }
 
-    public ScenarioEntity(Long id, String title, String description, String content, String tags, Instant creationDate, String dataset, Boolean activated, String userId, Instant updateDate, Integer version, String defaultDataset) {
+    public ScenarioEntity(Long id, String title, String description, String content, String tags, Instant creationDate, Boolean activated, String userId, Instant updateDate, Integer version, String defaultDataset) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.content = content;
         this.tags = tags;
         this.creationDate = creationDate.toEpochMilli();
-        this.dataset = dataset;
         this.activated = activated;
         this.userId = userId;
         this.updateDate = updateDate.toEpochMilli();
@@ -145,10 +136,6 @@ public class ScenarioEntity {
         return creationDate;
     }
 
-    public String getDataset() {
-        return dataset;
-    }
-
     public String getUserId() {
         return userId;
     }
@@ -177,7 +164,6 @@ public class ScenarioEntity {
             ofNullable(testCase.scenario).map(marshaller::serialize).orElse(null),
             TagListMapper.tagsListToString(testCase.metadata().tags()),
             testCase.metadata().creationDate(),
-            transformParametersToJson(testCase.executionParameters()),
             true,
             User.isAnonymous(testCase.metadata().author()) ? null : testCase.metadata().author(),
             testCase.metadata().updateDate(),
@@ -200,7 +186,6 @@ public class ScenarioEntity {
                 .withDefaultDataset(defaultDataset)
                 .build())
             .withScenario(ofNullable(content).map(c -> new GwtScenarioMapper().deserialize(title, description, c)).orElse(null))
-            .withExecutionParameters(transformParametersMap(dataset))
             .build();
     }
 
@@ -216,26 +201,5 @@ public class ScenarioEntity {
             .withVersion(version)
             .withDefaultDataset(defaultDataset)
             .build();
-    }
-
-    private static String transformParametersToJson(Map<String, String> executionParameters) {
-        if (executionParameters != null && !executionParameters.isEmpty()) {
-            return Try.exec(() -> {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    return objectMapper.writeValueAsString(executionParameters);
-                }
-            ).runtime();
-        }
-        return null;
-    }
-
-    private static Map<String, String> transformParametersMap(String parameters) {
-        return Try.exec(() -> {
-                ObjectMapper objectMapper = new ObjectMapper();
-                TypeReference<Map<String, String>> typeRef = new TypeReference<>() {
-                };
-                return objectMapper.readValue(parameters != null ? parameters : "{}", typeRef);
-            }
-        ).runtime();
     }
 }

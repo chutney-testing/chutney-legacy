@@ -35,7 +35,7 @@ public interface ScenarioJpaRepository extends CrudRepository<ScenarioEntity, Lo
     Optional<ScenarioEntity> findByIdAndActivated(Long id, Boolean activated);
 
     @Query("""
-        SELECT new com.chutneytesting.scenario.infra.jpa.ScenarioEntity(s.id, s.title, s.description, s.tags, s.creationDate, s.dataset, s.activated, s.userId, s.updateDate, s.version, s.defaultDataset)
+        SELECT new com.chutneytesting.scenario.infra.jpa.ScenarioEntity(s.id, s.title, s.description, s.tags, s.creationDate, s.activated, s.userId, s.updateDate, s.version, s.defaultDataset)
         FROM SCENARIO s
         WHERE s.id = :id
           AND s.activated = :activated
@@ -43,7 +43,7 @@ public interface ScenarioJpaRepository extends CrudRepository<ScenarioEntity, Lo
     Optional<ScenarioEntity> findMetaDataByIdAndActivated(@Param("id") Long id, @Param("activated") Boolean activated);
 
     @Query("""
-        SELECT new com.chutneytesting.scenario.infra.jpa.ScenarioEntity(s.id, s.title, s.description, s.tags, s.creationDate, s.dataset, s.activated, s.userId, s.updateDate, s.version, s.defaultDataset)
+        SELECT new com.chutneytesting.scenario.infra.jpa.ScenarioEntity(s.id, s.title, s.description, s.tags, s.creationDate, s.activated, s.userId, s.updateDate, s.version, s.defaultDataset)
         FROM SCENARIO s
         WHERE s.activated = true
         """)
@@ -57,7 +57,7 @@ public interface ScenarioJpaRepository extends CrudRepository<ScenarioEntity, Lo
     }
 
     @Modifying
-    @Query(nativeQuery = true, value = "INSERT INTO SCENARIO (ID, TITLE, DESCRIPTION, CONTENT, TAGS, CREATION_DATE, DATASET, ACTIVATED, USER_ID, UPDATE_DATE, VERSION, DEFAULT_DATASET_ID) VALUES (:id, :title, :description, :content, :tags, :creationDate, :dataset, :activated, :userId, :updateDate, :version, :defaultDataset)")
+    @Query(nativeQuery = true, value = "INSERT INTO SCENARIO (ID, TITLE, DESCRIPTION, CONTENT, TAGS, CREATION_DATE, ACTIVATED, USER_ID, UPDATE_DATE, VERSION, DEFAULT_DATASET_ID) VALUES (:id, :title, :description, :content, :tags, :creationDate, :activated, :userId, :updateDate, :version, :defaultDataset)")
     void saveWithExplicitId(
         @Param("id") Long id,
         @Param("title") String title,
@@ -65,7 +65,6 @@ public interface ScenarioJpaRepository extends CrudRepository<ScenarioEntity, Lo
         @Param("content") String content,
         @Param("tags") String tags,
         @Param("creationDate") Long creationDate,
-        @Param("dataset") String dataset,
         @Param("activated") Boolean activated,
         @Param("userId") String userId,
         @Param("updateDate") Long updateDate,

@@ -30,8 +30,8 @@ Feature: Replace scenario parameters with data set or global var values
                     "title": "GWT testcase with parameters for global vars",
                     "tags": [],
                     "computedParameters": {
-                        "testcase parameter quote": "**escape.quote**",
-                        "testcase parameter apostrophe": "**escape.apostrophe**"
+                        "testcase parameter quote": "**unused**",
+                        "testcase parameter apostrophe": "**unused**"
                     },
                     "scenario": {
                         "when": {
@@ -52,7 +52,7 @@ Feature: Replace scenario parameters with data set or global var values
                                         "type": "context-put",
                                         "inputs": {
                                             "entries": {
-                                                "apostrophe": "**testcase parameter apostrophe**"
+                                                "apostrophe": "**escape.apostrophe**"
                                             }
                                         }
                                     }
@@ -62,7 +62,7 @@ Feature: Replace scenario parameters with data set or global var values
                                         "type": "context-put",
                                         "inputs": {
                                             "entries": {
-                                                "quote": "**testcase parameter quote**"
+                                                "quote": "**escape.quote**"
                                             }
                                         }
                                     }

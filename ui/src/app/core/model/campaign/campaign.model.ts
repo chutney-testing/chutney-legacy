@@ -23,7 +23,6 @@ export class Campaign {
         public description: string = '',
         public scenarioIds: Array<string> = [],
         public campaignExecutionReports: Array<CampaignExecutionReport> = [],
-        public computedParameters: Map<string, string> = new Map(),
         public environment: string = '',
         public parallelRun?: false,
         public retryAuto?: false,

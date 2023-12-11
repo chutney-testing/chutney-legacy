@@ -188,11 +188,6 @@
             </dependency>
             <dependency>
                 <groupId>com.chutneytesting</groupId>
-                <artifactId>component</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.chutneytesting</groupId>
                 <artifactId>environment</artifactId>
                 <version>${project.version}</version>
             </dependency>

@@ -1006,4 +1006,17 @@
         <comment>Drop old Campaign executions table</comment>
         <dropTable tableName="CAMPAIGN_EXECUTION_HISTORY"/>
     </changeSet>
+
+    <changeSet id="drop-scenario-dataset" author="ICG">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="DATASET" tableName="SCENARIO"/>
+        </preConditions>
+        <comment>Remove DATASET column</comment>
+        <dropColumn tableName="SCENARIO" columnName="DATASET"></dropColumn>
+    </changeSet>
+
+    <changeSet id="drop-campaign-parameters" author="ICG">
+        <comment>Drop Campaign Parameters table</comment>
+        <dropTable tableName="CAMPAIGN_PARAMETERS"/>
+    </changeSet>
 </databaseChangeLog>

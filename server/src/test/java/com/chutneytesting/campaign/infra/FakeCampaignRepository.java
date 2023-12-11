@@ -16,7 +16,6 @@
 
 package com.chutneytesting.campaign.infra;
 
-import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 import static org.assertj.core.util.Lists.newArrayList;
 
@@ -49,7 +48,7 @@ public class FakeCampaignRepository implements CampaignRepository {
         if (campaign.id != null && campaignsById.containsKey(campaign.id)) {
             saved = campaign;
         } else {
-            saved = new Campaign(sequence.incrementAndGet(), campaign.title, campaign.description, campaign.scenarioIds, emptyMap(), "env", false, false, null, campaign.tags);
+            saved = new Campaign(sequence.incrementAndGet(), campaign.title, campaign.description, campaign.scenarioIds, "env", false, false, null, campaign.tags);
         }
         campaignsById.put(saved.id, saved);
         campaignsByName.put(saved.title, saved);
@@ -60,7 +59,7 @@ public class FakeCampaignRepository implements CampaignRepository {
     @Override
     public void saveExecution(Long campaignId, CampaignExecution execution) {
         ofNullable(campaignsById.get(campaignId)).ifPresent(campaign -> {
-            Campaign c = new Campaign(campaign.id, campaign.title, campaign.title, campaign.scenarioIds, campaign.executionParameters, campaign.executionEnvironment(), false, false, null, null);
+            Campaign c = new Campaign(campaign.id, campaign.title, campaign.title, campaign.scenarioIds, campaign.executionEnvironment(), false, false, null, null);
             createOrUpdate(c);
         });
 
@@ -70,7 +69,6 @@ public class FakeCampaignRepository implements CampaignRepository {
         }
         foundReport.add(execution);
         campaignsExecutionById.put(campaignId, foundReport);
-
     }
 
     @Override

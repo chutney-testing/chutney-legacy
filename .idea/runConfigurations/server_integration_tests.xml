@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="server_integration_tests" type="JUnit" factoryName="JUnit">
     <module name="server" />
+    <shortenClasspath name="ARGS_FILE" />
     <useClassPathOnly />
     <extension name="com.fapiko.jetbrains.plugins.better_direnv.runconfigs.IdeaRunConfigurationExtension">
       <option name="DIRENV_ENABLED" value="false" />

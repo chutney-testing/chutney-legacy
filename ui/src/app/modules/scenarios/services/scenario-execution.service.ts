@@ -19,7 +19,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
-import { Execution, KeyValue, ScenarioExecutionReport } from '@model';
+import { Execution, ScenarioExecutionReport } from '@model';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable()
@@ -44,8 +44,8 @@ export class ScenarioExecutionService {
                 map((res: Execution) => Execution.deserialize(res)));
     }
 
-    executeScenarioAsync(scenarioId: string, computedParameters: Array<KeyValue> = [], env: string): Observable<string> {
-        return this.http.post<string>(environment.backend + `${this.resourceUrl}/executionasync/v1/${scenarioId}/${env}`, computedParameters);
+    executeScenarioAsync(scenarioId: string, env: string): Observable<string> {
+        return this.http.post<string>(environment.backend + `${this.resourceUrl}/executionasync/v1/${scenarioId}/${env}`, {});
     }
 
     observeScenarioExecution(scenarioId: string, executionId: number): Observable<ScenarioExecutionReport> {

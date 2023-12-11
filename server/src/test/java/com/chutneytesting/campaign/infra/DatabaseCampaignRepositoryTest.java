@@ -16,14 +16,11 @@
 
 package com.chutneytesting.campaign.infra;
 
-import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.chutneytesting.campaign.domain.CampaignRepository;
-import com.chutneytesting.campaign.infra.jpa.CampaignParameterEntity;
 import com.chutneytesting.scenario.infra.jpa.ScenarioEntity;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
@@ -69,16 +66,12 @@ public class DatabaseCampaignRepositoryTest {
             ScenarioEntity s1 = givenScenario();
             ScenarioEntity s2 = givenScenario();
 
-            HashMap<String, String> dataSet = new HashMap<>();
-            dataSet.put("param1", "val1");
-            dataSet.put("param2", "");
             List<String> scenarioIds = scenariosIds(s1, s2);
-            Campaign campaign = new Campaign(null, "test", "lol", scenarioIds, dataSet, "env", false, false, null, null);
+            Campaign campaign = new Campaign(null, "test", "lol", scenarioIds, "env", false, false, null, null);
             campaign = sut.createOrUpdate(campaign);
 
             Campaign selected = sut.findById(campaign.id);
             assertThat(selected.scenarioIds).containsExactlyElementsOf(scenarioIds);
-            assertThat(selected.executionParameters).containsAllEntriesOf(dataSet);
         }
 
         @Test
@@ -86,20 +79,11 @@ public class DatabaseCampaignRepositoryTest {
             ScenarioEntity s1 = givenScenario();
             ScenarioEntity s2 = givenScenario();
 
-            HashMap<String, String> dataSet = new HashMap<>();
-            dataSet.put("param1", "val1");
-            dataSet.put("param2", "");
-            Campaign campaign = new Campaign(null, "test", "lol", scenariosIds(s1, s2), dataSet, "env", false, false, null, null);
+            Campaign campaign = new Campaign(null, "test", "lol", scenariosIds(s1, s2), "env", false, false, null, null);
             campaign = sut.createOrUpdate(campaign);
 
             boolean result = sut.removeById(campaign.id);
-            List<?> actualParameters =
-                entityManager.createNativeQuery("select * from campaign_parameters where campaign_id = :id", CampaignParameterEntity.class)
-                    .setParameter("id", campaign.id)
-                    .getResultList();
-
             assertThat(result).isTrue();
-            assertThat(actualParameters).isEmpty();
         }
 
         @Test
@@ -110,7 +94,7 @@ public class DatabaseCampaignRepositoryTest {
             ScenarioEntity s4 = givenScenario();
 
             List<String> scenarioIds = scenariosIds(s4, s2, s3, s1);
-            Campaign campaign = new Campaign(null, "test", "lol", scenarioIds, emptyMap(), "env", false, false, null, null);
+            Campaign campaign = new Campaign(null, "test", "lol", scenarioIds, "env", false, false, null, null);
             campaign = sut.createOrUpdate(campaign);
 
             Campaign selected = sut.findById(campaign.id);
@@ -127,7 +111,7 @@ public class DatabaseCampaignRepositoryTest {
             ScenarioEntity s2 = givenScenario();
 
             List<String> scenarioIds = scenariosIds(s1, s2);
-            Campaign campaign = new Campaign(null, "campaignName", "lol", scenarioIds, emptyMap(), "env", false, false, null, null);
+            Campaign campaign = new Campaign(null, "campaignName", "lol", scenarioIds, "env", false, false, null, null);
             campaign = sut.createOrUpdate(campaign);
 
             List<Campaign> selected = sut.findByName(campaign.title);
@@ -141,7 +125,7 @@ public class DatabaseCampaignRepositoryTest {
             ScenarioEntity s1 = givenScenario();
             ScenarioEntity s2 = givenScenario();
             List<String> scenarioIds = scenariosIds(s1, s2);
-            Campaign unsavedCampaign = new Campaign(null, "campaignName", "lol", scenarioIds, emptyMap(), "env", false, false, null, null);
+            Campaign unsavedCampaign = new Campaign(null, "campaignName", "lol", scenarioIds, "env", false, false, null, null);
             Campaign savedCampaign = sut.createOrUpdate(unsavedCampaign);
             assertThat(savedCampaign.title).isEqualTo(unsavedCampaign.title);
             assertThat(savedCampaign.description).isEqualTo(unsavedCampaign.description);
@@ -155,7 +139,7 @@ public class DatabaseCampaignRepositoryTest {
             ScenarioEntity s3 = givenScenario();
             List<String> newScenarios = scenariosIds(s3);
             String newEnvironment = "newEnv";
-            Campaign updatedCampaign = new Campaign(savedCampaign.id, newTitle, newDescription, newScenarios, emptyMap(), newEnvironment, true, true, null, null);
+            Campaign updatedCampaign = new Campaign(savedCampaign.id, newTitle, newDescription, newScenarios, newEnvironment, true, true, null, null);
 
             // When
             Campaign selected = sut.createOrUpdate(updatedCampaign);
@@ -177,10 +161,10 @@ public class DatabaseCampaignRepositoryTest {
             ScenarioEntity s2 = givenScenario();
             ScenarioEntity s3 = givenScenario();
             ScenarioEntity s4 = givenScenario();
-            Campaign campaign1 = new Campaign(null, "campaignTestName1", "campaignDesc1", scenariosIds(s1, s2), emptyMap(), "env", false, false, null, null);
-            Campaign campaign2 = new Campaign(null, "campaignTestName2", "campaignDesc2", scenariosIds(s2, s1), emptyMap(), "env", false, false, null, null);
-            Campaign campaign3 = new Campaign(null, "campaignTestName3", "campaignDesc3", scenariosIds(s1, s3), emptyMap(), "env", false, false, null, null);
-            Campaign campaign4 = new Campaign(null, "campaignTestName4", "campaignDesc4", scenariosIds(s3, s4), emptyMap(), "env", false, false, null, null);
+            Campaign campaign1 = new Campaign(null, "campaignTestName1", "campaignDesc1", scenariosIds(s1, s2), "env", false, false, null, null);
+            Campaign campaign2 = new Campaign(null, "campaignTestName2", "campaignDesc2", scenariosIds(s2, s1), "env", false, false, null, null);
+            Campaign campaign3 = new Campaign(null, "campaignTestName3", "campaignDesc3", scenariosIds(s1, s3), "env", false, false, null, null);
+            Campaign campaign4 = new Campaign(null, "campaignTestName4", "campaignDesc4", scenariosIds(s3, s4), "env", false, false, null, null);
             sut.createOrUpdate(campaign1);
             sut.createOrUpdate(campaign2);
             sut.createOrUpdate(campaign3);
@@ -203,7 +187,7 @@ public class DatabaseCampaignRepositoryTest {
         public void should_find_no_campaign_related_to_an_orphan_scenario() {
             // Given
             ScenarioEntity s1 = givenScenario();
-            Campaign campaign1 = new Campaign(null, "campaignTestName1", "campaignDesc1", scenariosIds(s1), emptyMap(), "env", false, false, null, null);
+            Campaign campaign1 = new Campaign(null, "campaignTestName1", "campaignDesc1", scenariosIds(s1), "env", false, false, null, null);
             sut.createOrUpdate(campaign1);
 
             // When

@@ -162,7 +162,7 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
             CriteriaBuilder builder = entityManager.getCriteriaBuilder();
             CriteriaQuery<ScenarioEntity> query = builder.createQuery(ScenarioEntity.class);
             Root<ScenarioEntity> root = query.from(ScenarioEntity.class);
-            query.select(builder.construct(ScenarioEntity.class, root.get("id"), root.get("title"), root.get("description"), root.get("tags"), root.get("creationDate"), root.get("dataset"), root.get("activated"), root.get("userId"), root.get("updateDate"), root.get("version"), root.get("defaultDataset")));
+            query.select(builder.construct(ScenarioEntity.class, root.get("id"), root.get("title"), root.get("description"), root.get("tags"), root.get("creationDate"), root.get("activated"), root.get("userId"), root.get("updateDate"), root.get("version"), root.get("defaultDataset")));
             query = query.where(scenarioDaoSpecification.toPredicate(root, query, builder));
 
             return entityManager.createQuery(query).getResultList().stream().map(ScenarioEntity::toTestCaseMetadata).toList();
@@ -202,7 +202,6 @@ public class DatabaseTestCaseRepository implements AggregatedRepository<GwtTestC
             scenarioEntity.getContent(),
             scenarioEntity.getTags(),
             scenarioEntity.getCreationDate(),
-            scenarioEntity.getDataset(),
             scenarioEntity.isActivated(),
             scenarioEntity.getUserId(),
             scenarioEntity.getUpdateDate(),

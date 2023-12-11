@@ -38,7 +38,6 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
     scenarioId: string;
     private _executionsFilters: Params = {};
     private tabFilters: Params = {};
-    private hasParameters: boolean = null;
     scenario: GwtTestCase;
     error: string;
     private scenarioExecution$: Subscription;
@@ -132,10 +131,8 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
 
     private loadScenario(): Observable<GwtTestCase> {
         let scenario$ = this.scenarioService.findTestCase(this.scenarioId);
-        let hasParameter = (scenario: GwtTestCase) => !!scenario.wrappedParams?.params?.length;
         return scenario$.pipe(
             tap(scenario => {
-                this.hasParameters = hasParameter(scenario);
                 this.scenario = scenario;
             }),
             catchError(err => {
@@ -145,7 +142,6 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
             })
         );
     }
-
 
     private updateQueryParams() {
         let queryParams = this.cleanParams({...this.executionsFilters, ...this.tabFilters});
@@ -265,28 +261,24 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
     }
 
     private executeScenario(env: string) {
-        if (this.hasParameters) {
-            this.router.navigateByUrl(`/scenario/${this.scenarioId}/execute/${env}`,);
-        } else {
-            this.scenarioExecutionService
-                .executeScenarioAsync(this.scenarioId, [], env)
-                .pipe(
-                    delay(1000),
-                    switchMap(executionId => this.findScenarioExecutionSummary(+executionId)))
-                .subscribe({
-                        next: (executionSummary) => {
-                            this.openReport({
-                                execution: executionSummary,
-                                focus: true
-                            });
-                            this.executions.unshift(executionSummary);
-                        },
-                        error: error => {
-                            this.error = error.error;
-                        }
+        this.scenarioExecutionService
+            .executeScenarioAsync(this.scenarioId, env)
+            .pipe(
+                delay(1000),
+                switchMap(executionId => this.findScenarioExecutionSummary(+executionId)))
+            .subscribe({
+                    next: (executionSummary) => {
+                        this.openReport({
+                            execution: executionSummary,
+                            focus: true
+                        });
+                        this.executions.unshift(executionSummary);
+                    },
+                    error: error => {
+                        this.error = error.error;
                     }
-                );
-        }
+                }
+            );
     }
 
     ngOnDestroy(): void {

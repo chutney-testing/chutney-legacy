@@ -32,7 +32,6 @@ import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -160,21 +159,6 @@ public class TestCaseEditionsServiceTest {
     }
 
     private TestCase testCaseFromMetadata(TestCaseMetadata metadata) {
-        return new TestCase() {
-            @Override
-            public TestCaseMetadata metadata() {
-                return metadata;
-            }
-
-            @Override
-            public Map<String, String> executionParameters() {
-                return null;
-            }
-
-            @Override
-            public TestCase usingExecutionParameters(Map<String, String> parameters) {
-                return null;
-            }
-        };
+        return () -> metadata;
     }
 }
