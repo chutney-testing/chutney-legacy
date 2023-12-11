@@ -92,7 +92,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let scenarioReportOutline of report.report.scenarioExecutionReports">
+                <tr *ngFor="let scenarioReportOutline of report.report.scenarioExecutionReports; let i = index">
                     <td class="fw-bold text-center align-middle text-nowrap">
                         <span>{{ scenarioReportOutline.scenarioId }}</span>
                     </td>
@@ -115,7 +115,7 @@
                         </ng-container>
                     </td>
                     <td class="align-middle">
-                        <span><small>{{ scenarioReportOutline.error }}</small></span>
+                        <span><small (click)="showMore[i]=!showMore[i]">{{ (!showMore[i] && scenarioReportOutline.error.length > 100) ? (scenarioReportOutline.error | slice:0:100) + " ..." : (scenarioReportOutline.error) }}</small></span>
                     </td>
                     <td class="text-center align-middle text-nowrap">
                         <span><small>{{ scenarioReportOutline.duration | duration:'short' }}</small></span>

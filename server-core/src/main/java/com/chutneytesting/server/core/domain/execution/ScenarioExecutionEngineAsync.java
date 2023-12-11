@@ -275,7 +275,7 @@ public class ScenarioExecutionEngineAsync {
             .duration(scenarioReport.report.duration)
             .status(scenarioReport.report.status)
             .info(joinAndTruncateMessages(searchInfo(scenarioReport.report)))
-            .error(joinAndTruncateMessages(searchErrors(scenarioReport.report)))
+            .error(searchErrors(scenarioReport.report).stream().findFirst().orElse(""))
             .report(serialize(scenarioReport)) // TODO - type me and move serialization to infra
             .testCaseTitle(scenarioReport.scenarioName)
             .environment(environment)
@@ -350,7 +350,7 @@ public class ScenarioExecutionEngineAsync {
     }
 
     private static List<String> searchErrors(StepExecutionReportCore report) {
-        if (report.errors.isEmpty()) {
+        if (report.errors.isEmpty() && report.status != ServerReportStatus.SUCCESS) {
             return report.steps.stream()
                 .map(ScenarioExecutionEngineAsync::searchErrors)
                 .flatMap(List::stream)
