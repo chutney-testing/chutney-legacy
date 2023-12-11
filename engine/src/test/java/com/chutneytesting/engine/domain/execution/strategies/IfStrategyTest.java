@@ -18,6 +18,7 @@ package com.chutneytesting.engine.domain.execution.strategies;
 
 import static com.chutneytesting.engine.domain.execution.ScenarioExecution.createScenarioExecution;
 import static com.chutneytesting.engine.domain.execution.report.Status.SUCCESS;
+import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -188,8 +189,76 @@ public class IfStrategyTest {
             verify(step).success();
             verify(step1).success();
             verify(step2).success();
-            verify(step1).addInformation(eq("Step not executed"));
-            verify(step2).addInformation(eq("Step not executed"));
+            verify(step1).addInformation(eq("Step skipped"));
+            verify(step2).addInformation(eq("Step skipped"));
+        }
+    }
+
+    static Stream<Arguments> if_strategy_with_sub_parent_step_nominal_cases() {
+        return Stream.of(
+            of("Should not execute step if condition false", false),
+            of("Should execute step if condition true", true),
+            of("Should not execute step if condition false Spel", "${ (1+1) == 3}"),
+            of("Should execute step if condition true Spel", "${ (1+1) == 2}")
+        );
+    }
+
+    @ParameterizedTest(name = "#{index}: {0}")
+    @MethodSource("if_strategy_with_sub_parent_step_nominal_cases")
+    void if_strategy_with_sub_parent_step_nominal_cases(String testName, Object ifCondition) {
+
+        // Given
+        StepDataEvaluator dataEvaluator = new StepDataEvaluator(new SpelFunctions());
+        Boolean ifConditionEvaluation = (Boolean) dataEvaluator.evaluate(ifCondition, emptyMap());
+
+        StrategyProperties strategyProperties = new StrategyProperties();
+        strategyProperties.put("condition", ifCondition);
+        StepStrategyDefinition strategyDefinition = new StepStrategyDefinition("if", strategyProperties);
+
+        Step ifStrategyStep = mock(Step.class);
+        when(ifStrategyStep.strategy()).thenReturn(of(strategyDefinition));
+        when(ifStrategyStep.dataEvaluator()).thenReturn(dataEvaluator);
+
+        // Step with IfStrategy has two substeps,the first of which has two subSteps
+        Step parentSubStep = mock(Step.class);
+        Step parentSubStep1 = mock(Step.class);
+        when(parentSubStep1.isParentStep()).thenReturn(false);
+        when(parentSubStep1.execute(any(), any(), any())).thenReturn(SUCCESS);
+        Step parentSubStep2 = mock(Step.class);
+        when(parentSubStep2.isParentStep()).thenReturn(false);
+        when(parentSubStep2.execute(any(), any(), any())).thenReturn(SUCCESS);
+
+        when(parentSubStep.isParentStep()).thenReturn(true);
+        when(parentSubStep.subSteps()).thenReturn(List.of(parentSubStep1, parentSubStep2));
+
+        Step simpleSubStep = mock(Step.class);
+        when(simpleSubStep.isParentStep()).thenReturn(false);
+        when(simpleSubStep.execute(any(), any(), any())).thenReturn(SUCCESS);
+
+        when(ifStrategyStep.isParentStep()).thenReturn(true);
+        when(ifStrategyStep.subSteps()).thenReturn(List.of(parentSubStep, simpleSubStep));
+
+        // When
+        Status status = new IfStrategy()
+            .execute(createScenarioExecution(null), ifStrategyStep, new ScenarioContextImpl(), new StepExecutionStrategies(Sets.newHashSet(DefaultStepExecutionStrategy.instance)));
+
+        //Then
+        assertThat(status).isEqualTo(SUCCESS);
+        verify(ifStrategyStep, times(0)).execute(any(), any(), any());
+        if (ifConditionEvaluation) {
+            verify(ifStrategyStep).addInformation("Execution condition [" + ifCondition + "] = " + "step executed");
+            verify(parentSubStep, times(0)).execute(any(), any(), any());
+            List.of(parentSubStep1, parentSubStep2, simpleSubStep).forEach(subStep -> {
+                verify(subStep).execute(any(), any(), any());
+            });
+        } else {
+            verify(ifStrategyStep).addInformation("Execution condition [" + ifCondition + "] = " + "step skipped");
+            verify(ifStrategyStep).success();
+            List.of(parentSubStep, parentSubStep1, parentSubStep2, simpleSubStep).forEach(subStep -> {
+                verify(subStep, times(0)).execute(any(), any(), any());
+                verify(subStep).addInformation("Step skipped");
+                verify(subStep).success();
+            });
         }
     }
 }
