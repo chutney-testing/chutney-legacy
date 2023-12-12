@@ -18,12 +18,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 import { EMPTY, Observable, of, Subscription, zip } from 'rxjs';
-import { repeat, switchMap, tap } from 'rxjs/operators';
+import { repeat, switchMap, tap, delay } from 'rxjs/operators';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
 import { Campaign, CampaignReport } from '@model';
 import { CampaignService, JiraPluginConfigurationService } from '@core/services';
-import { AlertService, EventManagerService } from '@shared';
+import { EventManagerService } from '@shared';
 
 @Component({
     selector: 'chutney-campaign-executions-history',
@@ -106,7 +106,8 @@ export class CampaignExecutionsHistoryComponent implements OnInit, OnDestroy {
         if (this.campaignReports.find(c => c.isRunning())) {
             if (!this.isRefreshActive()) {
                 this.refreshSubscription = this.campaign$().pipe(
-                    repeat(5000)
+                    delay(5000),
+                    repeat()
                 ).subscribe();
             }
         } else {
