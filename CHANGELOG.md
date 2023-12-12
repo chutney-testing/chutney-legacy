@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.5.1](https://github.com/chutney-testing/chutney/tree/2.5.1)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/2.5.0...2.5.1)
+
+## What's Changed
+### 🐛 Fixed bugs:
+* Add delay before repeating the update of a running campaign by @boddissattva in https://github.com/chutney-testing/chutney/pull/1205
+
+
 ## [2.5.0](https://github.com/chutney-testing/chutney/tree/2.5.0)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/2.4.0...2.5.0)
