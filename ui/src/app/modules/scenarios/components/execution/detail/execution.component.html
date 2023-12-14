@@ -195,7 +195,11 @@
         >
             {{ step.name }}
             <span *ngIf="step.status != 'NOT_EXECUTED'" placement="left" class="float-end small">
-                <em>{{step.duration | duration}}</em>
+                <em>
+                    <ng-container *ngIf="(step.duration | duration) as d">
+                        {{'global.time.in' | translate}} {{d}}
+                    </ng-container>
+                    {{'global.time.at' | translate}} {{scenarioExecutionReport.startDate | date:'short'}}</em>
             </span>
         </div>
         <div class="ps-4">
