@@ -229,7 +229,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     hasNotBeenExecuted() {
-        return ExecutionStatus.NOT_EXECUTED === this.scenarioExecutionReport?.report?.status; 
+        return ExecutionStatus.NOT_EXECUTED === this.scenarioExecutionReport?.report?.status;
     }
 
     toggleContextVariables() {
