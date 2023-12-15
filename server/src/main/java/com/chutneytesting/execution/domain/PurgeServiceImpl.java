@@ -234,7 +234,10 @@ public class PurgeServiceImpl implements PurgeService {
                 .forEach(executionsReports -> {
                     var executionsByEnvironment = executionsReports.stream()
                         .filter(executionsFilter)
-                        .collect(groupingBy(environmentFunction));
+                        .collect(groupingBy(t -> {
+                            var env = environmentFunction.apply(t);
+                            return env != null ? env : "";
+                        }));
                     for (List<Execution> executionsOneEnvironment : executionsByEnvironment.values()) {
                         purgeOneBaseObjectExecutionsForOneEnvironment(executionsOneEnvironment, deletedExecutionsIds);
                     }
