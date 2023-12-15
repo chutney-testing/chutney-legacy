@@ -19,18 +19,22 @@ package com.chutneytesting.engine.domain.execution.engine.step;
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 import com.chutneytesting.engine.domain.execution.report.Status;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 public class StepStateTest {
 
     @Test
-    public void should_change_state() {
+    void should_change_state() {
         StepState stepState = new StepState();
 
         stepState.successOccurred();
@@ -50,7 +54,7 @@ public class StepStateTest {
     }
 
     @Test
-    public void should_handle_null_or_empty_errors() {
+    void should_handle_null_or_empty_errors() {
         StepState stepState = new StepState();
 
         stepState.errorOccurred(null, "");
@@ -60,7 +64,7 @@ public class StepStateTest {
     }
 
     @Test
-    public void should_handle_null_or_empty_informations() {
+    void should_handle_null_or_empty_informations() {
         StepState stepState = new StepState();
 
         stepState.successOccurred(null, "");
@@ -70,7 +74,7 @@ public class StepStateTest {
     }
 
     @Test
-    public void should_manage_watch_with_idempotency() {
+    void should_manage_watch_with_idempotency() {
         StepState stepState = new StepState();
 
         List<Long> durations = new ArrayList<>();
@@ -95,7 +99,7 @@ public class StepStateTest {
     }
 
     @Test
-    public void should_manage_watch_independently_of_status() {
+    void should_manage_watch_independently_of_status() {
         StepState stepState = new StepState();
         Status initialStatus = stepState.status();
 
@@ -107,7 +111,7 @@ public class StepStateTest {
     }
 
     @Test
-    public void should_change_status_and_clean_logs_when_reset() {
+    void should_change_status_and_clean_logs_when_reset() {
         // Given
         StepState stepState = new StepState();
         stepState.addInformation("...");
@@ -127,7 +131,7 @@ public class StepStateTest {
     }
 
     @Test
-    public void should_begin_execution() {
+    void should_begin_execution() {
         StepState stepState = new StepState();
 
         stepState.beginExecution();
@@ -150,7 +154,7 @@ public class StepStateTest {
     }
 
     @Test
-    public void should_end_execution() {
+    void should_end_execution() {
         StepState stepState = new StepState();
         stepState.startWatch();
         Status initialStatus = stepState.status();
@@ -170,7 +174,7 @@ public class StepStateTest {
     }
 
     @Test
-    public void should_change_parent_step_running_status_when_end_execution() {
+    void should_change_parent_step_running_status_when_end_execution() {
         StepState stepState = new StepState();
         stepState.beginExecution();
         assertThat(stepState.status()).isEqualTo(Status.RUNNING);
@@ -178,5 +182,83 @@ public class StepStateTest {
         stepState.endExecution(true);
 
         assertThat(stepState.status()).isEqualTo(Status.EXECUTED);
+    }
+
+    @Nested
+    @DisplayName("Concurrent messages modifications")
+    class ConcurrentMessagesModification {
+        @Nested
+        class Informations {
+            @RepeatedTest(20)
+            void add_information() {
+                StepState stepState = new StepState();
+                for (int i = 0; i < 10000; i++) {
+                    stepState.addInformation("info " + i);
+                }
+
+                assertThatNoException().isThrownBy(() -> {
+                    new Thread(() -> {
+                        for (int i = 0; i < 10000; i++) {
+                            stepState.addInformation("new info " + i);
+                        }
+                    }).start();
+                    stepState.informations();
+                });
+            }
+
+            @RepeatedTest(20)
+            void success_occurred() {
+                StepState stepState = new StepState();
+                for (int i = 0; i < 10000; i++) {
+                    stepState.addInformation("info " + i);
+                }
+
+                assertThatNoException().isThrownBy(() -> {
+                    new Thread(() -> {
+                        for (int i = 0; i < 10000; i++) {
+                            stepState.successOccurred("new info " + i);
+                        }
+                    }).start();
+                    stepState.informations();
+                });
+            }
+        }
+
+        @Nested
+        class Errors {
+            @RepeatedTest(20)
+            void add_error() {
+                StepState stepState = new StepState();
+                for (int i = 0; i < 10000; i++) {
+                    stepState.addErrors("error " + i);
+                }
+
+                assertThatNoException().isThrownBy(() -> {
+                    new Thread(() -> {
+                        for (int i = 0; i < 10000; i++) {
+                            stepState.addErrors("new error " + i);
+                        }
+                    }).start();
+                    stepState.errors();
+                });
+            }
+
+            @RepeatedTest(20)
+            void error_occurred() {
+                StepState stepState = new StepState();
+                for (int i = 0; i < 10000; i++) {
+                    stepState.addErrors("error " + i);
+                }
+
+                assertThatNoException().isThrownBy(() -> {
+                    new Thread(() -> {
+                        for (int i = 0; i < 10000; i++) {
+                            stepState.errorOccurred("new info " + i);
+                        }
+                    }).start();
+                    stepState.errors();
+                });
+            }
+        }
     }
 }

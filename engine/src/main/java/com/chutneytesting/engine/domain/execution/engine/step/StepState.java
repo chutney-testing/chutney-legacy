@@ -20,7 +20,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.engine.domain.execution.report.Status;
 import com.google.common.base.Stopwatch;
@@ -132,6 +131,6 @@ public class StepState {
     }
 
     private List<String> filterNullAndEmptyMessage(List<String> messages) {
-        return messages.stream().filter(StringUtils::isNotEmpty).collect(toList());
+        return newArrayList(messages).stream().filter(StringUtils::isNotEmpty).toList();
     }
 }
