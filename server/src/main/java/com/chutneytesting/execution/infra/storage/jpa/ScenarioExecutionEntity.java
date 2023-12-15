@@ -183,8 +183,8 @@ public class ScenarioExecutionEntity {
             execution.time().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
             execution.duration(),
             execution.status(),
-            execution.info().map(info -> StringUtils.substring(info, 0, 512)).orElse(null),
-            execution.error().map(error -> StringUtils.substring(error, 0, 512)).orElse(null),
+            execution.info().map(ScenarioExecutionEntity::truncateExecutionTrace).orElse(null),
+            execution.error().map(ScenarioExecutionEntity::truncateExecutionTrace).orElse(null),
             execution.testCaseTitle(),
             execution.environment(),
             execution.user(),
@@ -218,7 +218,11 @@ public class ScenarioExecutionEntity {
     public void updateFromExecution(ExecutionHistory.Execution execution) {
         duration = execution.duration();
         status = execution.status();
-        information = execution.info().orElse(null);
-        error = execution.error().orElse(null);
+        information = execution.info().map(ScenarioExecutionEntity::truncateExecutionTrace).orElse(null);
+        error = execution.error().map(ScenarioExecutionEntity::truncateExecutionTrace).orElse(null);
+    }
+
+    private static String truncateExecutionTrace(String trace) {
+        return StringUtils.substring(trace, 0, 512);
     }
 }
