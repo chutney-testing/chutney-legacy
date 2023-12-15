@@ -285,6 +285,63 @@ public class PurgeServiceTest {
                     assertThat(report.scenariosExecutionsIds()).isEmpty();
                     assertThat(report.campaignsExecutionsIds()).containsExactly(oldestCampaignExecutionId);
                 }
+
+                @Test
+                void purge_oldest_when_limit_exceeded_with_no_environment() {
+                    // Given
+                    // Three campaign's executions with one without environment with only one scenario's execution each
+                    // And a configuration limit set to 10 for scenarios' executions
+                    // And a configuration limit set to 1 for campaigns' executions
+                    Integer maxScenarioExecutionsConfiguration = 10;
+                    Integer maxCampaignExecutionsConfiguration = 1;
+                    String scenarioId = "1";
+                    Long campaignId = 1L;
+                    Long oldestCampaignExecutionId = 1L;
+                    LocalDateTime now = now();
+
+                    TestCaseRepository testCaseRepository = mock(TestCaseRepository.class);
+                    when(testCaseRepository.findAll()).thenReturn(List.of(
+                        TestCaseMetadataImpl.builder().withId(scenarioId).build()
+                    ));
+
+                    ExecutionSummary scenarioExecution1 = scenarioExecutionBuilder().executionId(3L).time(now).build();
+                    CampaignExecution campaignExecution1 = buildCampaignExecution(3L, campaignId, tuple(scenarioId, scenarioExecution1));
+
+                    ExecutionSummary scenarioExecution2 = scenarioExecutionBuilder().executionId(2L).time(now.minusSeconds(10)).build();
+                    CampaignExecution campaignExecution2 = buildCampaignExecutionWithNullEnv(2L, campaignId, tuple(scenarioId, scenarioExecution2));
+
+                    ExecutionSummary scenarioExecution3 = scenarioExecutionBuilder().executionId(1L).time(now.minusSeconds(20)).build();
+                    CampaignExecution campaignExecution3 = buildCampaignExecution(oldestCampaignExecutionId, campaignId, tuple(scenarioId, scenarioExecution3));
+
+                    ExecutionHistoryRepository executionsRepository = mock(ExecutionHistoryRepository.class);
+                    when(executionsRepository.getExecutions(scenarioId)).thenReturn(List.of(
+                        scenarioExecution1.withCampaignReport(campaignExecution1),
+                        scenarioExecution2.withCampaignReport(campaignExecution2),
+                        scenarioExecution3.withCampaignReport(campaignExecution3)
+                    ));
+
+                    CampaignRepository campaignRepository = mock(CampaignRepository.class);
+                    when(campaignRepository.findAll()).thenReturn(List.of(
+                        CampaignBuilder.builder().setId(campaignId).build()
+                    ));
+                    CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
+                    when(campaignRepository.findExecutionsById(campaignId)).thenReturn(List.of(
+                        campaignExecution1, campaignExecution2, campaignExecution3
+                    ));
+
+                    // When
+                    PurgeServiceImpl sut = new PurgeServiceImpl(testCaseRepository, executionsRepository, campaignRepository, campaignExecutionRepository, maxScenarioExecutionsConfiguration, maxCampaignExecutionsConfiguration);
+                    PurgeReport report = sut.purge();
+
+                    // Then
+                    // The oldest campaign's execution is deleted
+                    // The associated scenario's execution is kept
+                    verify(executionsRepository, times(0)).deleteExecutions(anySet());
+                    verify(campaignExecutionRepository).deleteExecutions(anySet());
+                    verify(campaignExecutionRepository).deleteExecutions(Set.of(oldestCampaignExecutionId));
+                    assertThat(report.scenariosExecutionsIds()).isEmpty();
+                    assertThat(report.campaignsExecutionsIds()).containsExactly(oldestCampaignExecutionId);
+                }
             }
 
             @Nested
@@ -892,10 +949,24 @@ public class PurgeServiceTest {
             .testCaseTitle("");
     }
 
+
     /**
      * scenarioExecutions tuples are composed of (scenario id as String, scenario execution as ExecutionSummary)
      */
+    private static CampaignExecution buildCampaignExecutionWithNullEnv(Long campaignExecutionId, Long campaignId, Tuple... scenarioExecutions) {
+        return buildCampaignExecution(null, campaignExecutionId, campaignId, false, scenarioExecutions);
+    }
+
+    private static CampaignExecution buildCampaignExecution(Long campaignExecutionId, Long campaignId, Tuple... scenarioExecutions) {
+        return buildCampaignExecution(campaignExecutionId, campaignId, false, scenarioExecutions);
+    }
+
     private static CampaignExecution buildCampaignExecution(Long campaignExecutionId, Long campaignId, boolean partialExecution, Tuple... scenarioExecutions) {
+        String env = ((ExecutionHistory.ExecutionSummary) Arrays.stream(scenarioExecutions).findFirst().get().toList().get(1)).environment();
+        return buildCampaignExecution(env, campaignExecutionId, campaignId, partialExecution, scenarioExecutions);
+    }
+
+    private static CampaignExecution buildCampaignExecution(String campaignEnv, Long campaignExecutionId, Long campaignId, boolean partialExecution, Tuple... scenarioExecutions) {
         List<ScenarioExecutionCampaign> scenarioExecutionsForCampaign = Arrays.stream(scenarioExecutions)
             .map(t -> {
                 List<Object> tt = t.toList();
@@ -912,14 +983,10 @@ public class PurgeServiceTest {
             scenarioExecutionsForCampaign,
             "",
             partialExecution,
-            firsScenarioExecution.environment(),
+            campaignEnv,
             firsScenarioExecution.datasetId().orElse(null),
             firsScenarioExecution.datasetVersion().orElse(null),
             firsScenarioExecution.user()
         );
-    }
-
-    private static CampaignExecution buildCampaignExecution(Long campaignExecutionId, Long campaignId, Tuple... scenarioExecutions) {
-        return buildCampaignExecution(campaignExecutionId, campaignId, false, scenarioExecutions);
     }
 }
