@@ -330,7 +330,15 @@ public class DatabaseExecutionHistoryRepositoryTest {
             String scenarioId = givenScenarioId(true);
             final String tooLongString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.";
 
-            sut.store(scenarioId, buildDetachedExecution(SUCCESS, tooLongString, tooLongString));
+            Execution last = sut.store(scenarioId, buildDetachedExecution(SUCCESS, tooLongString, tooLongString));
+
+            assertThat(sut.getExecutions(scenarioId).get(0).info())
+                .hasValueSatisfying(v -> assertThat(v).hasSize(512));
+
+            assertThat(sut.getExecutions(scenarioId).get(0).error())
+                .hasValueSatisfying(v -> assertThat(v).hasSize(512));
+
+            sut.update(scenarioId, buildDetachedExecution(SUCCESS, tooLongString, tooLongString).attach(last.executionId()));
 
             assertThat(sut.getExecutions(scenarioId).get(0).info())
                 .hasValueSatisfying(v -> assertThat(v).hasSize(512));
