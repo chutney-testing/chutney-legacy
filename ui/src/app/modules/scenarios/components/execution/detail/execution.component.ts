@@ -285,10 +285,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     private getFailureSteps(scenarioExecutionReport: ScenarioExecutionReport) {
-        return scenarioExecutionReport
-            .report
-            .steps
-            .filter((step) => step.status === ExecutionStatus.FAILURE);
+        return scenarioExecutionReport?.report?.steps?.filter((step) => step.status === ExecutionStatus.FAILURE);
     }
 
     private unsubscribeScenarioExecutionAsyncSubscription() {
@@ -517,7 +514,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     private computeAllStepRowId() {
-        this.scenarioExecutionReport.report.steps.forEach((s, i) => {
+        this.scenarioExecutionReport?.report?.steps?.forEach((s, i) => {
             this.computeStepRowId(s, `${i}`);
         });
     }
