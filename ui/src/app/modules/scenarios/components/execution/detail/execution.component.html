@@ -199,7 +199,7 @@
                     <ng-container *ngIf="(step.duration | duration) as d">
                         {{'global.time.in' | translate}} {{d}}
                     </ng-container>
-                    {{'global.time.at' | translate}} {{scenarioExecutionReport.startDate | date:'short'}}</em>
+                    {{'global.time.at' | translate}} {{step.startDate | date:'short'}}</em>
             </span>
         </div>
         <div class="ps-4">
