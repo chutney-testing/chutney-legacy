@@ -107,17 +107,17 @@ export class ScenarioExecutionService {
     }
 
     private buildExecutionReport(jsonResponse: any): ScenarioExecutionReport {
-        let report;
+        let report = null;
         let contextVariables;
-        if(jsonResponse.report) {
+        if(jsonResponse?.report) {
             report = JSON.parse(jsonResponse.report).report
             contextVariables = JSON.parse(jsonResponse.report).contextVariables
         }
         return new ScenarioExecutionReport(
             jsonResponse.executionId,
-            jsonResponse.status ? jsonResponse.status : report.status,
-            jsonResponse.duration ? jsonResponse.duration : report.duration,
-            new Date(jsonResponse.time ? jsonResponse.time : report.startDate),
+            jsonResponse.status ? jsonResponse.status : report?.status,
+            jsonResponse.duration ? jsonResponse.duration : report?.duration,
+            new Date(jsonResponse.time ? jsonResponse.time : report?.startDate),
             report,
             jsonResponse.environment,
             jsonResponse.user,
@@ -130,9 +130,9 @@ export class ScenarioExecutionService {
     private buildExecutionReportFromEvent(jsonResponse: any): ScenarioExecutionReport {
         return new ScenarioExecutionReport(
             jsonResponse.executionId,
-            jsonResponse.status ? jsonResponse.status : jsonResponse.report.status,
-            jsonResponse.duration ? jsonResponse.duration : jsonResponse.report.duration,
-            new Date(jsonResponse.time ? jsonResponse.time : jsonResponse.report.startDate),
+            jsonResponse.status ? jsonResponse.status : jsonResponse.report?.status,
+            jsonResponse.duration ? jsonResponse.duration : jsonResponse.report?.duration,
+            new Date(jsonResponse.time ? jsonResponse.time : jsonResponse.report?.startDate),
             jsonResponse.report,
             jsonResponse.environment,
             jsonResponse.user,
