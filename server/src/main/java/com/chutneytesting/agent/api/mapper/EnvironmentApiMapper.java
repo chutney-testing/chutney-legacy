@@ -16,6 +16,7 @@
 
 package com.chutneytesting.agent.api.mapper;
 
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -24,6 +25,7 @@ import com.chutneytesting.agent.api.dto.NetworkConfigurationApiDto.TargetsApiDto
 import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
 import com.chutneytesting.environment.api.target.dto.TargetDto;
 import com.chutneytesting.tools.Entry;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +36,7 @@ public class EnvironmentApiMapper {
 
     public EnvironmentDto fromDto(EnvironmentApiDto environmentApiDto) {
         List<TargetDto> targets = environmentApiDto.targetsConfiguration.stream().map(this::fromDto).collect(toList());
-        return new EnvironmentDto(environmentApiDto.name, null, targets);
+        return new EnvironmentDto(environmentApiDto.name, null, targets, emptyList());
     }
 
     private TargetDto fromDto(TargetsApiDto targetsApiDto) {

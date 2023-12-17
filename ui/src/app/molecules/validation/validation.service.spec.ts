@@ -69,27 +69,27 @@ it('isValidUrl returns true on protocol length is 1', () => {
 });
 
 it('isValidEnvironmentName returns false on null', () => {
-  expect(service.isValidEnvironmentName(null)).toBe(false);
+  expect(service.isValidName(null)).toBe(false);
 });
 
 it('isValidEnvironmentName returns false on empty string', () => {
-  expect(service.isValidEnvironmentName('')).toBe(false);
+  expect(service.isValidName('')).toBe(false);
 });
 
 it('isValidEnvironmentName returns true on lower case', () => {
-  expect(service.isValidEnvironmentName('test')).toBe(true);
+  expect(service.isValidName('test')).toBe(true);
 });
 
 it('isValidEnvironmentName returns false on space', () => {
-  expect(service.isValidEnvironmentName('TEST TEST')).toBe(false);
+  expect(service.isValidName('TEST TEST')).toBe(false);
 });
 
 it('isValidEnvironmentName returns false short string', () => {
-  expect(service.isValidEnvironmentName('TE')).toBe(false);
+  expect(service.isValidName('TE')).toBe(false);
 });
 
 it('isValidEnvironmentName returns true when valid environment name', () => {
-  expect(service.isValidEnvironmentName('TEST_45-2')).toBe(true);
+  expect(service.isValidName('TEST_45-2')).toBe(true);
 });
 
 it('isValidSpel returns false on null', () => {

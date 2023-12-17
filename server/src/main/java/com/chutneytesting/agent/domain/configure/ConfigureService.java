@@ -65,7 +65,7 @@ public class ConfigureService {
 
     private void updateEnvironment(NetworkConfiguration.EnvironmentConfiguration environmentConfigurations) {
         environmentConfigurations.stream().forEach(env -> {
-            EnvironmentDto environment = new EnvironmentDto(env.name, env.description, env.targets);
+            EnvironmentDto environment = new EnvironmentDto(env.name, env.description, env.targets, env.variables);
             embeddedEnvironmentApi.createEnvironment(environment, true);
         });
     }

@@ -19,14 +19,17 @@ package com.chutneytesting.environment.domain;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
 import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentException;
+import com.chutneytesting.environment.domain.exception.EnvVariableNotFoundException;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
+import com.chutneytesting.environment.domain.exception.VariableAlreadyExistingException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,6 +146,56 @@ public class EnvironmentService {
         Environment newEnvironment = environment.updateTarget(previousTargetName, targetToUpdate);
         createOrUpdate(newEnvironment);
         logger.debug("Updated target " + previousTargetName + " as " + targetToUpdate.name);
+    }
+
+    public void addVariable(List<EnvironmentVariable> values) throws EnvironmentNotFoundException, VariableAlreadyExistingException {
+        values.forEach(variable -> {
+            Environment environment = environmentRepository.findByName(variable.env());
+            this.addVariable(variable, environment);
+        });
+
+    }
+
+    public void createOrUpdateVariable(String existingKey, List<EnvironmentVariable> values) throws EnvironmentNotFoundException, EnvVariableNotFoundException {
+        values.forEach(variable -> {
+            Environment environment = environmentRepository.findByName(variable.env());
+            if (!environment.containsVariable(existingKey)) {
+                this.addVariable(variable, environment);
+                return;
+            }
+            Environment updated = environment.updateVariable(existingKey, variable);
+            if (!environment.equals(updated)) {
+                createOrUpdate(updated);
+                logger.debug("Updated variable " + existingKey + " as " + values.get(0).key());
+            }
+        });
+    }
+
+    public void deleteVariable(String key) {
+        this.deleteVariable(key, environmentRepository.listNames());
+    }
+
+    public void deleteVariable(String key, List<String> envs) {
+        List<Environment> environment = environmentRepository.findByNames(envs)
+            .stream()
+            .filter(env -> env.containsVariable(key)).toList();
+
+        if (!envs.isEmpty() && environment.isEmpty()) {
+            throw new EnvVariableNotFoundException("Variable [" + key + "] not found");
+        }
+        environment
+            .forEach(env -> {
+                Environment updated = env.deleteVariable(key);
+                createOrUpdate(updated);
+            });
+        logger.debug("Deleted variable: " + key);
+    }
+
+    private void addVariable(EnvironmentVariable variable, Environment env) throws EnvironmentNotFoundException, VariableAlreadyExistingException {
+        Environment updated = env.addVariable(variable);
+        createOrUpdate(updated);
+        logger.debug("Variable " + variable.key() + " added to environment " + env);
+
     }
 
     private void createOrUpdate(Environment environment) {

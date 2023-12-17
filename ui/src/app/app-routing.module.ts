@@ -95,6 +95,12 @@ export const appRoutes: Routes = [
                 data: {'authorizations': [Authorization.ENVIRONMENT_ACCESS, Authorization.ADMIN_ACCESS]}
             },
             {
+                path: 'environmentsVariables',
+                loadChildren: () => import('./modules/environment-variable/environment-variable.module').then(m => m.EnvironmentVariableModule),
+                canActivate: [AuthGuard],
+                data: {'authorizations': [Authorization.ENVIRONMENT_ACCESS, Authorization.ADMIN_ACCESS]}
+            },
+            {
                 path: 'backups',
                 loadChildren: () => import('./modules/backups/backups.module').then(m => m.BackupsModule),
                 canActivate: [AuthGuard],

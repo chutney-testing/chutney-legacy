@@ -17,6 +17,7 @@
 package com.chutneytesting.agent.api.mapper;
 
 import static com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration.of;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -58,7 +59,7 @@ public class NetworkDescriptionApiMapperTest {
             createTarget("s1", "proto://lol:75/truc"),
             createTarget("s2", "proto://lol3:75/truc")
         );
-        EnvironmentDto environment = new EnvironmentDto("env", null, targets);
+        EnvironmentDto environment = new EnvironmentDto("env", null, targets, emptyList());
         Set<EnvironmentDto> environments = new HashSet<>();
         environments.add(environment);
 

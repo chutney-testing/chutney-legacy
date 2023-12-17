@@ -20,7 +20,9 @@ export class Environment {
     constructor(
         public name: string,
         public description: string,
-        public targets: Target [] = []) { }
+        public targets: Target [] = [],
+        public variables: EnvironmentVariable[] = []) {
+    }
 }
 
 export class Target {
@@ -29,12 +31,23 @@ export class Target {
         public url: string,
         public properties: Entry [] = [],
         public environment: string = null,
-    ) { }
+    ) {
+    }
+}
+
+export class EnvironmentVariable {
+    constructor(
+        public key: string,
+        public value: string,
+        public env: string = null
+    ) {
+    }
 }
 
 export class TargetFilter {
     constructor(
         public name: string = null,
         public environment: string = null,
-    ) { }
+    ) {
+    }
 }

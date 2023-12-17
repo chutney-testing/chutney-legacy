@@ -21,11 +21,13 @@ import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.domain.EnvironmentVariable;
 import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentException;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.exception.TargetAlreadyExistsException;
+import com.chutneytesting.environment.domain.exception.VariableAlreadyExistingException;
 import com.chutneytesting.tools.file.FileUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -111,6 +113,7 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
     private void doSave(Environment environment) {
         Path environmentPath = getEnvironmentPath(environment.name);
         checkTargetNameUnicity(environment.targets);
+        checkVariableNameUnicity(environment.variables);
         try {
             byte[] bytes = objectMapper.writeValueAsBytes(JsonEnvironment.from(environment));
             try {
@@ -134,6 +137,20 @@ public class JsonFilesEnvironmentRepository implements EnvironmentRepository {
             .collect(Collectors.toSet());
         if (!notUniqueTargets.isEmpty()) {
             throw new TargetAlreadyExistsException("Targets are not unique : " + String.join(", ", notUniqueTargets));
+        }
+    }
+
+    private void checkVariableNameUnicity(Set<EnvironmentVariable> variables) {
+        Set<String> notUniqueVariables = variables
+            .stream()
+            .collect(Collectors.groupingBy(EnvironmentVariable::key, Collectors.counting()))
+            .entrySet()
+            .stream()
+            .filter(entry -> entry.getValue() > 1)
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
+        if (!notUniqueVariables.isEmpty()) {
+            throw new VariableAlreadyExistingException("Variables are not unique : " + String.join(", ", notUniqueVariables));
         }
     }
 

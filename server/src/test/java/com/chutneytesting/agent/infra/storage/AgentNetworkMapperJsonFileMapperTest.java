@@ -47,7 +47,7 @@ public class AgentNetworkMapperJsonFileMapperTest {
         Agent agent = new Agent(new NamedHostAndPort("name", "host", 42));
         Agent reachableAgent = new Agent(new NamedHostAndPort("reachable", "host2", 42));
         TargetDto target = new TargetDto("targetName", "prot://me:42", emptySet());
-        EnvironmentDto environment = new EnvironmentDto("env", null, singletonList(target));
+        EnvironmentDto environment = new EnvironmentDto("env", null, singletonList(target),emptyList());
         TargetId targetId = TargetId.of("targetName", "env");
         agent.addReachable(reachableAgent);
         reachableAgent.addReachable(targetId);
@@ -94,7 +94,7 @@ public class AgentNetworkMapperJsonFileMapperTest {
 
         List<TargetDto> targets = new ArrayList<>();
         targets.add(new TargetDto(targetName, "http://s1:90", emptySet()));
-        EnvironmentDto environment = new EnvironmentDto("env", null, targets);
+        EnvironmentDto environment = new EnvironmentDto("env", null, targets, emptyList());
 
         NetworkDescription description = mapper.fromDto(networkJson, singleton(environment));
 

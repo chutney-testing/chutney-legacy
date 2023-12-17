@@ -21,6 +21,8 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.environment.api.target.dto.TargetDto;
+import com.chutneytesting.environment.api.variable.dto.EnvironmentVariableDto;
+import com.chutneytesting.environment.api.variable.dto.EnvironmentVariableDtoMapper;
 import com.chutneytesting.environment.domain.Environment;
 import java.util.Collections;
 import java.util.List;
@@ -32,22 +34,31 @@ public class EnvironmentDto {
     public final String name;
     public final String description;
     public final List<TargetDto> targets;
+    public final List<EnvironmentVariableDto> variables;
 
     public EnvironmentDto(String name) {
         this.name = name;
         this.description = null;
         this.targets = emptyList();
+        this.variables = emptyList();
     }
 
-    public EnvironmentDto(String name, String description, List<TargetDto> targets) {
+    public EnvironmentDto(String name, String description, List<TargetDto> targets, List<EnvironmentVariableDto> variables) {
         this.name = name;
         this.description = description;
         this.targets = ofNullable(targets).map(Collections::unmodifiableList).orElse(emptyList());
+        this.variables = ofNullable(variables).map(Collections::unmodifiableList).orElse(emptyList());
+
     }
 
     public static EnvironmentDto from(Environment environment) {
         List<TargetDto> targets = environment.targets.stream().map(TargetDto::from).collect(toList());
-        return new EnvironmentDto(environment.name, environment.description, targets);
+        List<EnvironmentVariableDto> variables = environment.variables
+            .stream()
+            .map(EnvironmentVariableDtoMapper.INSTANCE::fromDomain)
+            .collect(toList());
+
+        return new EnvironmentDto(environment.name, environment.description, targets, variables);
     }
 
     public Environment toEnvironment() {
@@ -57,6 +68,9 @@ public class EnvironmentDto {
             .withTargets(
                 ofNullable(targets).orElse(emptyList()).stream().map(t -> t.toTarget(name)).collect(Collectors.toSet())
             )
+            .withVariables(
+                ofNullable(variables).orElse(emptyList()).stream().map(EnvironmentVariableDtoMapper.INSTANCE::toDomain).collect(Collectors.toSet())
+            )
             .build();
     }
 
@@ -65,11 +79,11 @@ public class EnvironmentDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EnvironmentDto that = (EnvironmentDto) o;
-        return Objects.equals(name, that.name) && Objects.equals(targets, that.targets);
+        return Objects.equals(name, that.name) && Objects.equals(targets, that.targets) && Objects.equals(variables, that.variables);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, targets);
+        return Objects.hash(name, targets, variables);
     }
 }

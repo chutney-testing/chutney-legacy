@@ -31,6 +31,8 @@ class EnvironmentConfigurationTest {
         EnvironmentConfiguration environmentConfiguration = new EnvironmentConfiguration(tempPath.toString());
         // Then
         assertThat(environmentConfiguration.getEmbeddedEnvironmentApi()).isNotNull();
+        assertThat(environmentConfiguration.getEmbeddedTargetApi()).isNotNull();
+        assertThat(environmentConfiguration.getEmbeddedVariableApi()).isNotNull();
     }
 
     @Test
