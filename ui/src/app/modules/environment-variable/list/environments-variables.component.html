@@ -80,7 +80,7 @@
         <td class="align-bottom  w25">
             <small class="text-danger"
                    *ngIf="variableEditionForm.get('key').dirty && variableEditionForm.get('key').hasError('name')">
-                {{'admin.environment.name.syntaxe.error' | translate }}
+                {{'global.rules.name' | translate }}
             </small>
             <input type="text" [placeholder]="'global.smallword.key' | translate" class="form-control mt-1" formControlName="key">
         </td>

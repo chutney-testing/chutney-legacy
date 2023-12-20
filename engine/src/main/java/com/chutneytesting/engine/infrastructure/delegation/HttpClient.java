@@ -74,7 +74,7 @@ public class HttpClient implements DelegationClient {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             Dataset dataset = new Dataset(emptyMap(), emptyList()); // TODO - check if it still works
-            HttpEntity<ExecutionRequestDto> request = new HttpEntity<>(ExecutionRequestMapper.from(stepDefinition, dataset), headers);
+            HttpEntity<ExecutionRequestDto> request = new HttpEntity<>(ExecutionRequestMapper.from(stepDefinition, dataset, null), headers);
             StepExecutionReportDto reportDto = restTemplate.postForObject("https://" + delegate.host() + ":" + delegate.port() + EXECUTION_URL, request, StepExecutionReportDto.class);
             return StepExecutionReportMapper.fromDto(reportDto);
         } else {

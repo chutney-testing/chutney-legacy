@@ -48,8 +48,4 @@ public class TestActionTemplateLoader implements ActionTemplateLoader {
     public List<ActionTemplate> load() {
         return actionTemplates;
     }
-
-    public static ActionTemplateRegistry buildRegistry() {
-        return new DefaultActionTemplateRegistry(new ActionTemplateLoaders(Collections.singletonList(new TestActionTemplateLoader())));
-    }
 }

@@ -52,8 +52,6 @@ public class StepDefinition implements StepDefinitionSpi {
 
     public final Map<String, Object> validations;
 
-    public final String environment; // TODO - remove from here and pass as engine argument instead
-
     /**
      * Target on which to execute the current step.
      * Can be null, a step can have no target defined
@@ -72,8 +70,7 @@ public class StepDefinition implements StepDefinitionSpi {
                           Map<String, Object> inputs,
                           List<StepDefinition> steps,
                           Map<String, Object> outputs,
-                          Map<String, Object> validations,
-                          String environment) {
+                          Map<String, Object> validations) {
         this.name = requireNonNull(name, "The argument <name> must not be null");
         this.type = requireNonNull(type, "The argument <type> must not be null");
 
@@ -84,7 +81,6 @@ public class StepDefinition implements StepDefinitionSpi {
         this.steps = steps != null ? Collections.unmodifiableList(steps) : Collections.emptyList();
         this.outputs = outputs != null ? Collections.unmodifiableMap(outputs) : Collections.emptyMap();
         this.validations = validations != null ? Collections.unmodifiableMap(validations) : Collections.emptyMap();
-        this.environment = environment;
     }
 
     public Optional<Target> getTarget() {

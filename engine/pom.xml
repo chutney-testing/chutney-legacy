@@ -68,6 +68,10 @@
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-paranamer</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
         <!-- For ugly hack in InputParameterResolver -->
         <dependency>
             <groupId>net.minidev</groupId>

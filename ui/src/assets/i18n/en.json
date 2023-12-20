@@ -307,8 +307,7 @@
         },
         "environment": {
             "name": {
-                "placeholder": "Name",
-                "syntaxe.error": "Name must be of 3 to 20 letters, digits, underscore or hyphen. Example: My_name-1"
+                "placeholder": "Name"
             },
             "description.placeholder": "Description"
         },

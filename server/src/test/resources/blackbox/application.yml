@@ -37,7 +37,7 @@ spring:
 chutney:
   configuration-folder: target/.chutney/conf
   environment:
-    configuration-folder: ${chutney.configuration-folder}/environment
+    configuration-folder: .chutney/junit/conf # CHUTNEY_JUNIT_ENV_PATH value
   jira:
     configuration-folder: ${chutney.configuration-folder}/jira
 

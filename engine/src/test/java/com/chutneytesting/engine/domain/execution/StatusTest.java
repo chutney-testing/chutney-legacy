@@ -29,7 +29,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class StatusTest {
 
     @Test
-    public void worstWithoutStatussShouldReturnOkStatus() {
+    public void worstWithoutStatusShouldReturnOkStatus() {
         Status status = Status.worst(new ArrayList<>());
 
         Assertions.assertThat(status).isEqualTo(Status.SUCCESS);

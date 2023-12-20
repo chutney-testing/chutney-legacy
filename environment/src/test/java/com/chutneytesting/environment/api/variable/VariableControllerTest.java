@@ -18,25 +18,20 @@
 
 package com.chutneytesting.environment.api.variable;
 
-import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toCollection;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.chutneytesting.environment.api.EnvironmentRestExceptionHandler;
-import com.chutneytesting.environment.api.variable.dto.EnvironmentVariableDto;
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.EnvironmentService;
@@ -84,14 +79,6 @@ public class VariableControllerTest {
                 %s
             ]
         """.formatted(variableTemplate);
-
-    private final String twoVariablesBody = """
-            [
-                %s,
-                %s
-            ]
-        """.formatted(variableTemplate, variableTemplate);
-
     @BeforeEach
     public void setUp() {
         MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
@@ -100,13 +87,6 @@ public class VariableControllerTest {
             .setControllerAdvice(new EnvironmentRestExceptionHandler())
             .setMessageConverters(mappingJackson2HttpMessageConverter)
             .build();
-    }
-
-    private static Object[] params_listTargets_returns_all_available() {
-        return new Object[]{
-            new Object[]{new String[]{}},
-            new Object[]{new String[]{"target1", "target2"}}
-        };
     }
 
     @Test

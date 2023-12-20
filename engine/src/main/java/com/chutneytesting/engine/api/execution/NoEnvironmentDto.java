@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.chutneytesting.engine.domain.execution;
+package com.chutneytesting.engine.api.execution;
 
-import com.chutneytesting.engine.domain.execution.engine.Dataset;
-import com.chutneytesting.engine.domain.execution.engine.Environment;
+import static java.util.Collections.emptyMap;
 
-public interface ExecutionEngine {
+public final class NoEnvironmentDto {
 
-    Long execute(StepDefinition stepDefinition, Dataset dataset, ScenarioExecution execution, Environment environment);
+    public static final EnvironmentDto NO_ENVIRONMENT_DTO = new EnvironmentDto("", emptyMap());
 
-    void shutdown();
+    private NoEnvironmentDto() {
+    }
 }

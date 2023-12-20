@@ -34,11 +34,11 @@ import java.util.stream.Collectors;
 public class ExecutionRequestDto {
 
     public final StepDefinitionRequestDto scenario;
-    public final String environment;
+    public final EnvironmentDto environment;
     public final DatasetDto dataset;
 
     @JsonCreator
-    public ExecutionRequestDto(StepDefinitionRequestDto scenario, String environment, DatasetDto dataset) {
+    public ExecutionRequestDto(StepDefinitionRequestDto scenario, EnvironmentDto environment, DatasetDto dataset) {
         this.scenario = scenario;
         this.environment = environment;
         this.dataset = dataset;

@@ -16,6 +16,7 @@
 
 package com.chutneytesting.glacio.api;
 
+import static com.chutneytesting.environment.EnvironmentConfiguration.DEFAULT_ENV_NAME;
 import static com.chutneytesting.glacio.domain.parser.ParsingContext.PARSING_CONTEXT_KEYS.ENVIRONMENT;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
@@ -37,7 +38,6 @@ import java.util.stream.Collectors;
 public class GlacioAdapter {
 
     public static final String DEFAULT_ENV = "ENV";
-
     private final StepFactory stepFactory;
 
     public GlacioAdapter(StepFactory stepFactory) {
@@ -71,7 +71,6 @@ public class GlacioAdapter {
 
         List<StepDefinitionDto> scenarioSteps = example.getSteps().stream()
             .map(step -> this.stepFactory.toStepDefinition(lang, context, step))
-            //.map(StepDefinitionMapper::toStepDefinitionDto)
             .collect(Collectors.toList());
 
         return buildRootStep(scenarioSteps, name);

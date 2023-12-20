@@ -26,6 +26,7 @@ import com.chutneytesting.environment.infra.JsonFilesEnvironmentRepository;
 
 public class EnvironmentConfiguration {
 
+    public static final String DEFAULT_ENV_NAME = "DEFAULT";
     private final EnvironmentRepository environmentRepository;
     private final EmbeddedEnvironmentApi environmentApi;
     private final EmbeddedTargetApi targetApi;
@@ -43,7 +44,7 @@ public class EnvironmentConfiguration {
 
     private void createDefaultEnvironment(EnvironmentService environmentService) {
         if (environmentRepository.listNames().isEmpty()) {
-            environmentService.createEnvironment(Environment.builder().withName("DEFAULT").build());
+            environmentService.createEnvironment(Environment.builder().withName(DEFAULT_ENV_NAME).build());
         }
     }
 

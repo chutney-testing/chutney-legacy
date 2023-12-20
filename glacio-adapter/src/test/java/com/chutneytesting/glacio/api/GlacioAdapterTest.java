@@ -16,7 +16,7 @@
 
 package com.chutneytesting.glacio.api;
 
-import static com.chutneytesting.glacio.api.GlacioAdapter.DEFAULT_ENV;
+import static com.chutneytesting.environment.EnvironmentConfiguration.DEFAULT_ENV_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -40,7 +40,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 public class GlacioAdapterTest {
 
-    private static final String ENVIRONMENT = DEFAULT_ENV;
+    private static final String ENVIRONMENT = DEFAULT_ENV_NAME;
 
     private GlacioAdapter sut;
     private StepFactory stepFactory;

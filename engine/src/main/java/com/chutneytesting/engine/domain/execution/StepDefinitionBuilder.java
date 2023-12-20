@@ -31,7 +31,6 @@ public class StepDefinitionBuilder {
     private List<StepDefinition> steps;
     private Map<String, Object> outputs;
     private Map<String, Object> validations;
-    private String environment;
 
     public StepDefinitionBuilder withName(String name) {
         this.name = name;
@@ -73,13 +72,8 @@ public class StepDefinitionBuilder {
         return this;
     }
 
-    public StepDefinitionBuilder withEnvironment(String environment) {
-        this.environment = environment;
-        return this;
-    }
-
     public StepDefinition build() {
-        return new StepDefinition(name, target, type, strategy, inputs, steps, outputs, validations, environment);
+        return new StepDefinition(name, target, type, strategy, inputs, steps, outputs, validations);
     }
 
     public static StepDefinitionBuilder copyFrom(StepDefinition definition) {
@@ -92,7 +86,6 @@ public class StepDefinitionBuilder {
         builder.withSteps(definition.steps);
         builder.withOutputs(definition.outputs);
         builder.withValidations(definition.validations);
-        builder.withEnvironment(definition.environment);
         return builder;
     }
 }

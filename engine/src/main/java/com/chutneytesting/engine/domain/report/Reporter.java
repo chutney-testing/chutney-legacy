@@ -126,7 +126,7 @@ public class Reporter {
         try {
             return new StepExecutionReportBuilder()
                 .setName(step.name())
-                .setEnvironment(step.definition().environment)
+                .setEnvironment(getEnvironment(step))
                 .setDuration(step.duration().toMillis())
                 .setStartDate(step.startDate())
                 .setStatus(statusSupplier.apply(step))
@@ -184,5 +184,12 @@ public class Reporter {
         bus.register(EndStepExecutionEvent.class, this::publishReport);
         bus.register(PauseStepExecutionEvent.class, this::publishReport);
         bus.register(EndScenarioExecutionEvent.class, this::publishReportAndCompletePublisher);
+    }
+
+    private String getEnvironment(Step step) {
+        if (step.isParentStep()) {
+            return getEnvironment(step.subSteps().get(0));
+        }
+        return (String) step.getScenarioContext().get("environment");
     }
 }

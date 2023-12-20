@@ -81,7 +81,7 @@ public class JsonFilesEnvironmentRepositoryTest {
         assertThat(testEnv.targets).containsExactly(
             Target.builder().withName("target1").withUrl(url).withEnvironment("TEST").build()
         );
-        assertThat(testEnv.variables).containsExactlyElementsOf(variables);
+        assertThat(testEnv.variables).containsExactlyInAnyOrderElementsOf(variables);
     }
 
     @Test
@@ -128,7 +128,6 @@ public class JsonFilesEnvironmentRepositoryTest {
     @Test
     void should_throw_exception_when_variable_is_not_unique() {
         // Given
-        final String url = "http://target:8080";
         final Environment environment = Environment.builder()
             .withName("TEST")
             .withDescription("some description")

@@ -16,12 +16,15 @@
 
 package com.chutneytesting.engine.api.execution;
 
+import static com.chutneytesting.engine.api.execution.NoEnvironmentDto.NO_ENVIRONMENT_DTO;
+
 import com.chutneytesting.action.spi.injectable.ActionsConfiguration;
 import com.chutneytesting.engine.domain.execution.ExecutionEngine;
 import com.chutneytesting.engine.domain.execution.ExecutionManager;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.engine.Dataset;
+import com.chutneytesting.engine.domain.execution.engine.Environment;
 import com.chutneytesting.engine.domain.report.Reporter;
 import io.reactivex.rxjava3.core.Observable;
 import java.util.Optional;
@@ -48,11 +51,16 @@ public final class EmbeddedTestEngine implements TestEngine {
 
     @Override
     public Long executeAsync(ExecutionRequestDto request) {
-        StepDefinition stepDefinition = StepDefinitionMapper.toStepDefinition(request.scenario.definition, request.environment);
+        StepDefinition stepDefinition = StepDefinitionMapper.toStepDefinition(request.scenario.definition);
         Dataset dataset = Optional.ofNullable(request.dataset)
             .map(d -> new Dataset(d.constants, d.datatable))
             .orElseGet(Dataset::new);
-        return engine.execute(stepDefinition, dataset, ScenarioExecution.createScenarioExecution(actionsConfiguration));
+        Environment environment = EnvironmentDtoMapper.INSTANCE.toDomain(Optional.ofNullable(request.environment).orElse(NO_ENVIRONMENT_DTO));
+        return engine.execute(
+            stepDefinition,
+            dataset,
+            ScenarioExecution.createScenarioExecution(actionsConfiguration),
+            environment);
     }
 
     @Override
