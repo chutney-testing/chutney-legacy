@@ -43,6 +43,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -247,7 +248,7 @@ public class Step {
     }
 
     public List<Step> subSteps() {
-        return steps;
+        return new ArrayList<>(steps);
     }
 
     public StepExecutor executor() {

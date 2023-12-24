@@ -77,7 +77,11 @@ public class ForEachStrategy implements StepExecutionStrategy {
                 .peek(e -> step.addStepExecution(e.getKey()))
                 .toList();
 
-            iterations.forEach(it -> it.getLeft().execute(scenarioExecution, scenarioContext, it.getRight()));
+            iterations.forEach(it -> {
+                HashMap<String, Object> mergedContext = new HashMap<>(localContext);
+                mergedContext.putAll(it.getRight());
+                it.getLeft().execute(scenarioExecution, scenarioContext, mergedContext);
+            });
         }
         step.endExecution(scenarioExecution);
         return step.status();
@@ -88,12 +92,12 @@ public class ForEachStrategy implements StepExecutionStrategy {
         if (dataset.isEmpty()) {
             throw new IllegalArgumentException("Step iteration cannot have empty dataset");
         }
-        List<Map<String, Object>> evaluatedDataset = dataset.stream()
+
+        return dataset.stream()
             .map(iterationData -> iterationData.entrySet().stream()
                 .map(e -> Map.entry(e.getKey(), evaluator.evaluate(e.getValue(), scenarioContext)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))
             .toList();
-        return evaluatedDataset;
     }
 
     private Pair<Step, Map<String, Object>> buildParentIteration(String indexName, Integer index, Step step, List<Step> subSteps, Map<String, Object> iterationContext) {
