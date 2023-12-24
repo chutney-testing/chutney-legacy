@@ -1,0 +1,46 @@
+{
+    "scenario": {
+        "name": "Test iterations",
+        "steps": [
+            {
+                "name": "<i> - Hello env ${#env}",
+                "steps": [
+                    {
+                        "name": "<j> - I am nested for env ${#env}",
+                        "type": "complex",
+                        "outputs": {
+                            "environment_<i>.<j>": "${#env}"
+                        },
+                        "strategy": {
+                            "type": "for",
+                            "parameters": {
+                                "index": "j",
+                                "dataset": [
+                                    {
+                                        "env": "overriddenEnvX"
+                                    },
+                                    {
+                                        "env": "overriddenEnvY"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "strategy": {
+                    "type": "for",
+                    "parameters": {
+                        "dataset": [
+                            {
+                                "env": "envX"
+                            },
+                            {
+                                "env": "envY"
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}

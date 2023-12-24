@@ -1,0 +1,52 @@
+{
+    "scenario": {
+        "name": "Test iterations",
+        "steps": [
+            {
+                "name": "<i> - Hello env ${#env} ",
+                "steps": [
+                    {
+                        "name": "<j> - Hello nested on ${#env} with user ${#user}",
+                        "type": "complex",
+                        "inputs": {
+                            "stringParam": "/${#env}/${#user}"
+                        },
+                        "outputs": {
+                            "check_<i>_<j>": "${\"/\" + #env + \"/\" + #user + \"/<j>\"}"
+                        },
+                        "validations" : {
+                            "check_<i>_<j>_ok": "${#check_<i>_<j> == \"/\" + #env + \"/\" + #user + \"/<j>\"}"
+                        },
+                        "strategy": {
+                            "type": "for",
+                            "parameters": {
+                                "index": "j",
+                                "dataset": [
+                                    {
+                                        "user": "userA"
+                                    },
+                                    {
+                                        "user": "userB"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "strategy": {
+                    "type": "for",
+                    "parameters": {
+                        "dataset": [
+                            {
+                                "env": "envX"
+                            },
+                            {
+                                "env": "envY"
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}
