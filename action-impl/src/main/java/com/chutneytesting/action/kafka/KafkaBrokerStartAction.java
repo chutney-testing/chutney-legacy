@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.EmbeddedKafkaKraftBroker;
+import org.springframework.kafka.test.EmbeddedKafkaZKBroker;
 
 public class KafkaBrokerStartAction implements Action {
 
@@ -55,7 +55,7 @@ public class KafkaBrokerStartAction implements Action {
     @Override
     public ActionExecutionResult execute() {
         try {
-            EmbeddedKafkaBroker broker = new EmbeddedKafkaKraftBroker(1, 2, topics.toArray(new String[0]));
+            EmbeddedKafkaBroker broker = new EmbeddedKafkaZKBroker(1, true, topics.toArray(new String[0]));
             configure(broker);
             logger.info("Try to start kafka broker");
             broker.afterPropertiesSet();

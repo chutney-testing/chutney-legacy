@@ -45,6 +45,7 @@ import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Target;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,15 +71,12 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.MessageListener;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.EmbeddedKafkaKraftBroker;
-import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.kafka.test.EmbeddedKafkaZKBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.MimeType;
-import com.google.common.collect.ImmutableMap;
 
 @SuppressWarnings("unchecked")
-@EmbeddedKafka(partitions = 1, topics = { "topic" })
 public class KafkaBasicConsumeActionTest {
 
     private static final String TOPIC = "topic";
@@ -88,7 +86,7 @@ public class KafkaBasicConsumeActionTest {
     private static final long FIRST_OFFSET = 0L;
     private static final int PARTITION = 0;
     private static final String KEYSTORE_JKS = HttpsServerStartActionTest.class.getResource("/security/server.jks").getPath();
-    private final EmbeddedKafkaBroker embeddedKafkaBroker = new EmbeddedKafkaKraftBroker(1, 1,  TOPIC);
+    private final EmbeddedKafkaBroker embeddedKafkaBroker = new EmbeddedKafkaZKBroker(1, true,  TOPIC);
 
   private static final Target TARGET_STUB = TestTarget.TestTargetBuilder.builder()
         .withTargetId("kafka")
