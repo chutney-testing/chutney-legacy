@@ -70,6 +70,7 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.MessageListener;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.EmbeddedKafkaKraftBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -87,7 +88,7 @@ public class KafkaBasicConsumeActionTest {
     private static final long FIRST_OFFSET = 0L;
     private static final int PARTITION = 0;
     private static final String KEYSTORE_JKS = HttpsServerStartActionTest.class.getResource("/security/server.jks").getPath();
-    private final EmbeddedKafkaBroker embeddedKafkaBroker = new EmbeddedKafkaBroker(1, true, 1, TOPIC);
+    private final EmbeddedKafkaBroker embeddedKafkaBroker = new EmbeddedKafkaKraftBroker(1, 1,  TOPIC);
 
   private static final Target TARGET_STUB = TestTarget.TestTargetBuilder.builder()
         .withTargetId("kafka")
