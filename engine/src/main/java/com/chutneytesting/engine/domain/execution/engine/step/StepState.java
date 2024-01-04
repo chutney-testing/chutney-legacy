@@ -19,6 +19,7 @@ package com.chutneytesting.engine.domain.execution.engine.step;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.domain.execution.report.Status;
@@ -42,6 +43,11 @@ public class StepState {
     private Instant startDate;
     private final List<String> errors = new ArrayList<>();
     private final List<String> informations = new ArrayList<>();
+    private String name;
+
+    public StepState(String name) {
+        this.name = name;
+    }
 
     void beginExecution() {
         if (!stopwatch.isRunning()) {
@@ -116,6 +122,14 @@ public class StepState {
 
     public Status status() {
         return status;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public void resolveName(String name) {
+        this.name = requireNonNull(name, "The argument <name> must not be null");
     }
 
     public List<String> errors() {

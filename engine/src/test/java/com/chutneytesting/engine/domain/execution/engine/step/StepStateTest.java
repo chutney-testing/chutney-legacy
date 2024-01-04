@@ -35,7 +35,7 @@ public class StepStateTest {
 
     @Test
     void should_change_state() {
-        StepState stepState = new StepState();
+        StepState stepState = new StepState("Test");
 
         stepState.successOccurred();
         assertThat(stepState.status()).isEqualTo(Status.SUCCESS);
@@ -55,7 +55,7 @@ public class StepStateTest {
 
     @Test
     void should_handle_null_or_empty_errors() {
-        StepState stepState = new StepState();
+        StepState stepState = new StepState("Test");
 
         stepState.errorOccurred(null, "");
         stepState.addErrors(null, "");
@@ -65,7 +65,7 @@ public class StepStateTest {
 
     @Test
     void should_handle_null_or_empty_informations() {
-        StepState stepState = new StepState();
+        StepState stepState = new StepState("Test");
 
         stepState.successOccurred(null, "");
         stepState.addInformation(null, "");
@@ -75,7 +75,7 @@ public class StepStateTest {
 
     @Test
     void should_manage_watch_with_idempotency() {
-        StepState stepState = new StepState();
+        StepState stepState = new StepState("Test");
 
         List<Long> durations = new ArrayList<>();
         IntStream.range(1, 5).forEach(i -> {
@@ -100,7 +100,7 @@ public class StepStateTest {
 
     @Test
     void should_manage_watch_independently_of_status() {
-        StepState stepState = new StepState();
+        StepState stepState = new StepState("Test");
         Status initialStatus = stepState.status();
 
         stepState.startWatch();
@@ -113,7 +113,7 @@ public class StepStateTest {
     @Test
     void should_change_status_and_clean_logs_when_reset() {
         // Given
-        StepState stepState = new StepState();
+        StepState stepState = new StepState("Test");
         stepState.addInformation("...");
         stepState.errorOccurred("...");
 
@@ -132,7 +132,7 @@ public class StepStateTest {
 
     @Test
     void should_begin_execution() {
-        StepState stepState = new StepState();
+        StepState stepState = new StepState("Test");
 
         stepState.beginExecution();
         awaitDuring(100, MILLISECONDS);
@@ -155,7 +155,7 @@ public class StepStateTest {
 
     @Test
     void should_end_execution() {
-        StepState stepState = new StepState();
+        StepState stepState = new StepState("Test");
         stepState.startWatch();
         Status initialStatus = stepState.status();
         awaitDuring(100, MILLISECONDS);
@@ -175,7 +175,7 @@ public class StepStateTest {
 
     @Test
     void should_change_parent_step_running_status_when_end_execution() {
-        StepState stepState = new StepState();
+        StepState stepState = new StepState("Test");
         stepState.beginExecution();
         assertThat(stepState.status()).isEqualTo(Status.RUNNING);
 
@@ -191,7 +191,7 @@ public class StepStateTest {
         class Informations {
             @RepeatedTest(20)
             void add_information() {
-                StepState stepState = new StepState();
+                StepState stepState = new StepState("Test");
                 for (int i = 0; i < 10000; i++) {
                     stepState.addInformation("info " + i);
                 }
@@ -208,7 +208,7 @@ public class StepStateTest {
 
             @RepeatedTest(20)
             void success_occurred() {
-                StepState stepState = new StepState();
+                StepState stepState = new StepState("Test");
                 for (int i = 0; i < 10000; i++) {
                     stepState.addInformation("info " + i);
                 }
@@ -228,7 +228,7 @@ public class StepStateTest {
         class Errors {
             @RepeatedTest(20)
             void add_error() {
-                StepState stepState = new StepState();
+                StepState stepState = new StepState("Test");
                 for (int i = 0; i < 10000; i++) {
                     stepState.addErrors("error " + i);
                 }
@@ -245,7 +245,7 @@ public class StepStateTest {
 
             @RepeatedTest(20)
             void error_occurred() {
-                StepState stepState = new StepState();
+                StepState stepState = new StepState("Test");
                 for (int i = 0; i < 10000; i++) {
                     stepState.addErrors("error " + i);
                 }
