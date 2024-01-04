@@ -47,6 +47,9 @@ public final class DefaultStepExecutionStrategy implements StepExecutionStrategy
                           Map<String, Object> localContext,
                           StepExecutionStrategies strategies) {
         if (step.isParentStep()) {
+            Map<String, Object> context = new HashMap<>(scenarioContext);
+            context.putAll(localContext);
+            step.resolveName(step.dataEvaluator().evaluateString(step.getName(), context));
             Iterator<Step> subStepsIterator = step.subSteps().iterator();
             step.beginExecution(scenarioExecution);
             Step currentRunningStep = step;
