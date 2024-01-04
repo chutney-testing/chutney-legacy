@@ -56,11 +56,12 @@ public class StepIterationStrategy implements StepExecutionStrategy {
         final String indexName = (String) Optional.ofNullable(strategyDefinition.strategyProperties.get("index")).orElse("i");
         step.beginExecution(scenarioExecution);
         AtomicInteger index = new AtomicInteger(0);
+        List<String> whiteList = dataset.isEmpty() ? List.of() : dataset.get(index.get()).keySet().stream().toList();
+        Map<String, Object> context = new HashMap<>(scenarioContext);
+        context.putAll(localContext);
+        step.resolveName(step.dataEvaluator().evaluateString(step.getName(), context, whiteList));
 
         if (step.isParentStep()) {
-            Map<String, Object> context = new HashMap<>(scenarioContext);
-            context.putAll(localContext);
-            step.resolveName(step.dataEvaluator().evaluateString(step.getName(), context));
             List<Step> subSteps = List.copyOf(step.subSteps());
             step.removeStepExecution();
 
