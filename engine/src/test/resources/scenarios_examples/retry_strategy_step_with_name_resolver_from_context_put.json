@@ -1,0 +1,31 @@
+{
+    "scenario": {
+        "name": "Scenario",
+        "steps": [
+            {
+                "name": "Step 1",
+                "type": "context-put",
+                "inputs": {
+                    "entries": {
+                        "key": "value"
+                    }
+                }
+            },
+            {
+                "name": "Step 2 Parent : ${#key}",
+                "strategy": {
+                    "type": "retry-with-timeout",
+                    "parameters": {
+                        "timeOut": "240 s",
+                        "retryDelay": "5 s"
+                    }
+                },
+                "steps": [
+                    {
+                        "type": "success"
+                    }
+                ]
+            }
+        ]
+    }
+}
