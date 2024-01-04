@@ -20,6 +20,7 @@ import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContext;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.Status;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -46,6 +47,9 @@ public final class DefaultStepExecutionStrategy implements StepExecutionStrategy
                           Map<String, Object> localContext,
                           StepExecutionStrategies strategies) {
         if (step.isParentStep()) {
+            Map<String, Object> context = new HashMap<>(scenarioContext);
+            context.putAll(localContext);
+            step.resolveName(step.dataEvaluator().evaluateString(step.getName(), context));
             Iterator<Step> subStepsIterator = step.subSteps().iterator();
             step.beginExecution(scenarioExecution);
             Step currentRunningStep = step;
