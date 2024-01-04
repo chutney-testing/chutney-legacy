@@ -1,0 +1,30 @@
+{
+    "scenario": {
+        "name": "Scenario",
+        "steps": [
+            {
+                "name": "Step 1",
+                "type": "context-put",
+                "inputs": {
+                    "entries": {
+                        "key": "value"
+                    }
+                }
+            },
+            {
+                "name": "Step 2 Parent : ${#key}",
+                "strategy": {
+                    "type": "if",
+                    "parameters": {
+                        "condition": true
+                    }
+                },
+                "steps": [
+                    {
+                        "type": "success"
+                    }
+                ]
+            }
+        ]
+    }
+}
