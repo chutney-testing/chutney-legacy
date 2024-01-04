@@ -20,9 +20,9 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.action.spi.FinallyAction;
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
+import com.chutneytesting.action.spi.FinallyAction;
 import com.chutneytesting.action.spi.injectable.FinallyActionRegistry;
 import com.chutneytesting.action.spi.injectable.Input;
 import com.chutneytesting.action.spi.injectable.Logger;
@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.EmbeddedKafkaZKBroker;
 
 public class KafkaBrokerStartAction implements Action {
 
@@ -54,7 +55,7 @@ public class KafkaBrokerStartAction implements Action {
     @Override
     public ActionExecutionResult execute() {
         try {
-            EmbeddedKafkaBroker broker = new EmbeddedKafkaBroker(1, true, topics.toArray(new String[0]));
+            EmbeddedKafkaBroker broker = new EmbeddedKafkaZKBroker(1, true, topics.toArray(new String[0]));
             configure(broker);
             logger.info("Try to start kafka broker");
             broker.afterPropertiesSet();

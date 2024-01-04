@@ -85,7 +85,7 @@
         <buildMetadataRequired>false</buildMetadataRequired>
 
         <!-- Runtime dependencies versions -->
-        <springboot.version>3.1.2</springboot.version>
+        <springboot.version>3.2.1</springboot.version>
         <guava.version>31.0.1-jre</guava.version> <!-- Divergence on dependencies checker-qual and error_prone_annotations --> <!-- Test on https://github.com/FasterXML/jackson-datatypes-collections/tree/2.14/guava -->
 
         <mapstruct.version>1.5.5.Final</mapstruct.version>
@@ -107,12 +107,12 @@
         <org.everit.json.schema.version>1.14.1</org.everit.json.schema.version> <!-- Divergence on dependencies commons-logging and joda-time -->
 
         <!-- action-impl test dependencies versions -->
-        <activemq-junit.version>5.18.2</activemq-junit.version> <!-- = Follow spring boot version -->
+        <activemq-junit.version>5.18.3</activemq-junit.version> <!-- = Follow spring boot version -->
         <rabbitmq-mock.version>1.2.0</rabbitmq-mock.version>
 
         <!-- test dependencies versions -->
         <jqwik.version>1.8.1</jqwik.version>
-        <wiremock.version>3.0.1</wiremock.version>
+        <wiremock.version>3.3.1</wiremock.version>
         <testcontainers.version>1.19.3</testcontainers.version>
     </properties>
 
@@ -338,8 +338,8 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>com.github.tomakehurst</groupId>
-                <artifactId>wiremock</artifactId>
+                <groupId>org.wiremock</groupId>
+                <artifactId>wiremock-standalone</artifactId>
                 <version>${wiremock.version}</version>
                 <exclusions>
                     <exclusion>
@@ -381,7 +381,7 @@
             <dependency>
                 <groupId>io.opentelemetry</groupId>
                 <artifactId>opentelemetry-sdk-logs</artifactId>
-                <version>1.25.0-alpha</version>
+                <version>1.31.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
