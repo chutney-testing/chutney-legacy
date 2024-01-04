@@ -25,6 +25,7 @@ import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEval
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContext;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.Status;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -56,6 +57,9 @@ public class StepIterationStrategy implements StepExecutionStrategy {
         AtomicInteger index = new AtomicInteger(0);
 
         if (step.isParentStep()) {
+            Map<String, Object> context = new HashMap<>(scenarioContext);
+            context.putAll(localContext);
+            step.resolveName(step.dataEvaluator().evaluateString(step.getName(), context));
             List<Step> subSteps = List.copyOf(step.subSteps());
             step.removeStepExecution();
 
@@ -119,7 +123,7 @@ public class StepIterationStrategy implements StepExecutionStrategy {
     private StepDefinition iterationDefinition(String indexName, Integer index, StepDefinition definition, StepDataEvaluator evaluator, StepStrategyDefinition strategyDefinition, Map<String, Object> iterationContext) {
 
         return StepDefinitionBuilder.copyFrom(definition)
-            .withName(evaluator.evaluateString(index(indexName, index, definition.name), iterationContext))
+            .withName(index(indexName, index, definition.name))
             .withInputs(index(indexName, index, definition.inputs()))
             .withOutputs(index(indexName, index, definition.outputs))
             .withValidations(index(indexName, index, definition.validations))

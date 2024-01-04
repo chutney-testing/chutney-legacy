@@ -46,6 +46,24 @@ class StepIterationStrategyTest {
     }
 
     @Test
+    public void should_resolve_name_from_context_with_iteration_strategy() {
+        // G
+        final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iteration_strategy_step_with_name_resolver_from_context_put.json", ExecutionRequestDto.class);
+
+        // W
+        StepExecutionReportDto result = testEngine.execute(requestDto);
+
+        // T
+        assertThat(result).hasFieldOrPropertyWithValue("status", SUCCESS);
+        assertThat(result.steps).hasSize(2);
+        assertThat(result.steps.get(1).name).isEqualTo("Step 2 Parent : value");
+        assertThat(result.steps.get(1).steps).hasSize(2);
+        assertThat(result.steps.get(1).steps.get(0).name).isEqualTo("Step 2 Parent : value");
+        assertThat(result.steps.get(1).steps.get(1).name).isEqualTo("Step 2 Parent : value");
+    }
+
+    @Test
     public void should_repeat_step_with_iteration_strategy() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
