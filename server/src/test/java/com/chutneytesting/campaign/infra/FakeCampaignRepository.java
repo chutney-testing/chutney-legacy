@@ -19,6 +19,7 @@ package com.chutneytesting.campaign.infra;
 import static java.util.Optional.ofNullable;
 import static org.assertj.core.util.Lists.newArrayList;
 
+import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
@@ -29,13 +30,15 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.NotImplementedException;
 import org.assertj.core.util.Lists;
 
-public class FakeCampaignRepository implements CampaignRepository {
+public class FakeCampaignRepository implements CampaignRepository, CampaignExecutionRepository {
 
     private final AtomicLong sequence = new AtomicLong();
     private final Map<Long, Campaign> campaignsById = new HashMap<>();
@@ -57,7 +60,7 @@ public class FakeCampaignRepository implements CampaignRepository {
     }
 
     @Override
-    public void saveExecution(Long campaignId, CampaignExecution execution) {
+    public void saveCampaignExecution(Long campaignId, CampaignExecution execution) {
         ofNullable(campaignsById.get(campaignId)).ifPresent(campaign -> {
             Campaign c = new Campaign(campaign.id, campaign.title, campaign.title, campaign.scenarioIds, campaign.executionEnvironment(), false, false, null, null);
             createOrUpdate(c);
@@ -95,7 +98,7 @@ public class FakeCampaignRepository implements CampaignRepository {
     }
 
     @Override
-    public List<CampaignExecution> findExecutionsById(Long campaignId) {
+    public List<CampaignExecution> findExecutionHistory(Long campaignId) {
         return ofNullable(campaignsExecutionById.get(campaignId)).orElse(newArrayList());
     }
 
@@ -119,12 +122,12 @@ public class FakeCampaignRepository implements CampaignRepository {
     }
 
     @Override
-    public Long newCampaignExecution(Long campaignId) {
+    public Long generateCampaignExecutionId(Long campaignId, String environment) {
         return new Random(100).nextLong();
     }
 
     @Override
-    public CampaignExecution findByExecutionId(Long campaignExecutionId) {
+    public CampaignExecution getCampaignExecutionById(Long campaignExecutionId) {
         throw new NotImplementedException();
     }
 
@@ -133,6 +136,44 @@ public class FakeCampaignRepository implements CampaignRepository {
         return campaignsById.values().stream()
             .filter(campaign -> campaign.scenarioIds.contains(scenarioId))
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<CampaignExecution> currentExecution(Long campaignId) {
+        // not needed in tests
+        return Optional.empty();
+    }
+
+    @Override
+    public List<CampaignExecution> currentExecutions() {
+        // not needed in tests
+        return null;
+    }
+
+    @Override
+    public void startExecution(Long campaignId, CampaignExecution campaignExecution) {
+        // not needed in tests
+    }
+
+    @Override
+    public void stopExecution(Long campaignId) {
+        // not needed in tests
+    }
+
+    @Override
+    public CampaignExecution getLastExecution(Long campaignId) {
+        // not needed in tests
+        return null;
+    }
+
+    @Override
+    public void deleteExecutions(Set<Long> executionsIds) {
+        // not needed in tests
+    }
+
+    @Override
+    public void clearAllExecutionHistory(Long id) {
+        // not needed in tests
     }
 
     // Duplicate of com.chutneytesting.design.api.campaign.CampaignController#executionComparatorReportByExecutionId

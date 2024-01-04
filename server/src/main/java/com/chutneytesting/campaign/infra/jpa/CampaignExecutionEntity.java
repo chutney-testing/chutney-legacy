@@ -73,8 +73,8 @@ public class CampaignExecutionEntity {
     public CampaignExecutionEntity() {
     }
 
-    public CampaignExecutionEntity(Long campaignId) {
-        this(null, campaignId, null, null, null, null, null, null, null);
+    public CampaignExecutionEntity(Long campaignId, String environment) {
+        this(null, campaignId, null, null, environment, null, null, null, null);
     }
 
     public CampaignExecutionEntity(Long id, Long campaignId, List<ScenarioExecutionEntity> scenarioExecutions, Boolean partial, String environment, String userId, String datasetId, Integer datasetVersion, Integer version) {

@@ -23,19 +23,19 @@ import java.util.List;
 
 public class CampaignService {
 
-    private final CampaignRepository campaignRepository;
+    private final CampaignExecutionRepository campaignExecutionRepository;
 
-    public CampaignService(CampaignRepository campaignRepository) {
-        this.campaignRepository = campaignRepository;
+    public CampaignService(CampaignExecutionRepository campaignExecutionRepository) {
+        this.campaignExecutionRepository = campaignExecutionRepository;
     }
 
     public CampaignExecution findByExecutionId(Long campaignExecutionId) {
-        CampaignExecution report = campaignRepository.findByExecutionId(campaignExecutionId);
+        CampaignExecution report = campaignExecutionRepository.getCampaignExecutionById(campaignExecutionId);
         return report.withoutRetries();
     }
 
     public List<CampaignExecution> findExecutionsById(Long campaignId) {
-        return campaignRepository.findExecutionsById(campaignId).stream()
+        return campaignExecutionRepository.findExecutionHistory(campaignId).stream()
             .map(CampaignExecution::withoutRetries)
             .collect(toList());
     }

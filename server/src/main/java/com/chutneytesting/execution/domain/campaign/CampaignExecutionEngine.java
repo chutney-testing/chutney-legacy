@@ -73,6 +73,7 @@ public class CampaignExecutionEngine {
     private final ScenarioExecutionEngine scenarioExecutionEngine;
     private final ExecutionHistoryRepository executionHistoryRepository;
     private final TestCaseRepository testCaseRepository;
+    //TODO please not use type Optional as field
     private final Optional<DataSetHistoryRepository> dataSetHistoryRepository;
     private final JiraXrayEmbeddedApi jiraXrayEmbeddedApi;
     private final ChutneyMetrics metrics;
@@ -143,12 +144,12 @@ public class CampaignExecutionEngine {
     public void stopExecution(Long executionId) {
         LOGGER.trace("Stop requested for " + executionId);
         ofNullable(currentCampaignExecutionsStopRequests.computeIfPresent(executionId, (aLong, aBoolean) -> Boolean.TRUE))
-            .orElseThrow(() -> new CampaignExecutionNotFoundException(executionId, null));
+            .orElseThrow(() -> new CampaignExecutionNotFoundException(null,executionId));
     }
 
     public CampaignExecution executeScenarioInCampaign(List<String> failedIds, Campaign campaign, String userId) {
         verifyNotAlreadyRunning(campaign);
-        Long executionId = campaignRepository.newCampaignExecution(campaign.id);
+        Long executionId = campaignExecutionRepository.generateCampaignExecutionId(campaign.id, campaign.executionEnvironment());
 
         CampaignExecution campaignExecution = new CampaignExecution(
             executionId,
@@ -178,7 +179,7 @@ public class CampaignExecutionEngine {
             campaignExecutionRepository.stopExecution(campaign.id);
 
             Try.exec(() -> {
-                campaignRepository.saveExecution(campaign.id, campaignExecution);
+                campaignExecutionRepository.saveCampaignExecution(campaign.id, campaignExecution);
                 return null;
             }).ifFailed(e -> LOGGER.error("Error saving report of campaign {} execution {}", campaign.id, campaignExecution.executionId));
 
@@ -280,6 +281,7 @@ public class CampaignExecutionEngine {
     }
 
     private ExecutionRequest executionWithCombinedParametersFromCampaignAndTestCase(Campaign campaign, TestCase testCase, CampaignExecution campaignExecution) {
+        // TODO if dataset null should throw exception ?
         DataSet dataset = ofNullable(campaign.externalDatasetId)
             .map(datasetRepository::findById)
             .orElseGet(() -> datasetRepository.findById(testCase.metadata().defaultDataset()));

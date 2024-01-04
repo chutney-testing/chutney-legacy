@@ -33,4 +33,16 @@ public interface CampaignExecutionRepository {
     CampaignExecution getLastExecution(Long campaignId);
 
     void deleteExecutions(Set<Long> executionsIds);
+
+    void saveCampaignExecution(Long campaignId, CampaignExecution execution);
+
+    void clearAllExecutionHistory(Long id);
+
+    List<CampaignExecution> findLastExecutions(Long numberOfExecution);
+
+    Long generateCampaignExecutionId(Long campaignId, String environment);
+
+    List<CampaignExecution> findExecutionHistory(Long campaignId);
+
+    CampaignExecution getCampaignExecutionById(Long campaignExecutionId);
 }

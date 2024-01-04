@@ -37,14 +37,14 @@ class CampaignServiceTest {
     @Test
     void should_return_campaign_report_by_campaign_execution_id() {
         // G
-        CampaignRepository campaignRepository = mock(CampaignRepository.class);
-        CampaignService campaignService = new CampaignService(campaignRepository);
+        CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
+        CampaignService campaignService = new CampaignService(campaignExecutionRepository);
 
         ExecutionHistory.ExecutionSummary execution1 = ImmutableExecutionHistory.ExecutionSummary.builder()
             .executionId(1L)
             .testCaseTitle("")
             .time(LocalDateTime.now())
-            .duration(0l)
+            .duration(0L)
             .environment("")
             .user("")
             .status(SUCCESS)
@@ -54,7 +54,7 @@ class CampaignServiceTest {
             .executionId(2L)
             .testCaseTitle("")
             .time(LocalDateTime.now())
-            .duration(0l)
+            .duration(0L)
             .environment("")
             .user("")
             .status(SUCCESS)
@@ -72,7 +72,7 @@ class CampaignServiceTest {
             .addScenarioExecutionReport(scenarioExecutionReport1)
             .addScenarioExecutionReport(scenarioExecutionReport2)
             .build();
-        when(campaignRepository.findByExecutionId(anyLong())).thenReturn(campaignReport);
+        when(campaignExecutionRepository.getCampaignExecutionById(anyLong())).thenReturn(campaignReport);
 
         // W
         CampaignExecution report = campaignService.findByExecutionId(0L);
@@ -88,15 +88,15 @@ class CampaignServiceTest {
     @Test
     void should_return_campaign_report_by_campaign_execution_id_when_retry_scenario_executions_exist() {
         // G
-        CampaignRepository campaignRepository = mock(CampaignRepository.class);
-        CampaignService campaignService = new CampaignService(campaignRepository);
+        CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
+        CampaignService campaignService = new CampaignService(campaignExecutionRepository);
 
         String scenarioId = "scenario 1";
         ExecutionHistory.ExecutionSummary execution1 = ImmutableExecutionHistory.ExecutionSummary.builder()
             .executionId(1L)
             .testCaseTitle("")
             .time(LocalDateTime.now().minusMinutes(1))
-            .duration(0l)
+            .duration(0L)
             .environment("")
             .user("")
             .status(FAILURE)
@@ -106,7 +106,7 @@ class CampaignServiceTest {
             .executionId(2L)
             .testCaseTitle("")
             .time(LocalDateTime.now())
-            .duration(0l)
+            .duration(0L)
             .environment("")
             .user("")
             .status(SUCCESS)
@@ -116,7 +116,7 @@ class CampaignServiceTest {
             .addScenarioExecutionReport(scenarioExecutionReport1)
             .addScenarioExecutionReport(scenarioExecutionReport2)
             .build();
-        when(campaignRepository.findByExecutionId(anyLong())).thenReturn(campaignReport);
+        when(campaignExecutionRepository.getCampaignExecutionById(anyLong())).thenReturn(campaignReport);
 
         // W
         CampaignExecution report = campaignService.findByExecutionId(0L);
@@ -130,12 +130,12 @@ class CampaignServiceTest {
     void should_return_all_executions_of_a_campaign() {
         // Given
         Long campaignId = 1L;
-        CampaignRepository campaignRepository = mock(CampaignRepository.class);
+        CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
         ExecutionHistory.ExecutionSummary execution1 = ImmutableExecutionHistory.ExecutionSummary.builder()
             .executionId(1L)
             .testCaseTitle("")
             .time(LocalDateTime.now())
-            .duration(0l)
+            .duration(0L)
             .environment("")
             .user("")
             .status(SUCCESS)
@@ -145,7 +145,7 @@ class CampaignServiceTest {
             .executionId(2L)
             .testCaseTitle("")
             .time(LocalDateTime.now())
-            .duration(0l)
+            .duration(0L)
             .environment("")
             .user("")
             .status(SUCCESS)
@@ -159,8 +159,8 @@ class CampaignServiceTest {
                 .addScenarioExecutionReport(scenarioExecutionReport2)
                 .build()
         );
-        when(campaignRepository.findExecutionsById(anyLong())).thenReturn(allExecutions);
-        CampaignService sut = new CampaignService(campaignRepository);
+        when(campaignExecutionRepository.findExecutionHistory(anyLong())).thenReturn(allExecutions);
+        CampaignService sut = new CampaignService(campaignExecutionRepository);
 
         // When
         List<CampaignExecution> executionsReports = sut.findExecutionsById(campaignId);
@@ -173,13 +173,13 @@ class CampaignServiceTest {
     void should_return_all_executions_with_retries_of_a_campaign() {
         // Given
         Long campaignId = 1L;
-        CampaignRepository campaignRepository = mock(CampaignRepository.class);
+        CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
         String scenario1Id = "scenario 1";
         ExecutionHistory.ExecutionSummary execution1 = ImmutableExecutionHistory.ExecutionSummary.builder()
             .executionId(1L)
             .testCaseTitle("")
             .time(LocalDateTime.now())
-            .duration(0l)
+            .duration(0L)
             .environment("")
             .user("")
             .status(SUCCESS)
@@ -189,7 +189,7 @@ class CampaignServiceTest {
             .executionId(2L)
             .testCaseTitle("")
             .time(LocalDateTime.now())
-            .duration(0l)
+            .duration(0L)
             .environment("")
             .user("")
             .status(SUCCESS)
@@ -200,7 +200,7 @@ class CampaignServiceTest {
             .executionId(3L)
             .testCaseTitle("")
             .time(LocalDateTime.now())
-            .duration(0l)
+            .duration(0L)
             .environment("")
             .user("")
             .status(SUCCESS)
@@ -210,7 +210,7 @@ class CampaignServiceTest {
             .executionId(4L)
             .testCaseTitle("")
             .time(LocalDateTime.now())
-            .duration(0l)
+            .duration(0L)
             .environment("")
             .user("")
             .status(SUCCESS)
@@ -220,7 +220,7 @@ class CampaignServiceTest {
             .executionId(5L)
             .testCaseTitle("")
             .time(LocalDateTime.now())
-            .duration(0l)
+            .duration(0L)
             .environment("")
             .user("")
             .status(SUCCESS)
@@ -245,8 +245,8 @@ class CampaignServiceTest {
                 .addScenarioExecutionReport(scenarioExecutionReport5)
                 .build()
         );
-        when(campaignRepository.findExecutionsById(anyLong())).thenReturn(allExecutions);
-        CampaignService sut = new CampaignService(campaignRepository);
+        when(campaignExecutionRepository.findExecutionHistory(anyLong())).thenReturn(allExecutions);
+        CampaignService sut = new CampaignService(campaignExecutionRepository);
 
         // When
         List<CampaignExecution> executionsReports = sut.findExecutionsById(campaignId);

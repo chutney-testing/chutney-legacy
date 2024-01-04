@@ -357,7 +357,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             ScenarioExecutionCampaign scenarioExecutionOneReport = new ScenarioExecutionCampaign(scenarioEntity.getId().toString(), scenarioEntity.getTitle(), scenarioExecutionOne.toDomain());
             ScenarioExecutionEntity scenarioExecutionTwo = givenScenarioExecution(scenarioEntity.getId(), SUCCESS);
 
-            Long campaignExecutionId = campaignExecutionDBRepository.generateCampaignExecutionId(campaign.id());
+            Long campaignExecutionId = campaignExecutionDBRepository.generateCampaignExecutionId(campaign.id(), "executionEnv");
             CampaignExecution campaignExecution = new CampaignExecution(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
             campaignExecutionDBRepository.saveCampaignExecution(campaign.id(), campaignExecution);
 
@@ -385,7 +385,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             ScenarioExecutionCampaign scenarioExecutionOneReport = new ScenarioExecutionCampaign(scenarioEntity.getId().toString(), scenarioEntity.getTitle(), scenarioExecutionOne.toDomain());
             givenScenarioExecution(scenarioEntity.getId(), SUCCESS);
 
-            Long campaignExecutionId = campaignExecutionDBRepository.generateCampaignExecutionId(campaign.id());
+            Long campaignExecutionId = campaignExecutionDBRepository.generateCampaignExecutionId(campaign.id(), "executionEnv");
             CampaignExecution campaignExecution = new CampaignExecution(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionOneReport), campaign.title(), true, "env", "#2:87", 5, "user");
             campaignExecutionDBRepository.saveCampaignExecution(campaign.id(), campaignExecution);
 
@@ -409,11 +409,9 @@ public class DatabaseExecutionHistoryRepositoryTest {
 
             sut.deleteExecutions(Set.of(exec1.executionId(), exec2.executionId()));
 
-            List.of(exec1.executionId(), exec2.executionId()).forEach(executionId -> {
-                assertThatThrownBy(() ->
-                    sut.getExecutionSummary(executionId)
-                ).isInstanceOf(ReportNotFoundException.class);
-            });
+            List.of(exec1.executionId(), exec2.executionId()).forEach(executionId -> assertThatThrownBy(() ->
+                sut.getExecutionSummary(executionId)
+            ).isInstanceOf(ReportNotFoundException.class));
         }
 
         private DetachedExecution buildDetachedExecution(ServerReportStatus status, String info, String error) {
