@@ -64,6 +64,50 @@ class StepIterationStrategyTest {
     }
 
     @Test
+    public void should_resolve_name_with_idx_in_child_from_dataset_of_parent_of_parent() {
+        // G
+        final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iteration_strategy_using_idx_in_sub_sub_step.json", ExecutionRequestDto.class);
+
+        // W
+        StepExecutionReportDto result = testEngine.execute(requestDto);
+
+        // T
+        assertThat(result).hasFieldOrPropertyWithValue("status", SUCCESS);
+        assertThat(result.name).isEqualTo("<i> - parent");
+        assertThat(result.steps).hasSize(1);
+        assertThat(result.steps.get(0).name).isEqualTo("0 - parent");
+        assertThat(result.steps.get(0).steps).hasSize(1);
+        assertThat(result.steps.get(0).steps.get(0).name).isEqualTo("0 sub parent");
+        assertThat(result.steps.get(0).steps.get(0).steps).hasSize(1);
+        assertThat(result.steps.get(0).steps.get(0).steps.get(0).name).isEqualTo("0 sub sub parent");
+        assertThat(result.steps.get(0).steps.get(0).steps.get(0).steps).hasSize(1);
+        assertThat(result.steps.get(0).steps.get(0).steps.get(0).steps.get(0).name).isEqualTo("0 child");
+    }
+
+    @Test
+    public void should_resolve_name_in_child_with_value_from_dataset_of_parent_of_parent() {
+        // G
+        final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iteration_strategy_using_value_in_sub_sub_sub_step.json", ExecutionRequestDto.class);
+
+        // W
+        StepExecutionReportDto result = testEngine.execute(requestDto);
+
+        // T
+        assertThat(result).hasFieldOrPropertyWithValue("status", SUCCESS);
+        assertThat(result.name).isEqualTo("${#env} - parent");
+        assertThat(result.steps).hasSize(1);
+        assertThat(result.steps.get(0).name).isEqualTo("env0 - parent");
+        assertThat(result.steps.get(0).steps).hasSize(1);
+        assertThat(result.steps.get(0).steps.get(0).name).isEqualTo("env0 sub parent");
+        assertThat(result.steps.get(0).steps.get(0).steps).hasSize(1);
+        assertThat(result.steps.get(0).steps.get(0).steps.get(0).name).isEqualTo("env0 sub sub parent");
+        assertThat(result.steps.get(0).steps.get(0).steps.get(0).steps).hasSize(1);
+        assertThat(result.steps.get(0).steps.get(0).steps.get(0).steps.get(0).name).isEqualTo("env0 child");
+    }
+
+    @Test
     public void should_repeat_step_with_iteration_strategy() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();

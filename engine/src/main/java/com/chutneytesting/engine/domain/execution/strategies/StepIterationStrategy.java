@@ -21,6 +21,7 @@ import static java.util.Collections.emptyList;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.StepDefinitionBuilder;
+import com.chutneytesting.engine.domain.execution.engine.StepExecutor;
 import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEvaluator;
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContext;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
@@ -99,12 +100,9 @@ public class StepIterationStrategy implements StepExecutionStrategy {
 
     private Pair<Step, Map<String, Object>> buildParentIteration(String indexName, Integer index, Step step, List<Step> subSteps, Map<String, Object> iterationContext) {
 
-        StepDefinition newDef = iterationDefinition(indexName, index, step.definition(), step.dataEvaluator(), new StepStrategyDefinition("", new StrategyProperties()), iterationContext);
+        StepDefinition newDef = iterationDefinition(indexName, index, step.definition(), new StepStrategyDefinition("", new StrategyProperties()));
         List<Step> newSubSteps = subSteps.stream().map(
-            subStep -> {
-                StepDefinition subStepDef = iterationDefinition(indexName, index, subStep.definition(), subStep.dataEvaluator(), subStep.strategy().orElse(new StepStrategyDefinition("", new StrategyProperties())), iterationContext);
-                return new Step(subStep.dataEvaluator(), subStepDef, subStep.executor(), subStep.subSteps());
-            }
+            subStep -> buildIterationDefinition(indexName, index, subStep.dataEvaluator(), subStep.definition(), subStep.executor(), subStep.subSteps(), subStep.strategy().orElse(new StepStrategyDefinition("", new StrategyProperties())))
         ).collect(Collectors.toList());
 
         return Pair.of(
@@ -115,19 +113,28 @@ public class StepIterationStrategy implements StepExecutionStrategy {
 
     private Pair<Step, Map<String, Object>> buildIteration(String indexName, Integer index, Step step, Map<String, Object> iterationContext) {
         return Pair.of(
-            new Step(step.dataEvaluator(), iterationDefinition(indexName, index, step.definition(), step.dataEvaluator(), new StepStrategyDefinition("", new StrategyProperties()), iterationContext), step.executor(), emptyList()),
+            new Step(step.dataEvaluator(), iterationDefinition(indexName, index, step.definition(), new StepStrategyDefinition("", new StrategyProperties())), step.executor(), emptyList()),
             iterationContext
         );
     }
 
-    private StepDefinition iterationDefinition(String indexName, Integer index, StepDefinition definition, StepDataEvaluator evaluator, StepStrategyDefinition strategyDefinition, Map<String, Object> iterationContext) {
+    private Step buildIterationDefinition(String indexName, Integer index, StepDataEvaluator dataEvaluator, StepDefinition definition, StepExecutor executor, List<Step> subStep, StepStrategyDefinition strategy) {
+        definition = iterationDefinition(indexName, index, definition, Optional.ofNullable(strategy).orElse(new StepStrategyDefinition("", new StrategyProperties())));
+        return new Step(dataEvaluator, definition, executor, subStep.stream().map(step -> buildIterationDefinition(indexName, index, step.dataEvaluator(), step.definition(), step.executor(), step.subSteps(), step.strategy().orElse(null))).toList());
+    }
 
+    private StepDefinition iterationDefinition(String indexName, Integer index, StepDefinition definition, StepStrategyDefinition strategyDefinition) {
         return StepDefinitionBuilder.copyFrom(definition)
             .withName(index(indexName, index, definition.name))
             .withInputs(index(indexName, index, definition.inputs()))
             .withOutputs(index(indexName, index, definition.outputs))
             .withValidations(index(indexName, index, definition.validations))
             .withStrategy(strategyDefinition)
+            .withSteps(definition
+                .steps
+                .stream()
+                .map(subStep -> iterationDefinition(indexName, index, subStep, subStep.getStrategy().orElse(new StepStrategyDefinition("", new StrategyProperties()))))
+                .toList())
             .build();
     }
 
