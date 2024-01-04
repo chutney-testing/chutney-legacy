@@ -133,7 +133,7 @@ public class DefaultStepExecutionStrategyTest {
     public void should_resolve_name_from_context_with_default_strategy() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/default_strategy_step_with_name_resolver_from_context_put.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/defaultStrategy/default_strategy_step_with_name_resolver_from_context_put.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);

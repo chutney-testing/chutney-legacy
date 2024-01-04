@@ -424,7 +424,7 @@ public class StepTest {
     public void should_replace_variable_in_name_from_the_context() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/simple_step_with_var_from_context_put.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/simpleStep/simple_step_with_var_from_context_put.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);

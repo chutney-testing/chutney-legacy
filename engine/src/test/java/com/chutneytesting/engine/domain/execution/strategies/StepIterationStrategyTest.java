@@ -36,7 +36,7 @@ class StepIterationStrategyTest {
     public void should_fail_if_no_dataset_with_iteration_strategy() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/error_without_dataset_iterations.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/error_without_dataset_iterations.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -49,7 +49,7 @@ class StepIterationStrategyTest {
     public void should_resolve_name_from_context_with_iteration_strategy() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iteration_strategy_step_with_name_resolver_from_context_put.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/iteration_strategy_step_with_name_resolver_from_context_put.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -67,7 +67,7 @@ class StepIterationStrategyTest {
     public void should_resolve_name_with_idx_in_child_from_dataset_of_parent_of_parent() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iteration_strategy_using_idx_in_sub_sub_step.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/iteration_strategy_using_idx_in_sub_sub_step.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -89,7 +89,7 @@ class StepIterationStrategyTest {
     public void should_resolve_name_in_child_with_value_from_dataset_of_parent_of_parent() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iteration_strategy_using_value_in_sub_sub_sub_step.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/iteration_strategy_using_value_in_sub_sub_sub_step.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -111,7 +111,7 @@ class StepIterationStrategyTest {
     public void should_resolve_a_part_of_the_name_of_the_parent_iteration_from_context_put_but_keep_the_var_from_dataset_unevaluated() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iteration_strategy_with_variable_in_name_from_context_put_and_datset.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/iteration_strategy_with_variable_in_name_from_context_put_and_datset.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -129,7 +129,7 @@ class StepIterationStrategyTest {
     public void should_resolve_a_part_of_the_name_of_the_child_iteration_from_context_put_but_keep_the_var_from_dataset_unevaluated() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/final_step_iteration_strategy_with_variable_in_name_from_context_put_and_datset.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/final_step_iteration_strategy_with_variable_in_name_from_context_put_and_datset.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -147,7 +147,7 @@ class StepIterationStrategyTest {
     public void should_repeat_step_with_iteration_strategy() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/simple_step_iterations.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/simple_step_iterations.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -161,7 +161,7 @@ class StepIterationStrategyTest {
     public void should_evaluate_dataset_before_iterations() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/step_iteration_evaluated_dataset.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/step_iteration_evaluated_dataset.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -188,7 +188,7 @@ class StepIterationStrategyTest {
     public void should_preserve_input_types() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/step_iteration_preserve_input_types.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/step_iteration_preserve_input_types.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -207,7 +207,7 @@ class StepIterationStrategyTest {
     public void should_fail_at_end_by_default() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/simple_step_iterations_fail_at_end.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/simple_step_iterations_fail_at_end.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -227,7 +227,7 @@ class StepIterationStrategyTest {
     public void should_repeat_step_with_iteration_strategy_and_data_from_context() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/step_iterations_using_data_from_context.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/step_iterations_using_data_from_context.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);
@@ -241,7 +241,7 @@ class StepIterationStrategyTest {
     public void should_iterate_within_parent_step_and_keep_substep_own_strategy() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/step_iterations_with_parent_and_substeps.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/step_iterations_with_parent_and_substeps.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);

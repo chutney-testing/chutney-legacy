@@ -98,7 +98,7 @@ public class SoftAssertStrategyTest {
     public void should_resolve_name_from_context_with_strategy_soft_assert() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/soft_assert_strategy_step_with_name_resolver_from_context_put.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/softAssertStrategy/soft_assert_strategy_step_with_name_resolver_from_context_put.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);
