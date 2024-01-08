@@ -35,7 +35,7 @@ public class CampaignService {
     }
 
     public List<CampaignExecution> findExecutionsById(Long campaignId) {
-        return campaignExecutionRepository.findExecutionHistory(campaignId).stream()
+        return campaignExecutionRepository.getExecutionHistory(campaignId).stream()
             .map(CampaignExecution::withoutRetries)
             .collect(toList());
     }

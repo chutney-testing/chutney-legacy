@@ -100,7 +100,7 @@ public class PurgeServiceImpl implements PurgeService {
             maxCampaignExecutions,
             campaignRepository::findAll,
             campaign -> campaign.id,
-            campaignExecutionRepository::findExecutionHistory,
+            campaignExecutionRepository::getExecutionHistory,
             cer -> true,
             cer -> cer.executionId,
             cer -> cer.startDate,

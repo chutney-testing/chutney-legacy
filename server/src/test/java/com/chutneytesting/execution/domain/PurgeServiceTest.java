@@ -268,7 +268,7 @@ public class PurgeServiceTest {
                         CampaignBuilder.builder().setId(campaignId).build()
                     ));
                     CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
-                    when(campaignExecutionRepository.findExecutionHistory(campaignId)).thenReturn(List.of(
+                    when(campaignExecutionRepository.getExecutionHistory(campaignId)).thenReturn(List.of(
                         campaignExecution1, campaignExecution2, campaignExecution3
                     ));
 
@@ -325,7 +325,7 @@ public class PurgeServiceTest {
                         CampaignBuilder.builder().setId(campaignId).build()
                     ));
                     CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
-                    when(campaignExecutionRepository.findExecutionHistory(campaignId)).thenReturn(List.of(
+                    when(campaignExecutionRepository.getExecutionHistory(campaignId)).thenReturn(List.of(
                         campaignExecution1, campaignExecution2, campaignExecution3
                     ));
 
@@ -386,7 +386,7 @@ public class PurgeServiceTest {
                         CampaignBuilder.builder().setId(campaignId).build()
                     ));
                     CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
-                    when(campaignExecutionRepository.findExecutionHistory(campaignId)).thenReturn(List.of(
+                    when(campaignExecutionRepository.getExecutionHistory(campaignId)).thenReturn(List.of(
                         campaignExecution1, campaignExecution2, campaignExecution3
                     ));
 
@@ -463,10 +463,10 @@ public class PurgeServiceTest {
                     CampaignBuilder.builder().setId(campaignId2).build()
                 ));
                 CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
-                when(campaignExecutionRepository.findExecutionHistory(campaignId1)).thenReturn(List.of(
+                when(campaignExecutionRepository.getExecutionHistory(campaignId1)).thenReturn(List.of(
                     campaignExecution1, campaignExecution2, campaignExecution3
                 ));
-                when(campaignExecutionRepository.findExecutionHistory(campaignId2)).thenReturn(List.of(
+                when(campaignExecutionRepository.getExecutionHistory(campaignId2)).thenReturn(List.of(
                     campaignExecution4, campaignExecution5, campaignExecution6
                 ));
 
@@ -574,7 +574,7 @@ public class PurgeServiceTest {
                     CampaignBuilder.builder().setId(campaignId).build()
                 ));
                 CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
-                when(campaignExecutionRepository.findExecutionHistory(campaignId)).thenReturn(List.of(
+                when(campaignExecutionRepository.getExecutionHistory(campaignId)).thenReturn(List.of(
                     campaignExecution1, campaignExecution2, campaignExecution3, campaignExecution4
                 ));
 
@@ -637,7 +637,7 @@ public class PurgeServiceTest {
                 CampaignBuilder.builder().setId(campaignId).build()
             ));
             CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
-            when(campaignExecutionRepository.findExecutionHistory(campaignId)).thenReturn(List.of(
+            when(campaignExecutionRepository.getExecutionHistory(campaignId)).thenReturn(List.of(
                 campaignExecution1
             ));
 
@@ -713,10 +713,10 @@ public class PurgeServiceTest {
                 CampaignBuilder.builder().setId(campaignId).build()
             ));
             CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
-            when(campaignExecutionRepository.findExecutionHistory(campaignId)).thenReturn(List.of(
+            when(campaignExecutionRepository.getExecutionHistory(campaignId)).thenReturn(List.of(
                 campaignExecution5, campaignExecution6
             ));
-            when(campaignExecutionRepository.findExecutionHistory(campaignWithManualReplaysId)).thenReturn(List.of(
+            when(campaignExecutionRepository.getExecutionHistory(campaignWithManualReplaysId)).thenReturn(List.of(
                 campaignExecution1, campaignExecution2, campaignExecution3, campaignExecution4
             ));
 
@@ -912,10 +912,10 @@ public class PurgeServiceTest {
 
             // Campaigns executions stub
             CampaignExecutionRepository campaignExecutionRepository = mock(CampaignExecutionRepository.class);
-            when(campaignExecutionRepository.findExecutionHistory(campaignId1)).thenReturn(List.of(
+            when(campaignExecutionRepository.getExecutionHistory(campaignId1)).thenReturn(List.of(
                 ce1, ce2, ce3, ce4, ce5, ce6, ce7, ce8, ce9
             ));
-            when(campaignExecutionRepository.findExecutionHistory(campaignId2)).thenReturn(List.of(
+            when(campaignExecutionRepository.getExecutionHistory(campaignId2)).thenReturn(List.of(
                 ce10, ce11, ce12, ce13, ce14, ce15, ce16, ce17, ce18
             ));
 

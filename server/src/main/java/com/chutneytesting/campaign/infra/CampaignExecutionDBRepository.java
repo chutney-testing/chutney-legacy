@@ -103,7 +103,7 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
 
     @Override
     @Transactional(readOnly = true)
-    public List<CampaignExecution> findExecutionHistory(Long campaignId) {
+    public List<CampaignExecution> getExecutionHistory(Long campaignId) {
         CampaignEntity campaign = campaignJpaRepository.findById(campaignId).orElseThrow(() -> new CampaignNotFoundException(campaignId));
         return campaignExecutionJpaRepository.findByCampaignIdOrderByIdDesc(campaignId).stream()
             .map(ce -> toDomainWithCampaign(campaign, ce, false))
@@ -126,7 +126,7 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
 
     @Override
     @Transactional(readOnly = true)
-    public List<CampaignExecution> findLastExecutions(Long numberOfExecution) {
+    public List<CampaignExecution> getLastExecutions(Long numberOfExecution) {
         return campaignExecutionJpaRepository.findAll(
                 PageRequest.of(0, numberOfExecution.intValue(), Sort.by(Sort.Direction.DESC, "id"))).stream()
             .map(ce -> toDomain(ce, false))
@@ -168,7 +168,10 @@ public class CampaignExecutionDBRepository implements CampaignExecutionRepositor
     }
 
     private CampaignExecution toDomainWithCampaign(CampaignEntity campaign, CampaignExecutionEntity campaignExecutionEntity, boolean withRunning) {
-        if (!withRunning && isCampaignExecutionRunning(campaignExecutionEntity)) return null;
+        // TODO try to manage it with optional and not with null
+        if (!withRunning && isCampaignExecutionRunning(campaignExecutionEntity)) {
+            return null;
+        }
         return campaignExecutionEntity.toDomain(campaign, isCampaignExecutionRunning(campaignExecutionEntity), this::title);
     }
 

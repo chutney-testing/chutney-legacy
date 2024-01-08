@@ -159,7 +159,7 @@ class CampaignServiceTest {
                 .addScenarioExecutionReport(scenarioExecutionReport2)
                 .build()
         );
-        when(campaignExecutionRepository.findExecutionHistory(anyLong())).thenReturn(allExecutions);
+        when(campaignExecutionRepository.getExecutionHistory(anyLong())).thenReturn(allExecutions);
         CampaignService sut = new CampaignService(campaignExecutionRepository);
 
         // When
@@ -245,7 +245,7 @@ class CampaignServiceTest {
                 .addScenarioExecutionReport(scenarioExecutionReport5)
                 .build()
         );
-        when(campaignExecutionRepository.findExecutionHistory(anyLong())).thenReturn(allExecutions);
+        when(campaignExecutionRepository.getExecutionHistory(anyLong())).thenReturn(allExecutions);
         CampaignService sut = new CampaignService(campaignExecutionRepository);
 
         // When

@@ -126,7 +126,7 @@ public class CampaignController {
 
         // Complete current executions with finished ones up to the limit
         if (lastExecutions.size() < limit) {
-            lastExecutions.addAll(campaignExecutionRepository.findLastExecutions(limit - lastExecutions.size()));
+            lastExecutions.addAll(campaignExecutionRepository.getLastExecutions(limit - lastExecutions.size()));
         }
 
         return lastExecutions.stream()

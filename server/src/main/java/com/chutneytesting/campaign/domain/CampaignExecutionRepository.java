@@ -38,11 +38,11 @@ public interface CampaignExecutionRepository {
 
     void clearAllExecutionHistory(Long id);
 
-    List<CampaignExecution> findLastExecutions(Long numberOfExecution);
+    List<CampaignExecution> getLastExecutions(Long numberOfExecution);
 
     Long generateCampaignExecutionId(Long campaignId, String environment);
 
-    List<CampaignExecution> findExecutionHistory(Long campaignId);
+    List<CampaignExecution> getExecutionHistory(Long campaignId);
 
     CampaignExecution getCampaignExecutionById(Long campaignExecutionId);
 }

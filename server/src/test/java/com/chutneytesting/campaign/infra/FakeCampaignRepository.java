@@ -98,12 +98,12 @@ public class FakeCampaignRepository implements CampaignRepository, CampaignExecu
     }
 
     @Override
-    public List<CampaignExecution> findExecutionHistory(Long campaignId) {
+    public List<CampaignExecution> getExecutionHistory(Long campaignId) {
         return ofNullable(campaignsExecutionById.get(campaignId)).orElse(newArrayList());
     }
 
     @Override
-    public List<CampaignExecution> findLastExecutions(Long numberOfExecution) {
+    public List<CampaignExecution> getLastExecutions(Long numberOfExecution) {
         List<CampaignExecution> allExecutions = campaignsExecutionById.entrySet().stream()
             .flatMap(e -> e.getValue().stream())
             .sorted(executionComparatorReportByExecutionId())

@@ -110,7 +110,7 @@ public class CampaignExecutionDBRepositoryTest {
             CampaignExecution campaignExecution = new CampaignExecution(campaignExecutionId, campaign.id(), singletonList(scenarioExecutionReport), campaign.title(), true, "env", "", 5, "user");
             sut.saveCampaignExecution(campaign.id(), campaignExecution);
 
-            List<CampaignExecution> reports = sut.findExecutionHistory(campaign.id());
+            List<CampaignExecution> reports = sut.getExecutionHistory(campaign.id());
 
             assertThat(reports).hasSize(1)
                 .first()
@@ -150,7 +150,7 @@ public class CampaignExecutionDBRepositoryTest {
             CampaignExecution campaignExecution = new CampaignExecution(campaignExecutionId, campaign.id(), new ArrayList<>(List.of(scenarioOneExecutionReport, scenarioTwoExecutionReport)), campaign.title(), true, "env", "", 5, "user");
             sut.saveCampaignExecution(campaign.id(), campaignExecution);
 
-            List<CampaignExecution> reports = sut.findExecutionHistory(campaign.id());
+            List<CampaignExecution> reports = sut.getExecutionHistory(campaign.id());
 
             assertThat(reports).hasSize(1)
                 .first()
@@ -191,7 +191,7 @@ public class CampaignExecutionDBRepositoryTest {
         @Disabled
         // I don't know why is this here and how it was success before ?
         // When a campaign is running, as in this test, user interface add current executions by separate call (cf. campaignController)
-        // Therefore the implementation i made by not included the current execution if there is in findExecutionHistory method
+        // Therefore the implementation i made by not included the current execution if there is in getExecutionHistory method
         // So this test does not make sense for me now.
         // TODO - To move elsewhere ?
         public void campaign_execution_history_should_list_not_executed_scenarios() {
@@ -206,7 +206,7 @@ public class CampaignExecutionDBRepositoryTest {
             sut.startExecution(campaign.id(), campaignExecution);
             sut.saveCampaignExecution(campaign.id(), campaignExecution);
 
-            List<CampaignExecution> reports = sut.findExecutionHistory(campaign.id());
+            List<CampaignExecution> reports = sut.getExecutionHistory(campaign.id());
 
             assertThat(reports).hasSize(1)
                 .first()
@@ -250,7 +250,7 @@ public class CampaignExecutionDBRepositoryTest {
 
             sut.clearAllExecutionHistory(campaign.id());
 
-            List<CampaignExecution> executionHistory = sut.findExecutionHistory(campaign.id());
+            List<CampaignExecution> executionHistory = sut.getExecutionHistory(campaign.id());
             assertThat(executionHistory).isEmpty();
 
             List<?> scenarioExecutions =
@@ -291,7 +291,7 @@ public class CampaignExecutionDBRepositoryTest {
             sut.saveCampaignExecution(campaign.id(), campaignExecutionFourReport);
 
 
-            List<CampaignExecution> lastExecutions = sut.findLastExecutions(2L);
+            List<CampaignExecution> lastExecutions = sut.getLastExecutions(2L);
 
             assertThat(lastExecutions).hasSize(2);
 
