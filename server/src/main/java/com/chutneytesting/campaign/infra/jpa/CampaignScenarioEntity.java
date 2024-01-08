@@ -16,6 +16,7 @@
 
 package com.chutneytesting.campaign.infra.jpa;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,8 +27,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.util.List;
 import java.util.stream.IntStream;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity(name = "CAMPAIGN_SCENARIOS")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CampaignScenarioEntity {
 
     @Id

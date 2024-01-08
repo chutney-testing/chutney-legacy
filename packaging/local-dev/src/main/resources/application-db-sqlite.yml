@@ -5,7 +5,17 @@ chutney:
 spring:
   jpa:
     properties:
-      hibernate.dialect: org.hibernate.community.dialect.SQLiteDialect
-      hibernate.id.new_generator_mappings: false
+      hibernate:
+        dialect: org.hibernate.community.dialect.SQLiteDialect
+        id:
+          new_generator_mappings: false
+        cache:
+          use_query_cache: true
+          use_second_level_cache: true
+      javax:
+        cache:
+          provider: org.ehcache.jsr107.EhcacheCachingProvider
+          uri: classpath:/ehcache.xml
+        missing_cache_strategy: fail
   datasource:
     url: jdbc:sqlite:${chutney.db-server.base-dir}/sqlitesample.db

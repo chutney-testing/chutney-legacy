@@ -64,6 +64,7 @@ public class DBConfiguration {
             hikariConfig.setJdbcUrl(internalDataSourceProperties.determineUrl());
             hikariConfig.setDriverClassName(DatabaseDriver.fromJdbcUrl(internalDataSourceProperties.determineUrl()).getDriverClassName());
             hikariConfig.setMaximumPoolSize(1); // fix for sqlite
+            hikariConfig.setRegisterMbeans(true);
 
             SQLiteConfig config = new SQLiteConfig();
             // see https://www.sqlite.org/pragma.html

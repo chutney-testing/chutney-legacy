@@ -20,6 +20,7 @@ import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.scenario.infra.raw.TagListMapper;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,8 +33,11 @@ import jakarta.persistence.Version;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity(name = "CAMPAIGN")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CampaignEntity implements Serializable {
 
     @Id

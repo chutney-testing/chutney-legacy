@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://www.ehcache.org/ehcache.xsd"
+         updateCheck="false">
+
+    <!-- Configuration par défaut pour tous les caches -->
+    <defaultCache
+        eternal="false"
+        maxBytesLocalHeap="300M"
+        timeToLiveSeconds="600"
+        memoryStoreEvictionPolicy="LFU"
+        statistics="true">
+    </defaultCache>
+
+    <!-- Exemple de configuration d'un cache spécifique -->
+    <!--cache name="monCacheSpecifique"
+           maxEntriesLocalHeap="5000"
+           eternal="false"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LFU">
+    </cache-->
+
+    <!-- Ajoutez d'autres configurations de cache ici -->
+
+    <!-- Configuration pour le monitoring via JMX -->
+    <monitoring>autodetect</monitoring>
+
+    <!-- Configuration pour la réplication de cache ou les fonctionnalités de cache distribué (si nécessaire) -->
+    <!-- ... -->
+
+    <!-- Autres configurations avancées (si nécessaire) -->
+    <!-- ... -->
+</ehcache>
