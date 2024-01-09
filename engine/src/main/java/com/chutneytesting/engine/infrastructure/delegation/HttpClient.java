@@ -29,6 +29,8 @@ import com.chutneytesting.engine.domain.delegation.DelegationClient;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.engine.Dataset;
+import com.chutneytesting.engine.domain.execution.engine.Environment;
+import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,12 +71,13 @@ public class HttpClient implements DelegationClient {
     }
 
     @Override
-    public StepExecutionReport handDown(StepDefinition stepDefinition, NamedHostAndPort delegate) throws CannotDelegateException {
+    public StepExecutionReport handDown(Step step, NamedHostAndPort delegate) throws CannotDelegateException {
         if (connectionChecker.canConnectTo(delegate)) {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             Dataset dataset = new Dataset(emptyMap(), emptyList()); // TODO - check if it still works
-            HttpEntity<ExecutionRequestDto> request = new HttpEntity<>(ExecutionRequestMapper.from(stepDefinition, dataset, null), headers);
+            Environment environment =  new Environment((String) step.getScenarioContext().get("environment"));
+            HttpEntity<ExecutionRequestDto> request = new HttpEntity<>(ExecutionRequestMapper.from(step.definition(), dataset, environment), headers);
             StepExecutionReportDto reportDto = restTemplate.postForObject("https://" + delegate.host() + ":" + delegate.port() + EXECUTION_URL, request, StepExecutionReportDto.class);
             return StepExecutionReportMapper.fromDto(reportDto);
         } else {

@@ -46,8 +46,8 @@ import com.chutneytesting.server.core.domain.execution.ScenarioConversionExcepti
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.hjson.JsonValue;
 import org.springframework.stereotype.Component;
@@ -73,13 +73,11 @@ public class DefaultExecutionRequestMapper implements ExecutionRequestMapper {
         return new ExecutionRequestDto(stepDefinitionRequestDto, getEnvironment(executionRequest.environment), DatasetMapper.toDto(executionRequest.dataset));
     }
 
-    private EnvironmentDto getEnvironment(String name) {
-        return Optional.ofNullable(name)
-            .filter(Predicate.not(String::isBlank))
-            .map(n -> this.environmentApi.getEnvironment(n).variables)
-            .map(vars -> vars.stream().collect(Collectors.toMap(EnvironmentVariableDto::key, EnvironmentVariableDto::value)))
-            .map(vars -> new EnvironmentDto(name, vars))
-            .orElse(null);
+    private EnvironmentDto getEnvironment(String env) {
+        Map<String, String> variables = environmentApi.getEnvironment(env).variables
+            .stream()
+            .collect(Collectors.toMap(EnvironmentVariableDto::key, EnvironmentVariableDto::value));
+        return new EnvironmentDto(env, variables);
     }
 
     private StepDefinitionRequestDto convertToStepDef(ExecutionRequest executionRequest) { // TODO - shameless green - might be refactored later

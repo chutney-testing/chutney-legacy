@@ -59,7 +59,7 @@ public class NetworkDescriptionApiMapperTest {
             createTarget("s1", "proto://lol:75/truc"),
             createTarget("s2", "proto://lol3:75/truc")
         );
-        EnvironmentDto environment = new EnvironmentDto("env", null, targets, emptyList());
+        EnvironmentDto environment = new EnvironmentDto("env", null, targets);
         Set<EnvironmentDto> environments = new HashSet<>();
         environments.add(environment);
 

@@ -64,7 +64,7 @@ Feature:  Campaign execution
                     "description":"",
                     "scenarioIds":[ "${#scenario1Id}", "${#scenario2Id}" ],
                     "computedParameters":{},
-                    "environment":"ENV",
+                    "environment":"DEFAULT",
                     "parallelRun": false,
                     "retryAuto": false,
                     "tags":[]
@@ -115,7 +115,7 @@ Feature:  Campaign execution
                     "description":"",
                     "scenarioIds":[ "${#scenario1Id}" ],
                     "computedParameters":{},
-                    "environment":"ENV",
+                    "environment":"DEFAULT",
                     "parallelRun": false,
                     "retryAuto": false,
                     "tags":[]
@@ -126,7 +126,7 @@ Feature:  Campaign execution
         When this campaign is executed by name
             Do http-get
                 On CHUTNEY_LOCAL
-                With uri /api/ui/campaign/execution/v1/campaignName/ENV
+                With uri /api/ui/campaign/execution/v1/campaignName/DEFAULT
                 Take report ${#json(#body, "$[0]")}
                 Validate httpStatusCode_200 ${#status == 200}
         Then the execution reports are returned
@@ -166,7 +166,7 @@ Feature:  Campaign execution
                     "description":"",
                     "scenarioIds":[ "${#scenario1Id}" ],
                     "dataSet":{},
-                    "environment":"ENV",
+                    "environment":"DEFAULT",
                     "parallelRun": false,
                     "retryAuto": false,
                     "tags":[]
@@ -198,7 +198,7 @@ Feature:  Campaign execution
         When an unknown campaign is executed by id
             Do http-get
                 On CHUTNEY_LOCAL
-                With uri /api/ui/campaign/execution/v1/byID/666/ENV
+                With uri /api/ui/campaign/execution/v1/byID/666/DEFAULT
         Then the campaign is not found
                 Validate httpStatusCode_404 ${#status == 404}
 

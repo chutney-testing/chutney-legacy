@@ -16,10 +16,8 @@
 
 package com.chutneytesting.glacio.api;
 
-import static com.chutneytesting.environment.EnvironmentConfiguration.DEFAULT_ENV_NAME;
 import static com.chutneytesting.glacio.domain.parser.ParsingContext.PARSING_CONTEXT_KEYS.ENVIRONMENT;
 import static java.util.Collections.emptyMap;
-import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import com.chutneytesting.glacio.domain.parser.ParsingContext;
@@ -37,15 +35,10 @@ import java.util.stream.Collectors;
 
 public class GlacioAdapter {
 
-    public static final String DEFAULT_ENV = "ENV";
     private final StepFactory stepFactory;
 
     public GlacioAdapter(StepFactory stepFactory) {
         this.stepFactory = stepFactory;
-    }
-
-    public List<StepDefinitionDto> toChutneyStepDefinition(String text) {
-        return toChutneyStepDefinition(text, DEFAULT_ENV);
     }
 
     public List<StepDefinitionDto> toChutneyStepDefinition(String text, String environment) {
@@ -55,7 +48,7 @@ public class GlacioAdapter {
 
         List<Example> examples = feature.getExamples();
         ParsingContext context = new ParsingContext();
-        context.values.put(ENVIRONMENT, ofNullable(environment).orElse(DEFAULT_ENV));
+        context.values.put(ENVIRONMENT, environment);
         return examples.stream()
             .map(scenario -> toStepDefinitionDto(
                 featureName,

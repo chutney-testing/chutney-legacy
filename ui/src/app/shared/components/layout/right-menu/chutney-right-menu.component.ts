@@ -29,7 +29,7 @@ export class ChutneyRightMenuComponent {
 
     onItemClick(item: MenuItem) {
         if (item.click) {
-            const option = item.options ? item.options[0].id : null;
+            const option = item.options && item.options.length ? item.options[0].id : null;
             option ? item.click(option) : item.click();
         }
     }

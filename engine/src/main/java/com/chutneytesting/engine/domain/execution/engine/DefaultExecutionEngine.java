@@ -81,15 +81,14 @@ public class DefaultExecutionEngine implements ExecutionEngine {
         reporter.createPublisher(execution.executionId, rootStep.get());
 
         actionExecutor.execute(() -> {
-
             final ScenarioContext scenarioContext = new ScenarioContextImpl();
-            scenarioContext.put("environment", environment.name());
-            scenarioContext.put("dataset", dataset.datatable);
-            scenarioContext.putAll(ofNullable(environment.variables()).orElse(emptyMap()));
-            scenarioContext.putAll(evaluateDatasetConstants(dataset, scenarioContext));
-
             try {
                 try {
+                    scenarioContext.put("environment", environment.name());
+                    scenarioContext.putAll(ofNullable(environment.variables()).orElse(emptyMap()));
+                    scenarioContext.put("dataset", dataset.datatable);
+                    scenarioContext.putAll(evaluateDatasetConstants(dataset, scenarioContext));
+
                     rootStep.set(buildStep(stepDefinition));
                     RxBus.getInstance().post(new StartScenarioExecutionEvent(execution, rootStep.get()));
 

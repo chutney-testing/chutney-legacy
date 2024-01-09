@@ -21,7 +21,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface EnvironmentVariableDtoMapper {
 
     EnvironmentVariableDtoMapper INSTANCE = Mappers.getMapper( EnvironmentVariableDtoMapper.class );

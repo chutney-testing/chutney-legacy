@@ -1,4 +1,7 @@
 {
+    "environment": {
+        "name": "env"
+    },
     "scenario": {
         "name": "Test iterations",
         "steps": [

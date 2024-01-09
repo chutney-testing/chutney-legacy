@@ -71,6 +71,11 @@ public class HttpEnvironmentApi implements EnvironmentApi {
     }
 
     @Override
+    public String defaultEnvironmentName() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     @PreAuthorize("hasAuthority('ENVIRONMENT_ACCESS')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public EnvironmentDto createEnvironment(@RequestBody EnvironmentDto environmentDto) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {

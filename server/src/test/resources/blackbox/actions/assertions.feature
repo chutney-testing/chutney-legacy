@@ -47,7 +47,7 @@ Feature: Assertions Task test
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
-                With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/DEFAULT
                 With timeout 5 s
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
@@ -115,7 +115,7 @@ Feature: Assertions Task test
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
-                With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/DEFAULT
                 With timeout 5 s
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
@@ -152,7 +152,7 @@ Feature: Assertions Task test
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
-                With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/DEFAULT
                 With timeout 5 s
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}

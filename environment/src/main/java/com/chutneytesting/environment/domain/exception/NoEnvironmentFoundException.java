@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package com.chutneytesting.engine.api.execution;
+package com.chutneytesting.environment.domain.exception;
 
-import static java.util.Collections.emptyMap;
-
-public final class NoEnvironmentDto {
-
-    public static final EnvironmentDto NO_ENVIRONMENT_DTO = new EnvironmentDto("", emptyMap());
-
-    private NoEnvironmentDto() {
+@SuppressWarnings("serial")
+public class NoEnvironmentFoundException extends RuntimeException {
+    public NoEnvironmentFoundException(String message) {
+        super(message);
     }
 }
