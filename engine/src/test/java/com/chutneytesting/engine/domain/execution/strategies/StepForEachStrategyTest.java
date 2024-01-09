@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
-class StepIterationStrategyTest {
+class StepForEachStrategyTest {
 
     @Test
     public void should_fail_if_no_dataset_with_iteration_strategy() {
@@ -97,7 +97,7 @@ class StepIterationStrategyTest {
         // T
         assertThat(result).hasFieldOrPropertyWithValue("status", SUCCESS);
         assertThat(result.name).isEqualTo("${#env} - parent");
-        assertThat(result.steps).hasSize(1);
+        assertThat(result.steps).hasSize(2);
         assertThat(result.steps.get(0).name).isEqualTo("env0 - parent");
         assertThat(result.steps.get(0).steps).hasSize(1);
         assertThat(result.steps.get(0).steps.get(0).name).isEqualTo("env0 sub parent");
@@ -105,6 +105,13 @@ class StepIterationStrategyTest {
         assertThat(result.steps.get(0).steps.get(0).steps.get(0).name).isEqualTo("env0 sub sub parent");
         assertThat(result.steps.get(0).steps.get(0).steps.get(0).steps).hasSize(1);
         assertThat(result.steps.get(0).steps.get(0).steps.get(0).steps.get(0).name).isEqualTo("env0 child");
+        assertThat(result.steps.get(1).name).isEqualTo("env1 - parent");
+        assertThat(result.steps.get(1).steps).hasSize(1);
+        assertThat(result.steps.get(1).steps.get(0).name).isEqualTo("env1 sub parent");
+        assertThat(result.steps.get(1).steps.get(0).steps).hasSize(1);
+        assertThat(result.steps.get(1).steps.get(0).steps.get(0).name).isEqualTo("env1 sub sub parent");
+        assertThat(result.steps.get(1).steps.get(0).steps.get(0).steps).hasSize(1);
+        assertThat(result.steps.get(1).steps.get(0).steps.get(0).steps.get(0).name).isEqualTo("env1 child");
     }
 
     @Test

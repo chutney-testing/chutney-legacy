@@ -22,9 +22,7 @@
             "parameters": {
                 "index": "i",
                 "dataset": [
-                    {
-                        "env": "env0"
-                    }
+                    {}
                 ]
             }
         }

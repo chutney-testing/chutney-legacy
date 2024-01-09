@@ -183,6 +183,61 @@ public class StepDataEvaluatorTest {
     }
 
     @Test
+    public void should_fail_when_cannot_resolve_unknown_var_template_with_unique_var() {
+        // Given
+        Map<String, Object> context = new HashMap<>();
+
+        // When & Then
+        assertThatThrownBy(() -> sut.evaluateString("${#toto}", context, false));
+    }
+
+    @Test
+    public void should_not_resolve_unknown_var_template_with_unique_var() {
+        // Given
+        Map<String, Object> context = new HashMap<>();
+
+        // When
+        String result = sut.evaluateString("${#toto}", context, true);
+
+        // Then
+        assertThat(result).isEqualTo("${#toto}");
+    }
+
+    @Test
+    public void should_fail_when_cannot_resolve_unknown_vars_template_with_var_and_text() {
+        // Given
+        Map<String, Object> context = new HashMap<>();
+
+        // When & Then
+        assertThatThrownBy(() -> sut.evaluateString("test ${#toto}", context, false));
+    }
+
+    @Test
+    public void should_not_resolve_unknown_vars() {
+        // Given
+        Map<String, Object> context = new HashMap<>();
+
+        // When
+        String result = sut.evaluateString("test ${#toto}", context, true);
+
+        // Then
+        assertThat(result).isEqualTo("test ${#toto}");
+    }
+
+    @Test
+    public void should_resolve_known_vars_and_not_resolve_unknown_vars() {
+        // Given
+        Map<String, Object> context = new HashMap<>();
+        context.put("toto", "titi");
+
+        // When
+        String result = sut.evaluateString("test ${#toto} ${#tata}", context, true);
+
+        // Then
+        assertThat(result).isEqualTo("test titi ${#tata}");
+    }
+
+    @Test
     public void should_evaluate_multiple_spel() {
         // Given
         ScenarioContextImpl scenarioContext = new ScenarioContextImpl();

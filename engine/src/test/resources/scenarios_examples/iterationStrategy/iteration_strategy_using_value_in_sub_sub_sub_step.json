@@ -20,10 +20,12 @@
         "strategy": {
             "type": "for",
             "parameters": {
-                "index": "i",
                 "dataset": [
                     {
                         "env": "env0"
+                    },
+                    {
+                        "env": "env1"
                     }
                 ]
             }

@@ -1,4 +1,4 @@
 com.chutneytesting.engine.domain.execution.strategies.RetryWithTimeOutStrategy
 com.chutneytesting.engine.domain.execution.strategies.SoftAssertStrategy
 com.chutneytesting.engine.domain.execution.strategies.IfStrategy
-com.chutneytesting.engine.domain.execution.strategies.StepIterationStrategy
+com.chutneytesting.engine.domain.execution.strategies.StepForEachStrategy

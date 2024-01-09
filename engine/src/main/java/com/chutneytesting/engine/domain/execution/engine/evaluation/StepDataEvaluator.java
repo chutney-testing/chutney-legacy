@@ -67,21 +67,17 @@ public class StepDataEvaluator {
         return evaluatedNamedData;
     }
 
-    public String evaluateString(final String s, final Map<String, Object> contextVariables) throws EvaluationException {
-        return (String) this.evaluate((Object) s, contextVariables, Collections.emptyList());
-    }
-
-    public String evaluateString(final String s, final Map<String, Object> contextVariables, List<String> whiteList) throws EvaluationException {
-        return (String) this.evaluate((Object) s, contextVariables, whiteList);
+  public String evaluateString(final String s, final Map<String, Object> contextVariables, boolean silentResolve) throws EvaluationException {
+    return (String) this.evaluate((Object) s, contextVariables, silentResolve);
     }
 
     public Object evaluate(final Object o, final Map<String, Object> contextVariables) throws EvaluationException {
-        return evaluate(o, contextVariables, Collections.emptyList());
+        return evaluate(o, contextVariables, false);
     }
 
-    public Object evaluate(final Object o, final Map<String, Object> contextVariables, List<String> whiteList) throws EvaluationException {
+  public Object evaluate(final Object o, final Map<String, Object> contextVariables, boolean silentResolve) throws EvaluationException {
         StandardEvaluationContext evaluationContext = buildEvaluationContext(contextVariables);
-        return evaluateObject(o, evaluationContext, whiteList);
+    return evaluateObject(o, evaluationContext, silentResolve);
     }
 
     public Target evaluateTarget(final Target target, final Map<String, Object> contextVariables) throws EvaluationException {
@@ -108,25 +104,24 @@ public class StepDataEvaluator {
     }
 
     private Object evaluateObject(final Object object, final EvaluationContext evaluationContext) throws EvaluationException {
-        return evaluateObject(object, evaluationContext, Collections.emptyList());
-
+        return evaluateObject(object, evaluationContext, false);
     }
 
     @SuppressWarnings("unchecked")
-    private Object evaluateObject(final Object object, final EvaluationContext evaluationContext, List<String> whiteList) throws EvaluationException {
+    private Object evaluateObject(final Object object, final EvaluationContext evaluationContext, boolean silentResolve) throws EvaluationException {
         Object inputEvaluatedValue;
         if (object instanceof String stringValue) {
             if (hasOnlyOneSpel(stringValue)) {
-                inputEvaluatedValue = Strings.replaceExpression(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX, EVALUATION_STRING_ESCAPE, whiteList);
+              inputEvaluatedValue = Strings.replaceExpression(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX, EVALUATION_STRING_ESCAPE, silentResolve);
             } else {
-                inputEvaluatedValue = Strings.replaceExpressions(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX, EVALUATION_STRING_ESCAPE, whiteList);
+              inputEvaluatedValue = Strings.replaceExpressions(stringValue, s -> evaluate(parser, evaluationContext, s), EVALUATION_STRING_PREFIX, EVALUATION_STRING_SUFFIX, EVALUATION_STRING_ESCAPE, silentResolve);
             }
         } else if (object instanceof Map map) {
             Map evaluatedMap = new LinkedHashMap();
             map.forEach(
                 (key, value) -> {
-                    Object keyValue = evaluateObject(key, evaluationContext, whiteList);
-                    Object valueValue = evaluateObject(value, evaluationContext, whiteList);
+                  Object keyValue = evaluateObject(key, evaluationContext, silentResolve);
+                  Object valueValue = evaluateObject(value, evaluationContext, silentResolve);
                     evaluatedMap.put(keyValue, valueValue);
                     if (keyValue instanceof String stringKeyValue) {
                         evaluationContext.setVariable(stringKeyValue, valueValue);
@@ -136,13 +131,13 @@ public class StepDataEvaluator {
         } else if (object instanceof List list) {
             List evaluatedList = new ArrayList<>();
             list.forEach(
-                obj -> evaluatedList.add(evaluateObject(obj, evaluationContext, whiteList))
+                obj -> evaluatedList.add(evaluateObject(obj, evaluationContext, silentResolve))
             );
             inputEvaluatedValue = evaluatedList;
         } else if (object instanceof Set set) {
             Set evaluatedSet = new LinkedHashSet();
             set.forEach(
-                obj -> evaluatedSet.add(evaluateObject(obj, evaluationContext, whiteList))
+                obj -> evaluatedSet.add(evaluateObject(obj, evaluationContext, silentResolve))
             );
             inputEvaluatedValue = evaluatedSet;
         } else {

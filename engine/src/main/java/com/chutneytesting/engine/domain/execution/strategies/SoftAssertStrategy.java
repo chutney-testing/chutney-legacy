@@ -46,10 +46,11 @@ public class SoftAssertStrategy implements StepExecutionStrategy {
                           StepExecutionStrategies strategies) {
 
         if (step.isParentStep()) {
+            Status status = executeSubSteps(scenarioExecution, step, scenarioContext, localContext, strategies);
             Map<String, Object> context = new HashMap<>(scenarioContext);
             context.putAll(localContext);
-            step.resolveName(step.dataEvaluator().evaluateString(step.getName(), context));
-            return softenStatus(executeSubSteps(scenarioExecution, step, scenarioContext, localContext, strategies));
+            step.resolveName(context, false);
+            return softenStatus(status);
         }
 
         return softenStatus(step.execute(scenarioExecution, scenarioContext, localContext));

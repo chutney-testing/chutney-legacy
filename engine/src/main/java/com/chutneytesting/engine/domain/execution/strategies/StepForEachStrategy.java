@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class StepIterationStrategy implements StepExecutionStrategy {
+public class StepForEachStrategy implements StepExecutionStrategy {
 
     @Override
     public String getType() {
@@ -56,11 +56,9 @@ public class StepIterationStrategy implements StepExecutionStrategy {
         final String indexName = (String) Optional.ofNullable(strategyDefinition.strategyProperties.get("index")).orElse("i");
         step.beginExecution(scenarioExecution);
         AtomicInteger index = new AtomicInteger(0);
-        List<String> whiteList = dataset.isEmpty() ? List.of() : dataset.get(index.get()).keySet().stream().toList();
         Map<String, Object> context = new HashMap<>(scenarioContext);
         context.putAll(localContext);
-        step.resolveName(step.dataEvaluator().evaluateString(step.getName(), context, whiteList));
-
+        step.resolveName(context, true);
         if (step.isParentStep()) {
             List<Step> subSteps = List.copyOf(step.subSteps());
             step.removeStepExecution();
@@ -81,7 +79,6 @@ public class StepIterationStrategy implements StepExecutionStrategy {
 
             iterations.forEach(it -> it.getLeft().execute(scenarioExecution, scenarioContext, it.getRight()));
         }
-
         step.endExecution(scenarioExecution);
         return step.status();
     }

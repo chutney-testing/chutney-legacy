@@ -176,7 +176,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
         public void storage_keeps_all_items() {
             String scenarioId = givenScenarioId();
             DetachedExecution execution = buildDetachedExecution(SUCCESS, "", "");
-            IntStream.range(0, 23).forEach(i -> sut.store(scenarioId, execution));
+            IntStream.range(0, 24).forEach(i -> sut.store(scenarioId, execution));
 
             assertThat(sut.getExecutions("-1")).hasSize(0);
 
@@ -184,8 +184,8 @@ public class DatabaseExecutionHistoryRepositoryTest {
                 "SELECT count(*) as count FROM SCENARIO_EXECUTIONS WHERE SCENARIO_ID = '" + scenarioId + "'").getSingleResult();
 
             assertThat(executionsCount.intValue())
-                .as("All 23 reports of test scenario")
-                .isEqualTo(23);
+                .as("All 24 reports of test scenario")
+                .isEqualTo(24);
         }
 
         @Test

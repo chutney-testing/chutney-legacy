@@ -19,7 +19,6 @@ package com.chutneytesting.engine.domain.execution.engine.evaluation;
 import static java.util.Optional.ofNullable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -32,7 +31,7 @@ abstract class Strings {
     private Strings() {
     }
 
-    public static String replaceExpressions(String template, Function<String, Object> evaluator, String prefix, String suffix, String escape, List<String> whiteList) {
+    public static String replaceExpressions(String template, Function<String, Object> evaluator, String prefix, String suffix, String escape, boolean silentResolve) {
         final StringBuffer sb = new StringBuffer();
         Pattern pattern = cachePattern("(" + escapeForRegex(escape) + ")?" + escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix));
         final Matcher matcher = pattern.matcher(template);
@@ -40,11 +39,15 @@ abstract class Strings {
             String escapeMatch = matcher.group(1);
             String key = matcher.group(2);
             if (escapeMatch == null) {
-                if (!whiteListed(key, whiteList)) {
+                try {
                     Object o = evaluator.apply(key);
                     if (o != null) {
                         String replacement = Matcher.quoteReplacement(String.valueOf(o));
                         matcher.appendReplacement(sb, replacement);
+                    }
+                } catch (Exception e) {
+                    if (!silentResolve) {
+                        throw e;
                     }
                 }
             } else {
@@ -56,14 +59,14 @@ abstract class Strings {
         return sb.toString();
     }
 
-    public static Object replaceExpression(String template, Function<String, Object> transformer, String prefix, String suffix, String escape, List<String> whiteList) {
+    public static Object replaceExpression(String template, Function<String, Object> transformer, String prefix, String suffix, String escape, boolean silentResolve) {
         final Pattern pattern = cachePattern("^(" + escapeForRegex(escape) + ")?" + escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix) + "$");
         final Matcher matcher = pattern.matcher(template.trim());
         if (matcher.matches()) {
             String escapeMatch = matcher.group(1);
             String key = matcher.group(2);
             if (escapeMatch == null) {
-                return whiteListed(key, whiteList) ? key : transformer.apply(key);
+                return silentResolve ? template : transformer.apply(key);
             } else {
                 return prefix + key + suffix;
             }
@@ -86,10 +89,5 @@ abstract class Strings {
             PATTERN_CACHE.put(pattern, compiledPattern);
             return compiledPattern;
         });
-    }
-
-    private static boolean whiteListed(String match, List<String> whiteList) {
-        match = match.replaceAll("[^a-zA-Z0-9]", "");
-        return whiteList.contains(match);
     }
 }
