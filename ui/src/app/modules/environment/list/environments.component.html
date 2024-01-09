@@ -18,7 +18,7 @@
         <td>
             <chutney-forms-input-line [placeholder]="'admin.environment.name.placeholder' | translate"
                                       [(model)]="environment.name"
-                                      [validate]="validationService.isValidName.bind(validationService)"></chutney-forms-input-line>
+                                      [validate]="validationService.isValidEnvName.bind(validationService)"></chutney-forms-input-line>
         </td>
         <td>
             <chutney-forms-input-line
@@ -30,7 +30,7 @@
                 <i  class="bi bi-x" ></i>
             </button>
             <button class="btn btn-sm btn-primary" (click)="add()"
-                    [disabled]="!validationService.isValidName(environment.name)">
+                    [disabled]="!validationService.isValidEnvName(environment.name)">
                 <i  class="bi bi-check" ></i>
             </button>
         </td>
@@ -40,7 +40,7 @@
             <chutney-forms-input-line *ngIf="editing(i)"
                                       [placeholder]="'admin.environment.name.placeholder' | translate"
                                       [(model)]="env.name"
-                                      [validate]="validationService.isValidName.bind(validationService)"></chutney-forms-input-line>
+                                      [validate]="validationService.isValidEnvName.bind(validationService)"></chutney-forms-input-line>
             <div *ngIf="!editing(i)">
                 {{env.name}}
             </div>
@@ -63,7 +63,7 @@
                     <i  class="bi bi-x" ></i>
                 </button>
                 <button class="btn btn-sm btn-primary" (click)="save(i)"
-                [disabled]="!validationService.isValidName(env.name)">
+                [disabled]="!validationService.isValidEnvName(env.name)">
                     <i  class="bi bi-check" ></i>
                 </button>
             </ng-container>

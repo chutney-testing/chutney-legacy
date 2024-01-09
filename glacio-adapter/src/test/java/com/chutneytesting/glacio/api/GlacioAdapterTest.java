@@ -65,7 +65,7 @@ public class GlacioAdapterTest {
         StepDefinitionDto fakeStepDef = new StepDefinitionDto("fake", null, "", null, Collections.emptyMap(), Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap());
         when(stepFactory.toStepDefinition(any(), any(), any())).thenReturn(fakeStepDef);
 
-        List<StepDefinitionDto> stepDefinitions = sut.toChutneyStepDefinition(feature, null);
+        List<StepDefinitionDto> stepDefinitions = sut.toChutneyStepDefinition(feature, ENVIRONMENT);
 
         assertThat(stepDefinitions).hasSize(1);
         verify(stepFactory).toStepDefinition(eq(expectedLocale), any(), any());
@@ -75,7 +75,7 @@ public class GlacioAdapterTest {
     public void should_adapt_as_many_glacio_scenarios_as_feature_has() {
         String featureName = "Feature with multiple scenarios";
         String feature = fileContent("/unit/multiple_scenarios.feature");
-        List<StepDefinitionDto> stepDefinitions = sut.toChutneyStepDefinition(feature);
+        List<StepDefinitionDto> stepDefinitions = sut.toChutneyStepDefinition(feature, ENVIRONMENT);
         assertThat(stepDefinitions).hasSize(3);
         assertThat(stepDefinitions)
             .extracting(stepDefinition -> stepDefinition.name)

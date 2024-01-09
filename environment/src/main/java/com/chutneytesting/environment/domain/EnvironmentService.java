@@ -22,7 +22,9 @@ import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentEx
 import com.chutneytesting.environment.domain.exception.EnvVariableNotFoundException;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
+import com.chutneytesting.environment.domain.exception.NoEnvironmentFoundException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
+import com.chutneytesting.environment.domain.exception.UnresolvedEnvironmentException;
 import com.chutneytesting.environment.domain.exception.VariableAlreadyExistingException;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -89,6 +91,19 @@ public class EnvironmentService {
             environmentRepository.delete(environmentName);
         }
     }
+
+    public String defaultEnvironmentName() throws EnvironmentNotFoundException {
+        List<String> envs = environmentRepository.listNames();
+        if (envs.size() > 1) {
+            throw new UnresolvedEnvironmentException("There is more than one environment. Could not resolve the default one");
+        }
+        if (envs.isEmpty()) {
+            throw new NoEnvironmentFoundException("No Environment found");
+        }
+
+        return envs.get(0);
+    }
+
 
     public List<Target> listTargets(TargetFilter filters) {
         Set<Target> targets;
@@ -175,14 +190,14 @@ public class EnvironmentService {
     }
 
     public void deleteVariable(String key, List<String> envs) {
-        List<Environment> environment = environmentRepository.findByNames(envs)
+        List<Environment> environments = environmentRepository.findByNames(envs)
             .stream()
             .filter(env -> env.containsVariable(key)).toList();
 
-        if (!envs.isEmpty() && environment.isEmpty()) {
+        if (!envs.isEmpty() && environments.isEmpty()) {
             throw new EnvVariableNotFoundException("Variable [" + key + "] not found");
         }
-        environment
+        environments
             .forEach(env -> {
                 Environment updated = env.deleteVariable(key);
                 createOrUpdate(updated);

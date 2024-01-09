@@ -16,6 +16,7 @@
 
 package com.chutneytesting.environment.domain;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,6 +25,8 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
+import com.chutneytesting.environment.domain.exception.NoEnvironmentFoundException;
+import com.chutneytesting.environment.domain.exception.UnresolvedEnvironmentException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,5 +79,45 @@ class EnvironmentServiceTest {
 
         // Then
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void should_return_the_unique_env_as_default() {
+       // Given
+        when(environmentRepository.listNames())
+            .thenReturn(List.of("ENV"));
+
+        // When
+        String defaultEnv = sut.defaultEnvironmentName();
+
+        // Then
+        assertThat(defaultEnv).isEqualTo("ENV");
+
+    }
+
+    @Test
+    void getting_default_env_should_throws_exception_no_env_found() {
+        // Given
+        when(environmentRepository.listNames())
+            .thenReturn(emptyList());
+
+        // When Then
+        assertThatThrownBy(() -> sut.defaultEnvironmentName())
+            .isInstanceOf(NoEnvironmentFoundException.class)
+            .hasMessage("No Environment found");
+
+    }
+
+    @Test
+    void getting_default_env_should_throws_exception_many_env_found() {
+        // Given
+        when(environmentRepository.listNames())
+            .thenReturn(List.of("ENV", "OTHER"));
+
+        // When Then
+        assertThatThrownBy(() -> sut.defaultEnvironmentName())
+            .isInstanceOf(UnresolvedEnvironmentException.class)
+            .hasMessage("There is more than one environment. Could not resolve the default one");
+
     }
 }

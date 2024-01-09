@@ -23,7 +23,8 @@ export class ValidationService {
 
     private urlRegex = new RegExp('^[a-z][a-z0-9\+-\.]*:\/\/[^:]+(:[0-9]+)?.*$');
     private spelRegex = new RegExp('\\$\\{([^}]+)\\}');
-    private nameRegex = new RegExp('^[a-zA-Z0-9_-]{3,20}$');
+    private envNameRegex = new RegExp('^[a-zA-Z0-9_-]{3,20}$');
+    private varNameRegex = new RegExp('^[a-zA-Z][a-zA-Z_0-9]*$');
 
     constructor() { }
 
@@ -42,8 +43,12 @@ export class ValidationService {
     isValidUrlOrSpel(text: string): boolean {
         return this.isValidUrl(text) || this.isValidSpel(text);
     }
-    isValidName(text: string): boolean {
-        return text !== null && this.nameRegex.test(text);
+    isValidEnvName(text: string): boolean {
+        return text !== null && this.envNameRegex.test(text);
+    }
+
+    isValidVariableName(text: string): boolean {
+        return text !== null && this.varNameRegex.test(text);
     }
 
     isValidPattern(text: string) {

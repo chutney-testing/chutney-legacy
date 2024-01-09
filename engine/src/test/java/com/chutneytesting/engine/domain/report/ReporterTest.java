@@ -66,7 +66,7 @@ public class ReporterTest {
         Step subSubStep1 = step.subSteps().get(0).subSteps().get(0);
         Step subSubStep2 = step.subSteps().get(0).subSteps().get(1);
 
-        StepExecutionReport report = sut.generateReport(step, Step::status);
+        StepExecutionReport report = sut.generateReport(step, Step::status, "env");
         assertThat(report.status).isEqualTo(Status.NOT_EXECUTED);
         assertThat(report.steps.get(0).status).isEqualTo(Status.NOT_EXECUTED);
         assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(Status.NOT_EXECUTED);
@@ -76,7 +76,7 @@ public class ReporterTest {
         step.beginExecution(scenarioExecution);
         subStep1.beginExecution(scenarioExecution);
         subSubStep1.beginExecution(scenarioExecution);
-        report = sut.generateReport(step, Step::status);
+        report = sut.generateReport(step, Step::status, "env");
         assertThat(report.status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(RUNNING);
@@ -84,7 +84,7 @@ public class ReporterTest {
         assertThat(report.steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
 
         subSubStep1.pauseExecution(scenarioExecution);
-        report = sut.generateReport(step, Step::status);
+        report = sut.generateReport(step, Step::status, "env");
         assertThat(report.status).isEqualTo(Status.PAUSED);
         assertThat(report.steps.get(0).status).isEqualTo(Status.PAUSED);
         assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(Status.PAUSED);
@@ -92,7 +92,7 @@ public class ReporterTest {
         assertThat(report.steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
 
         subSubStep1.success();
-        report = sut.generateReport(step, Step::status);
+        report = sut.generateReport(step, Step::status, "env");
         assertThat(report.status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(SUCCESS);
@@ -100,7 +100,7 @@ public class ReporterTest {
         assertThat(report.steps.get(1).status).isEqualTo(Status.NOT_EXECUTED);
 
         subSubStep2.beginExecution(scenarioExecution);
-        report = sut.generateReport(step, Step::status);
+        report = sut.generateReport(step, Step::status, "env");
         assertThat(report.status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(SUCCESS);
@@ -109,7 +109,7 @@ public class ReporterTest {
 
         subSubStep2.success();
         subStep1.endExecution(scenarioExecution);
-        report = sut.generateReport(step, Step::status);
+        report = sut.generateReport(step, Step::status, "env");
         assertThat(report.status).isEqualTo(RUNNING);
         assertThat(report.steps.get(0).status).isEqualTo(SUCCESS);
         assertThat(report.steps.get(0).steps.get(0).status).isEqualTo(SUCCESS);

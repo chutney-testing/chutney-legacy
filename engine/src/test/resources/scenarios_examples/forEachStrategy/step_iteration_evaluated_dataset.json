@@ -34,5 +34,8 @@
                 }
             }
         ]
+    },
+    "environment": {
+        "name": "env"
     }
 }

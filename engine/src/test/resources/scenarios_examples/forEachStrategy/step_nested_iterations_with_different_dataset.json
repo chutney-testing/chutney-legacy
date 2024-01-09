@@ -1,4 +1,7 @@
 {
+    "environment": {
+        "name": "env"
+    },
     "scenario": {
         "name": "Test iterations",
         "steps": [
@@ -14,7 +17,7 @@
                         "outputs": {
                             "check_<i>_<j>": "${\"/\" + #env + \"/\" + #user + \"/<j>\"}"
                         },
-                        "validations" : {
+                        "validations": {
                             "check_<i>_<j>_ok": "${#check_<i>_<j> == \"/\" + #env + \"/\" + #user + \"/<j>\"}"
                         },
                         "strategy": {

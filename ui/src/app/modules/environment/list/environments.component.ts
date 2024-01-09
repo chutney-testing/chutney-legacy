@@ -48,10 +48,10 @@ export class EnvironmentsComponent implements OnInit, DoCheck {
     }
 
     ngDoCheck() {
-        var isNewEnvironmentInvalid = this.environment && !this.validationService.isValidName(this.environment.name);
-        var isEditableEnvironmentInvalid = this.editionIndex >= 0 && !this.validationService.isValidName(this.editableEnvironments[this.editionIndex]?.name);
+        var isNewEnvironmentInvalid = this.environment && !this.validationService.isValidEnvName(this.environment.name);
+        var isEditableEnvironmentInvalid = this.editionIndex >= 0 && !this.validationService.isValidEnvName(this.editableEnvironments[this.editionIndex]?.name);
         if ( isNewEnvironmentInvalid || isEditableEnvironmentInvalid) {
-            this.errorMessage = this.translateService.instant('global.rules.name');
+            this.errorMessage = this.translateService.instant('global.rules.env.name');
         } else {
             this.errorMessage = null;
         }

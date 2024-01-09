@@ -48,6 +48,12 @@ public class EmbeddedEnvironmentApi implements EnvironmentApi {
         return environmentService.listEnvironmentsNames();
     }
 
+
+    @Override
+    public String defaultEnvironmentName() throws EnvironmentNotFoundException {
+        return environmentService.defaultEnvironmentName();
+    }
+
     @Override
     public EnvironmentDto getEnvironment(String environmentName) throws EnvironmentNotFoundException {
         return EnvironmentDto.from(environmentService.getEnvironment(environmentName));

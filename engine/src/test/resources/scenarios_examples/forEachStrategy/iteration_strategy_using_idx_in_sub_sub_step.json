@@ -26,5 +26,8 @@
                 ]
             }
         }
+    },
+    "environment": {
+        "name": "env"
     }
 }

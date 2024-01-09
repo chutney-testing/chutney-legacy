@@ -24,6 +24,7 @@ import com.chutneytesting.environment.api.target.dto.TargetDto;
 import com.chutneytesting.environment.api.variable.dto.EnvironmentVariableDto;
 import com.chutneytesting.environment.api.variable.dto.EnvironmentVariableDtoMapper;
 import com.chutneytesting.environment.domain.Environment;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -43,6 +44,23 @@ public class EnvironmentDto {
         this.variables = emptyList();
     }
 
+    public EnvironmentDto(String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.targets = emptyList();
+        this.variables = emptyList();
+
+    }
+
+    public EnvironmentDto(String name, String description, List<TargetDto> targets) {
+        this.name = name;
+        this.description = description;
+        this.targets = ofNullable(targets).map(Collections::unmodifiableList).orElse(emptyList());
+        this.variables = emptyList();
+
+    }
+
+    @JsonCreator
     public EnvironmentDto(String name, String description, List<TargetDto> targets, List<EnvironmentVariableDto> variables) {
         this.name = name;
         this.description = description;

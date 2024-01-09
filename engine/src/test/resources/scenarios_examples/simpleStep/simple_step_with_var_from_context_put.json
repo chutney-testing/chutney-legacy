@@ -16,5 +16,8 @@
                 "type": "success"
             }
         ]
+    },
+    "environment": {
+        "name": "env"
     }
 }

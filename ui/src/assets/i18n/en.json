@@ -12,7 +12,7 @@
             "component": "Components",
             "backups": "Backups",
             "variable": "Variable",
-            "envVariable": "Environment Variables",
+            "envVariable": "Variables",
             "dataset": "Dataset",
             "jiraId": "Jira identifier",
             "roles": "Roles",
@@ -450,7 +450,8 @@
             "no": "No"
         },
         "rules": {
-            "name": "Name must be of 3 to 20 letters, digits, underscore or hyphen. Example: My_name-1"
+            "env.name": "Name must be of 3 to 20 letters, digits, underscore or hyphen. Example: My_name-1",
+            "var.name": "The name should only contain letters, numbers, or underscores. It must start with a letter. Example: My_name1"
         },
         "smallword": {
             "of": "of",

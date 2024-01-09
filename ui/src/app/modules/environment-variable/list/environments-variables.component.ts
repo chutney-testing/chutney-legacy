@@ -78,7 +78,7 @@ export class EnvironmentsVariablesComponent implements OnInit {
 
     initVariableEdition(variableKey: string = '') {
         this.variableEditionForm = new FormGroup({
-            key: new FormControl(variableKey, [Validators.required, this.validationService.asValidatorFn(this.validationService.isValidName.bind(this.validationService), 'name')]),
+            key: new FormControl(variableKey, [Validators.required, this.validationService.asValidatorFn(this.validationService.isValidVariableName.bind(this.validationService), 'name')]),
             oldKey: new FormControl(variableKey),
             values: new FormArray(
                 this.environments.map(env => {

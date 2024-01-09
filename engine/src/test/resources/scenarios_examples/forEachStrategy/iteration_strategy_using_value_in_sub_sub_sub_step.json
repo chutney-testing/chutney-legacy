@@ -30,5 +30,8 @@
                 ]
             }
         }
+    },
+    "environment": {
+        "name": "env"
     }
 }

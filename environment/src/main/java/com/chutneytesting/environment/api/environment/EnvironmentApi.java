@@ -28,6 +28,8 @@ public interface EnvironmentApi {
 
     Set<String> listEnvironmentsNames();
 
+    String defaultEnvironmentName();
+
     EnvironmentDto getEnvironment(String environmentName) throws EnvironmentNotFoundException;
 
     default EnvironmentDto createEnvironment(EnvironmentDto environmentMetadataDto) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {

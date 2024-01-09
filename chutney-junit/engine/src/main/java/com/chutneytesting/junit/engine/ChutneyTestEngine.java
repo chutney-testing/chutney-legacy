@@ -18,14 +18,14 @@ package com.chutneytesting.junit.engine;
 
 import com.chutneytesting.engine.api.execution.EnvironmentDto;
 import com.chutneytesting.environment.EnvironmentConfiguration;
+import com.chutneytesting.environment.api.environment.EmbeddedEnvironmentApi;
 import com.chutneytesting.environment.api.variable.dto.EnvironmentVariableDto;
 import com.chutneytesting.glacio.GlacioAdapterConfiguration;
-import com.chutneytesting.glacio.api.GlacioAdapter;
 import com.chutneytesting.junit.api.Chutney;
 import com.chutneytesting.junit.api.EnvironmentService;
 import com.chutneytesting.tools.UncheckedException;
 import java.lang.reflect.Constructor;
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.platform.commons.support.ReflectionSupport;
@@ -42,7 +42,7 @@ public class ChutneyTestEngine extends HierarchicalTestEngine<ChutneyEngineExecu
 
     public static final String CHUTNEY_JUNIT_ENGINE_ID = "chutney-junit-engine";
     private static final Logger LOGGER = LoggerFactory.getLogger(ChutneyTestEngine.class);
-    public static final String CHUTNEY_JUNIT_ENV_PATH = ".chutney/junit/conf";
+    private static final String CHUTNEY_JUNIT_ENV_PATH = ".chutney/junit/conf";
 
     @Override
     public String getId() {
@@ -115,14 +115,18 @@ public class ChutneyTestEngine extends HierarchicalTestEngine<ChutneyEngineExecu
     private EnvironmentDto getEnvironment(ConfigurationParameters cp) {
         EnvironmentConfiguration environmentConfiguration = new EnvironmentConfiguration(getEnvironmentDirectoryPath(cp));
         String environmentName = getEnvironmentName(cp);
-        return cp.get("chutney.junit.engine.conf.env.name")
-            .map(name -> environmentConfiguration.getEmbeddedEnvironmentApi().getEnvironment(environmentName))
-            .map(env -> env.variables.stream().collect(Collectors.toMap(EnvironmentVariableDto::key,EnvironmentVariableDto::value)))
-            .map(variables -> new EnvironmentDto(environmentName, variables))
-            .orElse(new EnvironmentDto(GlacioAdapter.DEFAULT_ENV, Collections.emptyMap()));
+        List<EnvironmentVariableDto> variables = environmentConfiguration.getEmbeddedEnvironmentApi().getEnvironment(environmentName).variables;
+        return new EnvironmentDto(environmentName, variables.stream().collect(Collectors.toMap(EnvironmentVariableDto::key,EnvironmentVariableDto::value)));
     }
 
     private String getEnvironmentName(ConfigurationParameters cp) {
-        return cp.get("chutney.junit.engine.conf.env.name").orElse(GlacioAdapter.DEFAULT_ENV);
+        return cp.get("chutney.junit.engine.conf.env.name")
+            .orElseGet(() -> getDefaultEnvName(cp));
+    }
+
+    private String getDefaultEnvName(ConfigurationParameters cp) {
+        EnvironmentConfiguration environmentConfiguration = new EnvironmentConfiguration(getEnvironmentDirectoryPath(cp));
+        EmbeddedEnvironmentApi embeddedEnvironmentApi = environmentConfiguration.getEmbeddedEnvironmentApi();
+        return embeddedEnvironmentApi.defaultEnvironmentName();
     }
 }

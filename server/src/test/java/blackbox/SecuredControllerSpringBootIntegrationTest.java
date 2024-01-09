@@ -168,7 +168,7 @@ public class SecuredControllerSpringBootIntegrationTest {
             {POST, "/api/scenario/v2/raw", "SCENARIO_WRITE", "{\"title\":\"\",\"content\":\"{\\\"when\\\":{}}\"}", OK},
             {GET, "/api/scenario/v2/raw/1", "SCENARIO_READ", null, OK},
 
-            {POST, "/api/scenario/execution/v1", "SCENARIO_EXECUTE", "{\"scenario\":{}}", OK},
+            {POST, "/api/scenario/execution/v1", "SCENARIO_EXECUTE", "{\"scenario\":{},\"environment\": {\"name\":\"env\"}}", OK},
 
             {GET, "/api/ui/scenario/123/execution/v1", "SCENARIO_READ", null, OK},
             {GET, "/api/ui/scenario/123/execution/666/v1", "SCENARIO_READ", null, NOT_FOUND},

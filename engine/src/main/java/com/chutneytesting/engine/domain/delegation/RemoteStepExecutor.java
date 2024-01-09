@@ -36,7 +36,7 @@ public class RemoteStepExecutor implements StepExecutor {
     @Override
     public void execute(ScenarioExecution scenarioExecution, Target target, Step step) {
         try {
-            StepExecutionReport remoteReport = delegationClient.handDown(step.definition(), agentInfo);
+            StepExecutionReport remoteReport = delegationClient.handDown(step, agentInfo);
 
             guardFromIllegalReport(remoteReport);
 

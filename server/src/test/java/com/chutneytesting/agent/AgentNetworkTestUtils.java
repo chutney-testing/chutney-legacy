@@ -16,7 +16,6 @@
 
 package com.chutneytesting.agent;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 
@@ -71,7 +70,7 @@ public class AgentNetworkTestUtils {
             .filter(Optional::isPresent)
             .map(Optional::get)
             .collect(Collectors.toList());
-        EnvironmentDto env = new EnvironmentDto(ENV_NAME, null, targets, emptyList());
+        EnvironmentDto env = new EnvironmentDto(ENV_NAME, null, targets);
         builder.environmentConfiguration(ImmutableNetworkConfiguration.EnvironmentConfiguration.of(singleton(env)));
 
         return builder;

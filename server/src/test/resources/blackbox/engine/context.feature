@@ -29,7 +29,7 @@ Feature: Execution success action
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
-                With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/DEFAULT
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
         Then the report status is SUCCESS
@@ -65,7 +65,7 @@ Feature: Execution success action
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
-                With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/DEFAULT
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
         Then the report status is FAILURE
@@ -101,7 +101,7 @@ Feature: Execution success action
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
-                With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/DEFAULT
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
         Then the report status is SUCCESS
@@ -143,7 +143,7 @@ Feature: Execution success action
         When last saved scenario is executed
             Do http-post Post scenario execution to Chutney instance
                 On CHUTNEY_LOCAL
-                With uri /api/ui/scenario/execution/v1/${#scenarioId}/ENV
+                With uri /api/ui/scenario/execution/v1/${#scenarioId}/DEFAULT
                 Take report ${#body}
                 Validate httpStatusCode_200 ${#status == 200}
         Then the report status is SUCCESS

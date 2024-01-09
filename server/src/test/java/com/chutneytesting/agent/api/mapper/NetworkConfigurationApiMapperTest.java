@@ -17,7 +17,6 @@
 package com.chutneytesting.agent.api.mapper;
 
 import static com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration.builder;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
@@ -116,7 +115,7 @@ public class NetworkConfigurationApiMapperTest {
         List<TargetDto> targets = new ArrayList<>();
         targets.add(new TargetDto("s2", "pro://host2:45/lol", emptySet()));
 
-        EnvironmentDto env = new EnvironmentDto("name", null, targets, emptyList());
+        EnvironmentDto env = new EnvironmentDto("name", null, targets);
 
         ImmutableNetworkConfiguration networkConfiguration = ImmutableNetworkConfiguration.builder()
             .creationDate(Instant.now())
@@ -163,7 +162,7 @@ public class NetworkConfigurationApiMapperTest {
 
         List<TargetDto> targets = new ArrayList<>();
         targets.add(new TargetDto("APP_1", "https://host_of_app:443/api", emptySet()));
-        EnvironmentDto newEnv = new EnvironmentDto("env_name", null, targets, emptyList());
+        EnvironmentDto newEnv = new EnvironmentDto("env_name", null, targets);
         Set<EnvironmentDto> newEnvs = new HashSet<>();
         newEnvs.add(newEnv);
         NetworkConfiguration enhancedNetworkConfiguration = networkConfigurationApiMapper.enhanceWithEnvironment(networkConfiguration, newEnvs);

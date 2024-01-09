@@ -16,7 +16,6 @@
 
 package blackbox;
 
-import static com.chutneytesting.junit.engine.ChutneyTestEngine.CHUTNEY_JUNIT_ENV_PATH;
 import static java.util.stream.Collectors.toList;
 
 import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
@@ -87,7 +86,8 @@ public class ChutneyTest {
     @AfterAll
     public void tearDown() {
         localChutney.stop();
-        FileUtils.deleteFolder(new File(CHUTNEY_JUNIT_ENV_PATH).toPath());
+        cleanEnvironment();
+
     }
 
     private static int findAvailableTcpPort() {

@@ -30,7 +30,7 @@ export class EnvironmentService {
 
     private envBaseUrl = '/api/v2/environments';
     private targetBaseUrl = '/api/v2/targets';
-    private variablesBaseUrl = '/api/v2/env-variables';
+    private variablesBaseUrl = '/api/v2/variables';
 
     constructor(private http: HttpClient,
                 private fileSaverService: FileSaverService) {

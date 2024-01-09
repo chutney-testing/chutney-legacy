@@ -17,6 +17,7 @@
 package com.chutneytesting.engine.api.execution;
 
 import io.reactivex.rxjava3.core.Observable;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -43,7 +44,7 @@ public class HttpTestEngine implements TestEngine {
     @Override
     @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
     @PostMapping(path = EXECUTION_URL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public StepExecutionReportDto execute(@RequestBody ExecutionRequestDto request) {
+    public StepExecutionReportDto execute(@Valid @RequestBody ExecutionRequestDto request) {
         return testEngine.execute(request);
     }
 

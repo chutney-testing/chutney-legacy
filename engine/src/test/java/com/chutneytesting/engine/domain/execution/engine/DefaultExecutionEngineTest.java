@@ -102,15 +102,13 @@ class DefaultExecutionEngineTest {
     @Test
     void execute_tear_down_after_step_definition_attaching_it_to_root_step() {
         // Given
-        StepExecutionStrategy strategy = DefaultStepExecutionStrategy.instance;
+        StepExecutionStrategy strategy = mock(StepExecutionStrategy.class);
+        when(strategy.execute(any(), any(), any(), any()))
+            .thenReturn(Status.SUCCESS) // for step definition
+            .thenReturn(Status.SUCCESS); // for tear down step
         when(stepExecutionStrategies.buildStrategyFrom(any()))
             .thenReturn(strategy) // for step definition
             .thenReturn(strategy); // for tear down step
-        ActionTemplateRegistry actionTemplateRegistry = mock(ActionTemplateRegistry.class);
-        when(delegationService.findExecutor(any()))
-            .thenReturn(new DefaultStepExecutor(actionTemplateRegistry));
-        when(actionTemplateRegistry.getByIdentifier(any()))
-            .thenReturn(Optional.empty());
 
         ScenarioExecution scenarioExecution = createScenarioExecution(null);
         FinallyAction finallyAction = FinallyAction.Builder.forAction("final", "action name").build();
@@ -130,15 +128,12 @@ class DefaultExecutionEngineTest {
         assertThat(scenarioExecution.hasToStop()).isFalse();
 
         assertThat(report.steps).hasSize(1);
-        assertThat(report.environment).isEqualTo(fakeEnvironment.name());
         StepExecutionReport tearDownRootNode = report.steps.get(0);
         assertThat(tearDownRootNode.name).isEqualTo(tearDownRootNodeName);
         assertThat(tearDownRootNode.strategy).isEqualTo(new SoftAssertStrategy().getType());
-        assertThat(tearDownRootNode.environment).isEqualTo(fakeEnvironment.name());
         assertThat(tearDownRootNode.steps).hasSize(1);
         assertThat(tearDownRootNode.steps.get(0).name).isEqualTo(finallyAction.name());
         assertThat(tearDownRootNode.steps.get(0).type).isEqualTo(finallyAction.type());
-        assertThat(tearDownRootNode.steps.get(0).environment).isEqualTo(fakeEnvironment.name());
     }
 
     @Test
@@ -169,6 +164,36 @@ class DefaultExecutionEngineTest {
         assertThat(report).isNotNull();
         assertThat(report.scenarioContext).contains(entry("environment", fakeEnvironment.name()));
         assertThat(report.environment).isEqualTo(fakeEnvironment.name());
+    }
+
+    @Test
+    void should_catch_exception_when_environment_is_null() {
+        // Given
+        StepExecutionStrategy strategy = DefaultStepExecutionStrategy.instance;
+        when(stepExecutionStrategies.buildStrategyFrom(any()))
+            .thenReturn(strategy);
+        ActionTemplateRegistry actionTemplateRegistry = mock(ActionTemplateRegistry.class);
+        when(delegationService.findExecutor(any()))
+            .thenReturn(new DefaultStepExecutor(actionTemplateRegistry));
+        when(actionTemplateRegistry.getByIdentifier(any()))
+            .thenReturn(Optional.empty());
+
+        ScenarioExecution scenarioExecution = createScenarioExecution(null);
+        Reporter reporter = new Reporter();
+        DefaultExecutionEngine sut = new DefaultExecutionEngine(new StepDataEvaluator(null), stepExecutionStrategies, delegationService, reporter, actionExecutor);
+
+        Map<String, Object> inputs = singletonMap("currentEnvironment", "${#environment}");
+        StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, inputs, null, null, null);
+
+        // When
+        Long executionId = sut.execute(stepDefinition, emptyDataset, scenarioExecution, null);
+        assertThat(executionId).isNotNull();
+        StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
+
+        // Then
+        assertThat(report).isNotNull();
+        assertThat(report.status).isEqualTo(Status.FAILURE);
+        assertThat(report.errors).contains("Cannot invoke \"com.chutneytesting.engine.domain.execution.engine.Environment.name()\" because \"environment\" is null");
     }
 
     @Test
@@ -256,7 +281,39 @@ class DefaultExecutionEngineTest {
         StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
 
         // Then
+        assertThat(report.status).isEqualTo(Status.SUCCESS);
         assertDoesNotThrow(() -> UUID.fromString((String) report.scenarioContext.get("myID")));
+    }
+
+    @Test
+    public void should_catch_dataset_evaluation_exception() {
+        when(stepExecutionStrategies.buildStrategyFrom(any())).thenReturn(DefaultStepExecutionStrategy.instance);
+
+        ActionTemplateRegistry actionTemplateRegistry = mock(ActionTemplateRegistry.class);
+        when(actionTemplateRegistry.getByIdentifier(any())).thenReturn(Optional.empty());
+        when(delegationService.findExecutor(any())).thenReturn(new DefaultStepExecutor(actionTemplateRegistry));
+
+        StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, emptyMap(), emptyList(), emptyMap(), emptyMap());
+
+        Map<String, String> constants = Map.of("myID", "${#unknownFunction()}");
+        Dataset dataset = new Dataset(constants, emptyList());
+
+        Reporter reporter = new Reporter();
+
+        SpelFunctionCallback spelFunctionCallback = new SpelFunctionCallback();
+        ExtensionLoaders
+            .classpathToClass("META-INF/extension/chutney.functions")
+            .load().forEach(c -> ReflectionUtils.doWithMethods(c, spelFunctionCallback));
+        SpelFunctions functions = spelFunctionCallback.getSpelFunctions();
+        DefaultExecutionEngine sut = new DefaultExecutionEngine(new StepDataEvaluator(functions), stepExecutionStrategies, delegationService, reporter, actionExecutor);
+
+        // When
+        Long executionId = sut.execute(stepDefinition, dataset, createScenarioExecution(null), fakeEnvironment);
+        StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
+
+        // Then
+        assertThat(report.status).isEqualTo(Status.FAILURE);
+        assertThat(report.errors).contains("Cannot resolve #unknownFunction() , EL1006E: Function 'unknownFunction' could not be found");
     }
 
     @ParameterizedTest(name = "{index}: {0}")
