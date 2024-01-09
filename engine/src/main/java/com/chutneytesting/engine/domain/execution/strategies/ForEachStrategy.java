@@ -60,9 +60,6 @@ public class ForEachStrategy implements StepExecutionStrategy {
         context.putAll(localContext);
         step.resolveName(context);
         if (step.isParentStep()) {
-            Map<String, Object> context = new HashMap<>(scenarioContext);
-            context.putAll(localContext);
-            step.resolveName(step.dataEvaluator().evaluateString(step.getName(), context));
             List<Step> subSteps = List.copyOf(step.subSteps());
             step.removeStepExecution();
 
