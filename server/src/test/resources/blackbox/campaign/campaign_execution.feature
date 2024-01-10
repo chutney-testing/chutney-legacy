@@ -154,7 +154,8 @@ Feature:  Campaign execution
 
     Scenario: Execution for surefire of a campaign with 1 scenario
         Given a campaign with name "campaignSurefire" is stored
-            On CHUTNEY_LOCAL
+            Do http-post Post campaign to Chutney instance
+                On CHUTNEY_LOCAL
                 With uri /api/ui/campaign/v1
                 With headers
                 | Content-Type | application/json;charset=UTF-8 |
