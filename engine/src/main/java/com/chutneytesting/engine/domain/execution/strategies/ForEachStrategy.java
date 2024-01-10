@@ -68,8 +68,11 @@ public class ForEachStrategy implements StepExecutionStrategy {
                 .peek(p -> step.addStepExecution(p.getLeft()))
                 .toList();
 
-            iterations.forEach(it ->
-                DefaultStepExecutionStrategy.instance.execute(scenarioExecution, it.getLeft()/*step*/, scenarioContext, it.getRight()/*localContext*/, strategies));
+            iterations.forEach(it -> {
+                HashMap<String, Object> mergedContext = new HashMap<>(localContext);
+                mergedContext.putAll(it.getRight());
+                DefaultStepExecutionStrategy.instance.execute(scenarioExecution, it.getLeft()/*step*/, scenarioContext, mergedContext/*localContext*/, strategies);
+            });
 
         } else {
             List<Pair<Step, Map<String, Object>>> iterations = dataset.stream()
