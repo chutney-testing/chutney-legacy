@@ -67,17 +67,12 @@ public class StepDataEvaluator {
         return evaluatedNamedData;
     }
 
-  public String evaluateString(final String s, final Map<String, Object> contextVariables, boolean silentResolve) throws EvaluationException {
-    return (String) this.evaluate((Object) s, contextVariables, silentResolve);
-    }
-
     public Object evaluate(final Object o, final Map<String, Object> contextVariables) throws EvaluationException {
         return evaluate(o, contextVariables, false);
     }
 
-  public Object evaluate(final Object o, final Map<String, Object> contextVariables, boolean silentResolve) throws EvaluationException {
-        StandardEvaluationContext evaluationContext = buildEvaluationContext(contextVariables);
-    return evaluateObject(o, evaluationContext, silentResolve);
+    public String silentEvaluateString(final String s, final Map<String, Object> contextVariables) throws EvaluationException {
+        return (String) this.evaluate((Object) s, contextVariables, true);
     }
 
     public Target evaluateTarget(final Target target, final Map<String, Object> contextVariables) throws EvaluationException {
@@ -89,6 +84,11 @@ public class StepDataEvaluator {
         builder.withUrl((String) evaluateObject(target.rawUri(), evaluationContext));
         builder.withProperties((Map<String, String>) evaluateObject(target.prefixedProperties(""), evaluationContext));
         return builder.build();
+    }
+
+    private Object evaluate(final Object o, final Map<String, Object> contextVariables, boolean silentResolve) throws EvaluationException {
+        StandardEvaluationContext evaluationContext = buildEvaluationContext(contextVariables);
+        return evaluateObject(o, evaluationContext, silentResolve);
     }
 
     private StandardEvaluationContext buildEvaluationContext(Map<String, Object> contextVariables) {

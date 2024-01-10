@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class StepForEachStrategy implements StepExecutionStrategy {
+public class ForEachStrategy implements StepExecutionStrategy {
 
     @Override
     public String getType() {
@@ -58,7 +58,7 @@ public class StepForEachStrategy implements StepExecutionStrategy {
         AtomicInteger index = new AtomicInteger(0);
         Map<String, Object> context = new HashMap<>(scenarioContext);
         context.putAll(localContext);
-        step.resolveName(context, true);
+        step.resolveName(context);
         if (step.isParentStep()) {
             List<Step> subSteps = List.copyOf(step.subSteps());
             step.removeStepExecution();

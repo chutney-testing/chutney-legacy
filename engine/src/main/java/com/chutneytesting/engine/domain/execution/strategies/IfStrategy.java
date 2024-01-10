@@ -56,7 +56,7 @@ public class IfStrategy implements StepExecutionStrategy {
         } else {
             Map<String, Object> context = new HashMap<>(scenarioContext);
             context.putAll(localContext);
-            step.resolveName(context, false);
+            step.resolveName(context);
             step.success();
             skipAllSubSteps(step);
         }

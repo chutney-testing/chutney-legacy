@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
-class StepForEachStrategyTest {
+class ForEachStrategyTest {
 
     @Test
     public void should_fail_if_no_dataset_with_iteration_strategy() {

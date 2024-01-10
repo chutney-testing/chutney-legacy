@@ -108,7 +108,7 @@ public class Step {
             Map<String, Object> evaluationContext = buildEvaluationContext(scenarioContext, localContext);
             final Map<String, Object> evaluatedInputs = definition.type.equals("final") ? definition.inputs() : unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs(), evaluationContext));
             target = dataEvaluator.evaluateTarget(target, evaluationContext);
-            resolveName(evaluationContext, false);
+            resolveName(evaluationContext);
             Try
                 .exec(() -> this.stepContext = new StepContext(scenarioContext, localContext, evaluatedInputs))
                 .ifSuccess(stepContextExecuted -> {
@@ -153,8 +153,8 @@ public class Step {
         return this.state.name();
     }
 
-    public void resolveName(Map<String, Object> context, boolean silentResolve) {
-        this.state.setName(dataEvaluator.evaluateString(state.name(), context, silentResolve));
+    public void resolveName(Map<String, Object> context) {
+        this.state.setName(dataEvaluator.silentEvaluateString(state.name(), context));
     }
 
     public Status status() {

@@ -53,7 +53,7 @@ public final class DefaultStepExecutionStrategy implements StepExecutionStrategy
             try {
                 Map<String, Object> context = new HashMap<>(scenarioContext);
                 context.putAll(localContext);
-                step.resolveName(context, false);
+                step.resolveName(context);
                 Status childStatus = Status.RUNNING;
                 while (subStepsIterator.hasNext() && childStatus != Status.FAILURE) {
                     currentRunningStep = subStepsIterator.next();
