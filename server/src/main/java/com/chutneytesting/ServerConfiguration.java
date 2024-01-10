@@ -60,6 +60,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
+import java.io.Serial;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Clock;
@@ -237,8 +238,8 @@ public class ServerConfiguration {
     }
 
     @Bean
-    CampaignService campaignService(CampaignRepository campaignRepository) {
-        return new CampaignService(campaignRepository);
+    CampaignService campaignService(CampaignExecutionRepository campaignExecutionRepository) {
+        return new CampaignService(campaignExecutionRepository);
     }
 
 
@@ -261,6 +262,7 @@ public class ServerConfiguration {
     // TODO - To remove when Reporter will serialize itself
     static class JDomElementSerializer extends StdSerializer<Element> {
 
+        @Serial
         private static final long serialVersionUID = 1L;
 
         protected JDomElementSerializer() {

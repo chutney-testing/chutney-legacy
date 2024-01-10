@@ -20,12 +20,12 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 
+import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignScenarioEntity;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
-import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import java.util.List;
 import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Repository;
@@ -40,7 +40,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
 
     private final CampaignJpaRepository campaignJpaRepository;
     private final CampaignScenarioJpaRepository campaignScenarioJpaRepository;
-    private final CampaignExecutionDBRepository campaignExecutionRepository;
+    private final CampaignExecutionRepository campaignExecutionRepository;
 
     public DatabaseCampaignRepository(CampaignJpaRepository campaignJpaRepository,
                                       CampaignScenarioJpaRepository campaignScenarioJpaRepository,
@@ -59,11 +59,6 @@ public class DatabaseCampaignRepository implements CampaignRepository {
 
     private Integer lastCampaignVersion(Long id) {
         return ofNullable(id).flatMap(campaignJpaRepository::findById).map(CampaignEntity::version).orElse(null);
-    }
-
-    @Override
-    public void saveExecution(Long campaignId, CampaignExecution execution) {
-        campaignExecutionRepository.saveCampaignExecution(campaignId, execution);
     }
 
     @Override
@@ -96,12 +91,6 @@ public class DatabaseCampaignRepository implements CampaignRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CampaignExecution> findLastExecutions(Long numberOfExecution) {
-        return campaignExecutionRepository.findLastExecutions(numberOfExecution);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<String> findScenariosIds(Long campaignId) {
         return campaignJpaRepository.findById(campaignId)
             .map(c -> c.campaignScenarios().stream()
@@ -112,22 +101,11 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     }
 
     @Override
-    public Long newCampaignExecution(Long campaignId) {
-        return campaignExecutionRepository.generateCampaignExecutionId(campaignId);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public List<Campaign> findAll() {
         return StreamSupport.stream(campaignJpaRepository.findAll().spliterator(), false)
             .map(CampaignEntity::toDomain)
             .toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<CampaignExecution> findExecutionsById(Long campaignId) {
-        return campaignExecutionRepository.findExecutionHistory(campaignId);
     }
 
     @Override
@@ -141,11 +119,5 @@ public class DatabaseCampaignRepository implements CampaignRepository {
             .map(CampaignScenarioEntity::campaign)
             .map(CampaignEntity::toDomain)
             .toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public CampaignExecution findByExecutionId(Long campaignExecutionId) {
-        return campaignExecutionRepository.getCampaignExecutionById(campaignExecutionId);
     }
 }

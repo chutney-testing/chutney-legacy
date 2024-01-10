@@ -43,6 +43,7 @@ import com.chutneytesting.dataset.domain.DataSetRepository;
 import com.chutneytesting.jira.api.JiraXrayEmbeddedApi;
 import com.chutneytesting.jira.api.ReportForJira;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
+import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.dataset.DataSetHistoryRepository;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.chutneytesting.server.core.domain.execution.ScenarioExecutionEngine;
@@ -59,14 +60,11 @@ import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
-import org.apache.groovy.util.Maps;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -157,7 +155,7 @@ public class CampaignExecutionEngineTest {
         assertThat(campaignExecution.scenarioExecutionReports().get(0).execution.executionId()).isEqualTo(firstScenarioExecutionId);
         assertThat(campaignExecution.scenarioExecutionReports().get(1).execution.executionId()).isEqualTo(secondScenarioExecutionId);
         assertThat(campaignExecution.partialExecution).isFalse();
-        verify(campaignRepository).saveExecution(campaign.id, campaignExecution);
+        verify(campaignExecutionRepository).saveCampaignExecution(campaign.id, campaignExecution);
         verify(metrics).onCampaignExecutionEnded(
             eq(campaign),
             eq(campaignExecution)
@@ -182,7 +180,7 @@ public class CampaignExecutionEngineTest {
         assertThat(campaignExecution.scenarioExecutionReports()).hasSize(1);
         assertThat(campaignExecution.scenarioExecutionReports().get(0).execution.executionId()).isEqualTo(secondScenarioExecutionId);
         assertThat(campaignExecution.partialExecution).isTrue();
-        verify(campaignRepository).saveExecution(campaign.id, campaignExecution);
+        verify(campaignExecutionRepository).saveCampaignExecution(campaign.id, campaignExecution);
     }
 
     @Test
@@ -295,7 +293,7 @@ public class CampaignExecutionEngineTest {
         verify(campaignRepository).findById(campaign.id);
         verify(campaignRepository).findByName(campaign.title);
 
-        verify(campaignRepository, times(2)).newCampaignExecution(campaign.id);
+        verify(campaignExecutionRepository, times(2)).generateCampaignExecutionId(campaign.id, "campaignEnv");
     }
 
 
@@ -327,9 +325,7 @@ public class CampaignExecutionEngineTest {
         when(campaignRepository.findById(campaign.id)).thenReturn(null);
 
         // When
-        assertThatThrownBy(() -> {
-            sut.getLastCampaignExecution(campaign.id);
-        });
+        assertThatThrownBy(() -> sut.getLastCampaignExecution(campaign.id));
 
         // Then
         verify(campaignRepository).findById(campaign.id);
@@ -395,18 +391,24 @@ public class CampaignExecutionEngineTest {
     @Test
     public void should_override_scenario_dataset_with_campaign_dataset_before_execution() {
         // Given
-        Map<String, String> gwtTestCaseDataSet = Maps.of(
-            "gwt key", "gwt specific value",
-            "key", "gwt value"
-        );
-        TestCase gwtTestCase = createGwtTestCase();
+        TestCase gwtTestCase = GwtTestCase.builder()
+            .withMetadata(
+                TestCaseMetadataImpl.builder()
+                    .withId("gwt")
+                    .withDefaultDataset("scenarioDataSet")
+                    .build()
+            )
+            .build();
 
-        Campaign campaign = createCampaign("campaignDataSetId", gwtTestCase);
+        Campaign campaign = createCampaign("campaignDataSet", gwtTestCase);
 
         when(campaignRepository.findById(campaign.id)).thenReturn(campaign);
         when(testCaseRepository.findExecutableById(gwtTestCase.id())).thenReturn(of(gwtTestCase));
         when(scenarioExecutionEngine.execute(any(ExecutionRequest.class))).thenReturn(mock(ScenarioExecutionReport.class));
         when(executionHistoryRepository.getExecution(any(), any())).thenReturn(executionWithId(42L));
+
+        when(datasetRepository.findById(eq("scenarioDataSet"))).thenReturn(DataSet.builder().withName("scenarioDataSet").build());
+        when(datasetRepository.findById(eq("campaignDataSet"))).thenReturn(DataSet.builder().withName("campaignDataSet").build());
 
         // When
         sut.executeById(campaign.id, "user");
@@ -414,8 +416,9 @@ public class CampaignExecutionEngineTest {
         // Then
         ArgumentCaptor<ExecutionRequest> argumentCaptor = ArgumentCaptor.forClass(ExecutionRequest.class);
         verify(scenarioExecutionEngine, times(1)).execute(argumentCaptor.capture());
-        List<ExecutionRequest> executionRequests = argumentCaptor.getAllValues();
-        assertThat(executionRequests).hasSize(1);
+        ExecutionRequest executionRequest = argumentCaptor.getValue();
+        assertThat(executionRequest.dataset).isNotNull();
+        assertThat(executionRequest.dataset.name).isEqualTo("campaignDataSet");
     }
 
     private final static Random campaignIdGenerator = new Random();
@@ -452,16 +455,6 @@ public class CampaignExecutionEngineTest {
 
     private GwtTestCase createGwtTestCase(String id) {
         return GwtTestCase.builder().withMetadata(TestCaseMetadataImpl.builder().withId(id).build()).build();
-    }
-
-    private GwtTestCase createGwtTestCase() {
-        return GwtTestCase.builder()
-            .withMetadata(
-                TestCaseMetadataImpl.builder()
-                    .withId("gwt")
-                    .build()
-            )
-            .build();
     }
 
     private Campaign createCampaign() {

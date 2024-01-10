@@ -86,7 +86,7 @@ public class CampaignControllerTest {
         resultExtractor = new ResultExtractor();
 
         repositoryAggregator = mock(TestCaseRepositoryAggregator.class);
-        CampaignController campaignController = new CampaignController(repositoryAggregator, repository, campaignExecutionEngine, new CampaignService(repository));
+        CampaignController campaignController = new CampaignController(repositoryAggregator, repository, repository, campaignExecutionEngine, new CampaignService(repository));
         mockMvc = MockMvcBuilders.standaloneSetup(campaignController)
             .setControllerAdvice(new RestExceptionHandler(Mockito.mock(ChutneyMetrics.class)))
             .build();
@@ -167,7 +167,7 @@ public class CampaignControllerTest {
             existingCampaign.getDescription(),
             existingCampaign.getScenarioIds(),
             existingCampaign.getCampaignExecutionReports(),
-            existingCampaign.getEnvironment(), false, false, null, Arrays.asList("Tag"));
+            existingCampaign.getEnvironment(), false, false, null, List.of("Tag"));
 
         // When
         CampaignDto receivedCampaign = insertCampaign(modifiedCampaign);
@@ -271,10 +271,10 @@ public class CampaignControllerTest {
         CampaignExecution report3 = new CampaignExecution(3L, existingCampaign.getId(), emptyList(), "...", false, "", null, null, "");
         CampaignExecution report4 = new CampaignExecution(4L, existingCampaign.getId(), emptyList(), "...", false, "", null, null, "");
 
-        repository.saveExecution(existingCampaign.getId(), report1);
-        repository.saveExecution(existingCampaign.getId(), report2);
-        repository.saveExecution(existingCampaign.getId(), report3);
-        repository.saveExecution(existingCampaign.getId(), report4);
+        repository.saveCampaignExecution(existingCampaign.getId(), report1);
+        repository.saveCampaignExecution(existingCampaign.getId(), report2);
+        repository.saveCampaignExecution(existingCampaign.getId(), report3);
+        repository.saveCampaignExecution(existingCampaign.getId(), report4);
 
         // When
         execute(MockMvcRequestBuilders.get(urlTemplate + existingCampaign.getId()))
@@ -297,7 +297,7 @@ public class CampaignControllerTest {
 
         CampaignExecution report1 = new CampaignExecution(1L, existingCampaign.getId(), emptyList(), existingCampaign.getTitle(), false, "", null, null, "user_2");
 
-        repository.saveExecution(existingCampaign.getId(), report1);
+        repository.saveCampaignExecution(existingCampaign.getId(), report1);
 
         // When
         execute(MockMvcRequestBuilders.get(urlTemplate + existingCampaign.getId()))
@@ -324,7 +324,7 @@ public class CampaignControllerTest {
         CampaignDto anotherExistingCampaign = new CampaignDto(null, "title", "description", emptyList(),
             emptyList(), "env", false, false, null, null);
         anotherExistingCampaign = insertCampaign(anotherExistingCampaign);
-        repository.saveExecution(anotherExistingCampaign.getId(), campaignExecution0);
+        repository.saveCampaignExecution(anotherExistingCampaign.getId(), campaignExecution0);
 
         CampaignExecution campaignExecution1 = new CampaignExecution(10L, 1L, emptyList(), existingCampaign.getTitle(), false, "", null, null, "");
         awaitDuring(100, MILLISECONDS); // Avoid reports with same startDate...

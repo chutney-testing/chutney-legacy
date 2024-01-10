@@ -24,6 +24,7 @@ import com.chutneytesting.campaign.api.dto.CampaignDto;
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportDto;
 import com.chutneytesting.campaign.api.dto.CampaignExecutionReportMapper;
 import com.chutneytesting.campaign.api.dto.CampaignMapper;
+import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.campaign.domain.CampaignService;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
@@ -55,16 +56,20 @@ public class CampaignController {
 
     private final TestCaseRepositoryAggregator repositoryAggregator;
     private final CampaignRepository campaignRepository;
+
+    private final CampaignExecutionRepository campaignExecutionRepository;
     private final CampaignExecutionEngine campaignExecutionEngine;
     private final CampaignService campaignService;
 
     public CampaignController(TestCaseRepositoryAggregator repositoryAggregator,
                               CampaignRepository campaignRepository,
+                              CampaignExecutionRepository campaignExecutionRepository,
                               CampaignExecutionEngine campaignExecutionEngine,
                               CampaignService campaignService) {
 
         this.repositoryAggregator = repositoryAggregator;
         this.campaignRepository = campaignRepository;
+        this.campaignExecutionRepository = campaignExecutionRepository;
         this.campaignExecutionEngine = campaignExecutionEngine;
         this.campaignService = campaignService;
     }
@@ -121,7 +126,7 @@ public class CampaignController {
 
         // Complete current executions with finished ones up to the limit
         if (lastExecutions.size() < limit) {
-            lastExecutions.addAll(campaignRepository.findLastExecutions(limit - lastExecutions.size()));
+            lastExecutions.addAll(campaignExecutionRepository.getLastExecutions(limit - lastExecutions.size()));
         }
 
         return lastExecutions.stream()
