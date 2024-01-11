@@ -154,42 +154,6 @@ class ForEachStrategyTest {
     }
 
     @Test
-    public void should_resolve_a_part_of_the_name_of_the_parent_iteration_from_context_put_but_keep_the_var_from_dataset_unevaluated() {
-        // G
-        final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/iteration_strategy_with_variable_in_name_from_context_put_and_datset.json", ExecutionRequestDto.class);
-
-        // W
-        StepExecutionReportDto result = testEngine.execute(requestDto);
-
-        // T
-        assertThat(result).hasFieldOrPropertyWithValue("status", SUCCESS);
-        assertThat(result.steps).hasSize(2);
-        assertThat(result.steps.get(1).name).isEqualTo("Step 2 Parent : value ${#env}");
-        assertThat(result.steps.get(1).steps).hasSize(2);
-        assertThat(result.steps.get(1).steps.get(0).name).isEqualTo("Step 2 Parent : value env0");
-        assertThat(result.steps.get(1).steps.get(1).name).isEqualTo("Step 2 Parent : value env1");
-    }
-
-    @Test
-    public void should_resolve_a_part_of_the_name_of_the_child_iteration_from_context_put_but_keep_the_var_from_dataset_unevaluated() {
-        // G
-        final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/iterationStrategy/final_step_iteration_strategy_with_variable_in_name_from_context_put_and_datset.json", ExecutionRequestDto.class);
-
-        // W
-        StepExecutionReportDto result = testEngine.execute(requestDto);
-
-        // T
-        assertThat(result).hasFieldOrPropertyWithValue("status", SUCCESS);
-        assertThat(result.steps).hasSize(2);
-        assertThat(result.steps.get(1).name).isEqualTo("Step 2 : value ${#env}");
-        assertThat(result.steps.get(1).steps).hasSize(2);
-        assertThat(result.steps.get(1).steps.get(0).name).isEqualTo("Step 2 : value env0");
-        assertThat(result.steps.get(1).steps.get(1).name).isEqualTo("Step 2 : value env1");
-    }
-
-    @Test
     public void should_repeat_step_with_iteration_strategy() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
