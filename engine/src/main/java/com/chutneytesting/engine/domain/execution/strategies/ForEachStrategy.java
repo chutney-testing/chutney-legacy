@@ -125,7 +125,7 @@ public class ForEachStrategy implements StepExecutionStrategy {
 
     private Step buildIterationDefinition(String indexName, Integer index, StepDataEvaluator dataEvaluator, StepDefinition definition, StepExecutor executor, List<Step> subStep, StepStrategyDefinition strategy) {
         StepDefinition iterationDefinition = iterationDefinition(indexName, index, definition, Optional.ofNullable(strategy).orElse(new StepStrategyDefinition("", new StrategyProperties())));
-        return new Step(dataEvaluator, iterationDefinition, executor, subStep.stream().map(step -> buildIterationDefinition(indexName, index, step.dataEvaluator(), step.definition(), step.executor(), step.subSteps(), step.strategy().orElse(null))).toList());
+        return new Step(dataEvaluator, iterationDefinition, executor, subStep.stream().map(step -> buildIterationDefinition(indexName, index, step.dataEvaluator(), step.definition(), step.executor(), step.subSteps(), step.strategy().orElse(null))).collect(Collectors.toList()));
     }
 
     private StepDefinition iterationDefinition(String indexName, Integer index, StepDefinition definition, StepStrategyDefinition strategyDefinition) {
