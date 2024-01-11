@@ -31,7 +31,7 @@ abstract class Strings {
     private Strings() {
     }
 
-    public static String replaceExpressions(String template, Function<String, Object> evaluator, String prefix, String suffix, String escape) {
+    public static String replaceExpressions(String template, Function<String, Object> evaluator, String prefix, String suffix, String escape, boolean silentResolve) {
         final StringBuffer sb = new StringBuffer();
         Pattern pattern = cachePattern("(" + escapeForRegex(escape) + ")?" + escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix));
         final Matcher matcher = pattern.matcher(template);
@@ -39,10 +39,16 @@ abstract class Strings {
             String escapeMatch = matcher.group(1);
             String key = matcher.group(2);
             if (escapeMatch == null) {
-                Object o = evaluator.apply(key);
-                if (o != null) {
-                    String replacement = Matcher.quoteReplacement(String.valueOf(o));
-                    matcher.appendReplacement(sb, replacement);
+                try {
+                    Object o = evaluator.apply(key);
+                    if (o != null) {
+                        String replacement = Matcher.quoteReplacement(String.valueOf(o));
+                        matcher.appendReplacement(sb, replacement);
+                    }
+                } catch (Exception e) {
+                    if (!silentResolve) {
+                        throw e;
+                    }
                 }
             } else {
                 String replacement = Matcher.quoteReplacement(prefix + key + suffix);
@@ -53,14 +59,14 @@ abstract class Strings {
         return sb.toString();
     }
 
-    public static Object replaceExpression(String template, Function<String, Object> transformer, String prefix, String suffix, String escape) {
+    public static Object replaceExpression(String template, Function<String, Object> transformer, String prefix, String suffix, String escape, boolean silentResolve) {
         final Pattern pattern = cachePattern("^(" + escapeForRegex(escape) + ")?" + escapeForRegex(prefix) + "(.*?)" + escapeForRegex(suffix) + "$");
         final Matcher matcher = pattern.matcher(template.trim());
         if (matcher.matches()) {
             String escapeMatch = matcher.group(1);
             String key = matcher.group(2);
             if (escapeMatch == null) {
-                return transformer.apply(key);
+                return silentResolve ? template : transformer.apply(key);
             } else {
                 return prefix + key + suffix;
             }

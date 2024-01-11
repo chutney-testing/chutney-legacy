@@ -125,7 +125,7 @@ public class Reporter {
     StepExecutionReport generateReport(Step step, Function<Step, Status> statusSupplier) {
         try {
             return new StepExecutionReportBuilder()
-                .setName(step.definition().name)
+                .setName(step.name())
                 .setEnvironment(step.definition().environment)
                 .setDuration(step.duration().toMillis())
                 .setStartDate(step.startDate())
@@ -144,7 +144,7 @@ public class Reporter {
             String error = "Cannot generate step report: " + e.getMessage();
             LOGGER.error(error, e);
             return new StepExecutionReportBuilder()
-                .setName(step.definition().name)
+                .setName(step.name())
                 .setStatus(Status.FAILURE)
                 .setErrors(List.of(error))
                 .createStepExecutionReport();

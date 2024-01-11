@@ -42,6 +42,14 @@ public class StepState {
     private Instant startDate;
     private final List<String> errors = new ArrayList<>();
     private final List<String> informations = new ArrayList<>();
+    private String name;
+
+    public StepState(String name) {
+        this.name = name;
+    }
+
+    public StepState() {
+    }
 
     void beginExecution() {
         if (!stopwatch.isRunning()) {
@@ -116,6 +124,14 @@ public class StepState {
 
     public Status status() {
         return status;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<String> errors() {

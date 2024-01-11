@@ -1,0 +1,34 @@
+{
+    "scenario": {
+        "name": "${#env} - parent",
+        "steps": [
+            {
+                "name": "${#env} sub parent",
+                "steps": [
+                    {
+                        "name": "${#env} sub sub parent",
+                        "steps": [
+                            {
+                                "name": "${#env} child",
+                                "type": "success"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "strategy": {
+            "type": "for",
+            "parameters": {
+                "dataset": [
+                    {
+                        "env": "env0"
+                    },
+                    {
+                        "env": "env1"
+                    }
+                ]
+            }
+        }
+    }
+}

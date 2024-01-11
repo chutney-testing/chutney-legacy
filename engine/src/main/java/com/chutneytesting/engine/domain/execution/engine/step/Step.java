@@ -75,7 +75,7 @@ public class Step {
         this.target = definition.getTarget().orElse(TargetImpl.NONE);
         this.executor = executor;
         this.steps = steps;
-        this.state = new StepState();
+        this.state = new StepState(definition.name);
         this.stepContext = new StepContext();
     }
 
@@ -108,7 +108,7 @@ public class Step {
             Map<String, Object> evaluationContext = buildEvaluationContext(scenarioContext, localContext);
             final Map<String, Object> evaluatedInputs = definition.type.equals("final") ? definition.inputs() : unmodifiableMap(dataEvaluator.evaluateNamedDataWithContextVariables(definition.inputs(), evaluationContext));
             target = dataEvaluator.evaluateTarget(target, evaluationContext);
-
+            resolveName(evaluationContext);
             Try
                 .exec(() -> this.stepContext = new StepContext(scenarioContext, localContext, evaluatedInputs))
                 .ifSuccess(stepContextExecuted -> {
@@ -147,6 +147,14 @@ public class Step {
     public void pauseExecution(ScenarioExecution scenarioExecution) {
         state.pauseExecution();
         RxBus.getInstance().post(new PauseStepExecutionEvent(scenarioExecution, this));
+    }
+
+    public String name() {
+        return this.state.name();
+    }
+
+    public void resolveName(Map<String, Object> context) {
+        this.state.setName(dataEvaluator.silentEvaluateString(state.name(), context));
     }
 
     public Status status() {

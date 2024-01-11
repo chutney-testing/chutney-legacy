@@ -71,7 +71,7 @@ public class HttpTestEngineTest {
         when(engine.execute(any()))
             .thenReturn(StepExecutionReportMapper.toDto(report));
 
-        ExecutionRequestDto executionRequestDto = Jsons.loadJsonFromClasspath("scenarios_examples/scenario_sample_1.json", ExecutionRequestDto.class);
+        ExecutionRequestDto executionRequestDto = Jsons.loadJsonFromClasspath("scenarios_examples/simpleStep/scenario_sample_1.json", ExecutionRequestDto.class);
         String body = Jsons.objectMapper().writeValueAsString(executionRequestDto);
 
         mvc

@@ -31,11 +31,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.ExecutionConfiguration;
+import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
+import com.chutneytesting.engine.api.execution.StatusDto;
+import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
+import com.chutneytesting.engine.api.execution.TestEngine;
 import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEvaluator;
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContextImpl;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.evaluation.SpelFunctions;
 import com.chutneytesting.engine.domain.execution.report.Status;
+import com.chutneytesting.tools.Jsons;
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.List;
@@ -224,19 +230,24 @@ public class IfStrategyTest {
         Step parentSubStep1 = mock(Step.class);
         when(parentSubStep1.isParentStep()).thenReturn(false);
         when(parentSubStep1.execute(any(), any(), any())).thenReturn(SUCCESS);
+        when(parentSubStep1.dataEvaluator()).thenReturn(dataEvaluator);
         Step parentSubStep2 = mock(Step.class);
         when(parentSubStep2.isParentStep()).thenReturn(false);
         when(parentSubStep2.execute(any(), any(), any())).thenReturn(SUCCESS);
+        when(parentSubStep2.dataEvaluator()).thenReturn(dataEvaluator);
 
         when(parentSubStep.isParentStep()).thenReturn(true);
         when(parentSubStep.subSteps()).thenReturn(List.of(parentSubStep1, parentSubStep2));
+        when(parentSubStep.dataEvaluator()).thenReturn(dataEvaluator);
 
         Step simpleSubStep = mock(Step.class);
         when(simpleSubStep.isParentStep()).thenReturn(false);
         when(simpleSubStep.execute(any(), any(), any())).thenReturn(SUCCESS);
+        when(simpleSubStep.dataEvaluator()).thenReturn(dataEvaluator);
 
         when(ifStrategyStep.isParentStep()).thenReturn(true);
         when(ifStrategyStep.subSteps()).thenReturn(List.of(parentSubStep, simpleSubStep));
+        when(ifStrategyStep.dataEvaluator()).thenReturn(dataEvaluator);
 
         // When
         Status status = new IfStrategy()
@@ -260,5 +271,20 @@ public class IfStrategyTest {
                 verify(subStep).success();
             });
         }
+    }
+
+    @Test
+    public void should_resolve_name_from_context_with_strategy_if() {
+        // G
+        final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/ifStrategy/if_strategy_step_with_name_resolver_from_context_put.json", ExecutionRequestDto.class);
+
+        // W
+        StepExecutionReportDto result = testEngine.execute(requestDto);
+
+        // T
+        assertThat(result).hasFieldOrPropertyWithValue("status", StatusDto.SUCCESS);
+        assertThat(result.steps).hasSize(2);
+        assertThat(result.steps.get(1).name).isEqualTo("Step 2 Parent : value");
     }
 }

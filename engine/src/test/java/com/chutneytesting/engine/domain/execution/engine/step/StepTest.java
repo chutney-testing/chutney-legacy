@@ -16,6 +16,7 @@
 
 package com.chutneytesting.engine.domain.execution.engine.step;
 
+import static com.chutneytesting.engine.api.execution.StatusDto.SUCCESS;
 import static com.chutneytesting.tools.WaitUtils.awaitDuring;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -30,8 +31,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.ExecutionConfiguration;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.action.spi.injectable.Target;
+import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
+import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
+import com.chutneytesting.engine.api.execution.TestEngine;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.engine.domain.delegation.RemoteStepExecutor;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
@@ -50,6 +55,7 @@ import com.chutneytesting.engine.domain.execution.report.Status;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReportBuilder;
 import com.chutneytesting.engine.infrastructure.delegation.HttpClient;
+import com.chutneytesting.tools.Jsons;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import java.time.Instant;
 import java.util.HashMap;
@@ -412,6 +418,21 @@ public class StepTest {
 
         assertThat(notifiedStep.status()).isEqualTo(returnedStatus);
         assertThat(System.identityHashCode(step)).isEqualTo(System.identityHashCode(notifiedStep));
+    }
+
+    @Test
+    public void should_replace_variable_in_name_from_the_context() {
+        // G
+        final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/simpleStep/simple_step_with_var_from_context_put.json", ExecutionRequestDto.class);
+
+        // W
+        StepExecutionReportDto result = testEngine.execute(requestDto);
+
+        // T
+        assertThat(result).hasFieldOrPropertyWithValue("status", SUCCESS);
+        assertThat(result.steps).hasSize(2);
+        assertThat(result.steps.get(1).name).isEqualTo("Step 2 : value");
     }
 
     private static Stream<Arguments> executionResults() {

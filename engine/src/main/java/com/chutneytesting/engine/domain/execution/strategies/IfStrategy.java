@@ -24,6 +24,7 @@ import com.chutneytesting.engine.domain.execution.engine.evaluation.StepDataEval
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContext;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.Status;
+import java.util.HashMap;
 import java.util.Map;
 
 public class IfStrategy implements StepExecutionStrategy {
@@ -53,6 +54,9 @@ public class IfStrategy implements StepExecutionStrategy {
         if (condition) {
             return DefaultStepExecutionStrategy.instance.execute(scenarioExecution, step, scenarioContext, localContext, strategies);
         } else {
+            Map<String, Object> context = new HashMap<>(scenarioContext);
+            context.putAll(localContext);
+            step.resolveName(context);
             step.success();
             skipAllSubSteps(step);
         }
