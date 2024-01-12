@@ -309,15 +309,24 @@ class ForEachStrategyTest {
     public void should_accept_nested_loops_with_different_dataset() {
         // G
         final TestEngine testEngine = new ExecutionConfiguration().embeddedTestEngine();
-        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/forEachStrategy/step_nested_iterations_with_extended_dataset.json", ExecutionRequestDto.class);
+        ExecutionRequestDto requestDto = Jsons.loadJsonFromClasspath("scenarios_examples/forEachStrategy/step_nested_iterations_with_different_dataset.json", ExecutionRequestDto.class);
 
         // W
         StepExecutionReportDto result = testEngine.execute(requestDto);
 
         // T
-        StepExecutionReportDto parentIterativeStep = result.steps.get(0);
-        assertThat(parentIterativeStep.steps).hasSize(2); // has 2 iterations
-        assertThat(result.status).isEqualTo(SUCCESS);
+        assertThat(result).hasFieldOrPropertyWithValue("status", SUCCESS);
+        assertThat(result.name).isEqualTo("Test iterations");
+        assertThat(result.steps).hasSize(1);
+        assertThat(result.steps.get(0).name).isEqualTo("<i> - Hello env ${#env} ");
+        assertThat(result.steps.get(0).steps).hasSize(2);
+        assertThat(result.steps.get(0).steps.get(0).name).isEqualTo("0 - Hello env envX ");
+        assertThat(result.steps.get(0).steps.get(1).name).isEqualTo("1 - Hello env envY ");
+        assertThat(result.steps.get(0).steps.get(0).steps).hasSize(1);
+        assertThat(result.steps.get(0).steps.get(0).steps.get(0).name).isEqualTo("<j> - Hello nested on envX with user ${#user}");
+        assertThat(result.steps.get(0).steps.get(0).steps.get(0).steps).hasSize(2);
+        assertThat(result.steps.get(0).steps.get(0).steps.get(0).steps.get(0).name).isEqualTo("0 - Hello nested on envX with user userA");
+        assertThat(result.steps.get(0).steps.get(0).steps.get(0).steps.get(1).name).isEqualTo("1 - Hello nested on envX with user userB");
     }
 
     @Test

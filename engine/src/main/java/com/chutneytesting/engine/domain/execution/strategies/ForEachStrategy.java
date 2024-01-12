@@ -71,7 +71,7 @@ public class ForEachStrategy implements StepExecutionStrategy {
             iterations.forEach(it -> {
                 HashMap<String, Object> mergedContext = new HashMap<>(localContext);
                 mergedContext.putAll(it.getRight());
-                DefaultStepExecutionStrategy.instance.execute(scenarioExecution, it.getLeft()/*step*/, scenarioContext, mergedContext/*localContext*/, strategies);
+                DefaultStepExecutionStrategy.instance.execute(scenarioExecution, it.getLeft(), scenarioContext, mergedContext, strategies);
             });
 
         } else {
