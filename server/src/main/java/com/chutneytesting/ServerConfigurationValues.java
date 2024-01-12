@@ -31,6 +31,8 @@ public final class ServerConfigurationValues {
     public static final String SCHEDULED_CAMPAIGNS_EXECUTOR_POOL_SIZE_SPRING_VALUE = "${chutney.server.schedule-campaigns.executor.pool-size:20}";
     public static final String SCHEDULED_CAMPAIGNS_FIXED_RATE_SPRING_VALUE = "${chutney.server.schedule-campaigns.fixed-rate:60000}";
     public static final String SCHEDULED_PURGE_CRON_SPRING_VALUE = "${chutney.server.schedule-purge.cron:0 0 1 * * *}";
+    public static final String SCHEDULED_PURGE_TIMEOUT_SPRING_VALUE = "${chutney.server.schedule-purge.timeout:600}";
+    public static final String SCHEDULED_PURGE_RETRY_COUNT_SPRING_VALUE = "${chutney.server.schedule-purge.retry:2}";
     public static final String SCHEDULED_PURGE_MAX_SCENARIO_EXECUTIONS_SPRING_VALUE = "${chutney.server.schedule-purge.max-scenario-executions:10}";
     public static final String SCHEDULED_PURGE_MAX_CAMPAIGN_EXECUTIONS_SPRING_VALUE = "${chutney.server.schedule-purge.max-campaign-executions:10}";
     public static final String ENGINE_EXECUTOR_POOL_SIZE_SPRING_VALUE = "${chutney.engine.executor.pool-size:20}";

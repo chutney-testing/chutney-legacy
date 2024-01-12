@@ -79,6 +79,8 @@ chutney:
         pool-size: 20
     schedule-purge:
       cron: 0 0 1 * * *
+      timeout: 600
+      retry: 1
       max-scenario-executions: 10
       max-campaign-executions: 10
     agent:
