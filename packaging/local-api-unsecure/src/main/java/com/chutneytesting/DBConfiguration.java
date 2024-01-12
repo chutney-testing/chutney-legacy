@@ -45,6 +45,7 @@ public class DBConfiguration {
 
     private static final String DBSERVER_PORT_SPRING_VALUE = "${chutney.db-server.port}";
     private static final String DBSERVER_BASEDIR_SPRING_VALUE = "${chutney.db-server.base-dir:~/.chutney/data}";
+    private static final String DBSERVER_TMPDIR_SPRING_VALUE = "${chutney.db-server.base-dir:}";
 
     @Configuration
     @Profile("db-sqlite")
@@ -59,7 +60,10 @@ public class DBConfiguration {
         }
 
         @Bean
-        public DataSource dataSource(DataSourceProperties internalDataSourceProperties) {
+        public DataSource dataSource(
+            DataSourceProperties internalDataSourceProperties,
+            @Value(DBSERVER_TMPDIR_SPRING_VALUE) String tmpDirectory
+        ) {
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setJdbcUrl(internalDataSourceProperties.determineUrl());
             hikariConfig.setDriverClassName(DatabaseDriver.fromJdbcUrl(internalDataSourceProperties.determineUrl()).getDriverClassName());
@@ -74,6 +78,9 @@ public class DBConfiguration {
             config.setJournalMode(SQLiteConfig.JournalMode.WAL);
             config.setSynchronous(SQLiteConfig.SynchronousMode.NORMAL);
             config.setBusyTimeout(10000);
+            if (!tmpDirectory.isBlank()) {
+                config.setTempStoreDirectory(tmpDirectory);
+            }
             hikariConfig.setDataSourceProperties(config.toProperties());
 
             return new HikariDataSource(hikariConfig);
