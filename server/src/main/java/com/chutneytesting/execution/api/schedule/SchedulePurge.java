@@ -42,6 +42,11 @@ public class SchedulePurge {
     private final Integer timeout;
     private final Integer maxRetries;
 
+    /**
+     * @param purgeService  The purge service implementation to use
+     * @param timeout       The timeout in seconds allowed to execute purge and all its potentials retries
+     * @param maxRetries    The maximum retries to attempt in order to have a purge without exception
+     */
     public SchedulePurge(
         PurgeService purgeService,
         @Value(SCHEDULED_PURGE_TIMEOUT_SPRING_VALUE) Integer timeout,
@@ -58,7 +63,7 @@ public class SchedulePurge {
             LOGGER.debug("Launch executions purge : START");
             return Optional.of(
                 retryExceptionallyAsync(purgeService::purge, maxRetries)
-                    .get(timeout, TimeUnit.SECONDS)
+                    .get(timeout, TimeUnit.SECONDS) // Note here that timeout is for all purge execution (first exec + retries)
             );
         } catch (InterruptedException | ExecutionException | TimeoutException | RuntimeException e) {
             LOGGER.error("Purge did not finish correctly.", e);

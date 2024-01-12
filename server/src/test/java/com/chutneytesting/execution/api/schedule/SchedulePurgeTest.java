@@ -23,6 +23,7 @@ class SchedulePurgeTest {
         when(mockPurge.purge()).thenReturn(new PurgeReport(Set.of(1L, 2L), Set.of(3L, 4L)));
         SchedulePurge sut = new SchedulePurge(mockPurge, 2, 0);
         assertThat(sut.launchPurge()).hasValue(new PurgeReport(Set.of(1L, 2L), Set.of(3L, 4L)));
+        verify(mockPurge).purge();
     }
 
     @Test
@@ -31,6 +32,7 @@ class SchedulePurgeTest {
         when(mockPurge.purge()).thenThrow(new RuntimeException("Purge failed !!"));
         SchedulePurge sut = new SchedulePurge(mockPurge, 1, 0);
         assertThat(sut.launchPurge()).isEmpty();
+        verify(mockPurge).purge();
     }
 
     @Test
@@ -42,6 +44,7 @@ class SchedulePurgeTest {
         });
         SchedulePurge sut = new SchedulePurge(mockPurge, 2, 0);
         assertThat(sut.launchPurge()).isEmpty();
+        verify(mockPurge).purge();
     }
 
     @ParameterizedTest
