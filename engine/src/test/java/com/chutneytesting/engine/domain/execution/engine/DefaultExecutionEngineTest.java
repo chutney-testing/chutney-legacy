@@ -63,7 +63,8 @@ class DefaultExecutionEngineTest {
     private final StepDataEvaluator dataEvaluator = mock(StepDataEvaluator.class);
     private final StepExecutionStrategies stepExecutionStrategies = mock(StepExecutionStrategies.class);
     private final DelegationService delegationService = mock(DelegationService.class);
-    private final String fakeEnvironment = "env";
+    private final String fakeEnvironmentName = "env";
+    private final Environment fakeEnvironment = new Environment(fakeEnvironmentName, emptyMap());
     private final ExecutorService actionExecutor = Executors.newSingleThreadExecutor();
     public static final String tearDownRootNodeName = "TearDown";
     private static final String throwableToCatchMessage = "Should be caught by fault barrier";
@@ -79,10 +80,10 @@ class DefaultExecutionEngineTest {
 
         Reporter reporter = new Reporter();
         DefaultExecutionEngine sut = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, actionExecutor);
-        StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null, fakeEnvironment);
+        StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null);
 
         // When
-        Long executionId = sut.execute(stepDefinition, emptyDataset, createScenarioExecution(null));
+        Long executionId = sut.execute(stepDefinition, emptyDataset, createScenarioExecution(null), fakeEnvironment);
         assertThat(executionId).isNotNull();
         StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
         assertThat(report).isNotNull();
@@ -115,10 +116,10 @@ class DefaultExecutionEngineTest {
 
         Reporter reporter = new Reporter();
         DefaultExecutionEngine sut = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, actionExecutor);
-        StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null, fakeEnvironment);
+        StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null);
 
         // When
-        Long executionId = sut.execute(stepDefinition, emptyDataset, scenarioExecution);
+        Long executionId = sut.execute(stepDefinition, emptyDataset, scenarioExecution, fakeEnvironment);
         assertThat(executionId).isNotNull();
         StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
         assertThat(report).isNotNull();
@@ -127,15 +128,12 @@ class DefaultExecutionEngineTest {
         assertThat(scenarioExecution.hasToStop()).isFalse();
 
         assertThat(report.steps).hasSize(1);
-        assertThat(report.environment).isEqualTo(fakeEnvironment);
         StepExecutionReport tearDownRootNode = report.steps.get(0);
         assertThat(tearDownRootNode.name).isEqualTo(tearDownRootNodeName);
         assertThat(tearDownRootNode.strategy).isEqualTo(new SoftAssertStrategy().getType());
-        assertThat(tearDownRootNode.environment).isEqualTo(fakeEnvironment);
         assertThat(tearDownRootNode.steps).hasSize(1);
         assertThat(tearDownRootNode.steps.get(0).name).isEqualTo(finallyAction.name());
         assertThat(tearDownRootNode.steps.get(0).type).isEqualTo(finallyAction.type());
-        assertThat(tearDownRootNode.steps.get(0).environment).isEqualTo(fakeEnvironment);
     }
 
     @Test
@@ -154,18 +152,48 @@ class DefaultExecutionEngineTest {
         Reporter reporter = new Reporter();
         DefaultExecutionEngine sut = new DefaultExecutionEngine(new StepDataEvaluator(null), stepExecutionStrategies, delegationService, reporter, actionExecutor);
 
-        String environment = "FakeTestEnvironment";
         Map<String, Object> inputs = singletonMap("currentEnvironment", "${#environment}");
-        StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, inputs, null, null, null, environment);
+        StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, inputs, null, null, null);
 
         // When
-        Long executionId = sut.execute(stepDefinition, emptyDataset, scenarioExecution);
+        Long executionId = sut.execute(stepDefinition, emptyDataset, scenarioExecution, fakeEnvironment);
         assertThat(executionId).isNotNull();
         StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
 
         // Then
         assertThat(report).isNotNull();
-        assertThat(report.scenarioContext).contains(entry("environment", environment));
+        assertThat(report.scenarioContext).contains(entry("environment", fakeEnvironment.name()));
+        assertThat(report.environment).isEqualTo(fakeEnvironment.name());
+    }
+
+    @Test
+    void should_catch_exception_when_environment_is_null() {
+        // Given
+        StepExecutionStrategy strategy = DefaultStepExecutionStrategy.instance;
+        when(stepExecutionStrategies.buildStrategyFrom(any()))
+            .thenReturn(strategy);
+        ActionTemplateRegistry actionTemplateRegistry = mock(ActionTemplateRegistry.class);
+        when(delegationService.findExecutor(any()))
+            .thenReturn(new DefaultStepExecutor(actionTemplateRegistry));
+        when(actionTemplateRegistry.getByIdentifier(any()))
+            .thenReturn(Optional.empty());
+
+        ScenarioExecution scenarioExecution = createScenarioExecution(null);
+        Reporter reporter = new Reporter();
+        DefaultExecutionEngine sut = new DefaultExecutionEngine(new StepDataEvaluator(null), stepExecutionStrategies, delegationService, reporter, actionExecutor);
+
+        Map<String, Object> inputs = singletonMap("currentEnvironment", "${#environment}");
+        StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, inputs, null, null, null);
+
+        // When
+        Long executionId = sut.execute(stepDefinition, emptyDataset, scenarioExecution, null);
+        assertThat(executionId).isNotNull();
+        StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
+
+        // Then
+        assertThat(report).isNotNull();
+        assertThat(report.status).isEqualTo(Status.FAILURE);
+        assertThat(report.errors).contains("Cannot invoke \"com.chutneytesting.engine.domain.execution.engine.Environment.name()\" because \"environment\" is null");
     }
 
     @Test
@@ -177,7 +205,7 @@ class DefaultExecutionEngineTest {
         when(actionTemplateRegistry.getByIdentifier(any())).thenReturn(Optional.empty());
         when(delegationService.findExecutor(any())).thenReturn(new DefaultStepExecutor(actionTemplateRegistry));
 
-        StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, emptyMap(), emptyList(), emptyMap(), emptyMap(), "env");
+        StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, emptyMap(), emptyList(), emptyMap(), emptyMap());
 
         Map<String, String> constants = Map.of("keyA", "A", "keyB", "B");
         List<Map<String, String>> datatable = List.of(singletonMap("key", "X"), singletonMap("key", "Y"));
@@ -188,13 +216,42 @@ class DefaultExecutionEngineTest {
         DefaultExecutionEngine sut = new DefaultExecutionEngine(new StepDataEvaluator(null), stepExecutionStrategies, delegationService, reporter, actionExecutor);
 
         // When
-        Long executionId = sut.execute(stepDefinition, dataset, createScenarioExecution(null));
+        Long executionId = sut.execute(stepDefinition, dataset, createScenarioExecution(null), fakeEnvironment);
         StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
 
         // Then
         assertThat(report.scenarioContext).contains(entry("keyA", "A"));
         assertThat(report.scenarioContext).contains(entry("keyB", "B"));
         assertThat(report.scenarioContext).contains(entry("dataset", datatable));
+    }
+
+    @Test
+    void should_set_env_variables_in_scenario_context() {
+        // Given
+        when(stepExecutionStrategies.buildStrategyFrom(any())).thenReturn(DefaultStepExecutionStrategy.instance);
+
+        ActionTemplateRegistry actionTemplateRegistry = mock(ActionTemplateRegistry.class);
+        when(actionTemplateRegistry.getByIdentifier(any())).thenReturn(Optional.empty());
+        when(delegationService.findExecutor(any())).thenReturn(new DefaultStepExecutor(actionTemplateRegistry));
+        Map<String, Object> inputs = singletonMap("my_input", "${#keyA}");
+        StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, inputs, emptyList(), emptyMap(), emptyMap());
+
+        Map<String, String> variables = Map.of("keyA", "A", "keyB", "B");
+        Environment environment = new Environment(fakeEnvironmentName, variables);
+
+        Reporter reporter = new Reporter();
+
+        DefaultExecutionEngine sut = new DefaultExecutionEngine(new StepDataEvaluator(null), stepExecutionStrategies, delegationService, reporter, actionExecutor);
+        Dataset dataset = new Dataset(emptyMap(), emptyList());
+
+        // When
+        Long executionId = sut.execute(stepDefinition, dataset, createScenarioExecution(null), environment);
+        StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
+
+        // Then
+        assertThat(report.scenarioContext).contains(entry("keyA", "A"));
+        assertThat(report.scenarioContext).contains(entry("keyB", "B"));
+        assertThat(report.evaluatedInputs).contains(entry("my_input", "A"));
     }
 
     @Test
@@ -205,7 +262,7 @@ class DefaultExecutionEngineTest {
         when(actionTemplateRegistry.getByIdentifier(any())).thenReturn(Optional.empty());
         when(delegationService.findExecutor(any())).thenReturn(new DefaultStepExecutor(actionTemplateRegistry));
 
-        StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, emptyMap(), emptyList(), emptyMap(), emptyMap(), "env");
+        StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, emptyMap(), emptyList(), emptyMap(), emptyMap());
 
         Map<String, String> constants = Map.of("myID", "${#randomID()}");
         Dataset dataset = new Dataset(constants, emptyList());
@@ -220,11 +277,43 @@ class DefaultExecutionEngineTest {
         DefaultExecutionEngine sut = new DefaultExecutionEngine(new StepDataEvaluator(functions), stepExecutionStrategies, delegationService, reporter, actionExecutor);
 
         // When
-        Long executionId = sut.execute(stepDefinition, dataset, createScenarioExecution(null));
+        Long executionId = sut.execute(stepDefinition, dataset, createScenarioExecution(null), fakeEnvironment);
         StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
 
         // Then
+        assertThat(report.status).isEqualTo(Status.SUCCESS);
         assertDoesNotThrow(() -> UUID.fromString((String) report.scenarioContext.get("myID")));
+    }
+
+    @Test
+    public void should_catch_dataset_evaluation_exception() {
+        when(stepExecutionStrategies.buildStrategyFrom(any())).thenReturn(DefaultStepExecutionStrategy.instance);
+
+        ActionTemplateRegistry actionTemplateRegistry = mock(ActionTemplateRegistry.class);
+        when(actionTemplateRegistry.getByIdentifier(any())).thenReturn(Optional.empty());
+        when(delegationService.findExecutor(any())).thenReturn(new DefaultStepExecutor(actionTemplateRegistry));
+
+        StepDefinition stepDefinition = new StepDefinition("fakeScenario", null, "", null, emptyMap(), emptyList(), emptyMap(), emptyMap());
+
+        Map<String, String> constants = Map.of("myID", "${#unknownFunction()}");
+        Dataset dataset = new Dataset(constants, emptyList());
+
+        Reporter reporter = new Reporter();
+
+        SpelFunctionCallback spelFunctionCallback = new SpelFunctionCallback();
+        ExtensionLoaders
+            .classpathToClass("META-INF/extension/chutney.functions")
+            .load().forEach(c -> ReflectionUtils.doWithMethods(c, spelFunctionCallback));
+        SpelFunctions functions = spelFunctionCallback.getSpelFunctions();
+        DefaultExecutionEngine sut = new DefaultExecutionEngine(new StepDataEvaluator(functions), stepExecutionStrategies, delegationService, reporter, actionExecutor);
+
+        // When
+        Long executionId = sut.execute(stepDefinition, dataset, createScenarioExecution(null), fakeEnvironment);
+        StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
+
+        // Then
+        assertThat(report.status).isEqualTo(Status.FAILURE);
+        assertThat(report.errors).contains("Cannot resolve #unknownFunction() , EL1006E: Function 'unknownFunction' could not be found");
     }
 
     @ParameterizedTest(name = "{index}: {0}")
@@ -241,14 +330,14 @@ class DefaultExecutionEngineTest {
 
         Reporter reporter = new Reporter();
         DefaultExecutionEngine sut = new DefaultExecutionEngine(dataEvaluator, stepExecutionStrategies, delegationService, reporter, actionExecutor);
-        StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null, fakeEnvironment);
+        StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null);
 
         ScenarioExecution scenarioExecution = createScenarioExecution(null);
         FinallyAction finallyAction = FinallyAction.Builder.forAction("final", "action name").build();
         scenarioExecution.registerFinallyAction(finallyAction);
 
         // When
-        Long executionId = sut.execute(stepDefinition, emptyDataset, scenarioExecution);
+        Long executionId = sut.execute(stepDefinition, emptyDataset, scenarioExecution, fakeEnvironment);
         StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
 
         // Then
@@ -283,7 +372,7 @@ class DefaultExecutionEngineTest {
             .thenReturn(strategy) // for step definition
             .thenReturn(strategy); // for tear down step
 
-        StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null, fakeEnvironment);
+        StepDefinition stepDefinition = new StepDefinition("name", null, "type", null, null, null, null, null);
 
         ScenarioExecution scenarioExecution = createScenarioExecution(null);
 
@@ -297,7 +386,7 @@ class DefaultExecutionEngineTest {
         scenarioExecution.registerFinallyAction(tearDownThirdAction);
 
         // When
-        Long executionId = sut.execute(stepDefinition, emptyDataset, scenarioExecution);
+        Long executionId = sut.execute(stepDefinition, emptyDataset, scenarioExecution, fakeEnvironment);
         StepExecutionReport report = reporter.subscribeOnExecution(executionId).blockingLast();
 
         // Then

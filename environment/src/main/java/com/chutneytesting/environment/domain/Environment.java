@@ -1,17 +1,19 @@
+
 /*
- * Copyright 2017-2023 Enedis
+ *  Copyright 2017-2023 Enedis
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package com.chutneytesting.environment.domain;
@@ -20,10 +22,11 @@ import static java.util.Collections.emptySet;
 import static java.util.Optional.ofNullable;
 
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
+import com.chutneytesting.environment.domain.exception.EnvVariableNotFoundException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
+import com.chutneytesting.environment.domain.exception.VariableAlreadyExistingException;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -33,11 +36,13 @@ public class Environment {
     public final String name;
     public final String description;
     public final Set<Target> targets;
+    public final Set<EnvironmentVariable> variables;
 
-    private Environment(String name, String description, Set<Target> targets) {
+    private Environment(String name, String description, Set<Target> targets, Set<EnvironmentVariable> variables) {
         this.name = name;
         this.description = description;
         this.targets = targets;
+        this.variables = variables;
     }
 
     public static EnvironmentBuilder builder() {
@@ -49,62 +54,79 @@ public class Environment {
             throw new AlreadyExistingTargetException("Target [" + target.name + "] already exists in [" + this.name + "] environment");
         }
 
-        return Environment.builder()
-            .from(this)
-            .addTarget(target)
-            .build();
+        return Environment.builder().from(this).addTarget(target).build();
     }
 
     private boolean containsTarget(Target target) {
         return targets.stream().anyMatch(t -> t.name.equalsIgnoreCase(target.name));
     }
 
+    boolean containsVariable(String key) {
+        return variables.stream().anyMatch(t -> t.key().equalsIgnoreCase(key));
+    }
+
     Target getTarget(String targetName) {
-        return targets.stream()
-            .filter(t -> t.name.equals(targetName))
-            .findFirst()
-            .orElseThrow(() -> new TargetNotFoundException("Target [" + targetName + "] not found in environment [" + name + "]"));
+        return targets.stream().filter(t -> t.name.equals(targetName)).findFirst().orElseThrow(() -> new TargetNotFoundException("Target [" + targetName + "] not found in environment [" + name + "]"));
     }
 
     Environment deleteTarget(String targetName) {
-        Optional<Target> targetToRemove = targets.stream()
-            .filter(t -> t.name.equals(targetName))
-            .findFirst();
+        Optional<Target> targetToRemove = targets.stream().filter(t -> t.name.equals(targetName)).findFirst();
 
-        return targetToRemove
-            .map(t -> {
-                Set<Target> updatedTargets = new HashSet<>(targets);
-                updatedTargets.remove(t);
+        return targetToRemove.map(t -> {
+            Set<Target> updatedTargets = new HashSet<>(targets);
+            updatedTargets.remove(t);
 
-                return Environment.builder()
-                    .from(this)
-                    .withTargets(updatedTargets)
-                    .build();
-            })
-            .orElseThrow(() -> new TargetNotFoundException("Target [" + targetName + "] not found in environment [" + name + "]"));
+            return Environment.builder().from(this).withTargets(updatedTargets).build();
+        }).orElseThrow(() -> new TargetNotFoundException("Target [" + targetName + "] not found in environment [" + name + "]"));
     }
 
     Environment updateTarget(String targetName, Target targetToUpdate) {
-        Optional<Target> previousTarget = targets.stream()
-            .filter(t -> t.name.equals(targetName))
-            .findFirst();
+        Optional<Target> previousTarget = targets.stream().filter(t -> t.name.equals(targetName)).findFirst();
 
-        return previousTarget
-            .map(t -> {
-                    if (previousTarget.get().equals(targetToUpdate)) {
-                        return this;
-                    }
-                    Set<Target> updatedTargets = new HashSet<>(targets);
-                    updatedTargets.remove(t);
-                    updatedTargets.add(targetToUpdate);
+        return previousTarget.map(t -> {
+            if (previousTarget.get().equals(targetToUpdate)) {
+                return this;
+            }
+            Set<Target> updatedTargets = new HashSet<>(targets);
+            updatedTargets.remove(t);
+            updatedTargets.add(targetToUpdate);
 
-                    return Environment.builder()
-                        .from(this)
-                        .withTargets(updatedTargets)
-                        .build();
-                }
-            )
-            .orElseThrow(() -> new TargetNotFoundException("Target [" + targetName + "] not found in environment [" + name + "]"));
+            return Environment.builder().from(this).withTargets(updatedTargets).build();
+        }).orElseThrow(() -> new TargetNotFoundException("Target [" + targetName + "] not found in environment [" + name + "]"));
+    }
+
+    Environment addVariable(EnvironmentVariable variable) {
+        if (this.containsVariable(variable.key())) {
+            throw new VariableAlreadyExistingException("Variable [" + variable.key() + "] already exists in [" + this.name + "] environment");
+        }
+        return Environment.builder().from(this).addVariable(variable).build();
+    }
+
+    Environment updateVariable(String oldKey, EnvironmentVariable variable) {
+        Optional<EnvironmentVariable> oldVariable = variables.stream().filter(t -> t.key().equalsIgnoreCase(oldKey)).findFirst();
+        oldVariable.orElseThrow(() -> new EnvVariableNotFoundException("Variable [" + oldKey + "] not found in environment [" + name + "]"));
+        if (!oldVariable.get().equals(variable)) {
+            Set<EnvironmentVariable> updatedVariables = new HashSet<>(variables);
+            updatedVariables.remove(oldVariable.get());
+            updatedVariables.add(variable);
+            return Environment.builder()
+                .from(this)
+                .withVariables(updatedVariables).build();
+        }
+        return this;
+    }
+
+    Environment deleteVariable(String key) {
+        Optional<EnvironmentVariable> variable = variables.stream().filter(t -> t.key().equalsIgnoreCase(key)).findFirst();
+        if (variable.isEmpty()) {
+            return this;
+        }
+        Set<EnvironmentVariable> updatedVariables = new HashSet<>(variables);
+        updatedVariables.remove(variable.get());
+        return Environment.builder()
+            .from(this)
+            .withVariables(updatedVariables)
+            .build();
     }
 
     public static class EnvironmentBuilder {
@@ -112,16 +134,16 @@ public class Environment {
         private String name;
         private String description;
         private Set<Target> targets = new HashSet<>();
+        private Set<EnvironmentVariable> variables = new HashSet<>();
 
         private EnvironmentBuilder() {
         }
 
         public Environment build() {
-            return new Environment(
-                ofNullable(name).orElse(""),
+            return new Environment(ofNullable(name).orElse(""),
                 ofNullable(description).orElse(""),
-                ofNullable(targets).map(Collections::unmodifiableSet).orElse(emptySet())
-            );
+                ofNullable(targets).map(Collections::unmodifiableSet).orElse(emptySet()),
+                ofNullable(variables).map(Collections::unmodifiableSet).orElse(emptySet()));
         }
 
         public EnvironmentBuilder withName(String name) {
@@ -139,13 +161,19 @@ public class Environment {
             return this;
         }
 
+        public EnvironmentBuilder withVariables(Set<EnvironmentVariable> variables) {
+            this.variables = new HashSet<>(variables);
+            return this;
+        }
+
+
         public EnvironmentBuilder addTarget(Target target) {
             this.targets.add(target);
             return this;
         }
 
-        public EnvironmentBuilder addAllTargets(List<Target> targets) {
-            this.targets.addAll(targets);
+        public EnvironmentBuilder addVariable(EnvironmentVariable variable) {
+            this.variables.add(variable);
             return this;
         }
 
@@ -153,6 +181,7 @@ public class Environment {
             this.name = environment.name;
             this.description = environment.description;
             this.targets = new HashSet<>(environment.targets);
+            this.variables = new HashSet<>(environment.variables);
             return this;
         }
 
@@ -164,6 +193,7 @@ public class Environment {
             "name='" + name + '\'' +
             ", description='" + description + '\'' +
             ", targets=" + targets +
+            ", variables=" + variables +
             '}';
     }
 
@@ -172,13 +202,12 @@ public class Environment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Environment that = (Environment) o;
-        return Objects.equals(name, that.name) &&
-            Objects.equals(description, that.description) &&
-            Objects.equals(targets, that.targets);
+        return Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(targets, that.targets) && Objects.equals(variables, that.variables);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, targets);
+        return Objects.hash(name, description, targets, variables);
     }
+
 }

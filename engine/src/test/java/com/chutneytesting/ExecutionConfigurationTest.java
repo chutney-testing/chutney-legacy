@@ -25,6 +25,7 @@ import com.chutneytesting.action.domain.ActionTemplateRegistry;
 import com.chutneytesting.action.spi.Action;
 import com.chutneytesting.action.spi.ActionExecutionResult;
 import com.chutneytesting.engine.api.execution.DatasetDto;
+import com.chutneytesting.engine.api.execution.EnvironmentDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.StatusDto;
@@ -44,7 +45,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class ExecutionConfigurationTest {
 
     private final ExecutionConfiguration sut = new ExecutionConfiguration();
-    private final String FAKE_ENV = "fakeEnv";
+    private final String FAKE_ENV_NAME = "fakeEnv";
+    private final EnvironmentDto FAKE_ENV = new EnvironmentDto(FAKE_ENV_NAME, emptyMap());
     private final DatasetDto dataset = new DatasetDto(Collections.emptyMap(), Collections.emptyList());
 
     @Test

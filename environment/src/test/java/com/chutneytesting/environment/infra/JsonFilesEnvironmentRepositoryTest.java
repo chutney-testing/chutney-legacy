@@ -21,9 +21,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
+import com.chutneytesting.environment.domain.EnvironmentVariable;
 import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.TargetAlreadyExistsException;
+import com.chutneytesting.environment.domain.exception.VariableAlreadyExistingException;
 import com.chutneytesting.tools.ThrowingConsumer;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,6 +56,9 @@ public class JsonFilesEnvironmentRepositoryTest {
     void should_save_configuration_then_read_it() {
         // Given
         final String url = "http://target1:8080";
+        Set<EnvironmentVariable> variables = Set.of(
+            new EnvironmentVariable("Key 1", "value", "TEST"),
+            new EnvironmentVariable("Key 2", "other value", "TEST"));
         final Environment environment = Environment.builder()
             .withName("TEST")
             .withDescription("some description")
@@ -64,6 +69,7 @@ public class JsonFilesEnvironmentRepositoryTest {
                         .withEnvironment("envName")
                         .withUrl(url)
                         .build()))
+            .withVariables(variables)
             .build();
 
         // When
@@ -75,6 +81,7 @@ public class JsonFilesEnvironmentRepositoryTest {
         assertThat(testEnv.targets).containsExactly(
             Target.builder().withName("target1").withUrl(url).withEnvironment("TEST").build()
         );
+        assertThat(testEnv.variables).containsExactlyInAnyOrderElementsOf(variables);
     }
 
     @Test
@@ -116,6 +123,23 @@ public class JsonFilesEnvironmentRepositoryTest {
             .isInstanceOf(TargetAlreadyExistsException.class)
             .message()
             .isEqualTo("Targets are not unique : target2, target1");
+    }
+
+    @Test
+    void should_throw_exception_when_variable_is_not_unique() {
+        // Given
+        final Environment environment = Environment.builder()
+            .withName("TEST")
+            .withDescription("some description")
+            .withVariables(
+                Set.of(new EnvironmentVariable("Key", "value", "TEST"),
+                    new EnvironmentVariable("Key", "other value", "TEST"))
+            ).build();
+        // When & Then
+        assertThatThrownBy(() -> sut.save(environment))
+            .isInstanceOf(VariableAlreadyExistingException.class)
+            .message()
+            .isEqualTo("Variables are not unique : Key");
     }
 
     @Test

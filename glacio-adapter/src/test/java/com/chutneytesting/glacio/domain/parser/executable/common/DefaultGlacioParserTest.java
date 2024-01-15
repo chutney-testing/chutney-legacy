@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.chutneytesting.environment.api.EnvironmentApi;
+import com.chutneytesting.environment.api.target.TargetApi;
 import com.chutneytesting.glacio.domain.parser.executable.DefaultGlacioParser;
 import com.chutneytesting.action.domain.ActionTemplate;
 import com.chutneytesting.action.domain.ActionTemplateRegistry;
@@ -41,8 +41,8 @@ public class DefaultGlacioParserTest {
     @BeforeEach
     public void setUp() {
         actionTemplateRegistry = mock(ActionTemplateRegistry.class);
-        final EnvironmentApi environmentEmbeddedApplication = mock(EnvironmentApi.class);
-        sut = new DefaultGlacioParser(actionTemplateRegistry, environmentEmbeddedApplication);
+        final TargetApi TargetApi = mock(TargetApi.class);
+        sut = new DefaultGlacioParser(actionTemplateRegistry, TargetApi);
     }
 
     @Test()

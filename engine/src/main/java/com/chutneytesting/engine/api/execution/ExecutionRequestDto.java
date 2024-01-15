@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -34,11 +35,12 @@ import java.util.stream.Collectors;
 public class ExecutionRequestDto {
 
     public final StepDefinitionRequestDto scenario;
-    public final String environment;
+    @NotNull
+    public final EnvironmentDto environment;
     public final DatasetDto dataset;
 
     @JsonCreator
-    public ExecutionRequestDto(StepDefinitionRequestDto scenario, String environment, DatasetDto dataset) {
+    public ExecutionRequestDto(StepDefinitionRequestDto scenario, EnvironmentDto environment, DatasetDto dataset) {
         this.scenario = scenario;
         this.environment = environment;
         this.dataset = dataset;

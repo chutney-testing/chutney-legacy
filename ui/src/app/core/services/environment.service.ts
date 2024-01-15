@@ -16,7 +16,7 @@
 
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Environment, Target, TargetFilter } from '@model';
+import { Environment, EnvironmentVariable, Target, TargetFilter } from '@model';
 import { environment as server } from '../../../environments/environment';
 import { HttpClient, HttpContext, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
@@ -30,6 +30,7 @@ export class EnvironmentService {
 
     private envBaseUrl = '/api/v2/environments';
     private targetBaseUrl = '/api/v2/targets';
+    private variablesBaseUrl = '/api/v2/variables';
 
     constructor(private http: HttpClient,
                 private fileSaverService: FileSaverService) {
@@ -78,9 +79,6 @@ export class EnvironmentService {
         return this.http.put(server.backend + this.envBaseUrl + '/' + environmentName, environment);
     }
 
-    environmentTargets(environmentName: string): Observable<Target[]> {
-        return this.getTargets(new TargetFilter(null, environmentName));
-    }
 
     environmentTarget(environmentName: string, targetName: string): Observable<Target> {
         return this.http.get<Target>(server.backend + this.envBaseUrl + '/' + environmentName + '/targets/' + targetName);
@@ -91,10 +89,6 @@ export class EnvironmentService {
             .filter(([key, value]) => value != null)
             .reduce((params, [key, value]) => params.append(key, value), new HttpParams());
         return this.http.get<Target[]>(server.backend + this.targetBaseUrl, {params});
-    }
-
-    targetsNames(): Observable<Array<string>> {
-        return this.http.get<Array<string>>(server.backend + this.targetBaseUrl + '/names');
     }
 
     updateTarget(targetName: string, target: Target): Observable<Object> {
@@ -129,6 +123,18 @@ export class EnvironmentService {
         const formData = new FormData();
         formData.append('file', file);
         return this.http.post<Target>(server.backend + this.envBaseUrl + '/' + environment + '/targets/', formData);
+    }
+
+
+    addVariable(variables: EnvironmentVariable[]): Observable<void> {
+        return this.http.post<void>(server.backend + this.variablesBaseUrl, variables);
+    }
+    updateVariable(key: string, values: EnvironmentVariable[]): Observable<void> {
+        return this.http.put<void>(server.backend + this.variablesBaseUrl + '/' + key, values);
+    }
+
+    deleteVariable(key: string): Observable<void> {
+        return this.http.delete<void>(server.backend + this.variablesBaseUrl + '/' + key);
     }
 
 }

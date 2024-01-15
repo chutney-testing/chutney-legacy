@@ -83,6 +83,8 @@ local.properties
 !.idea/codeStyleSettings.xml
 !.idea/codeStyles
 !.idea/runConfigurations
+!.idea/copyright
+!.idea/scopes
 *.iml
 *.iws
 *.ipr
@@ -104,6 +106,8 @@ classes/
 ######################
 /log/
 **/target/
+# Except for the target folder inside src
+!**/src/**/target/
 .mvn/
 
 ######################

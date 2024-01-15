@@ -58,7 +58,7 @@ public class GlacioAdapterConfiguration {
     private StepFactory createExecutableStepFactory() throws IOException {
         Map<Locale, Map<EXECUTABLE_KEYWORD, Set<String>>> languagesKeywords = createLanguagesKeywords(EXECUTABLE_KEYWORD.class, "META-INF/extension/chutney.glacio-languages.json");
         Map<Pair<Locale, String>, IParseExecutableStep> glacioParsers = createGlacioParsers("META-INF/extension/chutney.glacio.parsers");
-        DefaultGlacioParser defaultGlacioParser = new DefaultGlacioParser(executionConfiguration.actionTemplateRegistry(), environmentConfiguration.getEmbeddedEnvironmentApi());
+        DefaultGlacioParser defaultGlacioParser = new DefaultGlacioParser(executionConfiguration.actionTemplateRegistry(), environmentConfiguration.getEmbeddedTargetApi());
         return new StepFactory(
             languagesKeywords,
             glacioParsers,

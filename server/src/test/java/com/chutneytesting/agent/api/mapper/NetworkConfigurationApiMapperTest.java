@@ -17,6 +17,7 @@
 package com.chutneytesting.agent.api.mapper;
 
 import static com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration.builder;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
@@ -31,8 +32,8 @@ import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration;
 import com.chutneytesting.agent.domain.configure.NetworkConfiguration;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
-import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.target.dto.TargetDto;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;

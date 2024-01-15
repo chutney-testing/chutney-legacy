@@ -107,7 +107,8 @@ public class Reporter {
     }
 
     private StepExecutionReport generateRunningReport(long executionId) {
-        final Status calculatedRootStepStatus = rootSteps.get(executionId).status();
+        Step step = rootSteps.get(executionId);
+        final Status calculatedRootStepStatus = step.status();
 
         final Status finalStatus;
         if (!calculatedRootStepStatus.equals(RUNNING) && !calculatedRootStepStatus.equals(PAUSED)) {
@@ -115,24 +116,25 @@ public class Reporter {
         } else {
             finalStatus = calculatedRootStepStatus;
         }
-        return generateReport(rootSteps.get(executionId), s -> finalStatus);
+        return generateReport(step, s -> finalStatus, (String) step.getScenarioContext().get("environment"));
     }
 
     private StepExecutionReport generateLastReport(long executionId) {
-        return generateReport(rootSteps.get(executionId), Step::status);
+        Step step = rootSteps.get(executionId);
+        return generateReport(step, Step::status, (String) step.getScenarioContext().get("environment"));
     }
 
-    StepExecutionReport generateReport(Step step, Function<Step, Status> statusSupplier) {
+    StepExecutionReport generateReport(Step step, Function<Step, Status> statusSupplier, String env) {
         try {
             return new StepExecutionReportBuilder()
                 .setName(step.name())
-                .setEnvironment(step.definition().environment)
+                .setEnvironment(env)
                 .setDuration(step.duration().toMillis())
                 .setStartDate(step.startDate())
                 .setStatus(statusSupplier.apply(step))
                 .setInformation(step.informations())
                 .setErrors(step.errors())
-                .setSteps(step.subSteps().stream().map(subStep -> generateReport(subStep, Step::status)).collect(Collectors.toList()))
+                .setSteps(step.subSteps().stream().map(subStep -> generateReport(subStep, Step::status, env)).collect(Collectors.toList()))
                 .setEvaluatedInputs(step.getEvaluatedInputs())
                 .setStepResults(step.getStepOutputs())
                 .setScenarioContext(step.getScenarioContext())

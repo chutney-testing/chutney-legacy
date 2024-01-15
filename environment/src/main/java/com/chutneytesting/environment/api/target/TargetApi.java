@@ -14,39 +14,17 @@
  * limitations under the License.
  */
 
-package com.chutneytesting.environment.api;
+package com.chutneytesting.environment.api.target;
 
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
-import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.environment.api.target.dto.TargetDto;
 import com.chutneytesting.environment.domain.TargetFilter;
-import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
-import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentException;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
-import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
 import java.util.List;
 import java.util.Set;
 
-public interface EnvironmentApi {
-    Set<EnvironmentDto> listEnvironments();
-
-    Set<String> listEnvironmentsNames();
-
-    EnvironmentDto getEnvironment(String environmentName) throws EnvironmentNotFoundException;
-
-    default EnvironmentDto createEnvironment(EnvironmentDto environmentMetadataDto) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException {
-        return createEnvironment(environmentMetadataDto, false);
-    }
-
-    EnvironmentDto createEnvironment(EnvironmentDto environmentMetadataDto, boolean force) throws InvalidEnvironmentNameException, AlreadyExistingEnvironmentException;
-
-    EnvironmentDto importEnvironment(EnvironmentDto environmentDto);
-
-    void updateEnvironment(String environmentName, EnvironmentDto environmentMetadataDto) throws InvalidEnvironmentNameException, EnvironmentNotFoundException;
-
-    void deleteEnvironment(String environmentName) throws EnvironmentNotFoundException, CannotDeleteEnvironmentException;
-
+public interface TargetApi {
     List<TargetDto> listTargets(TargetFilter filter) throws EnvironmentNotFoundException;
 
     Set<String> listTargetsNames() throws EnvironmentNotFoundException;

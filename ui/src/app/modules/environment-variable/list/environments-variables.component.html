@@ -1,0 +1,115 @@
+<div class="row cursor-pointer" *ngIf="errorMessage" (click)="errorMessage = null">
+    <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
+</div>
+
+<div class="d-flex flex-row justify-content-between mb-2">
+    <div>
+        <button *ngFor="let env of environments" type="button"
+                class="btn btn-sm me-2 rounded btn-outline-info shadow-none"
+                [ngClass]="{
+                    'btn-info text-white': selectedEnvironment?.name === env.name,
+                    'env-filter-no-focus': selectedEnvironment?.name != env.name
+                }"
+                (click)="filter(env)">{{ env.name }}</button>
+    </div>
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-primary me-3 rounded"
+                (click)="initVariableEdition()"
+                [disabled]="variableEditionForm">{{ 'global.actions.add' | translate }}
+        </button>
+    </div>
+</div>
+
+
+<div>
+    <div class="d-flex flex-row  mb-2">
+        <input name="search" type="text" class="form-control w-25"
+               [placeholder]="'global.actions.search' | translate"
+               [(ngModel)]="keyword" (ngModelChange)="filter()"/>
+    </div>
+    <table class="table table-striped table-hover">
+        <tbody>
+        <tr *ngIf="editing()" >
+            <ng-container [ngTemplateOutlet]="variableEdition" ></ng-container>
+        </tr>
+        <tr *ngFor="let variableKey of variablesKeys">
+            <ng-container *ngIf="editing(variableKey)" [ngTemplateOutlet]="variableEdition" ></ng-container>
+            <ng-container *ngIf="!editing(variableKey)">
+                <td class="align-bottom w20">
+                    <ngb-highlight [result]="variableKey" [term]="keyword"></ngb-highlight>
+                </td>
+                <td class="small">
+                    <ul ngbNav #nav="ngbNav" class="nav-pills small" [activeId]="activeEnvironmentTab()"
+                        [destroyOnHide]="false">
+                        <!--DIFF [disabled]="!exist(variableKey, env)"-->
+                        <li class="me-1" *ngFor="let env of environments" [ngbNavItem]="env.name">
+                            <a ngbNavLink class="environment border p-1 text-info border-info">
+                                <strong>{{env.name}}</strong></a>
+                            <ng-template ngbNavContent>
+                                <ngb-highlight [result]="findVariable(variableKey, env)?.value"
+                                               [term]="keyword"></ngb-highlight>
+                            </ng-template>
+                        </li>
+                    </ul>
+                    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+                </td>
+                <td class="align-bottom w5">
+                    <div class="d-flex flex-row justify-content-end">
+                        <button class="btn btn-sm btn-outline-primary"
+                                (click)="initVariableEdition(variableKey)"
+                                ngbTooltip="{{'global.actions.edit' | translate}}">
+                            <i class="bi bi-pen-fill"></i>
+                        </button>
+                        <chutney-delete-confirm-dialog
+                            [dialogMessage]="('global.confirm.question' | translate) + ' ' + ('global.actions.delete' | translate) + '\n' + variableKey"
+                            [label]="'Delete Environment'"
+                            [btnSizeClass]="'sm'"
+                            (deleteEvent)="delete(variableKey)"
+                            class="ms-2">
+                        </chutney-delete-confirm-dialog>
+                    </div>
+                </td>
+            </ng-container>
+
+        </tr>
+        </tbody>
+    </table>
+</div>
+<ng-template #variableEdition>
+    <ng-container [formGroup]="variableEditionForm">
+        <td class="align-bottom  w25">
+            <small class="text-danger"
+                   *ngIf="variableEditionForm.get('key').dirty && variableEditionForm.get('key').hasError('name')">
+                {{'global.rules.var.name' | translate }}
+            </small>
+            <input type="text" [placeholder]="'global.smallword.key' | translate" class="form-control mt-1" formControlName="key">
+        </td>
+        <td class="small">
+            <ul ngbNav #nav="ngbNav" class="nav-pills small"
+                [destroyOnHide]="false" formArrayName="values">
+                <!--DIFF [disabled]="!exist(variableKey, env)"-->
+                <li class="me-1" *ngFor="let variableForm of valuesArrayForm().controls; let i = index"
+                    [ngbNavItem]="variableForm.value.env"
+                    [formGroupName]="i">
+                    <a ngbNavLink class="environment border p-1 text-info border-info ">
+                        <strong>{{variableForm.value.env}}</strong></a>
+                    <ng-template ngbNavContent>
+                        <input type="text" [placeholder]="'global.smallword.value' | translate" class="form-control w-25" formControlName="value">
+                    </ng-template>
+                </li>
+            </ul>
+            <div [ngbNavOutlet]="nav" class="mt-2"></div>
+        </td>
+        <td class="w5 align-bottom">
+            <div class="d-flex flex-row justify-content-end">
+                <button class="btn btn-sm btn-outline-primary me-2 " (click)="variableEditionForm = null">
+                    <i class="bi bi-x"></i>
+                </button>
+                <button class="btn btn-sm btn-primary" (click)="submitEdition()"
+                        [disabled]="variableEditionForm.invalid">
+                    <i class="bi  bi-check"></i>
+                </button>
+            </div>
+        </td>
+    </ng-container>
+</ng-template>

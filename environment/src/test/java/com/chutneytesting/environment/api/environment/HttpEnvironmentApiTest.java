@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.chutneytesting.environment.api;
+package com.chutneytesting.environment.api.environment;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
@@ -22,7 +22,6 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toCollection;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -37,6 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.chutneytesting.environment.api.EnvironmentRestExceptionHandler;
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.EnvironmentRepository;
 import com.chutneytesting.environment.domain.EnvironmentService;
@@ -51,7 +51,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -67,7 +66,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class HttpEnvironmentApiTest {
 
     private final String environmentBasePath = "/api/v2/environments";
-    private final String targetBasePath = "/api/v2/targets";
 
     private final EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
     private final EnvironmentService environmentService = new EnvironmentService(environmentRepository);
@@ -229,152 +227,6 @@ public class HttpEnvironmentApiTest {
         assertThat(savedEnvironment.description).isEqualTo("test2 description");
     }
 
-    private static Object[] params_listTargets_returns_all_available() {
-        return new Object[]{
-            new Object[]{new String[]{}},
-            new Object[]{new String[]{"target1", "target2"}}
-        };
-    }
-
-    @ParameterizedTest
-    @MethodSource("params_listTargets_returns_all_available")
-    public void listTargets_returns_all_available(String[] targetNames) throws Exception {
-        addAvailableEnvironment("env test", targetNames);
-
-        ResultActions resultActions = mockMvc.perform(get(targetBasePath + "?environment={env}", "env test"))
-            .andDo(MockMvcResultHandlers.log())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()", equalTo(targetNames.length)));
-
-        for (int i = 0; i < targetNames.length; i++) {
-            resultActions.andExpect(jsonPath("$.[" + i + "].name", equalTo(targetNames[i])))
-                .andExpect(jsonPath("$.[" + i + "].url", equalTo("http://" + targetNames[i] + ":43")));
-        }
-    }
-
-    @Test
-    public void should_list_distinct_targets_names_in_any_environment() throws Exception {
-        List<String> targetsNames = Lists.list("t1", "t2", "t3");
-        addAvailableEnvironment("env1", targetsNames.get(0), targetsNames.get(2));
-        addAvailableEnvironment("env2", targetsNames.get(0), targetsNames.get(1));
-
-        ResultActions resultActions = mockMvc.perform(get(targetBasePath + "/names"))
-            .andDo(MockMvcResultHandlers.log())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(3)));
-
-        for (String targetName : targetsNames) {
-            resultActions.andExpect(jsonPath("$[?(@=='" + targetName + "')]", hasSize(1)));
-        }
-    }
-
-    @Test
-    public void addTarget_saves_an_environment_with_the_new_target() throws Exception {
-        addAvailableEnvironment("env_test", "server 1");
-
-        mockMvc.perform(
-                post(targetBasePath )
-                    .content("{\"name\": \"server 2\", \"url\": \"ssh://somehost:42\", \"environment\": \"env_test\"}")
-                    .contentType(MediaType.APPLICATION_JSON))
-            .andDo(MockMvcResultHandlers.log())
-            .andExpect(status().isOk());
-
-        ArgumentCaptor<Environment> environmentArgumentCaptor = ArgumentCaptor.forClass(Environment.class);
-        verify(environmentRepository, times(1)).save(environmentArgumentCaptor.capture());
-
-        Environment savedEnvironment = environmentArgumentCaptor.getValue();
-        assertThat(savedEnvironment).isNotNull();
-        assertThat(savedEnvironment.targets).hasSize(2);
-        assertThat(savedEnvironment.targets.toArray()).contains(
-            Target.builder().withName("server 2").withUrl("ssh://somehost:42").withEnvironment("env_test").build()
-        );
-    }
-
-    @Test
-    public void addTarget_returns_409_when_already_existing() throws Exception {
-        addAvailableEnvironment("env test", "server 1");
-
-        mockMvc.perform(
-                post(targetBasePath)
-                    .content("{\"name\": \"server 1\", \"url\": \"ssh://somehost:42\", \"environment\": \"env test\"}")
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(MockMvcResultHandlers.log())
-            .andExpect(status().isConflict());
-    }
-
-    @Test
-    public void deleteTarget_deletes_it_from_repo() throws Exception {
-        addAvailableEnvironment("env_test", "server 1");
-
-        mockMvc.perform(delete(environmentBasePath + "/env_test/targets/server 1"))
-            .andDo(MockMvcResultHandlers.log())
-            .andExpect(status().isOk());
-
-        verify(environmentRepository, times(1)).save(eq(Environment.builder().withName("env_test").withDescription("env_test description").build()));
-    }
-
-    @Test
-    public void deleteTarget_returns_404_when_not_found() throws Exception {
-        addAvailableEnvironment("env_test", "server 1");
-
-        mockMvc.perform(delete(environmentBasePath + "/env_test/targets/server 2"))
-            .andDo(MockMvcResultHandlers.log())
-            .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void updateTarget_returns_404_when_not_found() throws Exception {
-        addAvailableEnvironment("env test", "server 1");
-
-        mockMvc.perform(
-                put(targetBasePath + "/server 2")
-                    .content("{\"name\": \"server 2\", \"url\": \"http://somehost2:42\" , \"environment\": \"env test\"}")
-                    .contentType(MediaType.APPLICATION_JSON))
-            .andDo(MockMvcResultHandlers.log())
-            .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void updateTarget_saves_it() throws Exception {
-        addAvailableEnvironment("env_test", "server 1");
-
-        mockMvc.perform(
-                put(targetBasePath + "/server 1")
-                    .content("{\"name\": \"server 1\", \"url\": \"http://somehost2:42\", \"environment\": \"env_test\"}")
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(MockMvcResultHandlers.log())
-            .andExpect(status().isOk());
-
-        ArgumentCaptor<Environment> environmentArgumentCaptor = ArgumentCaptor.forClass(Environment.class);
-        verify(environmentRepository, times(1)).save(environmentArgumentCaptor.capture());
-
-        Environment savedEnvironment = environmentArgumentCaptor.getValue();
-        assertThat(savedEnvironment).isNotNull();
-        assertThat(savedEnvironment.targets).hasSize(1);
-        assertThat(savedEnvironment.targets.iterator().next().url).isEqualTo("http://somehost2:42");
-    }
-
-    @Test
-    public void updateTarget_with_different_name_deletes_previous_one() throws Exception {
-        addAvailableEnvironment("env_test", "server 1");
-
-        mockMvc.perform(
-                put(targetBasePath + "/server 1")
-                    .content("{\"name\": \"server 2\", \"url\": \"http://somehost2:42\", \"environment\": \"env_test\"}")
-                    .contentType(MediaType.APPLICATION_JSON))
-            .andDo(MockMvcResultHandlers.log())
-            .andExpect(status().isOk());
-
-        ArgumentCaptor<Environment> environmentArgumentCaptor = ArgumentCaptor.forClass(Environment.class);
-        verify(environmentRepository, times(1)).save(environmentArgumentCaptor.capture());
-
-        Environment savedEnvironment = environmentArgumentCaptor.getValue();
-        assertThat(savedEnvironment).isNotNull();
-        assertThat(savedEnvironment.targets).hasSize(1);
-        assertThat(savedEnvironment.targets.iterator().next().name).isEqualTo("server 2");
-    }
 
     @Test
     public void should_get_environment_when_it_exists() throws Exception {

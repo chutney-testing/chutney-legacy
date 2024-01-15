@@ -45,7 +45,8 @@ export class ScenarioExecutionService {
     }
 
     executeScenarioAsync(scenarioId: string, env: string): Observable<string> {
-        return this.http.post<string>(environment.backend + `${this.resourceUrl}/executionasync/v1/${scenarioId}/${env}`, {});
+        const envPathParam = !!env ? `/${env}` : '';
+        return this.http.post<string>(environment.backend + `${this.resourceUrl}/executionasync/v1/${scenarioId}${envPathParam}`, {});
     }
 
     observeScenarioExecution(scenarioId: string, executionId: number): Observable<ScenarioExecutionReport> {

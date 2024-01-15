@@ -17,7 +17,7 @@
 package com.chutneytesting.agent.domain.configure;
 
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
 import com.chutneytesting.environment.domain.Environment;
 import java.time.Instant;
 import java.util.Set;

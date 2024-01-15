@@ -47,4 +47,8 @@ public interface EnvironmentRepository {
     default List<Environment> getEnvironments() {
         return listNames().stream().map(this::findByName).collect(Collectors.toList());
     }
+
+    default List<Environment> findByNames(List<String> names) {
+        return names.stream().map(this::findByName).toList();
+    }
 }

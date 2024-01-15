@@ -21,6 +21,7 @@ import static com.chutneytesting.engine.api.execution.StatusDto.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
+import com.chutneytesting.engine.api.execution.EnvironmentDto;
 import com.chutneytesting.engine.api.execution.StepDefinitionDto;
 import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
 import com.chutneytesting.glacio.GlacioAdapterConfiguration;
@@ -29,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.assertj.core.util.Files;
@@ -223,7 +225,8 @@ public class EngineIntegrationTest {
     }
 
     private StepExecutionReportDto execute(StepDefinitionDto stepDefinitionDto) {
-        return glacioAdapterConfiguration.executionConfiguration().embeddedTestEngine().execute(ExecutionRequestMapper.toDto(stepDefinitionDto, ENVIRONMENT));
+        EnvironmentDto environment = new EnvironmentDto(ENVIRONMENT, Collections.emptyMap());
+        return glacioAdapterConfiguration.executionConfiguration().embeddedTestEngine().execute(ExecutionRequestMapper.toDto(stepDefinitionDto, environment));
     }
 
     private String fileContent(String resourcePath) {

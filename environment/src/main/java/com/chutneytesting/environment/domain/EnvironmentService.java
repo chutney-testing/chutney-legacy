@@ -19,9 +19,13 @@ package com.chutneytesting.environment.domain;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
 import com.chutneytesting.environment.domain.exception.CannotDeleteEnvironmentException;
+import com.chutneytesting.environment.domain.exception.EnvVariableNotFoundException;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
+import com.chutneytesting.environment.domain.exception.NoEnvironmentFoundException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
+import com.chutneytesting.environment.domain.exception.UnresolvedEnvironmentException;
+import com.chutneytesting.environment.domain.exception.VariableAlreadyExistingException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -88,6 +92,19 @@ public class EnvironmentService {
         }
     }
 
+    public String defaultEnvironmentName() throws EnvironmentNotFoundException {
+        List<String> envs = environmentRepository.listNames();
+        if (envs.size() > 1) {
+            throw new UnresolvedEnvironmentException("There is more than one environment. Could not resolve the default one");
+        }
+        if (envs.isEmpty()) {
+            throw new NoEnvironmentFoundException("No Environment found");
+        }
+
+        return envs.get(0);
+    }
+
+
     public List<Target> listTargets(TargetFilter filters) {
         Set<Target> targets;
         if (filters != null && StringUtils.isNotBlank(filters.environment())) {
@@ -143,6 +160,56 @@ public class EnvironmentService {
         Environment newEnvironment = environment.updateTarget(previousTargetName, targetToUpdate);
         createOrUpdate(newEnvironment);
         logger.debug("Updated target " + previousTargetName + " as " + targetToUpdate.name);
+    }
+
+    public void addVariable(List<EnvironmentVariable> values) throws EnvironmentNotFoundException, VariableAlreadyExistingException {
+        values.forEach(variable -> {
+            Environment environment = environmentRepository.findByName(variable.env());
+            this.addVariable(variable, environment);
+        });
+
+    }
+
+    public void createOrUpdateVariable(String existingKey, List<EnvironmentVariable> values) throws EnvironmentNotFoundException, EnvVariableNotFoundException {
+        values.forEach(variable -> {
+            Environment environment = environmentRepository.findByName(variable.env());
+            if (!environment.containsVariable(existingKey)) {
+                this.addVariable(variable, environment);
+                return;
+            }
+            Environment updated = environment.updateVariable(existingKey, variable);
+            if (!environment.equals(updated)) {
+                createOrUpdate(updated);
+                logger.debug("Updated variable " + existingKey + " as " + values.get(0).key());
+            }
+        });
+    }
+
+    public void deleteVariable(String key) {
+        this.deleteVariable(key, environmentRepository.listNames());
+    }
+
+    public void deleteVariable(String key, List<String> envs) {
+        List<Environment> environments = environmentRepository.findByNames(envs)
+            .stream()
+            .filter(env -> env.containsVariable(key)).toList();
+
+        if (!envs.isEmpty() && environments.isEmpty()) {
+            throw new EnvVariableNotFoundException("Variable [" + key + "] not found");
+        }
+        environments
+            .forEach(env -> {
+                Environment updated = env.deleteVariable(key);
+                createOrUpdate(updated);
+            });
+        logger.debug("Deleted variable: " + key);
+    }
+
+    private void addVariable(EnvironmentVariable variable, Environment env) throws EnvironmentNotFoundException, VariableAlreadyExistingException {
+        Environment updated = env.addVariable(variable);
+        createOrUpdate(updated);
+        logger.debug("Variable " + variable.key() + " added to environment " + env);
+
     }
 
     private void createOrUpdate(Environment environment) {

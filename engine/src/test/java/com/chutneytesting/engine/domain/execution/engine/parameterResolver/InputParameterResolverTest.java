@@ -59,7 +59,7 @@ public class InputParameterResolverTest {
     }
 
     @Test
-    public void coudld_not_resolve_nameless_annotated_parameter() {
+    public void could_not_resolve_nameless_annotated_parameter() {
         java.lang.reflect.Parameter[] actionParameters = NoNameInputAction.class.getDeclaredConstructors()[0].getParameters();
         Parameter namelessParameter = Parameter.fromJavaParameter(actionParameters[0]);
         InputParameterResolver sut = new InputParameterResolver(emptyMap());

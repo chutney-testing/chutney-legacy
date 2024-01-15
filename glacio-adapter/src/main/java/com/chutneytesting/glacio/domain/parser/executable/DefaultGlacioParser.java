@@ -18,7 +18,7 @@ package com.chutneytesting.glacio.domain.parser.executable;
 
 import static java.util.Optional.ofNullable;
 
-import com.chutneytesting.environment.api.EnvironmentApi;
+import com.chutneytesting.environment.api.target.TargetApi;
 import com.chutneytesting.glacio.domain.parser.ExecutableGlacioStepParser;
 import com.chutneytesting.glacio.domain.parser.executable.common.EntryStepParser;
 import com.chutneytesting.glacio.domain.parser.executable.common.FilteredByKeywordsSubStepMapStepParser;
@@ -37,8 +37,8 @@ public class DefaultGlacioParser extends ExecutableGlacioStepParser {
 
     private final ActionTemplateRegistry actionTemplateRegistry;
 
-    public DefaultGlacioParser(ActionTemplateRegistry actionTemplateRegistry, EnvironmentApi environmentApplication) {
-        super(new TargetStepParser(environmentApplication, "On"),
+    public DefaultGlacioParser(ActionTemplateRegistry actionTemplateRegistry, TargetApi targetApi) {
+        super(new TargetStepParser(targetApi, "On"),
             new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "With"),
             new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "Take", "Keep"),
             new FilteredByKeywordsSubStepMapStepParser(new EntryStepParser(), "Validate"));

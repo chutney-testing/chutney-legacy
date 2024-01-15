@@ -17,6 +17,7 @@
 package com.chutneytesting.agent.api.mapper;
 
 import static com.chutneytesting.agent.domain.configure.ImmutableNetworkConfiguration.AgentNetworkConfiguration.of;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,8 +36,8 @@ import com.chutneytesting.agent.domain.network.AgentGraph;
 import com.chutneytesting.agent.domain.network.ImmutableNetworkDescription;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
-import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.target.dto.TargetDto;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;

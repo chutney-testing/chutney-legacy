@@ -16,8 +16,8 @@
 
 package com.chutneytesting.junit.api;
 
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
-import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.target.dto.TargetDto;
 
 public interface EnvironmentService {
 

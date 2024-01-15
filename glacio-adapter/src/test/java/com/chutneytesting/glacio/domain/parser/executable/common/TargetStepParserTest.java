@@ -24,8 +24,8 @@ import static org.mockito.Mockito.when;
 
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
-import com.chutneytesting.environment.api.EnvironmentApi;
-import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.environment.api.target.TargetApi;
+import com.chutneytesting.environment.api.target.dto.TargetDto;
 import com.chutneytesting.glacio.domain.parser.ParsingContext;
 import com.github.fridujo.glacio.model.Step;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,15 +35,15 @@ public class TargetStepParserTest {
 
     private static final ParsingContext CONTEXT = new ParsingContext();
     public static final String ENV = "ENV";
-    private EnvironmentApi environmentApplication;
+    private TargetApi targetApi;
 
     private TargetStepParser sut;
 
     @BeforeEach
     public void setUp() {
         CONTEXT.values.put(ENVIRONMENT, "ENV");
-        environmentApplication = mock(EnvironmentApi.class);
-        sut = new TargetStepParser(environmentApplication, "On");
+        targetApi = mock(TargetApi.class);
+        sut = new TargetStepParser(targetApi, "On");
     }
 
     @Test
@@ -54,7 +54,7 @@ public class TargetStepParserTest {
         Step step = mock(Step.class);
         when(stepParent.getSubsteps()).thenReturn(singletonList(step));
         when(step.getText()).thenReturn("On " + expectedTarget.name);
-        when(environmentApplication.getTarget(ENV, expectedTarget.name))
+        when(targetApi.getTarget(ENV, expectedTarget.name))
             .thenReturn(expectedTarget);
 
         TargetExecutionDto targetFound = sut.parseGlacioStep(CONTEXT, stepParent);

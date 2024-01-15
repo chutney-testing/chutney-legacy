@@ -12,6 +12,7 @@
             "component": "Composants",
             "backups": "Sauvegardes",
             "variable": "Variable",
+            "envVariable": "Variables",
             "dataset": "Dataset",
             "jiraId": "Identifiant jira",
             "roles": "Roles",
@@ -306,8 +307,7 @@
         },
         "environment": {
             "name": {
-                "placeholder": "Nom",
-                "syntaxe.error": "Le nom de l'environnement doit être de 3 à 20 lettres, nombres, underscore ou hyphen. Exemple: Mon_environnement-1"
+                "placeholder": "Nom"
             },
             "description.placeholder": "Description"
         },
@@ -448,6 +448,10 @@
             "delete": "Confirmez-vous votre demande de suppression ?",
             "yes": "Oui",
             "no": "Non"
+        },
+        "rules": {
+            "env.name": "Le nom doit être de 3 à 20 lettres, nombres, underscore ou hyphen. Exemple: Mon_nom-1",
+            "var.name": "Le nom ne doit contenir que des lettres, chiffres ou underscores. Il doit commencer par une lettre. Exemple: Mon_nom1"
         },
         "smallword": {
             "of": "de",

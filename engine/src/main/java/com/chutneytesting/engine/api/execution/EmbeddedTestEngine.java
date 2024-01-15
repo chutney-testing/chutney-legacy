@@ -22,6 +22,7 @@ import com.chutneytesting.engine.domain.execution.ExecutionManager;
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
 import com.chutneytesting.engine.domain.execution.engine.Dataset;
+import com.chutneytesting.engine.domain.execution.engine.Environment;
 import com.chutneytesting.engine.domain.report.Reporter;
 import io.reactivex.rxjava3.core.Observable;
 import java.util.Optional;
@@ -48,11 +49,16 @@ public final class EmbeddedTestEngine implements TestEngine {
 
     @Override
     public Long executeAsync(ExecutionRequestDto request) {
-        StepDefinition stepDefinition = StepDefinitionMapper.toStepDefinition(request.scenario.definition, request.environment);
+        StepDefinition stepDefinition = StepDefinitionMapper.toStepDefinition(request.scenario.definition);
         Dataset dataset = Optional.ofNullable(request.dataset)
             .map(d -> new Dataset(d.constants, d.datatable))
             .orElseGet(Dataset::new);
-        return engine.execute(stepDefinition, dataset, ScenarioExecution.createScenarioExecution(actionsConfiguration));
+        Environment environment = EnvironmentDtoMapper.INSTANCE.toDomain(request.environment);
+        return engine.execute(
+            stepDefinition,
+            dataset,
+            ScenarioExecution.createScenarioExecution(actionsConfiguration),
+            environment);
     }
 
     @Override

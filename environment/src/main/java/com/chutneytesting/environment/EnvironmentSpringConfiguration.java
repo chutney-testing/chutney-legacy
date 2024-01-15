@@ -16,7 +16,9 @@
 
 package com.chutneytesting.environment;
 
-import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.environment.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.target.EmbeddedTargetApi;
+import com.chutneytesting.environment.api.variable.EnvironmentVariableApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,5 +32,17 @@ public class EnvironmentSpringConfiguration {
     EmbeddedEnvironmentApi environmentEmbeddedApplication(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) {
         EnvironmentConfiguration environmentConfiguration = new EnvironmentConfiguration(storeFolderPath);
         return environmentConfiguration.getEmbeddedEnvironmentApi();
+    }
+
+    @Bean
+    EmbeddedTargetApi targetEmbeddedApplication(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) {
+        EnvironmentConfiguration environmentConfiguration = new EnvironmentConfiguration(storeFolderPath);
+        return environmentConfiguration.getEmbeddedTargetApi();
+    }
+
+    @Bean
+    EnvironmentVariableApi variableEmbeddedApplication(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) {
+        EnvironmentConfiguration environmentConfiguration = new EnvironmentConfiguration(storeFolderPath);
+        return environmentConfiguration.getEmbeddedVariableApi();
     }
 }

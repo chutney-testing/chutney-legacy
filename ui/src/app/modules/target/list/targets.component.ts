@@ -36,12 +36,6 @@ export class TargetsComponent implements OnInit {
     environmentFilter: Environment;
     targetFilter = '';
 
-
-    // TODO remove ?
-    envForm: FormGroup;
-    envUpdate = false;
-    help: boolean;
-
     constructor(
         private environmentService: EnvironmentService) {
     }
@@ -65,23 +59,6 @@ export class TargetsComponent implements OnInit {
     findTarget(targetName: string, environment: Environment): Target {
         return environment?.targets.find(target => target.name === targetName);
     }
-
-    reload() {
-        (async () => {
-            await this.delay(500);
-            this.errorMessage = null;
-            this.envUpdate = null;
-            this.envForm = null;
-            this.loadTargets();
-        })();
-
-    }
-
-    delay(ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-
 
     exist(targetName: string, environment: Environment): boolean {
         return !!this.findTarget(targetName, environment);

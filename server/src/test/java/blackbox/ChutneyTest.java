@@ -18,8 +18,8 @@ package blackbox;
 
 import static java.util.stream.Collectors.toList;
 
-import com.chutneytesting.environment.api.dto.EnvironmentDto;
-import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.target.dto.TargetDto;
 import com.chutneytesting.environment.domain.Environment;
 import com.chutneytesting.environment.domain.Target;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
@@ -87,6 +87,7 @@ public class ChutneyTest {
     public void tearDown() {
         localChutney.stop();
         cleanEnvironment();
+
     }
 
     private static int findAvailableTcpPort() {

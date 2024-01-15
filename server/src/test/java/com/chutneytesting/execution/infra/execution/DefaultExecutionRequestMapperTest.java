@@ -18,10 +18,13 @@ package com.chutneytesting.execution.infra.execution;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
-import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.environment.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.environment.dto.EnvironmentDto;
+import com.chutneytesting.environment.api.target.EmbeddedTargetApi;
 import com.chutneytesting.scenario.domain.raw.RawTestCase;
 import com.chutneytesting.server.core.domain.execution.ExecutionRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,18 +37,22 @@ import org.junit.jupiter.api.Test;
 public class DefaultExecutionRequestMapperTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
-    private final EmbeddedEnvironmentApi environmentApplication = mock(EmbeddedEnvironmentApi.class);
+    private final EmbeddedTargetApi embeddedTargetApi = mock(EmbeddedTargetApi.class);
+    private final EmbeddedEnvironmentApi embeddedEnvironmentApi = mock(EmbeddedEnvironmentApi.class);
     private final CurrentNetworkDescription currentNetworkDescription = mock(CurrentNetworkDescription.class);
 
-    private final DefaultExecutionRequestMapper sut = new DefaultExecutionRequestMapper(objectMapper, environmentApplication, currentNetworkDescription);
+    private final DefaultExecutionRequestMapper sut = new DefaultExecutionRequestMapper(objectMapper, embeddedTargetApi, embeddedEnvironmentApi, currentNetworkDescription);
 
     @Test
     public void should_map_test_case_to_execution_request() {
         // Given
+        String envName = "env";
+        EnvironmentDto env = new EnvironmentDto(envName);
+        when(embeddedEnvironmentApi.getEnvironment(envName)).thenReturn(env);
         RawTestCase testCase = RawTestCase.builder()
             .withScenario(Files.contentOf(new File(DefaultExecutionRequestMapperTest.class.getResource("/raw_scenarios/scenario.json").getPath()), StandardCharsets.UTF_8))
             .build();
-        ExecutionRequest request = new ExecutionRequest(testCase, "", "");
+        ExecutionRequest request = new ExecutionRequest(testCase, envName, "");
 
         // When
         ExecutionRequestDto executionRequestDto = sut.toDto(request);
@@ -55,6 +62,8 @@ public class DefaultExecutionRequestMapperTest {
         assertThat(executionRequestDto.scenario.name).isEqualTo("root step");
         assertThat(executionRequestDto.scenario.steps.get(0).name).isEqualTo("context-put name");
         assertThat(executionRequestDto.scenario.steps.get(0).inputs).containsKey("someID");
+        assertThat(executionRequestDto.environment).isNotNull();
+        assertThat(executionRequestDto.environment.name()).isEqualTo(envName);
     }
 
 }

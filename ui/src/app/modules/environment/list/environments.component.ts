@@ -36,7 +36,7 @@ export class EnvironmentsComponent implements OnInit, DoCheck {
 
     constructor(private route: ActivatedRoute,
                 private environmentService: EnvironmentService,
-                private validationService: ValidationService,
+                public validationService: ValidationService,
                 private translateService: TranslateService) {
     }
 
@@ -48,10 +48,10 @@ export class EnvironmentsComponent implements OnInit, DoCheck {
     }
 
     ngDoCheck() {
-        var isNewEnvironmentInvalid = this.environment && !this.validationService.isValidEnvironmentName(this.environment.name);
-        var isEditableEnvironmentInvalid = this.editionIndex >= 0 && !this.validationService.isValidEnvironmentName(this.editableEnvironments[this.editionIndex]?.name);
+        var isNewEnvironmentInvalid = this.environment && !this.validationService.isValidEnvName(this.environment.name);
+        var isEditableEnvironmentInvalid = this.editionIndex >= 0 && !this.validationService.isValidEnvName(this.editableEnvironments[this.editionIndex]?.name);
         if ( isNewEnvironmentInvalid || isEditableEnvironmentInvalid) {
-            this.errorMessage = this.translateService.instant('admin.environment.name.syntaxe.error');
+            this.errorMessage = this.translateService.instant('global.rules.env.name');
         } else {
             this.errorMessage = null;
         }
@@ -84,7 +84,9 @@ export class EnvironmentsComponent implements OnInit, DoCheck {
                 this.sort();
                 this.environment = null;
             },
-            error: err => this.errorMessage = err.error
+            error: err => {
+                this.errorMessage = err.error
+            }
         });
     }
 

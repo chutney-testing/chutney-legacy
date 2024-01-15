@@ -16,7 +16,7 @@
 
 package com.chutneytesting.execution.infra.execution;
 
-import static com.chutneytesting.environment.api.dto.NoTargetDto.NO_TARGET_DTO;
+import static com.chutneytesting.environment.api.target.dto.NoTargetDto.NO_TARGET_DTO;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
@@ -26,13 +26,17 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import com.chutneytesting.agent.domain.explore.CurrentNetworkDescription;
 import com.chutneytesting.agent.domain.network.Agent;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
+import com.chutneytesting.engine.api.execution.EnvironmentDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto;
 import com.chutneytesting.engine.api.execution.ExecutionRequestDto.StepDefinitionRequestDto;
 import com.chutneytesting.engine.api.execution.TargetExecutionDto;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
-import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
-import com.chutneytesting.environment.api.EnvironmentApi;
-import com.chutneytesting.environment.api.dto.TargetDto;
+import com.chutneytesting.environment.api.environment.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.environment.EnvironmentApi;
+import com.chutneytesting.environment.api.target.EmbeddedTargetApi;
+import com.chutneytesting.environment.api.target.TargetApi;
+import com.chutneytesting.environment.api.target.dto.TargetDto;
+import com.chutneytesting.environment.api.variable.dto.EnvironmentVariableDto;
 import com.chutneytesting.scenario.domain.gwt.GwtStep;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.domain.gwt.Strategy;
@@ -42,7 +46,9 @@ import com.chutneytesting.server.core.domain.execution.ScenarioConversionExcepti
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.hjson.JsonValue;
 import org.springframework.stereotype.Component;
 
@@ -50,11 +56,13 @@ import org.springframework.stereotype.Component;
 public class DefaultExecutionRequestMapper implements ExecutionRequestMapper {
 
     private final ObjectMapper objectMapper;
+    private final TargetApi targetApi;
     private final EnvironmentApi environmentApi;
     private final CurrentNetworkDescription currentNetworkDescription;
 
-    public DefaultExecutionRequestMapper(ObjectMapper objectMapper, EmbeddedEnvironmentApi environmentApi, CurrentNetworkDescription currentNetworkDescription) {
+    public DefaultExecutionRequestMapper(ObjectMapper objectMapper, EmbeddedTargetApi targetApi, EmbeddedEnvironmentApi environmentApi, CurrentNetworkDescription currentNetworkDescription) {
         this.objectMapper = objectMapper; // TODO - Choose explicitly which mapper to use
+        this.targetApi = targetApi;
         this.environmentApi = environmentApi;
         this.currentNetworkDescription = currentNetworkDescription;
     }
@@ -62,7 +70,14 @@ public class DefaultExecutionRequestMapper implements ExecutionRequestMapper {
     @Override
     public ExecutionRequestDto toDto(ExecutionRequest executionRequest) {
         final StepDefinitionRequestDto stepDefinitionRequestDto = convertToStepDef(executionRequest);
-        return new ExecutionRequestDto(stepDefinitionRequestDto, executionRequest.environment, DatasetMapper.toDto(executionRequest.dataset));
+        return new ExecutionRequestDto(stepDefinitionRequestDto, getEnvironment(executionRequest.environment), DatasetMapper.toDto(executionRequest.dataset));
+    }
+
+    private EnvironmentDto getEnvironment(String env) {
+        Map<String, String> variables = environmentApi.getEnvironment(env).variables
+            .stream()
+            .collect(Collectors.toMap(EnvironmentVariableDto::key, EnvironmentVariableDto::value));
+        return new EnvironmentDto(env, variables);
     }
 
     private StepDefinitionRequestDto convertToStepDef(ExecutionRequest executionRequest) { // TODO - shameless green - might be refactored later
@@ -164,7 +179,7 @@ public class DefaultExecutionRequestMapper implements ExecutionRequestMapper {
         if (isBlank(targetName)) {
             return NO_TARGET_DTO;
         }
-        return environmentApi.getTarget(environmentName, targetName);
+        return targetApi.getTarget(environmentName, targetName);
     }
 
     private List<NamedHostAndPort> getAgents(TargetDto targetDto, String env) {

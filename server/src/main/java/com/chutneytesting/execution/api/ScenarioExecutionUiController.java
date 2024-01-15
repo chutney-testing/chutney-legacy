@@ -17,6 +17,7 @@
 package com.chutneytesting.execution.api;
 
 import com.chutneytesting.dataset.domain.DataSetRepository;
+import com.chutneytesting.environment.api.environment.EmbeddedEnvironmentApi;
 import com.chutneytesting.execution.domain.GwtScenarioMarshaller;
 import com.chutneytesting.scenario.api.raw.mapper.GwtScenarioMapper;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
@@ -76,6 +77,7 @@ public class ScenarioExecutionUiController {
     private final SpringUserService userService;
     private final DataSetRepository datasetRepository;
     private final ScenarioExecutionReportMapper scenarioExecutionReportMapper;
+    private final EmbeddedEnvironmentApi embeddedEnvironmentApi;
 
     ScenarioExecutionUiController(
         ScenarioExecutionEngine executionEngine,
@@ -84,11 +86,12 @@ public class ScenarioExecutionUiController {
         ObjectMapper objectMapper,
         SpringUserService userService,
         DataSetRepository datasetRepository,
-        ScenarioExecutionReportMapper scenarioExecutionReportMapper) {
+        ScenarioExecutionReportMapper scenarioExecutionReportMapper, EmbeddedEnvironmentApi embeddedEnvironmentApi) {
         this.executionEngine = executionEngine;
         this.executionEngineAsync = executionEngineAsync;
         this.testCaseRepository = testCaseRepository;
         this.objectMapper = objectMapper;
+        this.embeddedEnvironmentApi = embeddedEnvironmentApi;
         this.reportObjectMapper = dtoReportObjectMapper();
         this.userService = userService;
         this.datasetRepository = datasetRepository;
@@ -125,6 +128,12 @@ public class ScenarioExecutionUiController {
         String userId = userService.currentUser().getId();
         DataSet dataset = getDataSet(testCase);
         return executionEngineAsync.execute(new ExecutionRequest(testCase, env, userId, dataset)).toString();
+    }
+
+    @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")
+    @PostMapping(path = "/api/ui/scenario/executionasync/v1/{scenarioId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String executeScenarioAsyncOnDefaultEnv(@PathVariable("scenarioId") String scenarioId) {
+        return executeScenarioAsyncWithExecutionParameters(scenarioId, embeddedEnvironmentApi.defaultEnvironmentName());
     }
 
     @PreAuthorize("hasAuthority('SCENARIO_EXECUTE')")

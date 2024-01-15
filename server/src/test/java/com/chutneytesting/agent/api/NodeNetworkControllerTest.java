@@ -40,7 +40,7 @@ import com.chutneytesting.agent.domain.configure.ConfigureService;
 import com.chutneytesting.agent.domain.configure.GetCurrentNetworkDescriptionService;
 import com.chutneytesting.agent.domain.explore.ExploreAgentsService;
 import com.chutneytesting.agent.domain.network.NetworkDescription;
-import com.chutneytesting.environment.api.EmbeddedEnvironmentApi;
+import com.chutneytesting.environment.api.environment.EmbeddedEnvironmentApi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.Arrays;

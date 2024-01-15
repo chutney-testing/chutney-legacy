@@ -19,6 +19,7 @@ package com.chutneytesting.engine.domain.execution.engine;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -74,20 +75,20 @@ public class DefaultExecutionEngine implements ExecutionEngine {
     }
 
     @Override
-    public Long execute(StepDefinition stepDefinition, Dataset dataset, ScenarioExecution execution) {
+    public Long execute(StepDefinition stepDefinition, Dataset dataset, ScenarioExecution execution, Environment environment) {
 
         AtomicReference<Step> rootStep = new AtomicReference<>(Step.nonExecutable(stepDefinition));
         reporter.createPublisher(execution.executionId, rootStep.get());
 
         actionExecutor.execute(() -> {
-
             final ScenarioContext scenarioContext = new ScenarioContextImpl();
-            scenarioContext.put("environment", stepDefinition.environment);
-            scenarioContext.put("dataset", dataset.datatable);
-            scenarioContext.putAll(evaluateDatasetConstants(dataset, scenarioContext));
-
             try {
                 try {
+                    scenarioContext.put("environment", environment.name());
+                    scenarioContext.putAll(ofNullable(environment.variables()).orElse(emptyMap()));
+                    scenarioContext.put("dataset", dataset.datatable);
+                    scenarioContext.putAll(evaluateDatasetConstants(dataset, scenarioContext));
+
                     rootStep.set(buildStep(stepDefinition));
                     RxBus.getInstance().post(new StartScenarioExecutionEvent(execution, rootStep.get()));
 
@@ -125,10 +126,9 @@ public class DefaultExecutionEngine implements ExecutionEngine {
 
     private Optional<Step> initFinalRootStep(AtomicReference<Step> rootStep, List<FinallyAction> finallyActionsSnapshot) {
         try {
-            String environment = rootStep.get().definition().environment;
             Pair<List<StepDefinition>, List<Step>> finalStepsWithDefinitions = finallyActionsSnapshot.stream()
                 .map(fa -> {
-                    StepDefinition definition = new FinallyActionMapper().toStepDefinition(fa, environment);
+                    StepDefinition definition = new FinallyActionMapper().toStepDefinition(fa);
                     return Pair.of(singletonList(definition), singletonList(buildStep(definition)));
                 })
                 .reduce(Pair.of(new ArrayList<>(), new ArrayList<>()), (p1, p2) -> {
@@ -145,8 +145,7 @@ public class DefaultExecutionEngine implements ExecutionEngine {
                 emptyMap(),
                 finalStepsWithDefinitions.getLeft(),
                 emptyMap(),
-                emptyMap(),
-                environment
+                emptyMap()
             );
 
             return Optional.of(

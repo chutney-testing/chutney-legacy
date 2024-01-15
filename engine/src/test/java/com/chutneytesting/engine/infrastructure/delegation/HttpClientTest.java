@@ -22,6 +22,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 import com.chutneytesting.engine.api.execution.StatusDto;
 import com.chutneytesting.engine.api.execution.StepExecutionReportDto;
@@ -29,6 +30,7 @@ import com.chutneytesting.engine.domain.delegation.CannotDelegateException;
 import com.chutneytesting.engine.domain.delegation.NamedHostAndPort;
 import com.chutneytesting.engine.domain.environment.TargetImpl;
 import com.chutneytesting.engine.domain.execution.StepDefinition;
+import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.StepExecutionReport;
 import com.chutneytesting.engine.domain.execution.strategies.StepStrategyDefinition;
 import com.chutneytesting.engine.domain.execution.strategies.StrategyProperties;
@@ -46,6 +48,7 @@ import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -55,6 +58,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -88,6 +92,9 @@ public class HttpClientTest {
     public void should_delegate_execution_to_endpoint(String user, String password) throws JsonProcessingException {
         //G
         StepDefinition stepDefinition = createFakeStepDefinition();
+        Step step = mock(Step.class);
+        when(step.definition()).thenReturn(stepDefinition);
+        when(step.getScenarioContext()).thenReturn(Map.of("environment","test"));
         NamedHostAndPort remoteHost = new NamedHostAndPort("name", "localhost", server.httpsPort());
         StepExecutionReportDto dto = createStepExecutionReportDto();
         String dtoAsString = objectMapper().writeValueAsString(dto);
@@ -104,7 +111,7 @@ public class HttpClientTest {
 
         //W
         HttpClient client = new HttpClient(user, password);
-        StepExecutionReport report = client.handDown(stepDefinition, remoteHost);
+        StepExecutionReport report = client.handDown(step, remoteHost);
 
         //T
         assertThat(report).isNotNull();
@@ -150,8 +157,7 @@ public class HttpClientTest {
             new HashMap<>(),
             Collections.emptyList(),
             new HashMap<>(),
-            new HashMap<>(),
-            "ENV");
+            new HashMap<>());
     }
 
     public ObjectMapper objectMapper() {

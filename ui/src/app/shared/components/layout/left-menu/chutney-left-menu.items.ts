@@ -64,6 +64,12 @@ export const allMenuItems: MenuItem [] = [
                 authorizations: [Authorization.ENVIRONMENT_ACCESS]
             },
             {
+                label: 'menu.principal.envVariable',
+                link: '/environmentsVariables',
+                iconClass: 'fa fa-key',
+                authorizations: [Authorization.ENVIRONMENT_ACCESS]
+            },
+            {
                 label: 'menu.principal.plugins',
                 link: '/plugins',
                 iconClass: 'fa fa-cogs',

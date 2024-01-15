@@ -1,0 +1,8 @@
+.environment {
+    &.active {
+        background-color: var(--bs-info) !important;
+        color: var(--bs-white) !important;
+    }
+}
+
+

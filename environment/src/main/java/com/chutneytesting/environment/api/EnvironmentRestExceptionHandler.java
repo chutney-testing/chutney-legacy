@@ -18,9 +18,11 @@ package com.chutneytesting.environment.api;
 
 import com.chutneytesting.environment.domain.exception.AlreadyExistingEnvironmentException;
 import com.chutneytesting.environment.domain.exception.AlreadyExistingTargetException;
+import com.chutneytesting.environment.domain.exception.EnvVariableNotFoundException;
 import com.chutneytesting.environment.domain.exception.EnvironmentNotFoundException;
 import com.chutneytesting.environment.domain.exception.InvalidEnvironmentNameException;
 import com.chutneytesting.environment.domain.exception.TargetNotFoundException;
+import com.chutneytesting.environment.domain.exception.VariableAlreadyExistingException;
 import java.time.format.DateTimeParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +65,8 @@ public class EnvironmentRestExceptionHandler extends ResponseEntityExceptionHand
 
     @ExceptionHandler({
         TargetNotFoundException.class,
-        EnvironmentNotFoundException.class
+        EnvironmentNotFoundException.class,
+        EnvVariableNotFoundException.class
     })
     protected ResponseEntity<Object> notFound(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
@@ -73,7 +76,8 @@ public class EnvironmentRestExceptionHandler extends ResponseEntityExceptionHand
 
     @ExceptionHandler({
         AlreadyExistingTargetException.class,
-        AlreadyExistingEnvironmentException.class
+        AlreadyExistingEnvironmentException.class,
+        VariableAlreadyExistingException.class
     })
     protected ResponseEntity<Object> conflict(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();

@@ -26,7 +26,7 @@ import com.chutneytesting.action.spi.FinallyAction;
 
 class FinallyActionMapper {
 
-    StepDefinition toStepDefinition(FinallyAction finallyAction, String environment) {
+    StepDefinition toStepDefinition(FinallyAction finallyAction) {
         return new StepDefinition(
             finallyAction.name(),
             finallyAction.target()
@@ -38,8 +38,7 @@ class FinallyActionMapper {
             finallyAction.inputs(),
             null,
             null,
-            finallyAction.validations(),
-            environment
+            finallyAction.validations()
         );
     }
 }
