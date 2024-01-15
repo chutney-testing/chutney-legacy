@@ -1,0 +1,61 @@
+{
+    "scenario": {
+        "name": "Test iterations",
+        "steps": [
+            {
+                "name": "<i> - level 1 - ${#level1}",
+                "steps": [
+                    {
+                        "name": "<i> <j> - level 2 - ${#level1} ${#level2}",
+                        "steps": [
+                            {
+                                "name": "<i> <j> <k> - level 3 - ${#level1} ${#level2} ${#level3}",
+                                "strategy": {
+                                    "type": "for",
+                                    "parameters": {
+                                        "index": "k",
+                                        "dataset": [
+                                            {
+                                                "level3": "level3.0"
+                                            },
+                                            {
+                                                "level3": "level3.1"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        "strategy": {
+                            "type": "for",
+                            "parameters": {
+                                "index": "j",
+                                "dataset": [
+                                    {
+                                        "level2": "level2.0"
+                                    },
+                                    {
+                                        "level2": "level2.1"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "strategy": {
+                    "type": "for",
+                    "parameters": {
+                        "dataset": [
+                            {
+                                "level1": "level1.0"
+                            },
+                            {
+                                "level1": "level1.1"
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}

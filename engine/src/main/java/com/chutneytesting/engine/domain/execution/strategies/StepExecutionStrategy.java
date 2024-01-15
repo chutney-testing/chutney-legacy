@@ -16,11 +16,12 @@
 
 package com.chutneytesting.engine.domain.execution.strategies;
 
+import static java.util.Collections.emptyMap;
+
 import com.chutneytesting.engine.domain.execution.ScenarioExecution;
 import com.chutneytesting.engine.domain.execution.engine.scenario.ScenarioContext;
 import com.chutneytesting.engine.domain.execution.engine.step.Step;
 import com.chutneytesting.engine.domain.execution.report.Status;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -34,10 +35,10 @@ public interface StepExecutionStrategy {
     String getType();
 
     default Status execute(ScenarioExecution scenarioExecution,
-                   Step step,
-                   ScenarioContext scenarioContext,
-                   StepExecutionStrategies strategies) {
-        return execute(scenarioExecution, step, scenarioContext, Collections.emptyMap(), strategies);
+                           Step step,
+                           ScenarioContext scenarioContext,
+                           StepExecutionStrategies strategies) {
+        return execute(scenarioExecution, step, scenarioContext, emptyMap(), strategies);
     }
 
     Status execute(ScenarioExecution scenarioExecution,
