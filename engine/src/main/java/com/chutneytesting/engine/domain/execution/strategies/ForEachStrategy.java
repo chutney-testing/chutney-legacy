@@ -69,7 +69,7 @@ public class ForEachStrategy implements StepExecutionStrategy {
                 .toList();
 
             iterations.forEach(it -> {
-                HashMap<String, Object> mergedContext = new HashMap<>(localContext);
+                Map<String, Object> mergedContext = new HashMap<>(localContext);
                 mergedContext.putAll(it.getRight());
                 DefaultStepExecutionStrategy.instance.execute(scenarioExecution, it.getLeft(), scenarioContext, mergedContext, strategies);
             });
@@ -81,7 +81,7 @@ public class ForEachStrategy implements StepExecutionStrategy {
                 .toList();
 
             iterations.forEach(it -> {
-                HashMap<String, Object> mergedContext = new HashMap<>(localContext);
+                Map<String, Object> mergedContext = new HashMap<>(localContext);
                 mergedContext.putAll(it.getRight());
                 it.getLeft().execute(scenarioExecution, scenarioContext, mergedContext);
             });
@@ -108,7 +108,7 @@ public class ForEachStrategy implements StepExecutionStrategy {
         StepDefinition newDef = iterationDefinition(indexName, index, step.definition(), new StepStrategyDefinition("", new StrategyProperties()));
         List<Step> newSubSteps = subSteps.stream().map(
             subStep -> buildIterationDefinition(indexName, index, subStep.dataEvaluator(), subStep.definition(), subStep.executor(), subStep.subSteps(), subStep.strategy().orElse(new StepStrategyDefinition("", new StrategyProperties())))
-        ).collect(Collectors.toList());
+        ).toList();
 
         return Pair.of(
             new Step(step.dataEvaluator(), newDef, step.executor(), newSubSteps),
@@ -125,7 +125,7 @@ public class ForEachStrategy implements StepExecutionStrategy {
 
     private Step buildIterationDefinition(String indexName, Integer index, StepDataEvaluator dataEvaluator, StepDefinition definition, StepExecutor executor, List<Step> subStep, StepStrategyDefinition strategy) {
         StepDefinition iterationDefinition = iterationDefinition(indexName, index, definition, Optional.ofNullable(strategy).orElse(new StepStrategyDefinition("", new StrategyProperties())));
-        return new Step(dataEvaluator, iterationDefinition, executor, subStep.stream().map(step -> buildIterationDefinition(indexName, index, step.dataEvaluator(), step.definition(), step.executor(), step.subSteps(), step.strategy().orElse(null))).collect(Collectors.toList()));
+        return new Step(dataEvaluator, iterationDefinition, executor, subStep.stream().map(step -> buildIterationDefinition(indexName, index, step.dataEvaluator(), step.definition(), step.executor(), step.subSteps(), step.strategy().orElse(null))).collect(Collectors.toList())); // We need this list to be mutable because of the clear in step.removeStepExecution()
     }
 
     private StepDefinition iterationDefinition(String indexName, Integer index, StepDefinition definition, StepStrategyDefinition strategyDefinition) {
