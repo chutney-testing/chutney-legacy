@@ -17,7 +17,7 @@
 import { Component, EventEmitter, Input, Renderer2, OnDestroy, OnInit, Output, AfterViewInit, TemplateRef, ElementRef, AfterViewChecked, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Observable, Subscription, fromEvent, merge, timer } from 'rxjs';
-import { debounceTime, delay, throttleTime } from 'rxjs/operators';
+import { auditTime, debounceTime, delay, mergeMap, retryWhen, takeWhile, throttleTime } from 'rxjs/operators';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { NGX_MONACO_EDITOR_CONFIG } from 'ngx-monaco-editor-v2';
@@ -248,7 +248,18 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         let executionStatus: ExecutionStatus;
         let executionError: string;
         return scenarioExecutionReportsObservable
-            .pipe(debounceTime(500))
+            .pipe(
+                auditTime(500),
+                retryWhen(errors =>
+                    errors.pipe(
+                      mergeMap((error, index) => {
+                          errors[index%2] = error.timeStamp;
+                          return timer(500);
+                      }),
+                      takeWhile((error,index) => index === 0 || errors[index%2] - errors[(index-1)%2] > 1000 ) // don't retry when 2 retries occure in less than 1000 ms (case execution end)
+                    )
+                  )
+            )
             .subscribe({
                 next: (scenarioExecutionReport: ScenarioExecutionReport) => {
                     executionStatus = ExecutionStatus[scenarioExecutionReport.report.status];
@@ -272,7 +283,7 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
                 },
                 complete: () => {
                     this.onExecutionStatusUpdate.emit({ status: executionStatus, error: executionError });
-                    this.ngOnInit();
+                    this.loadScenarioExecution(this.execution.executionId);
                 }
             });
     }
