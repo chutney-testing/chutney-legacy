@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.6.0](https://github.com/chutney-testing/chutney/tree/2.6.0)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/2.5.1...2.6.0)
+
+## What's Changed
+### 🚀 Implemented enhancements:
+* environments variables by @KarimGl in https://github.com/chutney-testing/chutney/pull/1203
+### 🐛 Fixed bugs:
+* Fix running report header date by @boddissattva in https://github.com/chutney-testing/chutney/pull/1209
+* Truncate info/error on execution update by @boddissattva in https://github.com/chutney-testing/chutney/pull/1210
+* Defensive copy in step state when requesting messages by @boddissattva in https://github.com/chutney-testing/chutney/pull/1211
+* Check for null values environment by @boddissattva in https://github.com/chutney-testing/chutney/pull/1212
+* Add environment at first save of campaignExecutionEngine by @nbrouand in https://github.com/chutney-testing/chutney/pull/1225
+* Fix/nested step iteration by @DelaunayAlex in https://github.com/chutney-testing/chutney/pull/1224
+* Handle runtime exception. Add Spring configuration on parameters by @boddissattva in https://github.com/chutney-testing/chutney/pull/1227
+### 🔧 Technical enhancements:
+* Add license to local xsd test file by @bessonm in https://github.com/chutney-testing/chutney/pull/1208
+* Add SQLite temp directory Spring configuration by @boddissattva in https://github.com/chutney-testing/chutney/pull/1228
+* Fix/double for strategy by @DelaunayAlex in https://github.com/chutney-testing/chutney/pull/1226
+### 👒 Dependencies:
+* Bump org.apache.maven.plugins:maven-javadoc-plugin from 3.6.0 to 3.6.3 by @dependabot in https://github.com/chutney-testing/chutney/pull/1217
+* Bump org.apache.maven.plugins:maven-enforcer-plugin from 3.3.0 to 3.4.1 by @dependabot in https://github.com/chutney-testing/chutney/pull/1222
+* Bump org.apache.maven.plugins:maven-surefire-plugin from 3.1.2 to 3.2.3 by @dependabot in https://github.com/chutney-testing/chutney/pull/1223
+* Bump springboot.version from 3.1.2 to 3.2.1 by @dependabot in https://github.com/chutney-testing/chutney/pull/1186
+
+
 ## [2.5.1](https://github.com/chutney-testing/chutney/tree/2.5.1)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/2.5.0...2.5.1)
