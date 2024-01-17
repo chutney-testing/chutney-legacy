@@ -63,7 +63,9 @@ public class ExecutionConfigurationTest {
         reports.blockingSubscribe(results::add);
 
         //T
-        assertThat(results.get(results.size() - 1)).hasFieldOrPropertyWithValue("status", StatusDto.SUCCESS);
+        StepExecutionReportDto lastReport = results.get(results.size() - 1);
+        assertThat(lastReport).hasFieldOrPropertyWithValue("status", StatusDto.SUCCESS);
+        assertThat(lastReport.environment).isEqualTo(FAKE_ENV.name());
     }
 
     @Test
@@ -78,6 +80,7 @@ public class ExecutionConfigurationTest {
 
         //T
         assertThat(result).hasFieldOrPropertyWithValue("status", StatusDto.SUCCESS);
+        assertThat(result.environment).isEqualTo(FAKE_ENV.name());
     }
 
     @Test
@@ -111,6 +114,7 @@ public class ExecutionConfigurationTest {
         assertThat(finalReport.steps.get(1)).hasFieldOrPropertyWithValue("status", StatusDto.SUCCESS);
         // check third step status
         assertThat(finalReport.steps.get(2)).hasFieldOrPropertyWithValue("status", StatusDto.STOPPED);
+        assertThat(finalReport.environment).isEqualTo(FAKE_ENV.name());
     }
 
     @Test

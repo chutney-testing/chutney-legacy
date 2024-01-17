@@ -116,12 +116,19 @@ public class Reporter {
         } else {
             finalStatus = calculatedRootStepStatus;
         }
-        return generateReport(step, s -> finalStatus, (String) step.getScenarioContext().get("environment"));
+        return generateReport(step, s -> finalStatus, getEnvironment(step));
     }
 
     private StepExecutionReport generateLastReport(long executionId) {
         Step step = rootSteps.get(executionId);
-        return generateReport(step, Step::status, (String) step.getScenarioContext().get("environment"));
+        return generateReport(step, Step::status, getEnvironment(step));
+    }
+
+    private static String getEnvironment(Step step) {
+        if (step.isParentStep()) {
+            return getEnvironment(step.subSteps().get(0));
+        }
+        return (String) step.getScenarioContext().get("environment");
     }
 
     StepExecutionReport generateReport(Step step, Function<Step, Status> statusSupplier, String env) {
