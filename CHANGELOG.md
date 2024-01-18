@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.6.1](https://github.com/chutney-testing/chutney/tree/2.6.1)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/2.6.0...2.6.1)
+
+## What's Changed
+### 🐛 Fixed bugs:
+* fix(): fix env value in execution report by @KarimGl in https://github.com/chutney-testing/chutney/pull/1231
+
+
 ## [2.6.0](https://github.com/chutney-testing/chutney/tree/2.6.0)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/2.5.1...2.6.0)
