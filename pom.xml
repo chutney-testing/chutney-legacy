@@ -96,7 +96,7 @@
         <glacio.version>0.0.1</glacio.version>
         <hjson.version>3.1.0</hjson.version>
         <jsr305.version>3.0.2</jsr305.version>
-        <liquibase.version>4.24.0</liquibase.version>
+        <liquibase.version>4.25.1</liquibase.version>
 
         <!-- action-impl dependencies versions -->
         <sshj.version>0.34.0</sshj.version>
