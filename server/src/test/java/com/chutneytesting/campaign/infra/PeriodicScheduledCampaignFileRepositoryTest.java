@@ -23,7 +23,6 @@ import static org.assertj.core.api.Assertions.fail;
 import com.chutneytesting.campaign.domain.PeriodicScheduledCampaign;
 import com.chutneytesting.campaign.domain.PeriodicScheduledCampaignRepository;
 import com.chutneytesting.tools.file.FileUtils;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -33,7 +32,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -41,41 +39,43 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
 
     private static PeriodicScheduledCampaignRepository sut;
     private static Path SCHEDULING_CAMPAIGN_FILE;
-
-    @BeforeAll
-    public static void setUp(@TempDir Path temporaryFolder) throws IOException {
-        String tmpConfDir = temporaryFolder.toFile().getAbsolutePath();
-
-        sut = new SchedulingCampaignFileRepository(tmpConfDir);
-        SCHEDULING_CAMPAIGN_FILE = Paths.get(tmpConfDir + "/scheduling/schedulingCampaigns.json");
-    }
+    @TempDir
+    private static Path temporaryFolder;
 
     @Test
     public void should_add_get_and_remove_scheduled_campaign() {
+        initSut(null);
         //// ADD
         // Given
         PeriodicScheduledCampaign sc1 = new PeriodicScheduledCampaign(null, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
         PeriodicScheduledCampaign sc2 = new PeriodicScheduledCampaign(null, 22L, "campaign title 2", LocalDateTime.of(2021, 3, 5, 8, 11));
         PeriodicScheduledCampaign sc3 = new PeriodicScheduledCampaign(null, 33L, "campaign title 3", LocalDateTime.of(2022, 4, 6, 9, 12));
+        PeriodicScheduledCampaign sc4 = new PeriodicScheduledCampaign(null, List.of(55L, 66L), List.of("campaign title 5", "campaign title 6"), LocalDateTime.of(2022, 4, 6, 9, 12));
         String expectedAdded =
             """
                 {
                   "1" : {
                     "id" : "1",
-                    "campaignId" : 11,
-                    "campaignTitle" : "campaign title 1",
+                    "campaignsId" : [ 11 ],
+                    "campaignsTitle" : [ "campaign title 1" ],
                     "schedulingDate" : [ 2020, 2, 4, 7, 10 ]
                   },
                   "2" : {
                     "id" : "2",
-                    "campaignId" : 22,
-                    "campaignTitle" : "campaign title 2",
+                    "campaignsId" : [ 22 ],
+                    "campaignsTitle" : [ "campaign title 2" ],
                     "schedulingDate" : [ 2021, 3, 5, 8, 11 ]
                   },
                   "3" : {
                     "id" : "3",
-                    "campaignId" : 33,
-                    "campaignTitle" : "campaign title 3",
+                    "campaignsId" : [ 33 ],
+                    "campaignsTitle" : [ "campaign title 3" ],
+                    "schedulingDate" : [ 2022, 4, 6, 9, 12 ]
+                  },
+                  "4" : {
+                    "id" : "4",
+                    "campaignsId" : [ 55, 66 ],
+                    "campaignsTitle" : [ "campaign title 5", "campaign title 6" ],
                     "schedulingDate" : [ 2022, 4, 6, 9, 12 ]
                   }
                 }
@@ -85,6 +85,7 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
         sut.add(sc1);
         sut.add(sc2);
         sut.add(sc3);
+        sut.add(sc4);
 
         // Then
         String actualContent = FileUtils.readContent(SCHEDULING_CAMPAIGN_FILE);
@@ -97,14 +98,14 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
                 {
                   "1" : {
                     "id" : "1",
-                    "campaignId" : 11,
-                    "campaignTitle" : "campaign title 1",
+                    "campaignsId" : [ 11 ],
+                    "campaignsTitle" : [ "campaign title 1" ],
                     "schedulingDate" : [ 2020, 2, 4, 7, 10 ]
                   },
                   "3" : {
                     "id" : "3",
-                    "campaignId" : 33,
-                    "campaignTitle" : "campaign title 3",
+                    "campaignsId" : [ 33 ],
+                    "campaignsTitle" : [ "campaign title 3" ],
                     "schedulingDate" : [ 2022, 4, 6, 9, 12 ]
                   }
                 }
@@ -112,6 +113,7 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
 
         // When
         sut.removeById(2L);
+        sut.removeById(4L);
 
         // Then
         actualContent = FileUtils.readContent(SCHEDULING_CAMPAIGN_FILE);
@@ -130,7 +132,66 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
     }
 
     @Test
+    public void should_get_and_update_old_scheduled_campaign() {
+        //// Get
+        // Given
+        String old_scheduled_campaign =
+            """
+                {
+                  "1" : {
+                    "id" : "1",
+                    "campaignId" : 11 ,
+                    "campaignTitle" : "campaign title 1",
+                    "schedulingDate" : [ 2020, 2, 4, 7, 10 ]
+                  }
+                }
+                """;
+
+        initSut(old_scheduled_campaign);
+
+        PeriodicScheduledCampaign sc1 = new PeriodicScheduledCampaign(1L, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
+        PeriodicScheduledCampaign sc2 = new PeriodicScheduledCampaign(2L, 22L, "campaign title 2", LocalDateTime.of(2023, 3, 4, 7, 10));
+
+        // When
+        List<PeriodicScheduledCampaign> periodicScheduledCampaigns = sut.getALl();
+        //Then
+        assertThat(periodicScheduledCampaigns).hasSize(1);
+        assertThat(periodicScheduledCampaigns).contains(sc1);
+
+        //// UPDATE
+        // When
+        sut.add(sc2);
+
+        // Then
+        periodicScheduledCampaigns = sut.getALl();
+        assertThat(periodicScheduledCampaigns).hasSize(2);
+        assertThat(periodicScheduledCampaigns).contains(sc1);
+        assertThat(periodicScheduledCampaigns).contains(sc2);
+
+        String expectedScheduledCampaignsAfterUpdate =
+            """
+                {
+                  "1" : {
+                    "id" : "1",
+                    "campaignsId" : [ 11 ],
+                    "campaignsTitle" : [ "campaign title 1" ],
+                    "schedulingDate" : [ 2020, 2, 4, 7, 10 ]
+                  },
+                  "2" : {
+                    "id" : "2",
+                    "campaignsId" : [ 22 ],
+                    "campaignsTitle" : [ "campaign title 2" ],
+                    "schedulingDate" : [ 2023, 3, 4, 7, 10 ]
+                  }
+                }
+                """;
+        String actualContent = FileUtils.readContent(SCHEDULING_CAMPAIGN_FILE);
+        assertThat(actualContent).isEqualToIgnoringNewLines(expectedScheduledCampaignsAfterUpdate);
+    }
+
+    @Test
     void should_read_and_write_concurrently() throws InterruptedException {
+        initSut(null);
         List<Exception> exceptions = new ArrayList<>();
         Runnable addScheduledCampaign = () -> {
             try {
@@ -158,5 +219,17 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
         } else {
             fail("Pool termination timeout ...");
         }
+    }
+
+    private void initSut(String content) {
+        String tmpConfDir = temporaryFolder.toFile().getAbsolutePath();
+        SCHEDULING_CAMPAIGN_FILE = Paths.get(tmpConfDir + "/scheduling/schedulingCampaigns.json");
+
+        if (content != null) {
+            FileUtils.initFolder(SCHEDULING_CAMPAIGN_FILE.getParent());
+            FileUtils.writeContent(SCHEDULING_CAMPAIGN_FILE, content);
+        }
+
+        sut = new SchedulingCampaignFileRepository(tmpConfDir);
     }
 }

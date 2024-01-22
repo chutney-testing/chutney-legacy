@@ -13,3 +13,16 @@
     color:var(--bs-warning);
     font-size: 0.8em;
 }
+
+:host ::ng-deep 
+.cuppa-dropdown {
+    border: none;
+
+    .selected-item, .selected-list {
+        display: none;
+    }
+
+    .dropdown-list {
+        width: auto!important;
+    }
+}

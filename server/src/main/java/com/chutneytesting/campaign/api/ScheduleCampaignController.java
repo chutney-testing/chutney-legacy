@@ -50,7 +50,7 @@ public class ScheduleCampaignController {
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<SchedulingCampaignDto> getAll() {
         return periodicScheduledCampaignRepository.getALl().stream()
-            .map(sc -> new SchedulingCampaignDto(sc.id, sc.campaignId, sc.campaignTitle, sc.nextExecutionDate, sc.frequency.label))
+            .map(sc -> new SchedulingCampaignDto(sc.id, sc.campaignsId, sc.campaignsTitle, sc.nextExecutionDate, sc.frequency.label))
             .sorted(Comparator.comparing(SchedulingCampaignDto::getSchedulingDate))
             .collect(Collectors.toList());
     }
@@ -58,7 +58,7 @@ public class ScheduleCampaignController {
     @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void add(@RequestBody SchedulingCampaignDto dto) {
-        periodicScheduledCampaignRepository.add(new PeriodicScheduledCampaign(null, dto.getCampaignId(), dto.getCampaignTitle(), dto.getSchedulingDate(), toFrequency(dto.getFrequency())));
+        periodicScheduledCampaignRepository.add(new PeriodicScheduledCampaign(null, dto.getCampaignsId(), dto.getCampaignsTitle(), dto.getSchedulingDate(), toFrequency(dto.getFrequency())));
     }
 
     @PreAuthorize("hasAuthority('CAMPAIGN_WRITE')")

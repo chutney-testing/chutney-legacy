@@ -267,10 +267,11 @@
             "deletion.suffix": "?"
         },
         "scheduling": {
-            "title": "Schedule a new campaign execution",
+            "title": "Schedule a new campaigns execution",
             "schedule": "Schedule",
+            "scheduling": "Scheduling",
             "back": "Back",
-            "campaign": "Campaign",
+            "campaign": "Campaigns",
             "schedulingDate": "Scheduling date",
             "frequency": "Frequency",
             "required": {
