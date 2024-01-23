@@ -49,7 +49,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @ContextConfiguration(classes = TestInfraConfiguration.class)
 public abstract class AbstractLocalDatabaseTest {
 
-    private Random rand = new Random();
+    private final Random rand = new Random();
     protected static final String DB_CHANGELOG_DB_CHANGELOG_MASTER_XML = "changelog/db.changelog-master.xml";
     @Autowired
     protected DataSource localDataSource;
@@ -71,6 +71,7 @@ public abstract class AbstractLocalDatabaseTest {
     protected void clearTables() {
         JdbcTemplate jdbcTemplate = namedParameterJdbcTemplate.getJdbcTemplate();
         jdbcTemplate.execute("DELETE FROM CAMPAIGN_EXECUTIONS");
+        jdbcTemplate.execute("DELETE FROM SCENARIO_EXECUTIONS_REPORTS");
         jdbcTemplate.execute("DELETE FROM SCENARIO_EXECUTIONS");
         jdbcTemplate.execute("DELETE FROM CAMPAIGN_SCENARIOS");
         jdbcTemplate.execute("DELETE FROM CAMPAIGN");

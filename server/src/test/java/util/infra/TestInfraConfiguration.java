@@ -59,6 +59,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.sqlite.SQLiteConfig;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 import util.SocketUtil;
@@ -139,11 +140,27 @@ class TestInfraConfiguration {
         }
 
         @Bean
-        public DataSource dataSource(DataSourceProperties dataSourceProperties) {
+        public DataSource dataSource(
+            DataSourceProperties dataSourceProperties,
+            @Value("${sqlite.config.lockingMode:NORMAL}") SQLiteConfig.LockingMode lockingMode,
+            @Value("${sqlite.config.transactionMode:IMMEDIATE}") SQLiteConfig.TransactionMode transactionMode,
+            @Value("${sqlite.config.journalMode:WAL}") SQLiteConfig.JournalMode journalMode,
+            @Value("${sqlite.config.synchronousMode:NORMAL}") SQLiteConfig.SynchronousMode synchronousMode,
+            @Value("${sqlite.config.journalSizeLimit:10485760}") int journalSizeLimit
+        ) {
             LOGGER.info("test configuration datasource : {}", dataSourceProperties.getUrl());
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setMaximumPoolSize(1);
             hikariConfig.setJdbcUrl(dataSourceProperties.getUrl());
+
+            SQLiteConfig sqLiteConfig = new SQLiteConfig();
+            sqLiteConfig.setLockingMode(lockingMode);
+            sqLiteConfig.setTransactionMode(transactionMode);
+            sqLiteConfig.setJournalMode(journalMode);
+            sqLiteConfig.setSynchronous(synchronousMode);
+            sqLiteConfig.setJournalSizeLimit(journalSizeLimit);
+
+            hikariConfig.setDataSourceProperties(sqLiteConfig.toProperties());
             return new HikariDataSource(hikariConfig);
         }
     }
