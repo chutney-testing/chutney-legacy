@@ -23,6 +23,7 @@ import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -103,6 +104,7 @@ public class SecuredControllerSpringBootIntegrationTest {
             {GET, "/api/v1/backups/backupables", "ADMIN_ACCESS", null, OK},
 
             {GET, "/api/v1/admin/database/execution?query=abc", "ADMIN_ACCESS", null, OK},
+            {POST, "/api/v1/admin/database/compact", "ADMIN_ACCESS", null, NOT_IMPLEMENTED},
 
             {POST, "/api/v1/agentnetwork/configuration", "ADMIN_ACCESS", "{}", OK},
             {GET, "/api/v1/description", "ADMIN_ACCESS", null, OK},

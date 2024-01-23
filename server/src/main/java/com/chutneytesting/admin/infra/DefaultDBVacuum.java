@@ -19,6 +19,8 @@ package com.chutneytesting.admin.infra;
 import static java.util.Collections.emptyMap;
 
 import com.chutneytesting.admin.domain.DBVacuum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -27,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class DefaultDBVacuum implements DBVacuum {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDBVacuum.class);
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final DataSourceProperties dsProperties;
@@ -42,11 +46,13 @@ public class DefaultDBVacuum implements DBVacuum {
     @Override
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void vacuum() {
+        LOGGER.info("Vacuum start");
         if (isSQLiteDriver()) {
             jdbcTemplate.update("VACUUM", emptyMap());
         } else {
             throw new UnsupportedOperationException("Database Vacuum is only supported for SQLite database");
         }
+        LOGGER.info("Vacuum end");
     }
 
     private boolean isSQLiteDriver() {
