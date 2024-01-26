@@ -31,6 +31,7 @@ export class Execution {
     public user: string,
     public info?: string,
     public error?: string,
+    public scenarioId?: string,
     public campaignReport?: CampaignExecutionReport,
   ) { }
 
@@ -49,6 +50,7 @@ export class Execution {
       jsonObject.user,
       jsonObject.info,
       jsonObject.error,
+      jsonObject.scenarioId,
       jsonObject.campaignReport,
     );
   }

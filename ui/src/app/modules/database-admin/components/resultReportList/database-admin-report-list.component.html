@@ -1,0 +1,172 @@
+<div *ngIf="filtersForm" class="executions">
+    <div [formGroup]="filtersForm">
+        <table class="table table-hover table-borderless table-striped text-center align-middle">
+            <thead>
+            <tr class="headers-labels">
+                <th class="w1">#</th>
+                <th scope="col">
+                    <div class="cursor-pointer d-flex justify-content-center" (click)="datepicker.toggle()">
+                        <span>{{'scenarios.execution.history.date' | translate}}</span>
+                        <i #dateToggleButton class="ms-2 fa-regular fa-calendar-days"></i>
+                    </div>
+                </th>
+                <th scope="col">
+                    <div class="cursor-pointer d-flex justify-content-center" (click)="toggleDropDown(statusDropdown, $event)">
+                        <span>{{'scenarios.execution.history.status' | translate}}</span>
+                        <i class="ms-2 fa" [ngClass]="{
+                        'fa-chevron-up': statusDropdown.isActive,
+                        'fa-chevron-down': !statusDropdown.isActive}"></i>
+                    </div>
+                </th>
+                <th scope="col">{{'scenarios.execution.history.error' | translate}}</th>
+                <th scope="col">{{'scenarios.execution.history.info' | translate}}</th>
+                <th scope="col">{{'scenarios.execution.history.scenarioId' | translate}}</th>
+                <th scope="col">
+                    <div class="cursor-pointer d-flex justify-content-center" (click)="toggleDropDown(envsDropdown, $event)">
+                        <span>{{'scenarios.execution.history.env' | translate}}</span>
+                        <i class="ms-2 fa" [ngClass]="{
+                        'fa-chevron-up': envsDropdown.isActive,
+                        'fa-chevron-down': !envsDropdown.isActive}"></i>
+                    </div>
+
+                </th>
+                <th scope="col">
+                    <div class="cursor-pointer d-flex justify-content-center" (click)="toggleDropDown(campsDropdown, $event)">
+                        <span> {{'scenarios.execution.history.campaign' | translate}}</span>
+                        <i class="ms-2 fa" [ngClass]="{
+                        'fa-chevron-up': campsDropdown.isActive,
+                        'fa-chevron-down': !campsDropdown.isActive}"></i>
+                    </div>
+                </th>
+                <th scope="col">
+                    <div class="cursor-pointer d-flex justify-content-center" (click)="toggleDropDown(executorsDropdown, $event)">
+                        <span>{{'scenarios.execution.history.executor' | translate}}</span>
+                        <i class="ms-2 fa" [ngClass]="{
+                        'fa-chevron-up': executorsDropdown.isActive,
+                        'fa-chevron-down': !executorsDropdown.isActive}"></i>
+                    </div>
+                </th>
+            </tr>
+            <tr class="headers-filters">
+                <th></th>
+                <th>
+                    <div *ngIf="filtersForm.controls.date.value" (click)="filtersForm.get('date').reset()"
+                         class="chutney-tag chutney-tag-selected">
+                        {{ getDateFilterValue() | amDateFormat:'LL'}}
+                        <i class="fa-regular fa-x fa-xs ms-2"></i>
+                    </div>
+                </th>
+                <th>
+                    <angular2-multiselect [data]="status"
+                                          [settings]="selectSettings"
+                                          formControlName="status"
+                                          #statusDropdown>
+                    </angular2-multiselect>
+                </th>
+                <th class="w20"></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>
+                    <angular2-multiselect [data]="environments"
+                                          [settings]="selectSettings"
+                                          formControlName="environments"
+                                          #envsDropdown>
+                    </angular2-multiselect>
+                </th>
+                <th>
+                    <angular2-multiselect [data]="campaigns"
+                                          [settings]="selectSettings"
+                                          formControlName="campaigns"
+                                          #campsDropdown>
+                    </angular2-multiselect>
+                </th>
+                <th>
+                    <angular2-multiselect [data]="executors"
+                                          [settings]="selectSettings"
+                                          formControlName="executors"
+                                          #executorsDropdown>
+                    </angular2-multiselect>
+                </th>
+            </tr>
+            </thead>
+            <tbody class="small">
+            <tr *ngFor="let execution of filteredExecutions"
+                (click)="openReport(execution, !$event.ctrlKey)" class="cursor-pointer">
+                <td>
+                    <a class="link">
+                        <ngb-highlight [result]="execution.executionId.toString()"
+                                       [term]="filtersForm.get('keyword').value">
+                        </ngb-highlight>
+                    </a>
+                </td>
+                <td>
+                    <ngb-highlight class="text-nowrap"
+                                   [result]="execution.time | amCalendar"
+                                   [term]="filtersForm.get('keyword').value">
+                    </ngb-highlight>
+                    <div>
+                        <small>({{ 'global.time.in' | translate }} {{execution.duration | amDuration:'ms' }})</small>
+                    </div>
+                </td>
+                <td>
+                    <i class="fa-lg"
+                       [ngClass]="
+                                {'fa-solid': execution.status !== ExecutionStatus.NOT_EXECUTED,
+                                'fa-circle-check icon-info': execution.status === ExecutionStatus.SUCCESS,
+                                'fa-circle-xmark icon-danger': execution.status === ExecutionStatus.FAILURE,
+                                'fa-spinner fa-pulse icon-warning': execution.status === ExecutionStatus.RUNNING || execution.status === ExecutionStatus.PAUSED,
+                                'fa-circle-exclamation icon-light': execution.status === ExecutionStatus.STOPPED,
+                                'fa-regular fa-circle text-warning': execution.status === ExecutionStatus.NOT_EXECUTED}"
+                       [ngbTooltip]="ExecutionStatus.toString(execution.status) | translate" placement="right"
+                    ></i>
+                </td>
+                <td>
+                    <ngb-highlight [result]="execution.error"
+                                   [term]="filtersForm.get('keyword').value"></ngb-highlight>
+                </td>
+                <td>
+                    <ngb-highlight [result]="execution.info"
+                                   [term]="filtersForm.get('keyword').value"></ngb-highlight>
+                </td>
+                <td>
+                    <ngb-highlight [result]="execution.scenarioId"
+                                   [term]="filtersForm.get('keyword').value"></ngb-highlight>
+                </td>
+                <td>
+                    <ngb-highlight [result]="execution.environment"
+                                   [term]="filtersForm.get('keyword').value"></ngb-highlight>
+                </td>
+                <td>
+                    <a (click)="openCampaignExecution(execution, $event)" class="link">
+                        <ngb-highlight [result]="execution.campaignReport?.campaignName"
+                                       [term]="filtersForm.get('keyword').value"></ngb-highlight>
+                    </a>
+                </td>
+                <td>
+                    <ngb-highlight [result]="execution.user" [term]="filtersForm.get('keyword').value"></ngb-highlight>
+                </td>
+            </tr>
+            <tr *ngIf="!filteredExecutions.length">
+                <td colspan="12">{{'scenarios.execution.history.empty' | translate}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="input-group ">
+            <input class="form-control d-none"
+                   name="datepicker"
+                   ngbDatepicker
+                   #datepicker="ngbDatepicker"
+                   formControlName="date"
+                   [readonly]="true"
+                   (click)="datepicker.toggle()"
+                   [positionTarget]="dateToggleButton"
+                   [markDisabled]="noExecutionAt()"
+                   placement="bottom-end">
+        </div>
+    </div>
+</div>
+
+
+
