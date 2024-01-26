@@ -327,7 +327,7 @@ public class ScenarioExecutionEngineAsync {
     private void updateHistory(long executionId, ExecutionRequest executionRequest, ScenarioExecutionReport report) {
         LOGGER.trace("Update history for execution {}", executionId);
         try {
-            executionHistoryRepository.update(executionRequest.testCase.id(), summarize(report, executionRequest.environment, executionRequest.userId).attach(executionId));
+            executionHistoryRepository.update(executionRequest.testCase.id(), summarize(report, executionRequest.environment, executionRequest.userId).attach(executionId, executionRequest.testCase.id()));
         } catch (Exception e) {
             LOGGER.error("Update history for execution {} failed", executionId, e);
         }

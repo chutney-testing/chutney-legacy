@@ -946,6 +946,7 @@ public class PurgeServiceTest {
             .duration(5L)
             .status(SUCCESS)
             .user("executor")
+            .scenarioId("")
             .testCaseTitle("");
     }
 

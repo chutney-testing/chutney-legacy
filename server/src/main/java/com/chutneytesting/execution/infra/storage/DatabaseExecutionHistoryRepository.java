@@ -140,7 +140,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         }
         scenarioExecution = scenarioExecutionsJpaRepository.save(scenarioExecution);
         scenarioExecutionReportJpaRepository.save(new ScenarioExecutionReportEntity(scenarioExecution, detachedExecution.report()));
-        Execution execution = detachedExecution.attach(scenarioExecution.id());
+        Execution execution = detachedExecution.attach(scenarioExecution.id(), scenarioId);
         return ImmutableExecutionHistory.Execution.builder().from(execution).build();
     }
 
@@ -234,6 +234,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
             .testCaseTitle(executionSummary.testCaseTitle())
             .environment(executionSummary.environment())
             .user(executionSummary.user())
+            .scenarioId(executionSummary.scenarioId())
             .build();
     }
 

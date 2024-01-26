@@ -70,11 +70,12 @@ public interface ExecutionHistory {
     @Value.Immutable
     interface DetachedExecution extends ExecutionProperties, HavingReport {
 
-        default Execution attach(long executionId) {
+        default Execution attach(long executionId, String scenarioId) {
             return ImmutableExecutionHistory.Execution.builder()
                 .from((ExecutionProperties) this)
                 .from((HavingReport) this)
                 .executionId(executionId)
+                .scenarioId(scenarioId)
                 .build();
         }
     }
@@ -84,12 +85,13 @@ public interface ExecutionHistory {
     }
 
     @Value.Immutable
-    interface Execution extends ExecutionProperties, HavingReport, Attached {
+    interface Execution extends ExecutionProperties, HavingReport, Attached, WithScenario {
 
         default ExecutionSummary summary() {
             return ImmutableExecutionHistory.ExecutionSummary.builder()
                 .from((ExecutionProperties) this)
                 .from((Attached) this)
+                .from((WithScenario) this)
                 .build();
         }
     }

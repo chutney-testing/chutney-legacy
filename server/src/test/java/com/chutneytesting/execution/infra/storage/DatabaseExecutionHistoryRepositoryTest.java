@@ -130,7 +130,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
                     try {
                         startLatch.await();
                         throwns.add(catchThrowable(() ->
-                            sut.update(id, buildDetachedExecution(SUCCESS, "updated", "").attach(summary.executionId()))
+                            sut.update(id, buildDetachedExecution(SUCCESS, "updated", "").attach(summary.executionId(), id))
                         ));
                     } catch (InterruptedException e) {
                         // do nothing
@@ -205,7 +205,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             assertThat(last.status()).isEqualTo(RUNNING);
             assertThat(last.info()).hasValue("exec");
 
-            sut.update(scenarioId, buildDetachedExecution(SUCCESS, "updated", "").attach(last.executionId()));
+            sut.update(scenarioId, buildDetachedExecution(SUCCESS, "updated", "").attach(last.executionId(), scenarioId));
 
             Execution updatedExecution = sut.getExecution(scenarioId, last.executionId());
             assertThat(updatedExecution.status()).isEqualTo(SUCCESS);
@@ -224,7 +224,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             assertThat(last.status()).isEqualTo(RUNNING);
             assertThat(last.info()).contains("exec3");
 
-            sut.update(scenarioId, buildDetachedExecution(SUCCESS, "updated", "").attach(last.executionId()));
+            sut.update(scenarioId, buildDetachedExecution(SUCCESS, "updated", "").attach(last.executionId(), scenarioId));
 
             assertThat(
                 sut.getExecutions(scenarioId).stream()
@@ -239,7 +239,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             String scenarioId = givenScenarioId();
             long unknownExecutionId = -1L;
             assertThatExceptionOfType(ReportNotFoundException.class)
-                .isThrownBy(() -> sut.update(scenarioId, buildDetachedExecution(SUCCESS, "updated", "").attach(unknownExecutionId)))
+                .isThrownBy(() -> sut.update(scenarioId, buildDetachedExecution(SUCCESS, "updated", "").attach(unknownExecutionId, scenarioId)))
                 .withMessage("Unable to find report " + unknownExecutionId + " of scenario " + scenarioId);
         }
 
@@ -346,7 +346,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             assertThat(sut.getExecutions(scenarioId).get(0).error())
                 .hasValueSatisfying(v -> assertThat(v).hasSize(512));
 
-            sut.update(scenarioId, buildDetachedExecution(SUCCESS, tooLongString, tooLongString).attach(last.executionId()));
+            sut.update(scenarioId, buildDetachedExecution(SUCCESS, tooLongString, tooLongString).attach(last.executionId(), scenarioId));
 
             assertThat(sut.getExecutions(scenarioId).get(0).info())
                 .hasValueSatisfying(v -> assertThat(v).hasSize(512));
