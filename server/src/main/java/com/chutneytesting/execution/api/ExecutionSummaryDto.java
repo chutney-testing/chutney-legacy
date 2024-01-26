@@ -16,6 +16,7 @@
 
 package com.chutneytesting.execution.api;
 
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.WithScenario;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.Attached;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.ExecutionProperties;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.ExecutionSummary;
@@ -30,7 +31,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @JsonSerialize(as= ImmutableExecutionSummaryDto.class)
 @JsonDeserialize(as= ImmutableExecutionSummaryDto.class)
-public interface ExecutionSummaryDto extends ExecutionProperties, Attached {
+public interface ExecutionSummaryDto extends ExecutionProperties, Attached, WithScenario {
 
     static List<ExecutionSummaryDto> toDto(Collection<ExecutionSummary> executionSummaryList) {
         return executionSummaryList.stream().map(ExecutionSummaryDto::toDto).collect(Collectors.toList());
@@ -48,6 +49,7 @@ public interface ExecutionSummaryDto extends ExecutionProperties, Attached {
             .environment(executionSummary.environment())
             .user(executionSummary.user())
             .campaignReport(executionSummary.campaignReport())
+            .scenarioId(executionSummary.scenarioId())
             .build();
     }
 
@@ -66,6 +68,7 @@ public interface ExecutionSummaryDto extends ExecutionProperties, Attached {
             .testCaseTitle(dto.testCaseTitle())
             .environment(dto.environment())
             .user(dto.user())
+            .scenarioId(dto.scenarioId())
             .build();
     }
 }

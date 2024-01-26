@@ -158,6 +158,15 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
     }
 
     @Override
+    public List<ExecutionSummary> getExecutionReportMatchQuery(String query) {
+        return scenarioExecutionsJpaRepository
+            .getExecutionReportMatchQuery(query)
+            .stream()
+            .map(this::scenarioExecutionToExecutionSummary)
+            .toList();
+    }
+
+    @Override
     public void update(String scenarioId, Execution updatedExecution) throws ReportNotFoundException {
         if (!scenarioExecutionsJpaRepository.existsById(updatedExecution.executionId())) {
             throw new ReportNotFoundException(scenarioId, updatedExecution.executionId());

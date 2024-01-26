@@ -16,14 +16,14 @@
 
 package com.chutneytesting.admin.api;
 
-import com.chutneytesting.server.core.domain.admin.DatabaseAdminService;
-import com.chutneytesting.server.core.domain.admin.SqlResult;
-import com.chutneytesting.server.core.domain.tools.PaginatedDto;
-import com.chutneytesting.server.core.domain.tools.PaginationRequestWrapperDto;
+import com.chutneytesting.execution.api.ExecutionSummaryDto;
+import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
+import jakarta.ws.rs.QueryParam;
+import java.util.List;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,21 +32,15 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 public class DatabaseManagementController {
 
-    private final DatabaseAdminService jdbcAdminService;
+    private final ExecutionHistoryRepository executionHistoryRepository;
 
-    DatabaseManagementController(DatabaseAdminService jdbcAdminService) {
-        this.jdbcAdminService = jdbcAdminService;
+    DatabaseManagementController(ExecutionHistoryRepository executionHistoryRepository) {
+        this.executionHistoryRepository = executionHistoryRepository;
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
-    @PostMapping("/execute/jdbc")
-    public SqlResult executeh2(@RequestBody String query) {
-        return jdbcAdminService.execute(query);
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
-    @PostMapping("/paginate/jdbc")
-    public PaginatedDto<SqlResult> executeh2(@RequestBody PaginationRequestWrapperDto<String> paginationRequestWrapperDto) {
-        return jdbcAdminService.paginate(paginationRequestWrapperDto);
+    @GetMapping(path = "/execution", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ExecutionSummaryDto> getExecutionReportMatchQuery(@QueryParam("query") String query) {
+        return executionHistoryRepository.getExecutionReportMatchQuery(query).stream().map(ExecutionSummaryDto::toDto).toList();
     }
 }

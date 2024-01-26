@@ -63,6 +63,10 @@ public interface ExecutionHistory {
         Long executionId();
     }
 
+    interface WithScenario {
+        String scenarioId();
+    }
+
     @Value.Immutable
     interface DetachedExecution extends ExecutionProperties, HavingReport {
 
@@ -76,7 +80,7 @@ public interface ExecutionHistory {
     }
 
     @Value.Immutable
-    interface ExecutionSummary extends ExecutionProperties, Attached {
+    interface ExecutionSummary extends ExecutionProperties, Attached, WithScenario {
     }
 
     @Value.Immutable

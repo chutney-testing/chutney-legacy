@@ -32,7 +32,11 @@ import com.chutneytesting.campaign.infra.CampaignExecutionDBRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionReportEntity;
+import com.chutneytesting.scenario.domain.gwt.GwtScenario;
+import com.chutneytesting.scenario.domain.gwt.GwtStep;
+import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.scenario.infra.jpa.ScenarioEntity;
+import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.Execution;
@@ -42,6 +46,7 @@ import com.chutneytesting.server.core.domain.execution.report.ReportNotFoundExce
 import com.chutneytesting.server.core.domain.execution.report.ScenarioExecutionReport;
 import com.chutneytesting.server.core.domain.execution.report.ServerReportStatus;
 import com.chutneytesting.server.core.domain.execution.report.StepExecutionReportCore;
+import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
 import com.chutneytesting.server.core.domain.scenario.campaign.CampaignExecution;
 import com.chutneytesting.server.core.domain.scenario.campaign.ScenarioExecutionCampaign;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -99,6 +104,9 @@ public class DatabaseExecutionHistoryRepositoryTest {
 
         @Autowired
         private ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository;
+
+        @Autowired
+        private DatabaseTestCaseRepository databaseTestCaseRepository;
 
         @Test
         public void parallel_execution_does_not_lock_database() throws InterruptedException {
@@ -412,6 +420,41 @@ public class DatabaseExecutionHistoryRepositoryTest {
             List.of(exec1.executionId(), exec2.executionId()).forEach(executionId -> assertThatThrownBy(() ->
                 sut.getExecutionSummary(executionId)
             ).isInstanceOf(ReportNotFoundException.class));
+        }
+
+        @Test
+        void should_return_scenario_execution_where_report_match_query_for_activated_scenario() {
+            clearTables();
+            String scenarioId1 = databaseTestCaseRepository.save(GwtTestCase.builder().withMetadata(TestCaseMetadataImpl.builder().withId("123456789").build()).withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build()).build());
+            String scenarioId2 = databaseTestCaseRepository.save(GwtTestCase.builder().withMetadata(TestCaseMetadataImpl.builder().withId("987654321").build()).withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build()).build());
+            DetachedExecution detachedExecution1 = ImmutableExecutionHistory.DetachedExecution.builder().report("toto").time(LocalDateTime.now()).duration(123L).status(SUCCESS).testCaseTitle("TEST").environment("ENV").user("USER").build();
+            DetachedExecution detachedExecution2 = ImmutableExecutionHistory.DetachedExecution.builder().report("tutu").time(LocalDateTime.now()).duration(123L).status(SUCCESS).testCaseTitle("TEST").environment("ENV").user("USER").build();
+            Execution exec1 = sut.store(scenarioId1, detachedExecution1);
+            Execution exec2 = sut.store(scenarioId2, detachedExecution2);
+
+            List<ExecutionSummary> executionSummaryList = sut.getExecutionReportMatchQuery("to");
+
+            assertThat(executionSummaryList).hasSize(1);
+            assertThat(executionSummaryList.get(0).executionId()).isEqualTo(exec1.executionId());
+            assertThat(exec1.report()).isEqualTo("toto");
+        }
+
+        @Test
+        void should_return_scenario_execution_where_report_match_query_for_deactivated_scenario() {
+            clearTables();
+            String scenarioId1 = databaseTestCaseRepository.save(GwtTestCase.builder().withMetadata(TestCaseMetadataImpl.builder().withId("123456789").build()).withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build()).build());
+            String scenarioId2 = databaseTestCaseRepository.save(GwtTestCase.builder().withMetadata(TestCaseMetadataImpl.builder().withId("987654321").build()).withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build()).build());
+            DetachedExecution detachedExecution1 = ImmutableExecutionHistory.DetachedExecution.builder().report("toto").time(LocalDateTime.now()).duration(123L).status(SUCCESS).testCaseTitle("TEST").environment("ENV").user("USER").build();
+            DetachedExecution detachedExecution2 = ImmutableExecutionHistory.DetachedExecution.builder().report("tutu").time(LocalDateTime.now()).duration(123L).status(SUCCESS).testCaseTitle("TEST").environment("ENV").user("USER").build();
+            Execution exec1 = sut.store(scenarioId1, detachedExecution1);
+            Execution exec2 = sut.store(scenarioId2, detachedExecution2);
+            databaseTestCaseRepository.removeById(scenarioId2);
+
+            List<ExecutionSummary> executionSummaryList = sut.getExecutionReportMatchQuery("t");
+
+            assertThat(executionSummaryList).hasSize(1);
+            assertThat(executionSummaryList.get(0).executionId()).isEqualTo(exec1.executionId());
+            assertThat(exec1.report()).isEqualTo("toto");
         }
 
         private DetachedExecution buildDetachedExecution(ServerReportStatus status, String info, String error) {

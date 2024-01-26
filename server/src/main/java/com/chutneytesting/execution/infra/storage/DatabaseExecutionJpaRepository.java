@@ -35,4 +35,11 @@ public interface DatabaseExecutionJpaRepository extends JpaRepository<ScenarioEx
     List<Tuple> findLastExecutionsByScenarioId(@Param("scenarioIds") List<String> scenarioIds);
 
     List<ScenarioExecutionEntity> findAllByScenarioId(String scenarioId);
+
+    @Query(value = "SELECT execution.* FROM SCENARIO_EXECUTIONS execution " +
+        "JOIN SCENARIO scenario ON scenario.ID = execution.SCENARIO_ID " +
+        "JOIN SCENARIO_EXECUTIONS_REPORTS execution_report ON execution_report.SCENARIO_EXECUTION_ID = execution.ID " +
+        "WHERE scenario.ACTIVATED = true " +
+        "AND execution_report.REPORT LIKE %:query% LIMIT 100", nativeQuery = true)
+    List<ScenarioExecutionEntity> getExecutionReportMatchQuery(@Param("query") String query);
 }
