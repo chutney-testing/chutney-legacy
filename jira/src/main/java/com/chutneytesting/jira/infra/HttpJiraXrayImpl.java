@@ -16,15 +16,22 @@
 
 package com.chutneytesting.jira.infra;
 
+import com.atlassian.httpclient.api.Request;
+import com.atlassian.httpclient.api.factory.Scheme;
+import com.atlassian.jira.rest.client.api.AuthenticationHandler;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
-import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClient;
+import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 import com.chutneytesting.jira.domain.JiraTargetConfiguration;
 import com.chutneytesting.jira.domain.JiraXrayApi;
 import com.chutneytesting.jira.domain.exception.NoJiraConfigurationException;
+import com.chutneytesting.jira.infra.atlassian.AsynchronousHttpClientFactory;
+import com.chutneytesting.jira.infra.atlassian.HttpClientOptions;
+import com.chutneytesting.jira.infra.atlassian.ProxyOptions;
 import com.chutneytesting.jira.xrayapi.JiraIssueType;
 import com.chutneytesting.jira.xrayapi.Xray;
 import com.chutneytesting.jira.xrayapi.XrayTestExecTest;
@@ -41,6 +48,7 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -48,6 +56,7 @@ import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuil
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.message.BasicHeader;
@@ -57,7 +66,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -80,7 +88,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
     public void updateRequest(Xray xray) {
         String updateUri = jiraTargetConfiguration.url() + "/rest/raven/1.0/import/execution";
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration);
+        RestTemplate restTemplate = buildRestTemplate();
 
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(updateUri, xray, String.class);
@@ -102,7 +110,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         String uriTemplate = jiraTargetConfiguration.url() + "/rest/raven/1.0/api/%s/%s/test";
         String uri = String.format(uriTemplate, isTestPlan(xrayId) ? "testplan" : "testexec", xrayId);
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration);
+        RestTemplate restTemplate = buildRestTemplate();
         try {
             ResponseEntity<XrayTestExecTest[]> response = restTemplate.getForEntity(uri, XrayTestExecTest[].class);
             if (response.getStatusCode().equals(HttpStatus.OK) && response.getBody() != null) {
@@ -122,7 +130,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         String uriTemplate = jiraTargetConfiguration.url() + "/rest/raven/1.0/api/testrun/%s/status?status=%s";
         String uri = String.format(uriTemplate, testRuntId, executionStatus);
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration);
+        RestTemplate restTemplate = buildRestTemplate();
         try {
             restTemplate.put(uri, null);
         } catch (RestClientException e) {
@@ -135,7 +143,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         String uriTemplate = jiraTargetConfiguration.url() + "/rest/raven/1.0/api/testplan/%s/testexecution";
         String uri = String.format(uriTemplate, testPlanId);
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration);
+        RestTemplate restTemplate = buildRestTemplate();
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(uri, Map.of("add", List.of(testExecutionId)), String.class);
             if (response.getStatusCode().equals(HttpStatus.OK)) {
@@ -187,7 +195,7 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         String uri = jiraTargetConfiguration.url() + "/rest/api/latest/issuetype";
         Optional<JiraIssueType> issueTypeOptional = Optional.empty();
 
-        RestTemplate restTemplate = buildRestTemplate(jiraTargetConfiguration);
+        RestTemplate restTemplate = buildRestTemplate();
         try {
             ResponseEntity<JiraIssueType[]> response = restTemplate.getForEntity(uri, JiraIssueType[].class);
             if (response.getStatusCode().equals(HttpStatus.OK) && response.getBody() != null) {
@@ -203,6 +211,50 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         return issueTypeOptional.orElseThrow(() -> new RuntimeException("Unable to get issue type [" + issueTypeName + "]"));
     }
 
+    private RestTemplate buildRestTemplate() {
+        try {
+            var requestFactory = new HttpComponentsClientHttpRequestFactory(buildHttpClient());
+            requestFactory.setConnectTimeout(MS_TIMEOUT);
+            return new RestTemplate(requestFactory);
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot build rest template.", e);
+        }
+    }
+
+    private HttpClient buildHttpClient() throws URISyntaxException {
+        HttpHost httpHost = HttpHost.create(new URI(jiraTargetConfiguration.url()));
+        HttpHost proxyHttpHost = HttpHost.create(new URI(jiraTargetConfiguration.urlProxy()));
+
+        HttpClientBuilder httpClientBuilder = HttpClients.custom()
+            .setConnectionManager(buildConnectionManager())
+            .setDefaultCredentialsProvider(getBasicCredentialsProvider(httpHost, proxyHttpHost));
+
+        var defaultHeaders = new ArrayList<BasicHeader>();
+        String authorization = basicAuthHeaderEncodedValue(jiraTargetConfiguration.username(), jiraTargetConfiguration.password());
+        defaultHeaders.add(new BasicHeader(HttpHeaders.AUTHORIZATION, authorization));
+
+        if (jiraTargetConfiguration.hasProxy()) {
+            httpClientBuilder.setProxy(proxyHttpHost);
+            if (jiraTargetConfiguration.hasProxyWithAuth()) {
+                String proxyAuthorization = basicAuthHeaderEncodedValue(jiraTargetConfiguration.userProxy(), jiraTargetConfiguration.passwordProxy());
+                defaultHeaders.add(new BasicHeader(HttpHeaders.PROXY_AUTHORIZATION, proxyAuthorization));
+            }
+        }
+
+        httpClientBuilder.setDefaultHeaders(defaultHeaders);
+
+        return httpClientBuilder.build();
+    }
+
+    private HttpClientConnectionManager buildConnectionManager() {
+        SSLContext sslContext = buildSslContext();
+        SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+        return PoolingHttpClientConnectionManagerBuilder.create()
+            .setSSLSocketFactory(socketFactory)
+            .setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(MS_TIMEOUT, TimeUnit.MILLISECONDS).build())
+            .build();
+    }
+
     private SSLContext buildSslContext() {
         try {
             SSLContextBuilder sslContextBuilder = new SSLContextBuilder();
@@ -213,69 +265,72 @@ public class HttpJiraXrayImpl implements JiraXrayApi {
         }
     }
 
-    private RestTemplate buildRestTemplate(JiraTargetConfiguration jiraTargetConfiguration) {
-        RestTemplate restTemplate;
-        SSLContext sslContext = buildSslContext();
-        SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
-        HttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
-            .setSSLSocketFactory(socketFactory)
-            .setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(MS_TIMEOUT, TimeUnit.MILLISECONDS).build())
-            .build();
+    private static String basicAuthHeaderEncodedValue(String user, String password) {
+        return "Basic " + Base64.getEncoder().encodeToString((user + ":" + password).getBytes());
+    }
 
-        HttpClientBuilder httpClientBuilder = HttpClients.custom().setConnectionManager(connectionManager);
+    private BasicCredentialsProvider getBasicCredentialsProvider(HttpHost httpHost, HttpHost proxyHttpHost) {
+        BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(
+            new AuthScope(httpHost),
+            new UsernamePasswordCredentials(jiraTargetConfiguration.username(), jiraTargetConfiguration.password().toCharArray())
+        );
+        if (jiraTargetConfiguration.hasProxyWithAuth()) {
+            credentialsProvider.setCredentials(
+                new AuthScope(proxyHttpHost),
+                new UsernamePasswordCredentials(jiraTargetConfiguration.userProxy(), jiraTargetConfiguration.passwordProxy().toCharArray())
+            );
+        }
+        return credentialsProvider;
+    }
+
+    private JiraRestClient getJiraRestClient() throws URISyntaxException {
+        URI serverUri = URI.create(jiraTargetConfiguration.url());
+        return new AsynchronousJiraRestClient(
+            serverUri,
+            buildJiraHttpClient(
+                serverUri,
+                new BasicHttpAuthenticationHandler(
+                    jiraTargetConfiguration.username(), jiraTargetConfiguration.password(),
+                    jiraTargetConfiguration.userProxy(), jiraTargetConfiguration.passwordProxy()
+                )
+            )
+        );
+    }
+
+    private DisposableHttpClient buildJiraHttpClient(
+        final URI serverUri,
+        final AuthenticationHandler authenticationHandler
+    ) throws URISyntaxException {
+        final HttpClientOptions options = new HttpClientOptions();
+        options.setTrustSelfSignedCertificates(true);
 
         if (jiraTargetConfiguration.hasProxy()) {
-            configureProxy(jiraTargetConfiguration, httpClientBuilder);
+            HttpHost proxyHttpHost = HttpHost.create(new URI(jiraTargetConfiguration.urlProxy()));
+            options.setProxyOptions(
+                ProxyOptions.ProxyOptionsBuilder.create()
+                    .withProxy(Scheme.valueOf(serverUri.getScheme().toUpperCase()), proxyHttpHost)
+                    .build()
+            );
         }
 
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClientBuilder.build());
-        requestFactory.setConnectTimeout(MS_TIMEOUT);
-
-        restTemplate = new RestTemplate(requestFactory);
-        restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(jiraTargetConfiguration.username(), jiraTargetConfiguration.password()));
-
-        return restTemplate;
+        return AsynchronousHttpClientFactory.createClient(
+            serverUri, authenticationHandler, options
+        );
     }
 
-    private void configureProxy(JiraTargetConfiguration jiraTargetConfiguration, HttpClientBuilder httpClientBuilder) {
-        try {
-            URI proxyUri = new URI(jiraTargetConfiguration.urlProxy());
-            HttpHost proxyHttpHost = HttpHost.create(proxyUri);
-            httpClientBuilder.setProxy(proxyHttpHost);
-
-            if (jiraTargetConfiguration.hasProxyWithAuth()) {
-                BasicCredentialsProvider credentialsProvider = getBasicCredentialsProvider(jiraTargetConfiguration, proxyHttpHost);
-                String proxyAuthorization = Base64
-                    .getEncoder()
-                    .encodeToString((jiraTargetConfiguration.userProxy() + ":" + jiraTargetConfiguration.passwordProxy()).getBytes());
-                httpClientBuilder
-                    .setDefaultCredentialsProvider(credentialsProvider)
-                    .setDefaultHeaders(List.of(new BasicHeader("Proxy-Authorization", "Basic " + proxyAuthorization)));
+    private record BasicHttpAuthenticationHandler(
+        String username,
+        String password,
+        String proxyUsername,
+        String proxyPassword
+    ) implements AuthenticationHandler {
+        @Override
+        public void configure(Request.Builder builder) {
+            builder.setHeader(HttpHeaders.AUTHORIZATION, basicAuthHeaderEncodedValue(username, password));
+            if (proxyUsername != null && !proxyUsername.isBlank()) {
+                builder.setHeader(HttpHeaders.PROXY_AUTHORIZATION, basicAuthHeaderEncodedValue(proxyUsername, proxyPassword));
             }
-        } catch (URISyntaxException e) {
-            LOGGER.error("Unexpected proxy url", e);
-        }
-    }
-
-    private BasicCredentialsProvider getBasicCredentialsProvider(JiraTargetConfiguration jiraTargetConfiguration, HttpHost proxyHttpHost) {
-    BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-    credentialsProvider.setCredentials(
-        new AuthScope(proxyHttpHost),
-        new UsernamePasswordCredentials(jiraTargetConfiguration.userProxy(), jiraTargetConfiguration.passwordProxy().toCharArray())
-    );
-    return credentialsProvider;
-  }
-
-  private JiraRestClient getJiraRestClient() {
-        try {
-            AsynchronousJiraRestClientFactory asynchronousJiraRestClientFactory = new AsynchronousJiraRestClientFactory();
-            return asynchronousJiraRestClientFactory
-                .createWithBasicHttpAuthentication(
-                    new URI(jiraTargetConfiguration.url()),
-                    jiraTargetConfiguration.username(),
-                    jiraTargetConfiguration.password());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Unable to instantiate Jira rest client from url [" + jiraTargetConfiguration.url() + "] : ", e);
         }
     }
 }
