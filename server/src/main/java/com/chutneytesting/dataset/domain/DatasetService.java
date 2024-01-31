@@ -19,11 +19,13 @@ package com.chutneytesting.dataset.domain;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
+import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.dataset.DataSetNotFoundException;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignBuilder;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -32,10 +34,12 @@ import org.springframework.stereotype.Component;
 public class DatasetService {
 
     private final DataSetRepository datasetRepository;
+    private final CampaignRepository campaignRepository;
     private final AggregatedRepository<GwtTestCase> testCaseRepository;
 
-    public DatasetService(DataSetRepository dataSetRepository, AggregatedRepository<GwtTestCase> testCaseRepository) {
+    public DatasetService(DataSetRepository dataSetRepository, CampaignRepository campaignRepository, AggregatedRepository<GwtTestCase> testCaseRepository) {
         this.datasetRepository = dataSetRepository;
+        this.campaignRepository = campaignRepository;
         this.testCaseRepository = testCaseRepository;
     }
 
@@ -62,6 +66,7 @@ public class DatasetService {
                 oldId.ifPresent(old -> {
                     if (!dataset.id.equals(newId)) {
                         updateScenarios(old, newId);
+                        updateCampaigns(old, newId);
                         datasetRepository.removeById(old);
                     }
                 });
@@ -84,8 +89,22 @@ public class DatasetService {
             );
     }
 
+    private void updateCampaigns(String oldId, String newId) {
+        campaignRepository.findAll().stream()
+            .filter(c -> oldId.equals(c.externalDatasetId))
+            .forEach(c -> campaignRepository.createOrUpdate(
+                CampaignBuilder.builder()
+                    .from(c)
+                    .setExternalDatasetId(newId)
+                    .build())
+            );
+    }
+
+
     public void remove(String datasetName) {
         datasetRepository.removeById(datasetName);
+        updateScenarios(datasetName, "");
+        updateCampaigns(datasetName, "");
     }
 
 }

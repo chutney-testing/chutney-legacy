@@ -60,6 +60,22 @@ public class Campaign {
         return this.environment;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Campaign campaign = (Campaign) o;
+        return id.equals(campaign.id) &&
+            title.equals(campaign.title) &&
+            description.equals(campaign.description) &&
+            scenarioIds.equals(campaign.scenarioIds) &&
+            parallelRun == campaign.parallelRun &&
+            retryAuto == campaign.retryAuto &&
+            environment.equals(campaign.environment) &&
+            externalDatasetId.equals(campaign.externalDatasetId) &&
+            tags.equals(campaign.tags);
+    }
+
     private <T> List<T> initListNullOrEmpty(List<T> list) {
         if (list != null && !list.isEmpty()) {
             return list;

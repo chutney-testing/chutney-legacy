@@ -24,20 +24,24 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.chutneytesting.campaign.domain.CampaignRepository;
 import com.chutneytesting.scenario.domain.gwt.GwtScenario;
 import com.chutneytesting.scenario.domain.gwt.GwtTestCase;
 import com.chutneytesting.server.core.domain.dataset.DataSet;
 import com.chutneytesting.server.core.domain.scenario.AggregatedRepository;
 import com.chutneytesting.server.core.domain.scenario.TestCaseMetadataImpl;
+import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
+import com.chutneytesting.server.core.domain.scenario.campaign.CampaignBuilder;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class DatasetServiceTest {
 
     private final DataSetRepository datasetRepository = mock(DataSetRepository.class);
+    private final CampaignRepository campaignRepository = mock(CampaignRepository.class);
     private final AggregatedRepository<GwtTestCase> testCaseRepository = mock(AggregatedRepository.class);
 
-    DatasetService sut = new DatasetService(datasetRepository, testCaseRepository);
+    DatasetService sut = new DatasetService(datasetRepository, campaignRepository, testCaseRepository);
 
     @Test
     public void should_sort_dataset_by_name() {
@@ -77,8 +81,34 @@ class DatasetServiceTest {
     }
 
     @Test
-    void should_prevent_deletion_of_used_dataset() {
-        // TODO - check if dataset is in used using a count
+    void should_remove_deleted_dataset_from_campaigns_and_scenarios() {
+        String datasetId = "dataset_id";
+
+        TestCaseMetadataImpl metadata = TestCaseMetadataImpl.builder().withDefaultDataset(datasetId).build();
+        when(testCaseRepository.findAll()).thenReturn(List.of(metadata));
+
+        GwtTestCase testCase = GwtTestCase.builder().withMetadata(metadata).withScenario(mock(GwtScenario.class)).build();
+        when(testCaseRepository.findById(any())).thenReturn(of(testCase));
+
+        Campaign campaign = CampaignBuilder.builder()
+            .setId(1L)
+            .setTitle("Campaign")
+            .setDescription("")
+            .setEnvironment("Env")
+            .setTags(List.of())
+            .setExternalDatasetId(datasetId)
+            .build();
+        when(campaignRepository.findAll()).thenReturn(List.of(campaign));
+
+        GwtTestCase expectedScenario = GwtTestCase.builder().from(testCase).withMetadata(
+            TestCaseMetadataImpl.TestCaseMetadataBuilder.from(metadata).build()
+        ).build();
+        Campaign expectedCampaign = CampaignBuilder.builder().from(campaign).setExternalDatasetId("").build();
+
+        sut.remove(datasetId);
+
+        verify(testCaseRepository, times(1)).save(expectedScenario);
+        verify(campaignRepository, times(1)).createOrUpdate(expectedCampaign);
     }
 
     @Test

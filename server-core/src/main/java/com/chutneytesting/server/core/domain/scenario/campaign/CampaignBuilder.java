@@ -81,6 +81,20 @@ public class CampaignBuilder {
         return this;
     }
 
+    public CampaignBuilder from(Campaign campaign) {
+        this.id = campaign.id;
+        this.title = campaign.title;
+        this.description = campaign.description;
+        this.scenarioIds = campaign.scenarioIds;
+        this.environment = campaign.executionEnvironment();
+        this.parallelRun = campaign.parallelRun;
+        this.retryAuto = campaign.retryAuto;
+        this.externalDatasetId = campaign.externalDatasetId;
+        this.tags = campaign.tags;
+
+        return this;
+    }
+
     public Campaign build() {
         return new Campaign(id, title, description, scenarioIds, environment, parallelRun, retryAuto, externalDatasetId, tags);
     }
