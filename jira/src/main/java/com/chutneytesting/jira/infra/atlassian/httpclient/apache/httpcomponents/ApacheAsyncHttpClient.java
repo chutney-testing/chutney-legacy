@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2012 Atlassian
+ * Copyright 2017-2023 Enedis
+ * Copyright (C) Atlassian
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,34 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.chutneytesting.jira.infra.atlassian;
-
-import static io.atlassian.util.concurrent.Promises.rejected;
-import static java.lang.String.format;
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
-import static org.apache.http.conn.ssl.SSLConnectionSocketFactory.TLS;
-import static org.apache.http.nio.conn.ssl.SSLIOSessionStrategy.getDefaultHostnameVerifier;
+package com.chutneytesting.jira.infra.atlassian.httpclient.apache.httpcomponents;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.httpclient.apache.httpcomponents.BannedHostResolver;
-import com.atlassian.httpclient.apache.httpcomponents.BoundedHttpAsyncClient;
-import com.atlassian.httpclient.apache.httpcomponents.DefaultHostResolver;
-import com.atlassian.httpclient.apache.httpcomponents.DefaultResponse;
-import com.atlassian.httpclient.apache.httpcomponents.EntityTooLargeException;
-import com.atlassian.httpclient.apache.httpcomponents.RedirectStrategy;
-import com.atlassian.httpclient.apache.httpcomponents.RequestEntityEffect;
 import com.atlassian.httpclient.apache.httpcomponents.cache.FlushableHttpCacheStorage;
 import com.atlassian.httpclient.apache.httpcomponents.cache.FlushableHttpCacheStorageImpl;
 import com.atlassian.httpclient.apache.httpcomponents.cache.LoggingHttpCacheStorage;
-import com.atlassian.httpclient.api.HostResolver;
-import com.atlassian.httpclient.api.HttpClient;
-import com.atlassian.httpclient.api.HttpStatus;
-import com.atlassian.httpclient.api.Request;
-import com.atlassian.httpclient.api.Response;
-import com.atlassian.httpclient.api.ResponsePromise;
-import com.atlassian.httpclient.api.ResponsePromises;
-import com.atlassian.httpclient.api.ResponseTooLargeException;
+import com.atlassian.httpclient.apache.httpcomponents.proxy.ProxyConfigFactory;
+import com.atlassian.httpclient.apache.httpcomponents.proxy.ProxyCredentialsProvider;
+import com.atlassian.httpclient.api.*;
+// CHANGE - Begin
+//import com.atlassian.httpclient.api.factory.HttpClientOptions;
+// CHANGE - End
 import com.atlassian.httpclient.base.AbstractHttpClient;
 import com.atlassian.httpclient.base.event.HttpRequestCompletedEvent;
 import com.atlassian.httpclient.base.event.HttpRequestFailedEvent;
@@ -50,21 +35,6 @@ import com.google.common.base.Throwables;
 import com.google.common.primitives.Ints;
 import io.atlassian.fugue.Suppliers;
 import io.atlassian.util.concurrent.ThreadFactories;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.security.GeneralSecurityException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -72,21 +42,16 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.client.methods.*;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpAsyncClient;
 import org.apache.http.impl.conn.DefaultSchemePortResolver;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
@@ -106,11 +71,53 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
-final class ApacheAsyncHttpClient<C> extends AbstractHttpClient implements HttpClient, DisposableBean {
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+
+import static io.atlassian.util.concurrent.Promises.rejected;
+import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+import static org.apache.http.conn.ssl.SSLConnectionSocketFactory.TLS;
+import static org.apache.http.nio.conn.ssl.SSLIOSessionStrategy.getDefaultHostnameVerifier;
+
+// CHANGE - Begin
+import com.atlassian.httpclient.apache.httpcomponents.BannedHostResolver;
+import com.atlassian.httpclient.apache.httpcomponents.BoundedHttpAsyncClient;
+import com.atlassian.httpclient.apache.httpcomponents.DefaultHostResolver;
+import com.atlassian.httpclient.apache.httpcomponents.DefaultResponse;
+import com.atlassian.httpclient.apache.httpcomponents.EntityTooLargeException;
+import com.atlassian.httpclient.apache.httpcomponents.RedirectStrategy;
+import com.atlassian.httpclient.apache.httpcomponents.RequestEntityEffect;
+import com.chutneytesting.jira.infra.atlassian.httpclient.api.factory.HttpClientOptions;
+// CHANGE - End
+
+/**
+ * <pre>
+ *  Changes :
+ *   - Use local HttpClientOptions class
+ * </pre>
+ *
+ * @see com.atlassian.httpclient.apache.httpcomponents.ApacheAsyncHttpClient
+ */
+public final class ApacheAsyncHttpClient<C> extends AbstractHttpClient implements HttpClient, DisposableBean {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final Supplier<String> httpClientVersion = Suppliers.memoize(
-        () -> MavenUtils.getVersion("com.atlassian.httpclient", "atlassian-httpclient-api"));
+            () -> MavenUtils.getVersion("com.atlassian.httpclient", "atlassian-httpclient-api"));
 
     private final Function<Object, Void> eventConsumer;
     private final Supplier<String> applicationName;
@@ -132,9 +139,17 @@ final class ApacheAsyncHttpClient<C> extends AbstractHttpClient implements HttpC
                                  ThreadLocalContextManager<C> threadLocalContextManager,
                                  HttpClientOptions options) {
         this(new DefaultApplicationNameSupplier(applicationProperties),
-            new EventConsumerFunction(eventConsumer),
-            threadLocalContextManager,
-            options);
+                new EventConsumerFunction(eventConsumer),
+                threadLocalContextManager,
+                options);
+    }
+
+    public ApacheAsyncHttpClient(String applicationName) {
+        this(applicationName, new HttpClientOptions());
+    }
+
+    public ApacheAsyncHttpClient(String applicationName, final HttpClientOptions options) {
+        this(Suppliers.ofInstance(applicationName), input -> null, new NoOpThreadLocalContextManager<>(), options);
     }
 
     public ApacheAsyncHttpClient(final Supplier<String> applicationName,
@@ -148,10 +163,10 @@ final class ApacheAsyncHttpClient<C> extends AbstractHttpClient implements HttpC
 
         try {
             final IOReactorConfig reactorConfig = IOReactorConfig.custom()
-                .setIoThreadCount(options.getIoThreadCount())
-                .setSelectInterval(options.getIoSelectInterval())
-                .setInterestOpQueued(true)
-                .build();
+                    .setIoThreadCount(options.getIoThreadCount())
+                    .setSelectInterval(options.getIoSelectInterval())
+                    .setInterestOpQueued(true)
+                    .build();
 
             final DefaultConnectingIOReactor ioReactor = new DefaultConnectingIOReactor(reactorConfig);
             ioReactor.setExceptionHandler(new IOReactorExceptionHandler() {
@@ -177,13 +192,13 @@ final class ApacheAsyncHttpClient<C> extends AbstractHttpClient implements HttpC
             }
 
             final PoolingNHttpClientConnectionManager connectionManager = new PoolingNHttpClientConnectionManager(
-                ioReactor,
-                ManagedNHttpClientConnectionFactory.INSTANCE,
-                getRegistry(options),
-                DefaultSchemePortResolver.INSTANCE,
-                resolver::resolve,
-                options.getConnectionPoolTimeToLive(),
-                TimeUnit.MILLISECONDS) {
+                    ioReactor,
+                    ManagedNHttpClientConnectionFactory.INSTANCE,
+                    getRegistry(options),
+                    DefaultSchemePortResolver.INSTANCE,
+                    resolver::resolve,
+                    options.getConnectionPoolTimeToLive(),
+                    TimeUnit.MILLISECONDS) {
                 @SuppressWarnings("MethodDoesntCallSuperMethod")
                 @Override
                 protected void finalize() {
@@ -195,30 +210,31 @@ final class ApacheAsyncHttpClient<C> extends AbstractHttpClient implements HttpC
             };
 
             final RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout((int) options.getConnectionTimeout())
-                .setConnectionRequestTimeout((int) options.getLeaseTimeout())
-                .setCookieSpec(options.getIgnoreCookies() ? CookieSpecs.IGNORE_COOKIES : CookieSpecs.DEFAULT)
-                .setSocketTimeout((int) options.getSocketTimeout())
-                .build();
+                    .setConnectTimeout((int) options.getConnectionTimeout())
+                    .setConnectionRequestTimeout((int) options.getLeaseTimeout())
+                    .setCookieSpec(options.getIgnoreCookies() ? CookieSpecs.IGNORE_COOKIES : CookieSpecs.DEFAULT)
+                    .setSocketTimeout((int) options.getSocketTimeout())
+                    .build();
 
             connectionManager.setDefaultMaxPerRoute(options.getMaxConnectionsPerHost());
             connectionManager.setMaxTotal(options.getMaxTotalConnections());
 
             final HttpAsyncClientBuilder clientBuilder = HttpAsyncClients.custom()
-                .setThreadFactory(ThreadFactories.namedThreadFactory(options.getThreadPrefix() + "-io", ThreadFactories.Type.DAEMON))
-                .setDefaultIOReactorConfig(reactorConfig)
-                .setConnectionManager(connectionManager)
-                .setRedirectStrategy(new RedirectStrategy())
-                .setUserAgent(getUserAgent(options))
-                .setDefaultRequestConfig(requestConfig);
+                    .setThreadFactory(ThreadFactories.namedThreadFactory(options.getThreadPrefix() + "-io", ThreadFactories.Type.DAEMON))
+                    .setDefaultIOReactorConfig(reactorConfig)
+                    .setConnectionManager(connectionManager)
+                    .setRedirectStrategy(new RedirectStrategy())
+                    .setUserAgent(getUserAgent(options))
+                    .setDefaultRequestConfig(requestConfig);
 
-            // set up a route planner if there is proxy configuration
+// CHANGE - Begin
             options.getProxyOptions().getProxyHosts().values().stream().findFirst().ifPresent(proxyHost -> {
                 clientBuilder.setRoutePlanner(
                     (target, request, context) ->
                         new HttpRoute(target, new HttpHost(proxyHost.getHostName(), proxyHost.getPort(), proxyHost.getSchemeName()))
                 );
             });
+            // set up a route planner if there is proxy configuration
 //            ProxyConfigFactory.getProxyConfig(options).forEach(proxyConfig -> {
 //                // don't be fooled by its name. If SystemDefaultRoutePlanner is passed a proxy selector it will use that
 //                // instead of creating the default one that reads system properties
@@ -229,16 +245,17 @@ final class ApacheAsyncHttpClient<C> extends AbstractHttpClient implements HttpC
 //                    clientBuilder.setDefaultCredentialsProvider(credsProvider);
 //                });
 //            });
+// CHANGE - End
 
             this.nonCachingHttpClient = new BoundedHttpAsyncClient(clientBuilder.build(),
-                Ints.saturatedCast(options.getMaxEntitySize()));
+                    Ints.saturatedCast(options.getMaxEntitySize()));
 
             final CacheConfig cacheConfig = CacheConfig.custom()
-                .setMaxCacheEntries(options.getMaxCacheEntries())
-                .setSharedCache(false)
-                .setNeverCacheHTTP10ResponsesWithQueryString(false)
-                .setMaxObjectSize(options.getMaxCacheObjectSize())
-                .build();
+                    .setMaxCacheEntries(options.getMaxCacheEntries())
+                    .setSharedCache(false)
+                    .setNeverCacheHTTP10ResponsesWithQueryString(false)
+                    .setMaxObjectSize(options.getMaxCacheObjectSize())
+                    .build();
 
             this.httpCacheStorage = new LoggingHttpCacheStorage(new FlushableHttpCacheStorageImpl(cacheConfig));
             this.httpClient = new CachingHttpAsyncClient(nonCachingHttpClient, httpCacheStorage, cacheConfig);
@@ -255,23 +272,23 @@ final class ApacheAsyncHttpClient<C> extends AbstractHttpClient implements HttpC
             final SSLContext sslContext;
             if (options.trustSelfSignedCertificates()) {
                 sslContext = SSLContexts.custom()
-                    .setProtocol(TLS)
-                    .loadTrustMaterial(null, new TrustSelfSignedStrategy())
-                    .build();
+                                     .setProtocol(TLS)
+                                     .loadTrustMaterial(null, new TrustSelfSignedStrategy())
+                                     .build();
             } else {
                 sslContext = SSLContexts.createSystemDefault();
             }
 
             final SSLIOSessionStrategy sslioSessionStrategy = new SSLIOSessionStrategy(
-                sslContext,
-                firstNonNull(options.getSupportedProtocols(), split(System.getProperty("https.protocols"))),
-                split(System.getProperty("https.cipherSuites")),
-                options.trustSelfSignedCertificates() ? getSelfSignedVerifier() : getDefaultHostnameVerifier());
+                    sslContext,
+                    firstNonNull(options.getSupportedProtocols(), split(System.getProperty("https.protocols"))),
+                    split(System.getProperty("https.cipherSuites")),
+                    options.trustSelfSignedCertificates() ? getSelfSignedVerifier() : getDefaultHostnameVerifier());
 
             return RegistryBuilder.<SchemeIOSessionStrategy>create()
-                .register("http", NoopIOSessionStrategy.INSTANCE)
-                .register("https", sslioSessionStrategy)
-                .build();
+                    .register("http", NoopIOSessionStrategy.INSTANCE)
+                    .register("https", sslioSessionStrategy)
+                    .build();
         } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
             return getFallbackRegistry(e);
         }
@@ -287,16 +304,16 @@ final class ApacheAsyncHttpClient<C> extends AbstractHttpClient implements HttpC
     private Registry<SchemeIOSessionStrategy> getFallbackRegistry(final GeneralSecurityException e) {
         log.error("Error when creating scheme session strategy registry", e);
         return RegistryBuilder.<SchemeIOSessionStrategy>create()
-            .register("http", NoopIOSessionStrategy.INSTANCE)
-            .register("https", SSLIOSessionStrategy.getDefaultStrategy())
-            .build();
+                .register("http", NoopIOSessionStrategy.INSTANCE)
+                .register("https", SSLIOSessionStrategy.getDefaultStrategy())
+                .build();
     }
 
     private String getUserAgent(HttpClientOptions options) {
         return format("Atlassian HttpClient %s / %s / %s",
-            httpClientVersion.get(),
-            applicationName.get(),
-            options.getUserAgent());
+                httpClientVersion.get(),
+                applicationName.get(),
+                options.getUserAgent());
     }
 
     @Override
@@ -350,56 +367,56 @@ final class ApacheAsyncHttpClient<C> extends AbstractHttpClient implements HttpC
 
         final PromiseHttpAsyncClient asyncClient = getPromiseHttpAsyncClient(request);
         return ResponsePromises.toResponsePromise(asyncClient.execute(op, new BasicHttpContext()).fold(
-            ex -> {
-                final long requestDuration = System.currentTimeMillis() - start;
-                Throwable exception = maybeTranslate(ex);
-                publishEvent(request, requestDuration, exception);
-                Throwables.throwIfUnchecked(exception);
-                throw new RuntimeException(exception);
-            },
-            httpResponse -> {
-                final long requestDuration = System.currentTimeMillis() - start;
-                publishEvent(request, requestDuration, httpResponse.getStatusLine().getStatusCode());
-                try {
-                    return translate(httpResponse);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
+                ex -> {
+                    final long requestDuration = System.currentTimeMillis() - start;
+                    Throwable exception = maybeTranslate(ex);
+                    publishEvent(request, requestDuration, exception);
+                    Throwables.throwIfUnchecked(exception);
+                    throw new RuntimeException(exception);
+                },
+                httpResponse -> {
+                    final long requestDuration = System.currentTimeMillis() - start;
+                    publishEvent(request, requestDuration, httpResponse.getStatusLine().getStatusCode());
+                    try {
+                        return translate(httpResponse);
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
                 }
-            }
         ));
     }
 
     private void publishEvent(Request request, long requestDuration, int statusCode) {
         if (HttpStatus.OK.code <= statusCode && statusCode < HttpStatus.MULTIPLE_CHOICES.code) {
             eventConsumer.apply(new HttpRequestCompletedEvent(
-                request.getUri().toString(),
-                request.getMethod().name(),
-                statusCode,
-                requestDuration,
-                request.getAttributes()));
+                    request.getUri().toString(),
+                    request.getMethod().name(),
+                    statusCode,
+                    requestDuration,
+                    request.getAttributes()));
         } else {
             eventConsumer.apply(new HttpRequestFailedEvent(
-                request.getUri().toString(),
-                request.getMethod().name(),
-                statusCode,
-                requestDuration,
-                request.getAttributes()));
+                    request.getUri().toString(),
+                    request.getMethod().name(),
+                    statusCode,
+                    requestDuration,
+                    request.getAttributes()));
         }
     }
 
     private void publishEvent(Request request, long requestDuration, Throwable ex) {
         eventConsumer.apply(new HttpRequestFailedEvent(
-            request.getUri().toString(),
-            request.getMethod().name(),
-            ex.toString(),
-            requestDuration,
-            request.getAttributes()));
+                request.getUri().toString(),
+                request.getMethod().name(),
+                ex.toString(),
+                requestDuration,
+                request.getAttributes()));
     }
 
     private PromiseHttpAsyncClient getPromiseHttpAsyncClient(Request request) {
         return new SettableFuturePromiseHttpPromiseAsyncClient<>(
-            request.isCacheDisabled() ? nonCachingHttpClient : httpClient,
-            threadLocalContextManager, callbackExecutor);
+                request.isCacheDisabled() ? nonCachingHttpClient : httpClient,
+                threadLocalContextManager, callbackExecutor);
     }
 
     private Throwable maybeTranslate(Throwable ex) {
@@ -418,9 +435,9 @@ final class ApacheAsyncHttpClient<C> extends AbstractHttpClient implements HttpC
     private Response translate(HttpResponse httpResponse) throws IOException {
         StatusLine status = httpResponse.getStatusLine();
         Response.Builder responseBuilder = DefaultResponse.builder()
-            .setMaxEntitySize(httpClientOptions.getMaxEntitySize())
-            .setStatusCode(status.getStatusCode())
-            .setStatusText(status.getReasonPhrase());
+                .setMaxEntitySize(httpClientOptions.getMaxEntitySize())
+                .setStatusCode(status.getStatusCode())
+                .setStatusText(status.getReasonPhrase());
 
         Header[] httpHeaders = httpResponse.getAllHeaders();
         for (Header httpHeader : httpHeaders) {
@@ -444,6 +461,21 @@ final class ApacheAsyncHttpClient<C> extends AbstractHttpClient implements HttpC
         httpCacheStorage.flushByUriPattern(urlPattern);
     }
 
+    private static final class NoOpThreadLocalContextManager<C> implements ThreadLocalContextManager<C> {
+        @Override
+        public C getThreadLocalContext() {
+            return null;
+        }
+
+        @Override
+        public void setThreadLocalContext(C context) {
+        }
+
+        @Override
+        public void clearThreadLocalContext() {
+        }
+    }
+
     private static final class DefaultApplicationNameSupplier implements Supplier<String> {
         private final ApplicationProperties applicationProperties;
 
@@ -454,9 +486,9 @@ final class ApacheAsyncHttpClient<C> extends AbstractHttpClient implements HttpC
         @Override
         public String get() {
             return format("%s-%s (%s)",
-                applicationProperties.getDisplayName(),
-                applicationProperties.getVersion(),
-                applicationProperties.getBuildNumber());
+                    applicationProperties.getDisplayName(),
+                    applicationProperties.getVersion(),
+                    applicationProperties.getBuildNumber());
         }
     }
 

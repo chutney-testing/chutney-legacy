@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2012 Atlassian
+ * Copyright 2017-2023 Enedis
+ * Copyright (C) Atlassian
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.chutneytesting.jira.infra.atlassian;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+package com.chutneytesting.jira.infra.atlassian.httpclient.apache.httpcomponents;
 
 import com.atlassian.sal.api.executor.ThreadLocalContextManager;
 import com.google.common.annotations.VisibleForTesting;
 import io.atlassian.util.concurrent.Promise;
 import io.atlassian.util.concurrent.Promises;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeoutException;
-import javax.annotation.Nonnull;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.apache.http.protocol.HttpContext;
 
+import javax.annotation.Nonnull;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeoutException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+/**
+ * @see com.httpclient.apache.httpcomponents.SettableFuturePromiseHttpPromiseAsyncClient
+ */
 final class SettableFuturePromiseHttpPromiseAsyncClient<C> implements PromiseHttpAsyncClient {
     private final HttpAsyncClient client;
     private final ThreadLocalContextManager<C> threadLocalContextManager;
@@ -39,13 +44,13 @@ final class SettableFuturePromiseHttpPromiseAsyncClient<C> implements PromiseHtt
     SettableFuturePromiseHttpPromiseAsyncClient(HttpAsyncClient client, ThreadLocalContextManager<C> threadLocalContextManager, Executor executor) {
         this.client = checkNotNull(client);
         this.threadLocalContextManager = checkNotNull(threadLocalContextManager);
-        this.executor = new SettableFuturePromiseHttpPromiseAsyncClient.ThreadLocalDelegateExecutor<>(threadLocalContextManager, executor);
+        this.executor = new ThreadLocalDelegateExecutor<>(threadLocalContextManager, executor);
     }
 
     @Override
     public Promise<HttpResponse> execute(HttpUriRequest request, HttpContext context) {
         final CompletableFuture<HttpResponse> future = new CompletableFuture<>();
-        client.execute(request, context, new SettableFuturePromiseHttpPromiseAsyncClient.ThreadLocalContextAwareFutureCallback<C, HttpResponse>(threadLocalContextManager) {
+        client.execute(request, context, new ThreadLocalContextAwareFutureCallback<C, HttpResponse>(threadLocalContextManager) {
             @Override
             void doCompleted(final HttpResponse httpResponse) {
                 executor.execute(() -> future.complete(httpResponse));
@@ -122,7 +127,7 @@ final class SettableFuturePromiseHttpPromiseAsyncClient<C> implements PromiseHtt
         }
 
         public void execute(@Nonnull final Runnable runnable) {
-            delegate.execute(new SettableFuturePromiseHttpPromiseAsyncClient.ThreadLocalDelegateRunnable<>(manager, runnable));
+            delegate.execute(new ThreadLocalDelegateRunnable<>(manager, runnable));
         }
     }
 

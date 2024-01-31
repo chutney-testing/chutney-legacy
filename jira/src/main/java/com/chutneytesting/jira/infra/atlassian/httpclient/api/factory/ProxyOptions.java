@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2012 Atlassian
+ * Copyright 2017-2023 Enedis
+ * Copyright (C) Atlassian
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.chutneytesting.jira.infra.atlassian;
+package com.chutneytesting.jira.infra.atlassian.httpclient.api.factory;
 
-import com.atlassian.httpclient.api.factory.Scheme;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nonnull;
+
+// CHANGE - Begin
+import com.atlassian.httpclient.api.factory.Scheme;
 import org.apache.hc.core5.http.HttpHost;
+// CHANGE - End
 
 /**
- * Contains proxy configuration for the HTTP client.
- * Use Apache Host definition.
+ * Contains proxy configuration for the HTTP client
  *
+ * <pre>
+ *  Changes :
+ *   - Use Apache HttpHost's class
+ *  </pre>
  * @see com.atlassian.httpclient.api.factory.ProxyOptions
  */
 public class ProxyOptions {
@@ -45,7 +53,9 @@ public class ProxyOptions {
      *
      * @return the mapping of schemes and their proxy hosts.
      */
+// CHANGE - Begin
     public Map<Scheme, HttpHost> getProxyHosts() {
+// CHANGE - End
         return Collections.unmodifiableMap(proxyHostMap);
     }
 
@@ -69,7 +79,9 @@ public class ProxyOptions {
 
     private final ProxyMode proxyMode;
 
+// CHANGE - Begin
     private ProxyOptions(ProxyMode mode, Map<Scheme, HttpHost> proxyHostMap, Map<Scheme, List<String>> nonProxyHosts) {
+// CHANGE - End
         this.proxyMode = mode;
         this.proxyHostMap = proxyHostMap;
         this.nonProxyHosts = nonProxyHosts;
@@ -79,7 +91,9 @@ public class ProxyOptions {
      * Use this builder to create a ProxyOptions
      */
     public static class ProxyOptionsBuilder {
+// CHANGE - Begin
         private Map<Scheme, HttpHost> proxyHostMap = new HashMap<Scheme, HttpHost>();
+// CHANGE - End
 
         private Map<Scheme, List<String>> nonProxyHosts = new HashMap<Scheme, List<String>>();
 
@@ -133,7 +147,9 @@ public class ProxyOptions {
          * @param proxyHost the proxy host
          * @return Builder with appropriate settings
          */
+// CHANGE - Begin
         public ProxyOptionsBuilder withProxy(final @Nonnull Scheme scheme, final @Nonnull HttpHost proxyHost) {
+// CHANGE - End
             Preconditions.checkNotNull(proxyHost, "Proxy host cannot be null");
             Preconditions.checkNotNull(scheme, "Scheme must not be null");
 
@@ -167,7 +183,9 @@ public class ProxyOptions {
          * @param nonProxyHosts List of hosts that we shouldn't use the proxy for
          * @return Builder with appropriate settings
          */
+// CHANGE - Begin
         public ProxyOptionsBuilder withProxy(Map<Scheme, HttpHost> proxyHostMap, Map<Scheme, List<String>> nonProxyHosts) {
+// CHANGE - End
             this.proxyHostMap = proxyHostMap;
             this.nonProxyHosts = nonProxyHosts;
             proxyMode = ProxyMode.CONFIGURED;

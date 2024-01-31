@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2012 Atlassian
+ * Copyright 2017-2023 Enedis
+ * Copyright (C) Atlassian
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.chutneytesting.jira.infra.atlassian;
+package com.chutneytesting.jira.infra.atlassian.httpclient.api.factory;
 
 import com.atlassian.httpclient.api.HostResolver;
 import com.atlassian.httpclient.api.Request;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import io.atlassian.util.concurrent.ThreadFactories;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.function.Consumer;
+
 /**
  * Configuration options for the http client instance and its caching system
- * <p>
- * Use local ProxyOptions.
  *
+ * <pre>
+ *  *  Changes :
+ *  *   - Use local package ProxyOptions class
+ *  *  </pre>
  * @see com.atlassian.httpclient.api.factory.HttpClientOptions
  */
 public final class HttpClientOptions {
@@ -72,8 +72,7 @@ public final class HttpClientOptions {
 
     private boolean trustSelfSignedCertificates = false;
 
-    private Consumer<Request> requestPreparer = request -> {
-    };
+    private Consumer<Request> requestPreparer = request -> {};
 
     private String userAgent = "Default";
 
@@ -385,19 +384,19 @@ public final class HttpClientOptions {
     private ExecutorService defaultCallbackExecutor() {
         ThreadFactory threadFactory = ThreadFactories.namedThreadFactory(getThreadPrefix() + "-callbacks", ThreadFactories.Type.DAEMON);
         return new ThreadPoolExecutor(
-            0,
-            getMaxCallbackThreadPoolSize(),
-            60L,
-            TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(threadWorkQueueLimit),
-            threadFactory,
-            (r, e) -> log.warn(
-                "Exceeded the limit of requests waiting for execution. " +
-                    " Increase the value of the system property {} to prevent these situations in the " +
-                    "future. Current value of {} = {}.",
-                OPTION_THREAD_WORK_QUEUE_LIMIT,
-                OPTION_THREAD_WORK_QUEUE_LIMIT,
-                threadWorkQueueLimit)
+                0,
+                getMaxCallbackThreadPoolSize(),
+                60L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(threadWorkQueueLimit),
+                threadFactory,
+                (r, e) -> log.warn(
+                        "Exceeded the limit of requests waiting for execution. " +
+                                " Increase the value of the system property {} to prevent these situations in the " +
+                                "future. Current value of {} = {}.",
+                        OPTION_THREAD_WORK_QUEUE_LIMIT,
+                        OPTION_THREAD_WORK_QUEUE_LIMIT,
+                        threadWorkQueueLimit)
         );
     }
 
