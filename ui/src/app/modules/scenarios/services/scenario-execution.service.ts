@@ -92,7 +92,6 @@ export class ScenarioExecutionService {
                     obs.next(this.buildExecutionReportFromEvent(JSON.parse(evt.data)));
                 });
                 es.addEventListener('last', (evt: any) => {
-                    obs.next(this.buildExecutionReportFromEvent(JSON.parse(evt.data)));
                     obs.complete();
                 });
             } catch (error) {

@@ -17,7 +17,7 @@
 import { Component, EventEmitter, Input, Renderer2, OnDestroy, OnInit, Output, AfterViewInit, TemplateRef, ElementRef, AfterViewChecked, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Observable, Subscription, fromEvent, merge, timer } from 'rxjs';
-import { debounceTime, delay, throttleTime } from 'rxjs/operators';
+import { auditTime, debounceTime, delay, delayWhen, retryWhen, scan, takeWhile, throttleTime, timestamp } from 'rxjs/operators';
 import { FileSaverService } from 'ngx-filesaver';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { NGX_MONACO_EDITOR_CONFIG } from 'ngx-monaco-editor-v2';
@@ -248,7 +248,17 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
         let executionStatus: ExecutionStatus;
         let executionError: string;
         return scenarioExecutionReportsObservable
-            .pipe(debounceTime(500))
+            .pipe(
+                auditTime(500),
+                retryWhen(errors =>
+                    errors.pipe(
+                        timestamp(),
+                        scan((retryCountAccumulator, error) => this.updateAccumulator(retryCountAccumulator, error), { count: 0, timestamp: 0 , lastTimestamp: 0, beforeLastTimestamp: 0}),
+                        delayWhen(() => timer(500)),
+                        takeWhile((retryCountAccumulator) => !this.retriedTwiceInLessThanOneSecond(retryCountAccumulator) )
+                    )
+                )
+            )
             .subscribe({
                 next: (scenarioExecutionReport: ScenarioExecutionReport) => {
                     executionStatus = ExecutionStatus[scenarioExecutionReport.report.status];
@@ -272,9 +282,25 @@ export class ScenarioExecutionComponent implements OnInit, OnDestroy, AfterViewI
                 },
                 complete: () => {
                     this.onExecutionStatusUpdate.emit({ status: executionStatus, error: executionError });
-                    this.ngOnInit();
+                    this.loadScenarioExecution(this.execution.executionId);
                 }
             });
+    }
+
+    private updateAccumulator(retryCountAccumulator: { count: number; timestamp: number; lastTimestamp: number; beforeLastTimestamp: number }, error: any) {
+        return {
+            count: retryCountAccumulator.count + 1,
+            timestamp: error.timestamp,
+            lastTimestamp: retryCountAccumulator.timestamp,
+            beforeLastTimestamp: retryCountAccumulator.lastTimestamp
+        };
+    }
+
+    private retriedTwiceInLessThanOneSecond(retryCountAccumulator: { count: number; timestamp: number; lastTimestamp: number; beforeLastTimestamp: number }) {
+        let retriedTwice = retryCountAccumulator.count > 2;
+        let lastRetryWasInLessThanOneSecond = retryCountAccumulator.timestamp - retryCountAccumulator.lastTimestamp < 1000;
+        let beforeLastRetryWasInLessThanOneSecond = retryCountAccumulator.lastTimestamp - retryCountAccumulator.beforeLastTimestamp < 1000;
+        return retriedTwice && lastRetryWasInLessThanOneSecond && beforeLastRetryWasInLessThanOneSecond;
     }
 
     private getExecutionError(scenarioExecutionReport: ScenarioExecutionReport) {

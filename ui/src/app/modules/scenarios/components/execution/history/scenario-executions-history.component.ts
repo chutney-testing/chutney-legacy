@@ -125,7 +125,9 @@ export class ScenarioExecutionsHistoryComponent implements OnInit, OnDestroy {
 
     updateExecutionStatus(executionId: number, update: { status: ExecutionStatus, error: string }) {
         const execution = this.getExecution(executionId.toString());
-        execution.status = update.status;
+        if(update.status in ExecutionStatus) {
+            execution.status = update.status;
+        }
         execution.error = update.error;
     }
 
