@@ -92,7 +92,7 @@
         <immutables.version>2.10.0</immutables.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <commonstext.version>1.10.0</commonstext.version> <!-- Follow commons-lang3 spring boot version -->
-        <commonsio.version>2.11.0</commonsio.version>
+        <commonsio.version>2.15.1</commonsio.version>
         <glacio.version>0.0.1</glacio.version>
         <hjson.version>3.1.0</hjson.version>
         <jsr305.version>3.0.2</jsr305.version>
