@@ -1,27 +1,22 @@
-<div class="database-admin-container m-3">
-    <div class="row text-center">
-        <div class="col-4 text-center input-group input-group-sm">
-            <div class="col-2"></div>
-            <div class="col-4 text-center">
+<div>
+    <div class="row">
+        <div class="col justify-content-center input-group input-group-sm">
+            <div class="w30">
                 <chutney-forms-search-field [id]="'scenario-search'"
-                                        [placeholder]="'scenarios.search.placeholder-search-report' | translate"
-                                        [searchInput]="query"
-                                        (searchInputEvent)="updateQuery($event)"></chutney-forms-search-field>
+                                            [placeholder]="'scenarios.search.placeholder-search-report' | translate"
+                                            [searchInput]="query"
+                                            (searchInputEvent)="updateQuery($event)"></chutney-forms-search-field>
             </div>
-            <div class="text-center mx-2">
+            <div class="mx-2">
                 <button class="btn btn-success" (click)="searchQuery()">
                     <span class="fa fa-play me-2" aria-hidden="true"></span> {{'global.actions.execute' | translate}}
                 </button>
             </div>
         </div>
     </div>
-    <div class="row sql-result mt-3">
-        <ul class="sticky-top">
-            <li>
-                    <database-admin-report-list [executions]="executions"
-                                                 [(filters)]="executionsFilters"
-                                                 (onExecutionSelect)="openReport($event)"></database-admin-report-list>
-            </li>
-        </ul>
+    <div class="row mt-1">
+        <database-admin-report-list [executions]="executions"
+                                    [(filters)]="executionsFilters"
+                                    (onExecutionSelect)="openReport($event)"></database-admin-report-list>
     </div>
 </div>
