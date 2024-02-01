@@ -425,12 +425,10 @@ public class DatabaseExecutionHistoryRepositoryTest {
         @Test
         void should_return_scenario_execution_where_report_match_query_for_activated_scenario() {
             clearTables();
-            String scenarioId1 = databaseTestCaseRepository.save(GwtTestCase.builder().withMetadata(TestCaseMetadataImpl.builder().withId("123456789").build()).withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build()).build());
-            String scenarioId2 = databaseTestCaseRepository.save(GwtTestCase.builder().withMetadata(TestCaseMetadataImpl.builder().withId("987654321").build()).withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build()).build());
-            DetachedExecution detachedExecution1 = ImmutableExecutionHistory.DetachedExecution.builder().report("toto").time(LocalDateTime.now()).duration(123L).status(SUCCESS).testCaseTitle("TEST").environment("ENV").user("USER").build();
-            DetachedExecution detachedExecution2 = ImmutableExecutionHistory.DetachedExecution.builder().report("tutu").time(LocalDateTime.now()).duration(123L).status(SUCCESS).testCaseTitle("TEST").environment("ENV").user("USER").build();
-            Execution exec1 = sut.store(scenarioId1, detachedExecution1);
-            Execution exec2 = sut.store(scenarioId2, detachedExecution2);
+            String scenarioId1 = givenScenario().getId().toString();
+            String scenarioId2 = givenScenario().getId().toString();
+            Execution exec1 = sut.store(scenarioId1, buildDetachedExecution("toto"));
+            sut.store(scenarioId2, buildDetachedExecution("tutu"));
 
             List<ExecutionSummary> executionSummaryList = sut.getExecutionReportMatchQuery("to");
 
@@ -444,10 +442,8 @@ public class DatabaseExecutionHistoryRepositoryTest {
             clearTables();
             String scenarioId1 = databaseTestCaseRepository.save(GwtTestCase.builder().withMetadata(TestCaseMetadataImpl.builder().withId("123456789").build()).withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build()).build());
             String scenarioId2 = databaseTestCaseRepository.save(GwtTestCase.builder().withMetadata(TestCaseMetadataImpl.builder().withId("987654321").build()).withScenario(GwtScenario.builder().withWhen(GwtStep.NONE).build()).build());
-            DetachedExecution detachedExecution1 = ImmutableExecutionHistory.DetachedExecution.builder().report("toto").time(LocalDateTime.now()).duration(123L).status(SUCCESS).testCaseTitle("TEST").environment("ENV").user("USER").build();
-            DetachedExecution detachedExecution2 = ImmutableExecutionHistory.DetachedExecution.builder().report("tutu").time(LocalDateTime.now()).duration(123L).status(SUCCESS).testCaseTitle("TEST").environment("ENV").user("USER").build();
-            Execution exec1 = sut.store(scenarioId1, detachedExecution1);
-            Execution exec2 = sut.store(scenarioId2, detachedExecution2);
+            Execution exec1 = sut.store(scenarioId1, buildDetachedExecution("toto"));
+            sut.store(scenarioId2, buildDetachedExecution("tutu"));
             databaseTestCaseRepository.removeById(scenarioId2);
 
             List<ExecutionSummary> executionSummaryList = sut.getExecutionReportMatchQuery("t");
@@ -455,6 +451,19 @@ public class DatabaseExecutionHistoryRepositoryTest {
             assertThat(executionSummaryList).hasSize(1);
             assertThat(executionSummaryList.get(0).executionId()).isEqualTo(exec1.executionId());
             assertThat(exec1.report()).isEqualTo("toto");
+        }
+
+        private DetachedExecution buildDetachedExecution(String report) {
+            return ImmutableExecutionHistory.DetachedExecution.builder()
+                .time(LocalDateTime.now())
+                .duration(12L)
+                .status(SUCCESS)
+                .report(report)
+                .testCaseTitle("Fake title")
+                .environment("")
+                .datasetId("fake dataset id")
+                .user("")
+                .build();
         }
 
         private DetachedExecution buildDetachedExecution(ServerReportStatus status, String info, String error) {

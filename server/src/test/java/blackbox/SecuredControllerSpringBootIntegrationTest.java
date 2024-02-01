@@ -102,8 +102,7 @@ public class SecuredControllerSpringBootIntegrationTest {
             {GET, "/api/v1/backups/id/download", "ADMIN_ACCESS", null, OK},
             {GET, "/api/v1/backups/backupables", "ADMIN_ACCESS", null, OK},
 
-            {POST, "/api/v1/admin/database/execute/jdbc", "ADMIN_ACCESS", "select 1", OK},
-            {POST, "/api/v1/admin/database/paginate/jdbc", "ADMIN_ACCESS", "{\"pageNumber\":1,\"elementPerPage\":1,\"wrappedRequest\":\"\"}", OK},
+            {GET, "/api/v1/admin/database/execution?query=abc", "ADMIN_ACCESS", null, OK},
 
             {POST, "/api/v1/agentnetwork/configuration", "ADMIN_ACCESS", "{}", OK},
             {GET, "/api/v1/description", "ADMIN_ACCESS", null, OK},
@@ -122,13 +121,13 @@ public class SecuredControllerSpringBootIntegrationTest {
             {DELETE, "/api/ui/campaign/v1/scheduling/666", "CAMPAIGN_WRITE", null, OK},
 
             {GET, "/api/ui/campaign/execution/v1/campaignName", "CAMPAIGN_EXECUTE", null, OK},
-            {GET, "/api/ui/campaign/execution/v1/campaignName/env", "CAMPAIGN_EXECUTE", null, OK},
+            {GET, "/api/ui/campaign/execution/v1/campaignName/DEFAULT", "CAMPAIGN_EXECUTE", null, OK},
             {POST, "/api/ui/campaign/execution/v1/replay/666", "CAMPAIGN_EXECUTE", "{}", NOT_FOUND},
             {GET, "/api/ui/campaign/execution/v1/campaignPattern/surefire", "CAMPAIGN_EXECUTE", null, OK},
-            {GET, "/api/ui/campaign/execution/v1/campaignPattern/surefire/env", "CAMPAIGN_EXECUTE", null, OK},
+            {GET, "/api/ui/campaign/execution/v1/campaignPattern/surefire/DEFAULT", "CAMPAIGN_EXECUTE", null, OK},
             {POST, "/api/ui/campaign/execution/v1/666/stop", "CAMPAIGN_EXECUTE", "{}", NOT_FOUND},
             {GET, "/api/ui/campaign/execution/v1/byID/666", "CAMPAIGN_EXECUTE", null, NOT_FOUND},
-            {GET, "/api/ui/campaign/execution/v1/byID/666/env", "CAMPAIGN_EXECUTE", null, NOT_FOUND},
+            {GET, "/api/ui/campaign/execution/v1/byID/666/DEFAULT", "CAMPAIGN_EXECUTE", null, NOT_FOUND},
 
             {GET, "/api/v1/editions/testcases/testcaseId", "SCENARIO_READ", null, OK},
             {POST, "/api/v1/editions/testcases/testcaseId", "SCENARIO_WRITE", "{}", NOT_FOUND},
@@ -173,9 +172,9 @@ public class SecuredControllerSpringBootIntegrationTest {
             {GET, "/api/ui/scenario/123/execution/v1", "SCENARIO_READ", null, OK},
             {GET, "/api/ui/scenario/123/execution/666/v1", "SCENARIO_READ", null, NOT_FOUND},
             {GET, "/api/ui/scenario/execution/666/summary/v1", "SCENARIO_READ", null, NOT_FOUND},
-            {POST, "/api/ui/scenario/execution/v1/scenarioId/env", "SCENARIO_EXECUTE", null, NOT_FOUND},
-            {POST, "/api/idea/scenario/execution/env", "SCENARIO_EXECUTE", "{\"content\":\"{\\\"when\\\":{}}\",\"params\":{}} ", OK},
-            {POST, "/api/ui/scenario/executionasync/v1/scenarioId/env", "SCENARIO_EXECUTE", "[]", NOT_FOUND},
+            {POST, "/api/ui/scenario/execution/v1/scenarioId/secuenv", "SCENARIO_EXECUTE", null, NOT_FOUND},
+            {POST, "/api/idea/scenario/execution/DEFAULT", "SCENARIO_EXECUTE", "{\"content\":\"{\\\"when\\\":{}}\",\"params\":{}} ", OK},
+            {POST, "/api/ui/scenario/executionasync/v1/scenarioId/DEFAULT", "SCENARIO_EXECUTE", "[]", NOT_FOUND},
             {GET, "/api/ui/scenario/executionasync/v1/scenarioId/execution/666", "SCENARIO_READ", null, NOT_FOUND},
             {POST, "/api/ui/scenario/executionasync/v1/scenarioId/execution/666/stop", "SCENARIO_EXECUTE", null, NOT_FOUND},
             {POST, "/api/ui/scenario/executionasync/v1/scenarioId/execution/666/pause", "SCENARIO_EXECUTE", null, NOT_FOUND},
@@ -203,7 +202,7 @@ public class SecuredControllerSpringBootIntegrationTest {
             {POST, "/api/v2/targets", "ENVIRONMENT_ACCESS", "{\"name\":\"targetName\",\"url\":\"http://localhost\", \"environment\":\"secuenv\"}", OK},
             {PUT, "/api/v2/targets/targetName", "ENVIRONMENT_ACCESS", "{\"name\":\"targetName\",\"url\":\"https://localhost\", \"environment\":\"secuenv\"}", OK},
 
-            // Must be at the end because the network configuration is in wrong staten, why ??
+            // Must be at the end because the network configuration is in wrong state, why ??
             {POST, "/api/v1/agentnetwork/wrapup", "ADMIN_ACCESS", "{\"agentsGraph\":{\"agents\":[]},\"networkConfiguration\":{\"creationDate\":\"2021-09-06T10:08:36.569227Z\",\"agentNetworkConfiguration\":[],\"environmentsConfiguration\":[]}}", OK},
         };
     }
