@@ -86,7 +86,7 @@
 
         <!-- Runtime dependencies versions -->
         <springboot.version>3.2.1</springboot.version>
-        <guava.version>31.0.1-jre</guava.version> <!-- Divergence on dependencies checker-qual and error_prone_annotations --> <!-- Test on https://github.com/FasterXML/jackson-datatypes-collections/tree/2.14/guava -->
+        <guava.version>33.0.0-jre</guava.version> <!-- Divergence on dependencies checker-qual and error_prone_annotations --> <!-- Test on https://github.com/FasterXML/jackson-datatypes-collections/tree/2.14/guava -->
 
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <immutables.version>2.9.0</immutables.version>
