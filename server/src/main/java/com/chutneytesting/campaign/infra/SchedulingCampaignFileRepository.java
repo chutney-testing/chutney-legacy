@@ -26,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -59,6 +60,8 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
     private final ObjectMapper objectMapper = new ObjectMapper()
         .findAndRegisterModules()
         .registerModule(new JavaTimeModule())
+        .registerModule(new SimpleModule()
+            .addDeserializer(SchedulingCampaignDto.class, new SchedulingCampaignsDtoDeserializer()))
         .enable(SerializationFeature.INDENT_OUTPUT)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
     private final ReadWriteLock rwLock;
@@ -140,10 +143,10 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
     }
 
     private PeriodicScheduledCampaign fromDto(SchedulingCampaignDto dto) {
-        return new PeriodicScheduledCampaign(Long.valueOf(dto.id), dto.campaignId, dto.campaignTitle, dto.schedulingDate, toFrequency(dto.frequency));
+        return new PeriodicScheduledCampaign(Long.valueOf(dto.id), dto.campaignsId, dto.campaignsTitle, dto.schedulingDate, toFrequency(dto.frequency));
     }
 
     private SchedulingCampaignDto toDto(long id, PeriodicScheduledCampaign periodicScheduledCampaign) {
-        return new SchedulingCampaignDto(String.valueOf(id), periodicScheduledCampaign.campaignId, periodicScheduledCampaign.campaignTitle, periodicScheduledCampaign.nextExecutionDate, periodicScheduledCampaign.frequency.label);
+        return new SchedulingCampaignDto(String.valueOf(id), periodicScheduledCampaign.campaignsId, periodicScheduledCampaign.campaignsTitle, periodicScheduledCampaign.nextExecutionDate, periodicScheduledCampaign.frequency.label);
     }
 }

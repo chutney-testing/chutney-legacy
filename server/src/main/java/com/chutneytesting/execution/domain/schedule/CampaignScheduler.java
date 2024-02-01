@@ -22,6 +22,7 @@ import com.chutneytesting.campaign.domain.PeriodicScheduledCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
@@ -68,25 +69,27 @@ public class CampaignScheduler {
         }
     }
 
-    private Callable<Void> executeScheduledCampaignById(Long campaignId) {
+    private Callable<Void> executeScheduledCampaignById(List<Long> campaignsId) {
         return () -> {
-            LOGGER.info("Execute campaign with id [{}]", campaignId);
-            try {
-                campaignExecutionEngine.executeById(campaignId, SCHEDULER_EXECUTE_USER);
-            } catch (Exception e) {
-                LOGGER.error("Error during campaign [{}] execution", campaignId, e);
-            }
+            campaignsId.forEach(campaignId -> {
+                try {
+                    LOGGER.info("Execute campaign with id [{}]", campaignId);
+                    campaignExecutionEngine.executeById(campaignId, SCHEDULER_EXECUTE_USER);
+                } catch (Exception e) {
+                    LOGGER.error("Error during campaign [{}] execution", campaignId, e);
+                }
+            });
             return null;
         };
     }
 
-    synchronized private Stream<Long> scheduledCampaignIdsToExecute() {
+    synchronized private Stream<List<Long>> scheduledCampaignIdsToExecute() {
         try {
             return periodicScheduledCampaignRepository.getALl().stream()
                 .filter(sc -> sc.nextExecutionDate != null)
                 .filter(sc -> sc.nextExecutionDate.isBefore(LocalDateTime.now(clock)))
                 .peek(this::prepareScheduledCampaignForNextExecution)
-                .map(sc -> sc.campaignId);
+                .map(sc -> sc.campaignsId);
         } catch (Exception e) {
             LOGGER.error("Error retrieving scheduled campaigns", e);
             return Stream.empty();
@@ -97,7 +100,7 @@ public class CampaignScheduler {
         try {
             if (!Frequency.EMPTY.equals(periodicScheduledCampaign.frequency)) {
                 periodicScheduledCampaignRepository.add(periodicScheduledCampaign.nextScheduledExecution());
-                LOGGER.info("Next execution of scheduled campaign [{}] with frequency [{}] has been added", periodicScheduledCampaign.campaignId, periodicScheduledCampaign.frequency);
+                LOGGER.info("Next execution of scheduled campaign(s) {} with frequency [{}] has been added", periodicScheduledCampaign.campaignsId, periodicScheduledCampaign.frequency);
             }
             periodicScheduledCampaignRepository.removeById(periodicScheduledCampaign.id);
         } catch (Exception e) {

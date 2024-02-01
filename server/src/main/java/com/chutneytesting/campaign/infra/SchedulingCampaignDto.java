@@ -17,11 +17,12 @@
 package com.chutneytesting.campaign.infra;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class SchedulingCampaignDto {
     public final String id;
-    public final Long campaignId;
-    public final String campaignTitle;
+    public final List<Long> campaignsId;
+    public final List<String> campaignsTitle;
     public final LocalDateTime schedulingDate;
     public final String frequency;
 
@@ -30,20 +31,20 @@ public class SchedulingCampaignDto {
      **/
     public SchedulingCampaignDto() {
         id = null;
-        campaignId = null;
+        campaignsId = null;
         schedulingDate = null;
-        campaignTitle = null;
+        campaignsTitle = null;
         frequency = null;
     }
 
     public SchedulingCampaignDto(String id,
-                                 Long campaignId,
-                                 String campaignTitle,
+                                 List<Long> campaignsId,
+                                 List<String> campaignsTitle,
                                  LocalDateTime schedulingDate,
                                  String frequency) {
         this.id = id;
-        this.campaignId = campaignId;
-        this.campaignTitle = campaignTitle;
+        this.campaignsId = campaignsId;
+        this.campaignsTitle = campaignsTitle;
         this.schedulingDate = schedulingDate;
         this.frequency = frequency;
     }

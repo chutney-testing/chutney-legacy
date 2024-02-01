@@ -23,6 +23,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -41,6 +42,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.mockito.InOrder;
 
 public class CampaignSchedulerTest {
 
@@ -68,7 +70,7 @@ public class CampaignSchedulerTest {
 
         sut.executeScheduledCampaigns();
 
-        verify(campaignExecutionEngine).executeById(periodicScheduledCampaign.get(0).campaignId, "auto");
+        verify(campaignExecutionEngine).executeById(periodicScheduledCampaign.get(0).campaignsId.get(0), "auto");
     }
 
     @ParameterizedTest()
@@ -123,7 +125,7 @@ public class CampaignSchedulerTest {
             .thenReturn(
                 periodicScheduledCampaigns
             );
-        when(campaignExecutionEngine.executeById(periodicScheduledCampaigns.get(0).campaignId, SCHEDULER_EXECUTE_USER))
+        when(campaignExecutionEngine.executeById(periodicScheduledCampaigns.get(0).campaignsId.get(0), SCHEDULER_EXECUTE_USER))
             .thenThrow(new RuntimeException("campaignExecutionEngine.executeById"));
 
         Assertions.assertDoesNotThrow(
@@ -133,11 +135,29 @@ public class CampaignSchedulerTest {
         verify(campaignExecutionEngine, times(periodicScheduledCampaigns.size())).executeById(any(), any());
     }
 
+    @Test
+    void should_execute_sequentially_when_executing_periodic_scheduled_campaigns() {
+        PeriodicScheduledCampaign sc1 = new PeriodicScheduledCampaign(1L, List.of(11L, 22L), List.of("cpg 11", "cpg 22"), now(clock).minusSeconds(5), Frequency.HOURLY);
+
+        List<PeriodicScheduledCampaign> periodicScheduledCampaign = List.of(sc1);
+        when(periodicScheduledCampaignRepository.getALl())
+            .thenReturn(
+                periodicScheduledCampaign
+            );
+        InOrder inOrder = inOrder(campaignExecutionEngine);
+
+        sut.executeScheduledCampaigns();
+
+        inOrder.verify(campaignExecutionEngine).executeById(periodicScheduledCampaign.get(0).campaignsId.get(0), "auto");
+        inOrder.verify(campaignExecutionEngine).executeById(periodicScheduledCampaign.get(0).campaignsId.get(1), "auto");
+        verify(campaignExecutionEngine, times(2)).executeById(any(), any());
+    }
+
     private List<PeriodicScheduledCampaign> createPeriodicScheduledCampaigns(List<Frequency> frequencies) {
         Random rand = new Random();
         return frequencies.stream()
             .map(f ->
-                new PeriodicScheduledCampaign(rand.nextLong(), rand.nextLong(), "title", now(clock).minusSeconds(5), f)
+                new PeriodicScheduledCampaign(rand.nextLong(), List.of(rand.nextLong()), List.of("title"), now(clock).minusSeconds(5), f)
             )
             .collect(toList());
     }

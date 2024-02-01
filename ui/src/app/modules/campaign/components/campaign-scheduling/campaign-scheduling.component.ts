@@ -24,6 +24,8 @@ import { NgbDatepickerConfig, NgbDateStruct, NgbTimepickerConfig } from '@ng-boo
 import { NgbDate } from '@ng-bootstrap/ng-bootstrap/datepicker/ngb-date';
 import { NgbTime } from '@ng-bootstrap/ng-bootstrap/timepicker/ngb-time';
 import { FREQUENCY } from '@core/model/campaign/FREQUENCY';
+import { DragulaService } from "ng2-dragula";
+import { AngularMultiSelect } from 'angular2-multiselect-dropdown';
 
 @Component({
     selector: 'chutney-campaign-scheduling',
@@ -38,11 +40,15 @@ export class CampaignSchedulingComponent implements OnInit {
     submitted: boolean;
     frequencies = Object.values(FREQUENCY);
     campaigns: Array<Campaign> = [];
+    settings = {};
+
+    public selectedMoment = new Date();
 
     model: NgbDateStruct;
 
     constructor(private campaignSchedulingService: CampaignSchedulingService,
                 private campaignService: CampaignService,
+                private dragulaService: DragulaService,
                 private formBuilder: FormBuilder,
                 private configTime: NgbTimepickerConfig,
                 private configDate: NgbDatepickerConfig
@@ -70,11 +76,20 @@ export class CampaignSchedulingComponent implements OnInit {
 
 
         this.form = this.formBuilder.group({
-            campaign: ['', Validators.required],
+            selectedCampaigns: [[], Validators.required],
             date: ['', Validators.required],
             time: ['', Validators.required],
             frequency: ['']
         });
+
+        this.settings = {
+            text: '',
+            enableCheckAll: false,
+            enableSearchFilter: true,
+            autoPosition: false,
+            showCheckbox: false,
+            labelKey: 'title'
+        };
     }
 
     create() {
@@ -86,46 +101,59 @@ export class CampaignSchedulingComponent implements OnInit {
 
         const date: NgbDate = formValue['date'];
         const time: NgbTime = formValue['time'];
-        const campaign: Campaign = this.form.get('campaign').value;
+        const campaignList: Array<Campaign> = this.form.get('selectedCampaigns').value;
         const dateTime = new Date(date.year, date.month - 1, date.day, time.hour, time.minute, 0, 0);
         dateTime.setHours(time.hour - dateTime.getTimezoneOffset() / 60);
         const frequency: FREQUENCY = formValue['frequency'];
         const schedulingCampaign = new CampaignScheduling(
-            campaign.id,
-            campaign.title,
+            campaignList.map(campaign => campaign.id),
+            campaignList.map(campaign => campaign.title),
             dateTime, frequency
         );
 
-        this.campaignSchedulingService.create(schedulingCampaign).subscribe(() => {
+        this.campaignSchedulingService.create(schedulingCampaign).subscribe({
+            next: () => {
                 this.loadSchedulingCampaign();
+                this.form.reset();
             },
-            (error) => {
+            error: (error) => {
                 this.errorMessage = 'Cannot create - ' + error;
-            });
+            }
+        });
 
         this.submitted = false;
-
     }
 
     delete(id: number) {
-        this.campaignSchedulingService.delete(id).subscribe(
-            () => {
+        this.campaignSchedulingService.delete(id).subscribe({
+            next: () => {
                 this.loadSchedulingCampaign();
             },
-            (error) => {
+            error: (error) => {
                 this.errorMessage = 'Cannot delete - ' + error;
-            });
+            }
+        });
     }
 
+    unselectCampaign(campaign: Campaign) {
+        const selectedCampaigns = this.form.get('selectedCampaigns').value.filter( (c: Campaign) => c !== campaign);
+        this.form.get('selectedCampaigns').setValue([...selectedCampaigns]);
+    }
+
+    toggleDropDown(dropDown: AngularMultiSelect, event) {
+        event.stopPropagation();
+        dropDown.toggleDropdown(event);
+    }
 
     private loadSchedulingCampaign() {
-        this.campaignSchedulingService.findAll().subscribe(
-            (res) => {
+        this.campaignSchedulingService.findAll().subscribe({
+            next: (res) => {
                 this.scheduledCampaigns = res;
             },
-            (error) => {
+            error: (error) => {
                 this.errorMessage = 'Cannot get scheduled campaigns - ' + error;
-            });
+            }
+        });
     }
 
     // convenience getter for easy access to form fields

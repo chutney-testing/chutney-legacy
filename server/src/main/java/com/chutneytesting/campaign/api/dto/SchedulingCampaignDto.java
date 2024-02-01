@@ -19,13 +19,14 @@ package com.chutneytesting.campaign.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SchedulingCampaignDto {
 
     private Long id;
-    private Long campaignId;
-    private String campaignTitle;
+    private List<Long> campaignsId;
+    private List<String> campaignsTitle;
     private LocalDateTime schedulingDate;
     private String frequency;
 
@@ -33,14 +34,14 @@ public class SchedulingCampaignDto {
     }
 
     public SchedulingCampaignDto(Long id,
-                                 Long campaignId,
-                                 String campaignTitle,
+                                 List<Long> campaignsId,
+                                 List<String> campaignsTitle,
                                  LocalDateTime schedulingDate,
                                  String frequency
     ) {
         this.id = id;
-        this.campaignId = campaignId;
-        this.campaignTitle = campaignTitle;
+        this.campaignsId = campaignsId;
+        this.campaignsTitle = campaignsTitle;
         this.schedulingDate = schedulingDate;
         this.frequency = frequency;
     }
@@ -49,12 +50,12 @@ public class SchedulingCampaignDto {
         return id;
     }
 
-    public Long getCampaignId() {
-        return campaignId;
+    public List<Long> getCampaignsId() {
+        return campaignsId;
     }
 
-    public String getCampaignTitle() {
-        return campaignTitle;
+    public List<String> getCampaignsTitle() {
+        return campaignsTitle;
     }
 
     public LocalDateTime getSchedulingDate() {
