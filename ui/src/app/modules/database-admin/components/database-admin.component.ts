@@ -22,8 +22,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 
 @Component({
     selector: 'chutney-database-admin',
-    templateUrl: './database-admin.component.html',
-    styleUrls: ['./database-admin.component.scss']
+    templateUrl: './database-admin.component.html'
 })
 export class DatabaseAdminComponent {
 
