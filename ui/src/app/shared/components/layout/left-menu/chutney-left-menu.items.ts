@@ -16,11 +16,10 @@
 
 import { Authorization } from '@model';
 import { MenuItem } from '@shared/components/layout/menuItem';
-import { FeatureName } from '@core/feature/feature.model';
 
 export const allMenuItems: MenuItem [] = [
     {
-        label: 'Navigation',
+        label: '',
         children: [
             {
                 label: 'menu.principal.scenarios',

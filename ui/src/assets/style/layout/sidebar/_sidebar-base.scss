@@ -19,39 +19,12 @@
         width: 100%;
 
         .app-sidebar-scroll {
-            width: 90%;
+            width: 98%;
             height: 100%;
         }
     }
-
-    .accordion .card {
-        box-shadow: 0 0 0 0 transparent;
-        border: 0;
-        background: transparent;
-        position: relative;
-        display: block;
-        padding: 0.1rem 0;
-
-        .card-body {
-            padding: 0;
-        }
-
-        .card-header {
-            padding: 0;
-            margin: 0;
-            //@include border-radius(0);
-            border: 0;
-            height: auto;
-            background: transparent;
-        }
-    }
 }
 
-.logo-src {
-    height: $logo-height;
-    width: $logo-width;
-    //background: url('/assets/logo/logo-circle.png');
-}
 
 // Sidebar Menu
 

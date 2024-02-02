@@ -37,10 +37,6 @@ export class ParentComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
     }
 
-    toggleSidebarMobile() {
-        this.layoutOptions.toggleSidebarMobile = !this.layoutOptions.toggleSidebarMobile;
-    }
-
     ngOnDestroy() {
         if (this.linkifierSubscription) {
             this.linkifierSubscription.unsubscribe();
