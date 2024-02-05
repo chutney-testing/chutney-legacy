@@ -437,6 +437,7 @@ public class CampaignExecutionEngineTest {
             .report("{\"report\":{\"status\":\"SUCCESS\", \"steps\":[]}}")
             .environment("")
             .user("")
+            .scenarioId("1234")
             .build();
     }
 
@@ -450,6 +451,7 @@ public class CampaignExecutionEngineTest {
             .report("{\"report\":{\"status\":\"FAILURE\", \"steps\":[]}}")
             .environment("")
             .user("")
+            .scenarioId("1234")
             .build();
     }
 

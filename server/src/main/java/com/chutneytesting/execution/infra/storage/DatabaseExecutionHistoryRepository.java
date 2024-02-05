@@ -140,7 +140,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
         }
         scenarioExecution = scenarioExecutionsJpaRepository.save(scenarioExecution);
         scenarioExecutionReportJpaRepository.save(new ScenarioExecutionReportEntity(scenarioExecution, detachedExecution.report()));
-        Execution execution = detachedExecution.attach(scenarioExecution.id());
+        Execution execution = detachedExecution.attach(scenarioExecution.id(), scenarioId);
         return ImmutableExecutionHistory.Execution.builder().from(execution).build();
     }
 
@@ -155,6 +155,15 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
             .orElseThrow(
                 () -> new ReportNotFoundException(scenarioId, reportId)
             );
+    }
+
+    @Override
+    public List<ExecutionSummary> getExecutionReportMatchQuery(String query) {
+        return scenarioExecutionsJpaRepository
+            .getExecutionReportMatchQuery(query)
+            .stream()
+            .map(this::scenarioExecutionToExecutionSummary)
+            .toList();
     }
 
     @Override
@@ -225,6 +234,7 @@ class DatabaseExecutionHistoryRepository implements ExecutionHistoryRepository {
             .testCaseTitle(executionSummary.testCaseTitle())
             .environment(executionSummary.environment())
             .user(executionSummary.user())
+            .scenarioId(executionSummary.scenarioId())
             .build();
     }
 

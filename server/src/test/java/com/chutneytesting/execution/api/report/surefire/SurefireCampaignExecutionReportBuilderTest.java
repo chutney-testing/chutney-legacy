@@ -74,6 +74,7 @@ public class SurefireCampaignExecutionReportBuilderTest {
             .testCaseTitle("fake")
             .environment("")
             .user("")
+            .scenarioId("")
             .build();
 
         ScenarioExecutionCampaign scenarioExecutionReportOK = new ScenarioExecutionCampaign("123", "test ♥ Scenario Title ok", success_execution.summary());
@@ -97,6 +98,7 @@ public class SurefireCampaignExecutionReportBuilderTest {
             .testCaseTitle("fake")
             .environment("")
             .user("")
+            .scenarioId("")
             .build();
 
         ScenarioExecutionCampaign scenarioExecutionReportKO = new ScenarioExecutionCampaign("123", "test Scenario Title ko", failure_execution.summary());

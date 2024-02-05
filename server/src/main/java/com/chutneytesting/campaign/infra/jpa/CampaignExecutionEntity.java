@@ -153,10 +153,10 @@ public class CampaignExecutionEntity {
 
     private ScenarioExecutionCampaign blankScenarioExecutionReport(CampaignScenarioEntity campaignScenarioEntity, Function<String, String> titleSupplier) {
         String scenarioTitle = titleSupplier.apply(campaignScenarioEntity.scenarioId());
-        return new ScenarioExecutionCampaign(campaignScenarioEntity.scenarioId(), scenarioTitle, blankScenarioExecution(scenarioTitle));
+        return new ScenarioExecutionCampaign(campaignScenarioEntity.scenarioId(), scenarioTitle, blankScenarioExecution(scenarioTitle, campaignScenarioEntity.scenarioId()));
     }
 
-    private ExecutionHistory.ExecutionSummary blankScenarioExecution(String testCaseTitle) {
+    private ExecutionHistory.ExecutionSummary blankScenarioExecution(String testCaseTitle, String scenarioId) {
         return ImmutableExecutionHistory.ExecutionSummary.builder()
             .executionId(-1L)
             .testCaseTitle(testCaseTitle)
@@ -165,6 +165,7 @@ public class CampaignExecutionEntity {
             .duration(0)
             .environment("")
             .user("")
+            .scenarioId(scenarioId)
             .build();
     }
 }

@@ -217,6 +217,7 @@ public class CampaignExecutionTest {
             .environment("")
             .user("")
             .status(FAILURE)
+            .scenarioId("")
             .build();
         ScenarioExecutionCampaign firstReport = new ScenarioExecutionCampaign(scenarioId, "", firstExecution);
         ExecutionHistory.ExecutionSummary retryExecution = ImmutableExecutionHistory.ExecutionSummary.builder()
@@ -227,6 +228,7 @@ public class CampaignExecutionTest {
             .environment("")
             .user("")
             .status(SUCCESS)
+            .scenarioId("")
             .build();
         ScenarioExecutionCampaign retryReport = new ScenarioExecutionCampaign(scenarioId, "", retryExecution);
         CampaignExecution campaignReport = CampaignExecutionReportBuilder.builder()

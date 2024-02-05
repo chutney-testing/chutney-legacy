@@ -212,6 +212,7 @@ public class ScenarioExecutionEntity {
             .datasetVersion(ofNullable(datasetVersion))
             .user(userId)
             .campaignReport(ofNullable(campaignReport))
+            .scenarioId(scenarioId)
             .build();
     }
 

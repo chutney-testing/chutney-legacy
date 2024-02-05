@@ -48,6 +48,7 @@ class CampaignServiceTest {
             .environment("")
             .user("")
             .status(SUCCESS)
+            .scenarioId("")
             .build();
         ScenarioExecutionCampaign scenarioExecutionReport1 = new ScenarioExecutionCampaign("scenario 1", "", execution1);
         ExecutionHistory.ExecutionSummary execution2 = ImmutableExecutionHistory.ExecutionSummary.builder()
@@ -58,6 +59,7 @@ class CampaignServiceTest {
             .environment("")
             .user("")
             .status(SUCCESS)
+            .scenarioId("")
             .build();
         ScenarioExecutionCampaign scenarioExecutionReport2 = new ScenarioExecutionCampaign("scenario 2", "", execution2);
         CampaignExecution campaignReport = CampaignExecutionReportBuilder.builder()
@@ -100,6 +102,7 @@ class CampaignServiceTest {
             .environment("")
             .user("")
             .status(FAILURE)
+            .scenarioId("")
             .build();
         ScenarioExecutionCampaign scenarioExecutionReport1 = new ScenarioExecutionCampaign(scenarioId, "", execution1);
         ExecutionHistory.ExecutionSummary execution2 = ImmutableExecutionHistory.ExecutionSummary.builder()
@@ -110,6 +113,7 @@ class CampaignServiceTest {
             .environment("")
             .user("")
             .status(SUCCESS)
+            .scenarioId("")
             .build();
         ScenarioExecutionCampaign scenarioExecutionReport2 = new ScenarioExecutionCampaign(scenarioId, "", execution2);
         CampaignExecution campaignReport = CampaignExecutionReportBuilder.builder()
@@ -139,6 +143,7 @@ class CampaignServiceTest {
             .environment("")
             .user("")
             .status(SUCCESS)
+            .scenarioId("")
             .build();
         ScenarioExecutionCampaign scenarioExecutionReport1 = new ScenarioExecutionCampaign("scenario 1", "", execution1);
         ExecutionHistory.ExecutionSummary execution2 = ImmutableExecutionHistory.ExecutionSummary.builder()
@@ -149,6 +154,7 @@ class CampaignServiceTest {
             .environment("")
             .user("")
             .status(SUCCESS)
+            .scenarioId("")
             .build();
         ScenarioExecutionCampaign scenarioExecutionReport2 = new ScenarioExecutionCampaign("scenario 2", "", execution2);
         List<CampaignExecution> allExecutions = List.of(
@@ -183,6 +189,7 @@ class CampaignServiceTest {
             .environment("")
             .user("")
             .status(SUCCESS)
+            .scenarioId("")
             .build();
         ScenarioExecutionCampaign scenarioExecutionReport1 = new ScenarioExecutionCampaign(scenario1Id, scenario1Id, execution1);
         ExecutionHistory.ExecutionSummary execution2 = ImmutableExecutionHistory.ExecutionSummary.builder()
@@ -193,6 +200,7 @@ class CampaignServiceTest {
             .environment("")
             .user("")
             .status(SUCCESS)
+            .scenarioId("")
             .build();
         String scenario2Id = "scenario 2";
         ScenarioExecutionCampaign scenarioExecutionReport2 = new ScenarioExecutionCampaign(scenario2Id, "", execution2);
@@ -204,6 +212,7 @@ class CampaignServiceTest {
             .environment("")
             .user("")
             .status(SUCCESS)
+            .scenarioId("")
             .build();
         ScenarioExecutionCampaign scenarioExecutionReport3 = new ScenarioExecutionCampaign("scenario 3", "", execution3);
         ExecutionHistory.ExecutionSummary execution4 = ImmutableExecutionHistory.ExecutionSummary.builder()
@@ -214,6 +223,7 @@ class CampaignServiceTest {
             .environment("")
             .user("")
             .status(SUCCESS)
+            .scenarioId("")
             .build();
         ScenarioExecutionCampaign scenarioExecutionReport4 = new ScenarioExecutionCampaign(scenario1Id, "", execution4);
         ExecutionHistory.ExecutionSummary execution5 = ImmutableExecutionHistory.ExecutionSummary.builder()
@@ -224,6 +234,7 @@ class CampaignServiceTest {
             .environment("")
             .user("")
             .status(SUCCESS)
+            .scenarioId("")
             .build();
         ScenarioExecutionCampaign scenarioExecutionReport5 = new ScenarioExecutionCampaign(scenario2Id, "", execution5);
         List<CampaignExecution> allExecutions = List.of(

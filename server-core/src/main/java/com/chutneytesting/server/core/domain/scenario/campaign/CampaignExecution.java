@@ -144,6 +144,7 @@ public class CampaignExecution {
                         .datasetId(dataSetId)
                         .datasetVersion(dataSetVersion)
                         .user(userId)
+                        .scenarioId(testCase.id())
                         .build())));
     }
 
@@ -165,6 +166,7 @@ public class CampaignExecution {
                     .datasetId(dataSetId)
                     .datasetVersion(dataSetVersion)
                     .user(userId)
+                    .scenarioId(testCase.id())
                     .build()));
     }
 

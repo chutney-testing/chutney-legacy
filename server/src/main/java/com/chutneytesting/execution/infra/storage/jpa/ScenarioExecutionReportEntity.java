@@ -81,6 +81,7 @@ public class ScenarioExecutionReportEntity {
             .user(scenarioExecution.userId())
             .datasetId(ofNullable(scenarioExecution.datasetId()))
             .datasetVersion(ofNullable(scenarioExecution.datasetVersion()))
+            .scenarioId(scenarioExecution.scenarioId())
             .build();
     }
 }

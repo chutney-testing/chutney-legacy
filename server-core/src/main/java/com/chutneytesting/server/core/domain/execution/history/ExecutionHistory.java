@@ -63,29 +63,35 @@ public interface ExecutionHistory {
         Long executionId();
     }
 
+    interface WithScenario {
+        String scenarioId();
+    }
+
     @Value.Immutable
     interface DetachedExecution extends ExecutionProperties, HavingReport {
 
-        default Execution attach(long executionId) {
+        default Execution attach(long executionId, String scenarioId) {
             return ImmutableExecutionHistory.Execution.builder()
                 .from((ExecutionProperties) this)
                 .from((HavingReport) this)
                 .executionId(executionId)
+                .scenarioId(scenarioId)
                 .build();
         }
     }
 
     @Value.Immutable
-    interface ExecutionSummary extends ExecutionProperties, Attached {
+    interface ExecutionSummary extends ExecutionProperties, Attached, WithScenario {
     }
 
     @Value.Immutable
-    interface Execution extends ExecutionProperties, HavingReport, Attached {
+    interface Execution extends ExecutionProperties, HavingReport, Attached, WithScenario {
 
         default ExecutionSummary summary() {
             return ImmutableExecutionHistory.ExecutionSummary.builder()
                 .from((ExecutionProperties) this)
                 .from((Attached) this)
+                .from((WithScenario) this)
                 .build();
         }
     }

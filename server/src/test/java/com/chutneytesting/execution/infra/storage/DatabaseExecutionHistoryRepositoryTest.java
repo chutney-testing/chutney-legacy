@@ -33,6 +33,7 @@ import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionEntity;
 import com.chutneytesting.execution.infra.storage.jpa.ScenarioExecutionReportEntity;
 import com.chutneytesting.scenario.infra.jpa.ScenarioEntity;
+import com.chutneytesting.scenario.infra.raw.DatabaseTestCaseRepository;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.DetachedExecution;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistory.Execution;
@@ -51,6 +52,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -59,11 +61,13 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.IntStream;
 import org.hibernate.exception.LockAcquisitionException;
 import org.junit.Ignore;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.CannotAcquireLockException;
+import org.springframework.test.context.NestedTestConfiguration;
 import org.sqlite.SQLiteException;
 import util.infra.AbstractLocalDatabaseTest;
 import util.infra.EnableH2MemTestInfra;
@@ -100,6 +104,9 @@ public class DatabaseExecutionHistoryRepositoryTest {
         @Autowired
         private ScenarioExecutionReportJpaRepository scenarioExecutionReportJpaRepository;
 
+        @Autowired
+        private DatabaseTestCaseRepository databaseTestCaseRepository;
+
         @Test
         public void parallel_execution_does_not_lock_database() throws InterruptedException {
             int numThreads = 10;
@@ -122,7 +129,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
                     try {
                         startLatch.await();
                         throwns.add(catchThrowable(() ->
-                            sut.update(id, buildDetachedExecution(SUCCESS, "updated", "").attach(summary.executionId()))
+                            sut.update(id, buildDetachedExecution(SUCCESS, "updated", "").attach(summary.executionId(), id))
                         ));
                     } catch (InterruptedException e) {
                         // do nothing
@@ -197,7 +204,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             assertThat(last.status()).isEqualTo(RUNNING);
             assertThat(last.info()).hasValue("exec");
 
-            sut.update(scenarioId, buildDetachedExecution(SUCCESS, "updated", "").attach(last.executionId()));
+            sut.update(scenarioId, buildDetachedExecution(SUCCESS, "updated", "").attach(last.executionId(), scenarioId));
 
             Execution updatedExecution = sut.getExecution(scenarioId, last.executionId());
             assertThat(updatedExecution.status()).isEqualTo(SUCCESS);
@@ -216,7 +223,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             assertThat(last.status()).isEqualTo(RUNNING);
             assertThat(last.info()).contains("exec3");
 
-            sut.update(scenarioId, buildDetachedExecution(SUCCESS, "updated", "").attach(last.executionId()));
+            sut.update(scenarioId, buildDetachedExecution(SUCCESS, "updated", "").attach(last.executionId(), scenarioId));
 
             assertThat(
                 sut.getExecutions(scenarioId).stream()
@@ -231,7 +238,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             String scenarioId = givenScenarioId();
             long unknownExecutionId = -1L;
             assertThatExceptionOfType(ReportNotFoundException.class)
-                .isThrownBy(() -> sut.update(scenarioId, buildDetachedExecution(SUCCESS, "updated", "").attach(unknownExecutionId)))
+                .isThrownBy(() -> sut.update(scenarioId, buildDetachedExecution(SUCCESS, "updated", "").attach(unknownExecutionId, scenarioId)))
                 .withMessage("Unable to find report " + unknownExecutionId + " of scenario " + scenarioId);
         }
 
@@ -338,7 +345,7 @@ public class DatabaseExecutionHistoryRepositoryTest {
             assertThat(sut.getExecutions(scenarioId).get(0).error())
                 .hasValueSatisfying(v -> assertThat(v).hasSize(512));
 
-            sut.update(scenarioId, buildDetachedExecution(SUCCESS, tooLongString, tooLongString).attach(last.executionId()));
+            sut.update(scenarioId, buildDetachedExecution(SUCCESS, tooLongString, tooLongString).attach(last.executionId(), scenarioId));
 
             assertThat(sut.getExecutions(scenarioId).get(0).info())
                 .hasValueSatisfying(v -> assertThat(v).hasSize(512));
@@ -412,6 +419,86 @@ public class DatabaseExecutionHistoryRepositoryTest {
             List.of(exec1.executionId(), exec2.executionId()).forEach(executionId -> assertThatThrownBy(() ->
                 sut.getExecutionSummary(executionId)
             ).isInstanceOf(ReportNotFoundException.class));
+        }
+
+        @Nested
+        @NestedTestConfiguration(NestedTestConfiguration.EnclosingConfiguration.OVERRIDE)
+        @DisplayName("Find scenario execution with report match")
+        class ScenarioExecutionReportMatch {
+            @Test
+            void simple_case() {
+                clearTables();
+                var scenarioId1 = givenScenario().getId().toString();
+                var scenarioId2 = givenScenario().getId().toString();
+                var exec1 = sut.store(scenarioId1, buildDetachedExecution("toto"));
+                sut.store(scenarioId2, buildDetachedExecution("tutu"));
+
+                var executionSummaryList = sut.getExecutionReportMatchQuery("to");
+
+                assertThat(executionSummaryList).hasSize(1);
+                assertThat(executionSummaryList.get(0).executionId()).isEqualTo(exec1.executionId());
+                assertThat(executionSummaryList.get(0).scenarioId()).isEqualTo(exec1.scenarioId());
+            }
+
+            @Test
+            void filter_unactivated_scenario_execution() {
+                clearTables();
+                var scenarioId1 = givenScenario().getId().toString();
+                var scenarioId2 = givenScenario().getId().toString();
+                var exec1 = sut.store(scenarioId1, buildDetachedExecution("toto"));
+                sut.store(scenarioId2, buildDetachedExecution("tutu"));
+                databaseTestCaseRepository.removeById(scenarioId2);
+
+                var executionSummaryList = sut.getExecutionReportMatchQuery("t");
+
+                assertThat(executionSummaryList).hasSize(1);
+                assertThat(executionSummaryList.get(0).executionId()).isEqualTo(exec1.executionId());
+                assertThat(executionSummaryList.get(0).scenarioId()).isEqualTo(exec1.scenarioId());
+            }
+
+            @Test
+            void limit_results_to_100() {
+                clearTables();
+                IntStream.range(0, 110).forEach(i -> {
+                    String scenarioId = givenScenario().getId().toString();
+                    sut.store(scenarioId, buildDetachedExecution("report"));
+                });
+
+                var executionSummaryList = sut.getExecutionReportMatchQuery("ort");
+
+                assertThat(executionSummaryList).hasSize(100);
+            }
+
+            @Test
+            void order_by_id_descending() {
+                clearTables();
+                List<Long> executionsIds = new ArrayList<>();
+                IntStream.range(0, 10).forEach(i -> {
+                    var scenarioId = givenScenario().getId();
+                    var execution = sut.store(scenarioId.toString(), buildDetachedExecution("report"));
+                    executionsIds.add(execution.executionId());
+                });
+                var expectedOrder = executionsIds.stream().sorted(Comparator.<Long>naturalOrder().reversed()).toList();
+
+                var executionSummaryList = sut.getExecutionReportMatchQuery("ort");
+
+                assertThat(executionSummaryList)
+                    .map(ExecutionSummary::executionId)
+                    .containsExactlyElementsOf(expectedOrder);
+            }
+
+            private DetachedExecution buildDetachedExecution(String report) {
+                return ImmutableExecutionHistory.DetachedExecution.builder()
+                    .time(LocalDateTime.now())
+                    .duration(12L)
+                    .status(SUCCESS)
+                    .report(report)
+                    .testCaseTitle("Fake title")
+                    .environment("")
+                    .datasetId("fake dataset id")
+                    .user("")
+                    .build();
+            }
         }
 
         private DetachedExecution buildDetachedExecution(ServerReportStatus status, String info, String error) {

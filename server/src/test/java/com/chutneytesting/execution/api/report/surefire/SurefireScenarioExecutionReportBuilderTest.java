@@ -65,6 +65,7 @@ public class SurefireScenarioExecutionReportBuilderTest {
             .testCaseTitle("fake")
             .environment("")
             .user("user")
+            .scenarioId("")
             .build();
 
         ScenarioExecutionCampaign scenarioExecutionCampaign = new ScenarioExecutionCampaign("123", "test1", execution.summary());
@@ -118,6 +119,7 @@ public class SurefireScenarioExecutionReportBuilderTest {
             .testCaseTitle("fake")
             .environment("")
             .user("user")
+            .scenarioId("")
             .build();
 
         ScenarioExecutionCampaign scenarioExecutionCampaign = new ScenarioExecutionCampaign("123", "test2", execution.summary());

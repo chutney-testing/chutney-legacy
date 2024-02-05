@@ -266,6 +266,7 @@ public class ScenarioExecutionEngineAsyncTest {
             .environment(executionRequest.environment)
             .user(executionRequest.userId)
             .report("")
+            .scenarioId("1234")
             .build();
         when(executionHistoryRepository.store(eq("1"), any(ExecutionHistory.DetachedExecution.class))).thenReturn(expected);
 
@@ -368,6 +369,7 @@ public class ScenarioExecutionEngineAsyncTest {
             .testCaseTitle("fake")
             .environment("")
             .user("")
+            .scenarioId("1234")
             .build();
 
         when(executionHistoryRepository.store(eq(scenarioId), any())).thenReturn(storedExecution);

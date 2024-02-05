@@ -14,77 +14,81 @@
  * limitations under the License.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
-import { Sqlresult, sqlResultFromObject } from '@model';
-import { PaginationInstance } from 'ngx-pagination';
+import { Execution } from '@model';
 import { DatabaseAdminService } from '@core/services';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 @Component({
     selector: 'chutney-database-admin',
-    templateUrl: './database-admin.component.html',
-    styleUrls: ['./database-admin.component.scss']
+    templateUrl: './database-admin.component.html'
 })
 export class DatabaseAdminComponent {
 
-    itemsPerPage: number = 5;
-    database: string = 'jdbc';
-    paginate: boolean = false;
-    statement: string = '';
+    query: string;
     errorMessage: string;
-    sqlResult = new Sqlresult();
+    executions: Execution[];
+    private _executionsFilters: Params = {};
 
-    paginationInstanceConfig: PaginationInstance = {
-        id: 'admin-pagination',
-        currentPage: 1,
-        itemsPerPage: this.itemsPerPage
-    };
 
-    constructor(private databaseAdminService: DatabaseAdminService) {
+    constructor(
+        private databaseAdminService: DatabaseAdminService,
+        private route: ActivatedRoute,
+        private router: Router) {
+        this.executions = []
     }
 
-    execute() {
-        if (this.statement.length === 0) {
+    get executionsFilters(): Params {
+        return this._executionsFilters;
+    }
+
+    set executionsFilters(value: Params) {
+        const {open, active, ...executionsParams} = value;
+        this._executionsFilters = executionsParams;
+        this.updateQueryParams();
+    }
+
+
+    private updateQueryParams() {
+        let queryParams = this.cleanParams({...this.executionsFilters});
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: queryParams
+        });
+    }
+
+    openReport(request: { execution: Execution }) {
+        const url = this.router.serializeUrl(this.router.createUrlTree(['scenario', request.execution.scenarioId, 'executions'], {queryParams: {open: request.execution.executionId, active: request.execution.executionId}}));
+        window.open('#' + url, "_blank");
+    }
+
+    private cleanParams(params: Params) {
+        Object.keys(params).forEach(key => {
+            if (params[key] === null || params[key] === '' || params[key] === '0') {
+                delete params[key];
+            }
+        });
+        return params;
+    }
+
+    searchQuery() {
+        if (this.query.length === 0) {
             return;
         }
-
-        this.paginationInstanceConfig.itemsPerPage = this.itemsPerPage;
-
         this.errorMessage = null;
-        if (this.paginate) {
-            this.databaseAdminService.paginate(this.statement, this.database, this.paginationInstanceConfig.currentPage, this.paginationInstanceConfig.itemsPerPage)
-                .subscribe(
-                    (res: Array<Object>) => {
-                        this.sqlResult = sqlResultFromObject(res['data'][0]);
-                        this.paginationInstanceConfig.totalItems = res['totalCount'];
-                    },
-                    (error) => {
-                        this.errorMessage = error.error;
-                        this.sqlResult = new Sqlresult();
-                    }
-                );
-        } else {
-            this.databaseAdminService.execute(this.statement, this.database)
-                .subscribe(
-                    (res: Array<Object>) => {
-                        this.sqlResult = sqlResultFromObject(res);
-                    },
-                    (error) => {
-                        this.errorMessage = error.error;
-                        this.sqlResult = new Sqlresult();
-                    }
-                );
-        }
+        this.databaseAdminService.getExecutionReportMatchQuery(this.query)
+        .subscribe(
+            (res: Execution[]) => {
+                this.executions = res;
+            },
+            (error) => {
+                this.errorMessage = error
+            }
+        );
     }
 
-    onPaginationChange() {
-        if (this.paginate) {
-            this.execute();
-        }
-    }
-
-    pageChange(event: number) {
-        this.paginationInstanceConfig.currentPage = event;
-        this.execute();
+    updateQuery(text: string) {
+        this.query = text;
     }
 }

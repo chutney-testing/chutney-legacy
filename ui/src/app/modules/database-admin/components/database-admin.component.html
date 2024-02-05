@@ -1,37 +1,22 @@
-<div class="database-admin-container">
+<div>
     <div class="row">
-        <div class="col text-center input-group input-group-sm">
-            <div class="align-bottom">
-                <label for="paginate" class="me-2">Paginate</label>
-                <input id="paginate" type="checkbox" [(ngModel)]="paginate" (change)="onPaginationChange()" class="me-2 align-middle" />
-                <div class="d-inline ms-1" [ngClass]="paginate ? 'visible' : 'invisible'">
-                    <label for="itemsPerPage" class="me-2">Items per page</label>
-                    <input id="itemsPerPage" type="number" min="1" max="50" [(ngModel)]="itemsPerPage"
-                        (change)="onPaginationChange()" />
-                </div>
+        <div class="col justify-content-center input-group input-group-sm">
+            <div class="w30">
+                <chutney-forms-search-field [id]="'scenario-search'"
+                                            [placeholder]="'scenarios.search.placeholder-search-report' | translate"
+                                            [searchInput]="query"
+                                            (searchInputEvent)="updateQuery($event)"></chutney-forms-search-field>
+            </div>
+            <div class="mx-2">
+                <button class="btn btn-success" (click)="searchQuery()">
+                    <span class="fa fa-play me-2" aria-hidden="true"></span> {{'global.actions.execute' | translate}}
+                </button>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="d-inline">
-            <a class="fs-6 fst-italic" *ngIf="database === 'jdbc'"
-               href="https://en.wikibooks.org/wiki/Structured_Query_Language" target="_blank" rel="noopener noreferrer">query syntax</a>
-            <textarea id="statement" class="form-control" rows="5" [(ngModel)]="statement"></textarea>
-        </div>
-        <div class="text-center my-2">
-            <button class="btn btn-success" (click)="execute()">
-                <span class="fa fa-play me-2" aria-hidden="true"></span> {{'global.actions.execute' | translate}}
-            </button>
-        </div>
-    </div>
-    <div class="row sql-result">
-        <chutney-error-panel [errorMessage]="errorMessage"></chutney-error-panel>
-        <chutney-error-panel [errorMessage]="sqlResult.error"></chutney-error-panel>
-        <div [hidden]="sqlResult.updatedRows === undefined || sqlResult.updatedRows === null" class="mb-2">
-            {{sqlResult.updatedRows}} {{'admin.database.updated_rows' | translate}}
-        </div>
-        <chutney-table-panel [table]="sqlResult.table"
-                             [paginationInstanceConfig]="paginate ? paginationInstanceConfig : undefined"
-                             (pageChangeEvent)="pageChange($event)"></chutney-table-panel>
+    <div class="row mt-3">
+        <database-admin-report-list [executions]="executions"
+                                    [(filters)]="executionsFilters"
+                                    (onExecutionSelect)="openReport($event)"></database-admin-report-list>
     </div>
 </div>

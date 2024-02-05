@@ -34,6 +34,7 @@
             },
             "placeholder": "Rechercher un scénario (id ou titre ou jira ou tags)",
             "placeholder-fulltext": "Rechercher dans le contenu du scénario (scénario json seulement)",
+            "placeholder-search-report": "Rechercher dans le contenu des rapports",
             "created": " Derniers créés",
             "executed": "Derniers executés",
             "lastExecution": "Dernière execution",
@@ -75,6 +76,9 @@
                 "executor": "Utilisateur",
                 "campaign": "Campagne",
                 "report": "Rapport",
+                "error": "Erreur",
+                "info": "Info",
+                "scenarioId": "Scenario ID",
                 "empty": "Aucune exécution",
                 "default-dataset": "Dataset par default"
             },
