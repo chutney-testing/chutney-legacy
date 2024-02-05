@@ -132,6 +132,61 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
     }
 
     @Test
+    public void should_remove_campaign_from_scheduled() {
+        initSut("{}");
+        // Given
+        PeriodicScheduledCampaign periodicScheduledCampaign = new PeriodicScheduledCampaign(null, List.of(1L, 2L, 3L), List.of("campaign title 1","campaign title 2","campaign title 3"), LocalDateTime.of(2024, 2, 4, 7, 10));
+        sut.add(periodicScheduledCampaign);
+
+        String expectedAdded =
+            """
+                {
+                  "1" : {
+                    "id" : "1",
+                    "campaignsId" : [ 1, 3 ],
+                    "campaignsTitle" : [ "campaign title 1", "campaign title 3" ],
+                    "schedulingDate" : [ 2024, 2, 4, 7, 10 ]
+                  }
+                }
+                """;
+
+        // When
+        sut.removeCampaignId(2L);
+
+        // Then
+        String actualContent = FileUtils.readContent(SCHEDULING_CAMPAIGN_FILE);
+        assertThat(actualContent).isEqualToIgnoringNewLines(expectedAdded);
+    }
+
+    @Test
+    public void should_remove_schedule_without_campaign_after_removing_campaign() {
+        initSut("{}");
+        // Given
+        PeriodicScheduledCampaign sc1 = new PeriodicScheduledCampaign(null, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
+        PeriodicScheduledCampaign sc2 = new PeriodicScheduledCampaign(null, 22L, "campaign title 2", LocalDateTime.of(2021, 3, 5, 8, 11));
+        sut.add(sc1);
+        sut.add(sc2);
+        String expectedAdded =
+            """
+                {
+                  "2" : {
+                    "id" : "2",
+                    "campaignsId" : [ 22 ],
+                    "campaignsTitle" : [ "campaign title 2" ],
+                    "schedulingDate" : [ 2021, 3, 5, 8, 11 ]
+                  }
+                }
+                """;
+
+        // When
+        sut.removeCampaignId(11L);
+
+        // Then
+        String actualContent = FileUtils.readContent(SCHEDULING_CAMPAIGN_FILE);
+        assertThat(actualContent).isEqualToIgnoringNewLines(expectedAdded);
+    }
+
+    @Test
     public void should_get_and_update_old_scheduled_campaign() {
         //// Get
         // Given

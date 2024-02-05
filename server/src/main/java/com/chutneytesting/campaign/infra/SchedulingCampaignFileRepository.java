@@ -104,6 +104,29 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
     }
 
     @Override
+    public void removeCampaignId(Long id) {
+        final Lock writeLock;
+        (writeLock = rwLock.writeLock()).lock();
+        try {
+            Map<String, SchedulingCampaignDto> schedulingCampaigns = readFromDisk();
+            Map<String, SchedulingCampaignDto> schedulingCampaignsFiltered = new HashMap<>();
+            schedulingCampaigns.forEach((key, schedulingCampaignDto) -> {
+                int indexCampaignId = schedulingCampaignDto.campaignsId.indexOf(id);
+                if (indexCampaignId != -1) { // Remove id and title if the campaignId has been found
+                    schedulingCampaignDto.campaignsTitle.remove(indexCampaignId);
+                    schedulingCampaignDto.campaignsId.remove(indexCampaignId);
+                }
+                if (!schedulingCampaignDto.campaignsId.isEmpty()) { // Set the schedule only if a campaign is present after removal
+                    schedulingCampaignsFiltered.put(key, schedulingCampaignDto);
+                }
+            });
+            writeOnDisk(resolvedFilePath, schedulingCampaignsFiltered);
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    @Override
     public List<PeriodicScheduledCampaign> getALl() {
         return readFromDisk().values().stream()
             .map(this::fromDto)

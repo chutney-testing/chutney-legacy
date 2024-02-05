@@ -23,6 +23,7 @@ import static java.util.Optional.ofNullable;
 import com.chutneytesting.campaign.domain.CampaignExecutionRepository;
 import com.chutneytesting.campaign.domain.CampaignNotFoundException;
 import com.chutneytesting.campaign.domain.CampaignRepository;
+import com.chutneytesting.campaign.domain.PeriodicScheduledCampaignRepository;
 import com.chutneytesting.campaign.infra.jpa.CampaignEntity;
 import com.chutneytesting.campaign.infra.jpa.CampaignScenarioEntity;
 import com.chutneytesting.server.core.domain.scenario.campaign.Campaign;
@@ -41,13 +42,15 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     private final CampaignJpaRepository campaignJpaRepository;
     private final CampaignScenarioJpaRepository campaignScenarioJpaRepository;
     private final CampaignExecutionRepository campaignExecutionRepository;
+    private final PeriodicScheduledCampaignRepository periodicScheduledCampaignRepository;
 
     public DatabaseCampaignRepository(CampaignJpaRepository campaignJpaRepository,
                                       CampaignScenarioJpaRepository campaignScenarioJpaRepository,
-                                      CampaignExecutionDBRepository campaignExecutionRepository) {
+                                      CampaignExecutionDBRepository campaignExecutionRepository, PeriodicScheduledCampaignRepository periodicScheduledCampaignRepository) {
         this.campaignJpaRepository = campaignJpaRepository;
         this.campaignScenarioJpaRepository = campaignScenarioJpaRepository;
         this.campaignExecutionRepository = campaignExecutionRepository;
+        this.periodicScheduledCampaignRepository = periodicScheduledCampaignRepository;
     }
 
     @Override
@@ -66,6 +69,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
         if (campaignJpaRepository.existsById(id)) {
             campaignExecutionRepository.clearAllExecutionHistory(id);
             campaignJpaRepository.deleteById(id);
+            periodicScheduledCampaignRepository.removeCampaignId(id);
             return true;
         }
         return false;

@@ -110,6 +110,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
                     this.campaigns.splice(this.getIndexFromId(id), 1);
                     this.campaigns = this.campaigns.slice();
                     this.applyFilters();
+                    this.loadSchedulingCampaign()
                 });
         }
     }
