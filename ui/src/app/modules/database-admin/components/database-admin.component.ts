@@ -60,7 +60,6 @@ export class DatabaseAdminComponent {
 
     openReport(request: { execution: Execution }) {
         const url = this.router.serializeUrl(this.router.createUrlTree(['scenario', request.execution.scenarioId, 'executions'], {queryParams: {open: request.execution.executionId, active: request.execution.executionId}}));
-        console.log(url)
         window.open('#' + url, "_blank");
     }
 

@@ -336,19 +336,22 @@ export class DatabaseAdminExecutionReportListComponent
     openCampaignExecution(execution: Execution, event: MouseEvent) {
         if (execution.campaignReport) {
             event.stopPropagation();
-            this.router.navigate(
-                [
-                    '/campaign',
-                    execution.campaignReport.campaignId,
-                    'executions',
-                ],
-                {
-                    queryParams: {
-                        open: execution.campaignReport.executionId,
-                        active: execution.campaignReport.executionId,
-                    },
-                }
+            const url = this.router.serializeUrl(
+                this.router.createUrlTree(
+                    [
+                        '/campaign',
+                        execution.campaignReport.campaignId,
+                        'executions',
+                    ],
+                    {
+                        queryParams: {
+                            open: execution.campaignReport.executionId,
+                            active: execution.campaignReport.executionId,
+                        },
+                    }
+                )
             );
+            window.open('#' + url, "_blank");
         }
     }
 }

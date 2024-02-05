@@ -42,7 +42,7 @@ public interface DatabaseExecutionJpaRepository extends JpaRepository<ScenarioEx
                 where s.activated = true
                   and cast(s.id as string) = se.scenarioId
                   and ser.report like '%' || :query || '%'
-                order by se.id
+                order by se.id desc
                 limit 100
         """)
     List<ScenarioExecutionEntity> getExecutionReportMatchQuery(@Param("query") String query);
