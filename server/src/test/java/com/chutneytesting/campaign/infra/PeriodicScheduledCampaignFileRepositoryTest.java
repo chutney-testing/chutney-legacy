@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -42,9 +43,15 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
     @TempDir
     private static Path temporaryFolder;
 
+    @BeforeEach
+    public void setup() {
+        String tmpConfDir = temporaryFolder.toFile().getAbsolutePath();
+        SCHEDULING_CAMPAIGN_FILE = Paths.get(tmpConfDir + "/scheduling/schedulingCampaigns.json");
+        sut = new SchedulingCampaignFileRepository(tmpConfDir);
+    }
+
     @Test
     public void should_add_get_and_remove_scheduled_campaign() {
-        initSut(null);
         //// ADD
         // Given
         PeriodicScheduledCampaign sc1 = new PeriodicScheduledCampaign(null, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
@@ -133,8 +140,8 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
 
     @Test
     public void should_remove_campaign_from_scheduled() {
-        initSut("{}");
         // Given
+        FileUtils.writeContent(SCHEDULING_CAMPAIGN_FILE, "{}");
         PeriodicScheduledCampaign periodicScheduledCampaign = new PeriodicScheduledCampaign(null, List.of(1L, 2L, 3L), List.of("campaign title 1","campaign title 2","campaign title 3"), LocalDateTime.of(2024, 2, 4, 7, 10));
         sut.add(periodicScheduledCampaign);
 
@@ -160,8 +167,8 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
 
     @Test
     public void should_remove_schedule_without_campaign_after_removing_campaign() {
-        initSut("{}");
         // Given
+        FileUtils.writeContent(SCHEDULING_CAMPAIGN_FILE, "{}");
         PeriodicScheduledCampaign sc1 = new PeriodicScheduledCampaign(null, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
         PeriodicScheduledCampaign sc2 = new PeriodicScheduledCampaign(null, 22L, "campaign title 2", LocalDateTime.of(2021, 3, 5, 8, 11));
         sut.add(sc1);
@@ -202,7 +209,7 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
                 }
                 """;
 
-        initSut(old_scheduled_campaign);
+        FileUtils.writeContent(SCHEDULING_CAMPAIGN_FILE, old_scheduled_campaign);
 
         PeriodicScheduledCampaign sc1 = new PeriodicScheduledCampaign(1L, 11L, "campaign title 1", LocalDateTime.of(2020, 2, 4, 7, 10));
         PeriodicScheduledCampaign sc2 = new PeriodicScheduledCampaign(2L, 22L, "campaign title 2", LocalDateTime.of(2023, 3, 4, 7, 10));
@@ -246,7 +253,6 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
 
     @Test
     void should_read_and_write_concurrently() throws InterruptedException {
-        initSut(null);
         List<Exception> exceptions = new ArrayList<>();
         Runnable addScheduledCampaign = () -> {
             try {
@@ -274,17 +280,5 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
         } else {
             fail("Pool termination timeout ...");
         }
-    }
-
-    private void initSut(String content) {
-        String tmpConfDir = temporaryFolder.toFile().getAbsolutePath();
-        SCHEDULING_CAMPAIGN_FILE = Paths.get(tmpConfDir + "/scheduling/schedulingCampaigns.json");
-
-        if (content != null) {
-            FileUtils.initFolder(SCHEDULING_CAMPAIGN_FILE.getParent());
-            FileUtils.writeContent(SCHEDULING_CAMPAIGN_FILE, content);
-        }
-
-        sut = new SchedulingCampaignFileRepository(tmpConfDir);
     }
 }
