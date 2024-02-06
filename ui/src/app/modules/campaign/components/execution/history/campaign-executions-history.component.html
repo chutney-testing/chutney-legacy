@@ -9,6 +9,8 @@
     <h5>{{ campaign.title }}</h5>
     <h6>{{ campaign.description }}</h6>
 
+    <chutney-campaign-execution-menu></chutney-campaign-execution-menu>
+    
     <ul ngbNav #nav="ngbNav" [activeId]="getActiveTab()" (navChange)="onTabChange($event)" class="nav-tabs">
         <li [ngbNavItem]="'0'" [destroyOnHide]="false">
             <a ngbNavLink>

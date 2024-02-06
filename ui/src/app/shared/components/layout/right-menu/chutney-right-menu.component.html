@@ -1,31 +1,31 @@
-<nav class="navbar px-1 bg-light h-100 align-items-start" *ngIf="menuItems?.length">
-    <div class="container-fluid">
-        <ul class="navbar-nav me-auto mb-2">
-                <ng-container *ngFor="let item of menuItems"
-                    [ngTemplateOutlet]="!!item.options && item.options.length > 1 ? dropDownItem : simpleItem"
-                    [ngTemplateOutletContext]="{item:item}">
-                </ng-container>
-        </ul>
+<div class="chutney-nav-menu">
+    <div class="nav">
+        <ng-container *ngIf="menuItems?.length">
+            <ng-container *ngFor="let item of menuItems"
+                [ngTemplateOutlet]="!!item.options && item.options.length > 1 ? dropDownItem : simpleItem"
+                [ngTemplateOutletContext]="{item:item}">
+            </ng-container>
+        </ng-container>
     </div>
-</nav>
-<ng-template #dropDownItem let-item='item'>
-    <li class="nav-item" ngbDropdown display="dynamic" *hasAuthorization="item.authorizations || []">
-        <a class="nav-link" tabindex="0" ngbDropdownToggle id="executeDropdown" role="button">
-            <i [ngClass]="item.iconClass"></i>
-            {{item.label | translate}}
-        </a>
-        <div ngbDropdownMenu aria-labelledby="executeDropdown" class="dropdown-menu">
-            <a class="cursor-pointer" ngbDropdownItem *ngFor="let option of item.options"
-            (click)="item.click(option.id)">{{ option.label }}</a>
-        </div>
-</ng-template>
 
-<ng-template #simpleItem let-item='item'>
-    <li class="nav-item" *hasAuthorization="item.authorizations || []">
-        <a class="nav-link cursor-pointer" role="nav-link"
-           [routerLink]="getItemLink(item)"
-           (click)="onItemClick(item)">
-            <i [ngClass]="item.iconClass"></i>
-            {{item.label | translate}}</a>
-    </li>
-</ng-template>
+    <ng-template #dropDownItem let-item='item'>
+        <div class="nav-item" placement="bottom" ngbTooltip="{{item.label | translate}}" ngbDropdown display="dynamic" *hasAuthorization="item.authorizations || []">
+            <a class="nav-link" tabindex="0" ngbDropdownToggle id="executeDropdown" role="button">
+                <i [ngClass]="item.iconClass"></i>
+            </a>
+            <div ngbDropdownMenu aria-labelledby="executeDropdown" class="dropdown-menu">
+                <a class="cursor-pointer" ngbDropdownItem *ngFor="let option of item.options"
+                    (click)="item.click(option.id)">{{ option.label }}</a>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #simpleItem let-item='item'>
+        <div class="nav-item" placement="bottom" ngbTooltip="{{item.label | translate}}" *hasAuthorization="item.authorizations || []">
+            <a class="nav-link cursor-pointer" role="nav-link" [routerLink]="getItemLink(item)"
+                (click)="onItemClick(item)">
+                <i [ngClass]="item.iconClass"></i>
+                {{item.label | translate}}</a>
+        </div>
+    </ng-template>
+</div>
