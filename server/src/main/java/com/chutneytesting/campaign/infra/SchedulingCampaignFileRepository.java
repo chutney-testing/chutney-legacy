@@ -36,7 +36,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -55,7 +54,6 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
 
     private final Path storeFolderPath;
     private final Path resolvedFilePath;
-    private final AtomicLong currentMaxId = new AtomicLong();
 
     private final ObjectMapper objectMapper = new ObjectMapper()
         .findAndRegisterModules()
@@ -71,7 +69,6 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
         this.resolvedFilePath = this.storeFolderPath.resolve(SCHEDULING_CAMPAIGNS_FILE);
         initFolder(this.storeFolderPath);
-        currentMaxId.set(this.getALl().stream().map(sm -> sm.id).max(Long::compare).orElse(0L));
     }
 
     @Override
@@ -80,8 +77,8 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
         (writeLock = rwLock.writeLock()).lock();
         try {
             Map<String, SchedulingCampaignDto> schedulingCampaigns = readFromDisk();
-            long id = currentMaxId.incrementAndGet();
-            schedulingCampaigns.put(String.valueOf(id), toDto(id, periodicScheduledCampaign));
+            Long nextId = getCurrentMaxId(schedulingCampaigns) + 1L;
+            schedulingCampaigns.put(String.valueOf(nextId), toDto(nextId, periodicScheduledCampaign));
             writeOnDisk(resolvedFilePath, schedulingCampaigns);
 
             return periodicScheduledCampaign;
@@ -92,12 +89,35 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
 
     @Override
     public void removeById(Long id) {
-        final Lock writeLock;
-        (writeLock = rwLock.writeLock()).lock();
+        final Lock writeLock = rwLock.writeLock();
+        writeLock.lock();
         try {
             Map<String, SchedulingCampaignDto> schedulingCampaigns = readFromDisk();
             schedulingCampaigns.remove(String.valueOf(id));
             writeOnDisk(resolvedFilePath, schedulingCampaigns);
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    @Override
+    public void removeCampaignId(Long id) {
+        final Lock writeLock = rwLock.writeLock();
+        writeLock.lock();
+        try {
+            Map<String, SchedulingCampaignDto> schedulingCampaigns = readFromDisk();
+            Map<String, SchedulingCampaignDto> schedulingCampaignsFiltered = new HashMap<>();
+            schedulingCampaigns.forEach((key, schedulingCampaignDto) -> {
+                int indexCampaignId = schedulingCampaignDto.campaignsId.indexOf(id);
+                if (indexCampaignId != -1) { // Remove id and title if the campaignId has been found
+                    schedulingCampaignDto.campaignsTitle.remove(indexCampaignId);
+                    schedulingCampaignDto.campaignsId.remove(indexCampaignId);
+                }
+                if (!schedulingCampaignDto.campaignsId.isEmpty()) { // Set the schedule only if a campaign is present after removal
+                    schedulingCampaignsFiltered.put(key, schedulingCampaignDto);
+                }
+            });
+            writeOnDisk(resolvedFilePath, schedulingCampaignsFiltered);
         } finally {
             writeLock.unlock();
         }
@@ -148,5 +168,9 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
 
     private SchedulingCampaignDto toDto(long id, PeriodicScheduledCampaign periodicScheduledCampaign) {
         return new SchedulingCampaignDto(String.valueOf(id), periodicScheduledCampaign.campaignsId, periodicScheduledCampaign.campaignsTitle, periodicScheduledCampaign.nextExecutionDate, periodicScheduledCampaign.frequency.label);
+    }
+
+    private Long getCurrentMaxId(Map<String, SchedulingCampaignDto> schedulingCampaigns) {
+        return schedulingCampaigns.keySet().stream().mapToLong(Long::valueOf).max().orElse(0);
     }
 }
