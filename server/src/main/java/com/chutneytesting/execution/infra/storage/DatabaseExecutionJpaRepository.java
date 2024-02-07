@@ -31,7 +31,7 @@ public interface DatabaseExecutionJpaRepository extends JpaRepository<ScenarioEx
 
     List<ScenarioExecutionEntity> findByScenarioIdOrderByIdDesc(String scenarioId);
 
-    @Query("select max(se.id), se.scenarioId from SCENARIO_EXECUTIONS se where se.scenarioId in :scenarioIds group by se.scenarioId")
+    @Query("select max(se.id), se.scenarioId from SCENARIO_EXECUTIONS se where se.scenarioId in :scenarioIds AND se.status != 'NOT_EXECUTED' group by se.scenarioId")
     List<Tuple> findLastExecutionsByScenarioId(@Param("scenarioIds") List<String> scenarioIds);
 
     List<ScenarioExecutionEntity> findAllByScenarioId(String scenarioId);
