@@ -17,6 +17,7 @@
 package com.chutneytesting.execution.infra.storage;
 
 import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.FAILURE;
+import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.NOT_EXECUTED;
 import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.PAUSED;
 import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.RUNNING;
 import static com.chutneytesting.server.core.domain.execution.report.ServerReportStatus.STOPPED;
@@ -177,6 +178,18 @@ public class DatabaseExecutionHistoryRepositoryTest {
             assertThat(lastExecutions).containsOnlyKeys(scenarioIdOne, scenarioIdTwo);
             assertThat(lastExecutions.get(scenarioIdOne).info()).hasValue("exec3");
             assertThat(lastExecutions.get(scenarioIdTwo).info()).hasValue("exec4");
+        }
+
+        @Test
+        public void last_execution_does_not_return_not_executed() {
+            String scenarioIdOne = givenScenarioId();
+            sut.store(scenarioIdOne, buildDetachedExecution(SUCCESS, "exec1", ""));
+            sut.store(scenarioIdOne, buildDetachedExecution(NOT_EXECUTED, "exec2", ""));
+
+            Map<String, ExecutionSummary> lastExecutions = sut.getLastExecutions(List.of(scenarioIdOne, scenarioIdOne));
+            assertThat(lastExecutions).containsOnlyKeys(scenarioIdOne);
+            assertThat(lastExecutions.get(scenarioIdOne).info()).hasValue("exec1");
+            assertThat(lastExecutions.get(scenarioIdOne).status()).isEqualTo(SUCCESS);
         }
 
         @Test
