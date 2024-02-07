@@ -97,7 +97,7 @@ class TestInfraConfiguration {
             Properties jpaProperties = new Properties();
             jpaProperties.putAll(Map.of(
                 "hibernate.dialect", "org.hibernate.dialect.H2Dialect",
-                "hibernate.show_sql", "true",
+                "hibernate.show_sql", "false",
                 "hibernate.use-new-id-generator-mappings", "false"
             ));
             return jpaProperties;
