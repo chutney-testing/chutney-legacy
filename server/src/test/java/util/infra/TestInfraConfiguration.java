@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -85,6 +84,15 @@ class TestInfraConfiguration {
         }
 
         @Bean
+        @Profile("test-infra-h2-file")
+        @Primary
+        public DataSourceProperties fileDataSourceProperties(Server h2Server) {
+            DataSourceProperties dataSourceProperties = new DataSourceProperties();
+            dataSourceProperties.setUrl("jdbc:h2:tcp://localhost:" + h2Server.getPort() + "/./h2-chutney;SCHEMA=PUBLIC");
+            return dataSourceProperties;
+        }
+
+        @Bean
         public Properties jpaProperties() {
             Properties jpaProperties = new Properties();
             jpaProperties.putAll(Map.of(
@@ -96,24 +104,13 @@ class TestInfraConfiguration {
         }
 
         @Bean(value = "dbServer", destroyMethod = "stop")
-        Server dbServer() throws SQLException {
+        @Profile("test-infra-h2-file")
+        Server dbServer() throws SQLException, IOException {
             int availablePort = SocketUtil.freePort();
-            Path tempDirectory = copyH2ToTempDir();
+            Path tempDirectory = Files.createTempDirectory("test-infra-h2-");
             Server h2Server = Server.createTcpServer("-tcp", "-tcpPort", String.valueOf(availablePort), "-tcpAllowOthers", "-baseDir", tempDirectory.toString(), "-ifNotExists").start();
             LOGGER.debug("Started H2 server " + h2Server.getURL());
             return h2Server;
-        }
-
-        private Path copyH2ToTempDir() {
-            File h2BaseBlankFile = new File(TestInfraConfiguration.class.getResource("/test-infra/h2-chutney-171.mv.db.blank.bak").getPath());
-            Path tempDirectory;
-            try {
-                tempDirectory = Files.createTempDirectory("test-infra");
-                Files.copy(h2BaseBlankFile.toPath(), tempDirectory.resolve("h2-chutney-171.mv.db"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            return tempDirectory;
         }
     }
 

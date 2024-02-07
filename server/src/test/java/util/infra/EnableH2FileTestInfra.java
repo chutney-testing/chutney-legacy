@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package com.chutneytesting.admin.domain;
+package util.infra;
 
-public interface DBVacuum {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import org.junit.jupiter.api.DisplayName;
+import org.springframework.test.context.ActiveProfiles;
 
-    /**
-     * Try to compact database
-     */
-    void vacuum();
-
-    /**
-     * Compute current database size in bytes
-     *
-     * @return The size in bytes
-     */
-    long size();
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@DisplayName("H2 (file)")
+@ActiveProfiles({"test-infra-h2", "test-infra-h2-file"})
+public @interface EnableH2FileTestInfra {
 }

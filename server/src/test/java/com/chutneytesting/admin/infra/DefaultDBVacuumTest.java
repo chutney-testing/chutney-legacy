@@ -45,19 +45,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.test.context.ContextConfiguration;
 import util.infra.AbstractLocalDatabaseTest;
+import util.infra.EnableH2FileTestInfra;
 import util.infra.EnableH2MemTestInfra;
 import util.infra.EnablePostgreSQLTestInfra;
 import util.infra.EnableSQLiteTestInfra;
 
 @Isolated
-public class VacuumTest {
+public class DefaultDBVacuumTest {
 
     @Nested
     @EnableSQLiteTestInfra
     class SQLite extends AllTests {
 
         @Test
-        void compact_db_size() {
+        void compact_db() {
             // Given
             dbInsertReports(100, _1Mo);
             File dbFile = dbFile(dataSourceProperties);
@@ -76,7 +77,7 @@ public class VacuumTest {
         }
 
         @Test
-        void compact_db_size_while_updating() throws InterruptedException {
+        void compact_db_while_updating() throws InterruptedException {
             // Given
             dbInsertReports(100, _1Mo);
             Runnable updatingRunnable = () ->
@@ -165,9 +166,19 @@ public class VacuumTest {
 
     @Nested
     @EnableH2MemTestInfra
-    class H2 extends AllTests {
+    class H2Memory extends AllTests {
         @Test
-        void is_not_supported() {
+        void compact_db_is_not_supported() {
+            Assertions.assertThatThrownBy(() -> sut.vacuum())
+                .isInstanceOf(UnsupportedOperationException.class);
+        }
+    }
+
+    @Nested
+    @EnableH2FileTestInfra
+    class H2File extends AllTests {
+        @Test
+        void compact_db_is_not_supported() {
             Assertions.assertThatThrownBy(() -> sut.vacuum())
                 .isInstanceOf(UnsupportedOperationException.class);
         }
@@ -177,7 +188,7 @@ public class VacuumTest {
     @EnablePostgreSQLTestInfra
     class PostGreSQL extends AllTests {
         @Test
-        void is_not_supported() {
+        void compact_db_is_not_supported() {
             Assertions.assertThatThrownBy(() -> sut.vacuum())
                 .isInstanceOf(UnsupportedOperationException.class);
         }
@@ -212,6 +223,15 @@ public class VacuumTest {
         @AfterEach
         void afterEach() {
             clearTables();
+        }
+
+        @Test
+        void compute_db_size() {
+            long initSize = sut.size();
+            assertThat(initSize).isPositive();
+            dbInsertReports(10, _1Mo);
+            long afterInsertSize = sut.size();
+            assertThat(afterInsertSize).isGreaterThan(initSize);
         }
 
         @SuppressWarnings("unchecked")

@@ -105,6 +105,7 @@ public class SecuredControllerSpringBootIntegrationTest {
 
             {GET, "/api/v1/admin/database/execution?query=abc", "ADMIN_ACCESS", null, OK},
             {POST, "/api/v1/admin/database/compact", "ADMIN_ACCESS", null, NOT_IMPLEMENTED},
+            {GET, "/api/v1/admin/database/size", "ADMIN_ACCESS", null, OK},
 
             {POST, "/api/v1/agentnetwork/configuration", "ADMIN_ACCESS", "{}", OK},
             {GET, "/api/v1/description", "ADMIN_ACCESS", null, OK},
