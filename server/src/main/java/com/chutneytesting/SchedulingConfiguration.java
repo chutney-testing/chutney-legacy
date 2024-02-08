@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.task.TaskExecutorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -76,6 +77,11 @@ public class SchedulingConfiguration implements AsyncConfigurer {
     @Bean
     public TaskExecutor applicationTaskExecutor(TaskExecutorBuilder builder) {
         return builder.threadNamePrefix("app-task-exec").build();
+    }
+
+    @Bean
+    public ApplicationRunner scheduledMissedCampaignToExecute(CampaignScheduler campaignScheduler) {
+        return arg -> campaignScheduler.scheduledMissedCampaignToExecute();
     }
 
     /**

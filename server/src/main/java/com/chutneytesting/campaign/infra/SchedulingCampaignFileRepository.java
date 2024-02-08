@@ -64,7 +64,7 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
     private final ReadWriteLock rwLock;
 
-    SchedulingCampaignFileRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
+    public SchedulingCampaignFileRepository(@Value(CONFIGURATION_FOLDER_SPRING_VALUE) String storeFolderPath) throws UncheckedIOException {
         this.rwLock = new ReentrantReadWriteLock(true);
         this.storeFolderPath = Paths.get(storeFolderPath).resolve(ROOT_DIRECTORY_NAME);
         this.resolvedFilePath = this.storeFolderPath.resolve(SCHEDULING_CAMPAIGNS_FILE);

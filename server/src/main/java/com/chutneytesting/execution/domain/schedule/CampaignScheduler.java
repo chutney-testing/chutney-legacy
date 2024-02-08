@@ -83,6 +83,10 @@ public class CampaignScheduler {
         };
     }
 
+    public void scheduledMissedCampaignToExecute() {
+        scheduledCampaignIdsToExecute().toList();
+    }
+
     synchronized private Stream<List<Long>> scheduledCampaignIdsToExecute() {
         try {
             return periodicScheduledCampaignRepository.getALl().stream()
@@ -99,7 +103,11 @@ public class CampaignScheduler {
     private void prepareScheduledCampaignForNextExecution(PeriodicScheduledCampaign periodicScheduledCampaign) {
         try {
             if (!Frequency.EMPTY.equals(periodicScheduledCampaign.frequency)) {
-                periodicScheduledCampaignRepository.add(periodicScheduledCampaign.nextScheduledExecution());
+                PeriodicScheduledCampaign periodicScheduledCampaignWithNextSchedule = periodicScheduledCampaign;
+                while (periodicScheduledCampaignWithNextSchedule.nextExecutionDate.isBefore(LocalDateTime.now(clock))) {
+                    periodicScheduledCampaignWithNextSchedule = periodicScheduledCampaignWithNextSchedule.nextScheduledExecution();
+                }
+                periodicScheduledCampaignRepository.add(periodicScheduledCampaignWithNextSchedule);
                 LOGGER.info("Next execution of scheduled campaign(s) {} with frequency [{}] has been added", periodicScheduledCampaign.campaignsId, periodicScheduledCampaign.frequency);
             }
             periodicScheduledCampaignRepository.removeById(periodicScheduledCampaign.id);

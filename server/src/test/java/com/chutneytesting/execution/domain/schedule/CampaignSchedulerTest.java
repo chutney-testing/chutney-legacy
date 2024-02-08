@@ -22,7 +22,9 @@ import static java.time.LocalDateTime.now;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -32,17 +34,26 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.campaign.domain.Frequency;
 import com.chutneytesting.campaign.domain.PeriodicScheduledCampaign;
 import com.chutneytesting.campaign.domain.PeriodicScheduledCampaignRepository;
+import com.chutneytesting.campaign.infra.SchedulingCampaignFileRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
+import com.chutneytesting.tools.file.FileUtils;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InOrder;
+import org.mockito.Mock;
 
 public class CampaignSchedulerTest {
 
@@ -51,11 +62,16 @@ public class CampaignSchedulerTest {
     private final CampaignExecutionEngine campaignExecutionEngine = mock(CampaignExecutionEngine.class);
     private final PeriodicScheduledCampaignRepository periodicScheduledCampaignRepository = mock(PeriodicScheduledCampaignRepository.class);
 
-    private Clock clock;
+    private static Path SCHEDULING_CAMPAIGN_FILE;
+    @TempDir
+    private static Path temporaryFolder;
+    private final Clock clock = mock(Clock.class);
 
     @BeforeEach
     public void setUp() {
-        clock = Clock.systemDefaultZone();
+        Clock fixedClock = Clock.fixed(LocalDateTime.of(2024, 3, 15, 15, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.systemDefault());
+        doReturn(fixedClock.instant()).when(clock).instant();
+        doReturn(fixedClock.getZone()).when(clock).getZone();
         sut = new CampaignScheduler(campaignExecutionEngine, clock, periodicScheduledCampaignRepository, Executors.newFixedThreadPool(2));
     }
 
@@ -105,6 +121,69 @@ public class CampaignSchedulerTest {
                 periodicScheduledCampaign.get(0).nextScheduledExecution()
             );
         }
+    }
+
+    @Test
+    void should_reschedule_missed_campaign() {
+        String tmpConfDir = temporaryFolder.toFile().getAbsolutePath();
+        SCHEDULING_CAMPAIGN_FILE = Paths.get(tmpConfDir + "/scheduling/schedulingCampaigns.json");
+        CampaignScheduler campaignScheduler = new CampaignScheduler(campaignExecutionEngine, clock, new SchedulingCampaignFileRepository(tmpConfDir), Executors.newFixedThreadPool(2));
+
+        String initialSchedules = """
+                {
+                      "1" : {
+                        "id" : "1",
+                        "campaignsId" : [ 11 ],
+                        "campaignsTitle" : [ "campaign title 1" ],
+                        "schedulingDate" : [ 2024, 1, 1, 14, 0 ],
+                        "frequency" : "Weekly"
+                      },
+                      "2" : {
+                        "id" : "2",
+                        "campaignsId" : [ 22 ],
+                        "campaignsTitle" : [ "campaign title 2" ],
+                        "schedulingDate" : [ 2023, 3, 4, 7, 10 ],
+                        "frequency" : "Hourly"
+                      },
+                      "3" : {
+                        "id" : "3",
+                        "campaignsId" : [ 33 ],
+                        "campaignsTitle" : [ "campaign title 3" ],
+                        "schedulingDate" : [ 2024, 2, 2, 14, 0 ]
+                      }
+                }
+                """;
+        FileUtils.initFolder(SCHEDULING_CAMPAIGN_FILE.getParent());
+        FileUtils.writeContent(SCHEDULING_CAMPAIGN_FILE, initialSchedules);
+
+
+        String expectedSchedules =
+          """
+          {
+            "4" : {
+              "id" : "4",
+              "campaignsId" : [ 11 ],
+              "campaignsTitle" : [ "campaign title 1" ],
+              "schedulingDate" : [ 2024, 3, 18, 14, 0 ],
+              "frequency" : "Weekly"
+            },
+            "5" : {
+              "id" : "5",
+              "campaignsId" : [ 22 ],
+              "campaignsTitle" : [ "campaign title 2" ],
+              "schedulingDate" : [ 2024, 3, 15, 16, 10 ],
+              "frequency" : "Hourly"
+            }
+          }
+          """;
+
+        // WHEN
+        campaignScheduler.scheduledMissedCampaignToExecute();
+
+        // THEN
+        String result = FileUtils.readContent(SCHEDULING_CAMPAIGN_FILE);
+        assertThat(result).isEqualToIgnoringNewLines(expectedSchedules);
+
     }
 
     @Test
