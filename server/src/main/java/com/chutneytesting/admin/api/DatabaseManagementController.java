@@ -17,6 +17,7 @@
 package com.chutneytesting.admin.api;
 
 import com.chutneytesting.admin.domain.DBVacuum;
+import com.chutneytesting.admin.domain.DBVacuum.VacuumReport;
 import com.chutneytesting.execution.api.ExecutionSummaryDto;
 import com.chutneytesting.server.core.domain.execution.history.ExecutionHistoryRepository;
 import jakarta.ws.rs.QueryParam;
@@ -52,9 +53,10 @@ public class DatabaseManagementController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")
-    @PostMapping(path = "/compact")
-    public void vacuum() {
-        dbVacuum.vacuum();
+    @PostMapping(path = "/compact", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Long> vacuum() {
+        VacuumReport report = dbVacuum.vacuum();
+        return List.of(report.beforeSize(), report.afterSize());
     }
 
     @PreAuthorize("hasAuthority('ADMIN_ACCESS')")

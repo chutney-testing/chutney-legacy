@@ -21,7 +21,7 @@ public interface DBVacuum {
     /**
      * Try to compact database
      */
-    void vacuum();
+    VacuumReport vacuum();
 
     /**
      * Compute current database size in bytes
@@ -29,4 +29,7 @@ public interface DBVacuum {
      * @return The size in bytes
      */
     long size();
+
+    record VacuumReport(Long beforeSize, Long afterSize) {
+    }
 }

@@ -340,7 +340,17 @@
             }
         },
         "database": {
-            "updated_rows": "updated row(s)"
+            "actions": {
+                "search.executions": "Exécutions",
+                "vacuum": "Vacuum"
+            },
+            "vacuum": {
+                "size": {
+                    "current": "La taille actuelle de la BDD est",
+                    "report": "Les tailles de la BDD (avant / après) sont",
+                    "unit": "Mo"
+                }
+            }
         },
         "plugins": {
             "jira": {
@@ -431,7 +441,8 @@
             "select": "Sélectionner",
             "done": {
                 "saved": "Sauvegarde réalisée"
-            }
+            },
+            "refresh": "Rafraîchir"
         },
         "bdd": {
             "given": "Etant donné",

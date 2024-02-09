@@ -23,6 +23,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.chutneytesting.admin.domain.DBVacuum;
+import com.chutneytesting.admin.domain.DBVacuum.VacuumReport;
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -69,11 +70,14 @@ public class DefaultDBVacuumTest {
             assertThat(dbFile.length()).isEqualTo(dbInitSizeLength);
 
             // When
-            sut.vacuum();
+            VacuumReport report = sut.vacuum();
 
             // Then
             assertThat(dbSizeBytes()).isLessThan(dbInitSizeBytes);
             assertThat(dbFile.length()).isLessThan(dbInitSizeLength);
+            assertThat(report.afterSize())
+                .isPositive()
+                .isLessThan(report.afterSize());
         }
 
         @Test

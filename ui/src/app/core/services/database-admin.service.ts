@@ -37,4 +37,12 @@ export class DatabaseAdminService {
       })
     )
   }
+
+  compactDatabase(): Observable<number[]> {
+    return this.http.post<number[]>(environment.backend + this.adminUrl + '/compact', null);
+  }
+
+  computeDatabaseSize(): Observable<number> {
+    return this.http.get<number>(environment.backend + this.adminUrl + '/size');
+  }
 }

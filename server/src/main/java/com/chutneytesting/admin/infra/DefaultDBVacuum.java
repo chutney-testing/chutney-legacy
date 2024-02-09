@@ -46,14 +46,17 @@ public class DefaultDBVacuum implements DBVacuum {
 
     @Override
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public void vacuum() {
-        LOGGER.info("Vacuum start");
+    public VacuumReport vacuum() {
+        var dbBeforeSize = size();
+        LOGGER.info("Vacuum start [{}]", dbBeforeSize);
         switch (JDBCDriver.valueFromJDBCUrl(dsProperties.determineUrl())) {
             case SQLITE -> jdbcTemplate.update("VACUUM", emptyMap());
             case POSTGRES, H2 ->
                 throw new UnsupportedOperationException("Database Vacuum is only supported for SQLite database");
         }
-        LOGGER.info("Vacuum end");
+        var dbAfterSize = size();
+        LOGGER.info("Vacuum end [{}]", dbAfterSize);
+        return new VacuumReport(dbBeforeSize, dbAfterSize);
     }
 
     @Override
