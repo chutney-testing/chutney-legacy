@@ -140,6 +140,10 @@ public class CampaignEntity implements Serializable {
         return title;
     }
 
+    public String description() {
+        return description;
+    }
+
     public List<CampaignScenarioEntity> campaignScenarios() {
         return campaignScenarios;
     }
