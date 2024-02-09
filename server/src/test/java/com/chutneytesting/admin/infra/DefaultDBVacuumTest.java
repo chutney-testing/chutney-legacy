@@ -77,7 +77,7 @@ public class DefaultDBVacuumTest {
             assertThat(dbFile.length()).isLessThan(dbInitSizeLength);
             assertThat(report.afterSize())
                 .isPositive()
-                .isLessThan(report.afterSize());
+                .isLessThan(report.beforeSize());
         }
 
         @Test
