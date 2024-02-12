@@ -22,8 +22,8 @@ import static java.time.LocalDateTime.now;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -34,11 +34,7 @@ import static org.mockito.Mockito.when;
 import com.chutneytesting.campaign.domain.Frequency;
 import com.chutneytesting.campaign.domain.PeriodicScheduledCampaign;
 import com.chutneytesting.campaign.domain.PeriodicScheduledCampaignRepository;
-import com.chutneytesting.campaign.infra.SchedulingCampaignFileRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
-import com.chutneytesting.tools.file.FileUtils;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -61,15 +57,11 @@ public class CampaignSchedulerTest {
 
     private final CampaignExecutionEngine campaignExecutionEngine = mock(CampaignExecutionEngine.class);
     private final PeriodicScheduledCampaignRepository periodicScheduledCampaignRepository = mock(PeriodicScheduledCampaignRepository.class);
-
-    private static Path SCHEDULING_CAMPAIGN_FILE;
-    @TempDir
-    private static Path temporaryFolder;
     private final Clock clock = mock(Clock.class);
 
     @BeforeEach
     public void setUp() {
-        Clock fixedClock = Clock.fixed(LocalDateTime.of(2024, 3, 15, 15, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.systemDefault());
+        Clock fixedClock = Clock.fixed(LocalDateTime.of(2024, 3, 15, 15, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/Paris"));
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
         sut = new CampaignScheduler(campaignExecutionEngine, clock, periodicScheduledCampaignRepository, Executors.newFixedThreadPool(2));
@@ -125,65 +117,32 @@ public class CampaignSchedulerTest {
 
     @Test
     void should_reschedule_missed_campaign() {
-        String tmpConfDir = temporaryFolder.toFile().getAbsolutePath();
-        SCHEDULING_CAMPAIGN_FILE = Paths.get(tmpConfDir + "/scheduling/schedulingCampaigns.json");
-        CampaignScheduler campaignScheduler = new CampaignScheduler(campaignExecutionEngine, clock, new SchedulingCampaignFileRepository(tmpConfDir), Executors.newFixedThreadPool(2));
+        PeriodicScheduledCampaign periodicScheduledCampaign1 = new PeriodicScheduledCampaign(1L, List.of(11L), List.of("campaign title 1"), LocalDateTime.of(2024, 1, 1, 14, 0), Frequency.WEEKLY);
+        PeriodicScheduledCampaign periodicScheduledCampaign2 = new PeriodicScheduledCampaign(2L, List.of(22L), List.of("campaign title 2"), LocalDateTime.of(2023, 3, 4, 7, 10), Frequency.HOURLY);
+        PeriodicScheduledCampaign periodicScheduledCampaign3 = new PeriodicScheduledCampaign(3L, List.of(33L), List.of("campaign title 3"), LocalDateTime.of(2024, 2, 2, 14, 0));
+        when(periodicScheduledCampaignRepository.getALl())
+            .thenReturn(
+                List.of(periodicScheduledCampaign1, periodicScheduledCampaign2, periodicScheduledCampaign3)
+            );
+        when(periodicScheduledCampaignRepository.add(any()))
+            .thenReturn(
+                null
+            );
+        doNothing().when(periodicScheduledCampaignRepository).removeById(any());
 
-        String initialSchedules = """
-                {
-                      "1" : {
-                        "id" : "1",
-                        "campaignsId" : [ 11 ],
-                        "campaignsTitle" : [ "campaign title 1" ],
-                        "schedulingDate" : [ 2024, 1, 1, 14, 0 ],
-                        "frequency" : "Weekly"
-                      },
-                      "2" : {
-                        "id" : "2",
-                        "campaignsId" : [ 22 ],
-                        "campaignsTitle" : [ "campaign title 2" ],
-                        "schedulingDate" : [ 2023, 3, 4, 7, 10 ],
-                        "frequency" : "Hourly"
-                      },
-                      "3" : {
-                        "id" : "3",
-                        "campaignsId" : [ 33 ],
-                        "campaignsTitle" : [ "campaign title 3" ],
-                        "schedulingDate" : [ 2024, 2, 2, 14, 0 ]
-                      }
-                }
-                """;
-        FileUtils.initFolder(SCHEDULING_CAMPAIGN_FILE.getParent());
-        FileUtils.writeContent(SCHEDULING_CAMPAIGN_FILE, initialSchedules);
+        PeriodicScheduledCampaign expected1 = new PeriodicScheduledCampaign(1L, List.of(11L), List.of("campaign title 1"), LocalDateTime.of(2024, 3, 18, 14, 0), Frequency.WEEKLY);
+        PeriodicScheduledCampaign expected2 = new PeriodicScheduledCampaign(2L, List.of(22L), List.of("campaign title 2"), LocalDateTime.of(2024, 3, 15, 16, 10), Frequency.HOURLY);
 
-
-        String expectedSchedules =
-          """
-          {
-            "4" : {
-              "id" : "4",
-              "campaignsId" : [ 11 ],
-              "campaignsTitle" : [ "campaign title 1" ],
-              "schedulingDate" : [ 2024, 3, 18, 14, 0 ],
-              "frequency" : "Weekly"
-            },
-            "5" : {
-              "id" : "5",
-              "campaignsId" : [ 22 ],
-              "campaignsTitle" : [ "campaign title 2" ],
-              "schedulingDate" : [ 2024, 3, 15, 16, 10 ],
-              "frequency" : "Hourly"
-            }
-          }
-          """;
 
         // WHEN
-        campaignScheduler.scheduledMissedCampaignToExecute();
+        sut.scheduledMissedCampaignIds();
 
         // THEN
-        String result = FileUtils.readContent(SCHEDULING_CAMPAIGN_FILE);
-        assertThat(result).isEqualToIgnoringNewLines(expectedSchedules);
-
+        verify(periodicScheduledCampaignRepository).add(expected1);
+        verify(periodicScheduledCampaignRepository).add(expected2);
+        verify(periodicScheduledCampaignRepository).removeById(1L);
+        verify(periodicScheduledCampaignRepository).removeById(2L);
+        verify(periodicScheduledCampaignRepository).removeById(3L);
     }
 
     @Test

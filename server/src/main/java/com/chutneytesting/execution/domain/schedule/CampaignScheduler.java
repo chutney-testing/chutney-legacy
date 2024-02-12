@@ -83,13 +83,14 @@ public class CampaignScheduler {
         };
     }
 
-    public void scheduledMissedCampaignToExecute() {
-        scheduledCampaignIdsToExecute().toList();
+    public void scheduledMissedCampaignIds() {
+        scheduledCampaignIdsToExecute().forEach(campaignId -> LOGGER.info("Reschedule missed campaign with id {}", campaignId));
     }
 
     synchronized private Stream<List<Long>> scheduledCampaignIdsToExecute() {
         try {
-            return periodicScheduledCampaignRepository.getALl().stream()
+            List<PeriodicScheduledCampaign> all = periodicScheduledCampaignRepository.getALl();
+            return all.stream()
                 .filter(sc -> sc.nextExecutionDate != null)
                 .filter(sc -> sc.nextExecutionDate.isBefore(LocalDateTime.now(clock)))
                 .peek(this::prepareScheduledCampaignForNextExecution)
