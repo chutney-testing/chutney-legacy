@@ -35,7 +35,6 @@ import com.chutneytesting.server.core.domain.scenario.TestCaseRepository;
 import com.chutneytesting.tools.ui.MyMixInForIgnoreType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -210,7 +209,6 @@ public class ScenarioExecutionUiController {
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            .enable(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS.mappedFeature())
             .registerModule(jdomElementModule)
             .findAndRegisterModules();
     }
