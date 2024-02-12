@@ -20,7 +20,5 @@ import { Injectable } from '@angular/core';
     providedIn: 'root'
 })
 export class LayoutOptions {
-    sidebarHover = false;
     toggleSidebar = false;
-    toggleSidebarMobile = false;
 }

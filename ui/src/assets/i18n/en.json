@@ -23,7 +23,7 @@
             "lightMode": "Light mode",
             "feedback": "Feedback",
             "notif": "Notifications",
-            "previewReport": "Preview execution",
+            "previewReport": "Load report",
             "metrics": "Metrics"
         }
     },

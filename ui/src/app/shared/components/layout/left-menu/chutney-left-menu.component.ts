@@ -58,10 +58,6 @@ export class ChutneyLeftMenuComponent implements OnInit {
         this.layoutOptions.toggleSidebar = !this.layoutOptions.toggleSidebar;
     }
 
-    sidebarHover() {
-        this.layoutOptions.sidebarHover = !this.layoutOptions.sidebarHover;
-    }
-
     @HostListener('window:resize', ['$event'])
     onResize(event) {
         this.newInnerWidth = event.target.innerWidth;

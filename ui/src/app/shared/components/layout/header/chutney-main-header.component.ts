@@ -32,7 +32,7 @@ export class ChutneyMainHeaderComponent implements OnInit {
 
     constructor(private loginService: LoginService,
                 private themeService: ThemeService,
-                public globals: LayoutOptions) {
+                public layoutOptions: LayoutOptions) {
         this.user$ = this.loginService.getUser();
     }
 
@@ -44,8 +44,8 @@ export class ChutneyMainHeaderComponent implements OnInit {
     isActive: boolean;
 
 
-    toggleSidebarMobile() {
-        this.globals.toggleSidebarMobile = !this.globals.toggleSidebarMobile;
+    toggleSidebar() {
+        this.layoutOptions.toggleSidebar = !this.layoutOptions.toggleSidebar;
     }
 
     ngOnInit(): void {

@@ -1,7 +1,6 @@
 <div [ngClass]="{
 'closed-sidebar' : layoutOptions.toggleSidebar,
-'closed-sidebar-md' : layoutOptions.toggleSidebarMobile,
-'closed-sidebar-open': layoutOptions.sidebarHover || layoutOptions.toggleSidebarMobile
+'closed-sidebar-open': !layoutOptions.toggleSidebar
 }" class="app">
     <header>
         <router-outlet name="header"></router-outlet>

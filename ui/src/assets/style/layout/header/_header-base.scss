@@ -1,6 +1,7 @@
 // Header Base
 @import "~bootstrap/scss/bootstrap";
 @import "../layout-variables";
+
 .app-header {
   height: $app-header-height;
   display: flex;
@@ -19,7 +20,6 @@
     align-items: center;
     align-content: center;
     flex: 1;
-    padding-left: $app-sidebar-width;
     height: $app-header-height;
     transition: all .2s;
 
@@ -29,27 +29,19 @@
       margin-left: auto;
       padding: 0 $layout-spacer-x 0 0;
     }
+
+    .app-header-left {
+      padding: 0 $layout-spacer-x;
+      height: $app-header-height;
+      align-items: center;
+      display: flex;
+    }    
   }
-
 }
+
 .close-sidebar-btn {
-    cursor: pointer;
-    color: var(--bs-primary);
-    font-size: larger;
-    padding-right: 0.5rem;
-}
-
-.app-header__menu,
-.app-header__mobile-menu {
-  display: none;
-  padding: 0 $layout-spacer-x;
-  height: $app-header-height;
-  align-items: center;
-}
-
-.hamburger-inner,
-.hamburger-inner::before,
-.hamburger-inner::after {
-    background-color: $white!important;
+  font-size: x-large;
+  cursor: pointer;
+  color: var(--bs-white);
 }
 

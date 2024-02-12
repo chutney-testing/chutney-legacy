@@ -1,8 +1,9 @@
 <div class="app-header bg-primary">
-    <div class="logo-src">
-    </div>
     <div class="app-header__content">
         <div class="app-header-left">
+            <div class="close-sidebar-btn" (click)="toggleSidebar()">
+                <i class="fa fa-bars"></i>
+            </div>
         </div>
         <div class="app-header-right">
             <div class="nav">
@@ -11,30 +12,30 @@
                         <i class="fa fa-book"></i>
                     </a>
                 </div>
-                <div *ngIf="false" class="nav-item" placement="bottom"  ngbTooltip="{{'menu.principal.feedback' | translate}}">
+                <div *ngIf="false" class="nav-item" placement="bottom" ngbTooltip="{{'menu.principal.feedback' | translate}}">
                     <span class="nav-link cursor-pointer">
                         <i class="fa fa-lightbulb"></i>
                     </span>
                 </div>
-                <div *ngIf="false" class="nav-item" placement="bottom"  ngbTooltip="{{'menu.principal.notif' | translate}}">
+                <div *ngIf="false" class="nav-item" placement="bottom" ngbTooltip="{{'menu.principal.notif' | translate}}">
                     <span class="nav-link">
                         <i class="fa fa-bell"></i>
                     </span>
                 </div>
                 <div class="nav-item" *ngIf="isLight()" (click)="switchTheme()"
-                     placement="bottom"  ngbTooltip="{{'menu.principal.darkMode' | translate}}">
+                     placement="bottom" ngbTooltip="{{'menu.principal.darkMode' | translate}}">
                     <span class="nav-link">
                         <i class="fa fa-moon"></i>
                     </span>
                 </div>
                 <div class="nav-item" *ngIf="isDark()" (click)="switchTheme()"
-                     placement="bottom"  ngbTooltip="{{'menu.principal.lightMode' | translate}}">
+                     placement="bottom" ngbTooltip="{{'menu.principal.lightMode' | translate}}">
                     <span class="nav-link">
                         <i class="fa fa-sun"></i>
                     </span>
                 </div>
             <ng-container *ngIf="(user$ | async) as user">
-                <div class="nav-item dropdown" *ngIf="user?.id" ngbTooltip="{{'menu.principal.profile' | translate}}">
+                <div class="nav-item dropdown" *ngIf="user?.id"  ngbTooltip="{{'menu.principal.profile' | translate}}">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="fa fa-regular fa-user" placement="bottom"></i>
                     </a>
@@ -55,10 +56,4 @@
             </div>
         </div>
     </div>
-    <div class="app-header__mobile-menu">
-        <div class="close-sidebar-btn__mobile" (click)="toggleSidebarMobile()">
-            <i class="fa fa-bars"></i>
-        </div>
-    </div>
-
 </div>
