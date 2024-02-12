@@ -56,7 +56,7 @@ public class DatabaseCampaignRepository implements CampaignRepository {
     @Override
     public Campaign createOrUpdate(Campaign campaign) {
         if (campaign.id != null && !campaignExists(campaign.id)) {
-            CampaignEntity campaignEntity = CampaignEntity.fromDomain(campaign, 0);
+            CampaignEntity campaignEntity = CampaignEntity.fromDomain(campaign, 1);
             campaignJpaRepository.saveWithExplicitId(campaignEntity.id(), campaignEntity.title(), campaignEntity.description());
         }
         CampaignEntity campaignJpa =
