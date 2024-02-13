@@ -1,5 +1,34 @@
 # Changelog
 
+## [2.7.0](https://github.com/chutney-testing/chutney/tree/2.7.0)
+
+[Full Changelog](https://github.com/chutney-testing/chutney/compare/2.6.1...2.7.0)
+
+## What's Changed
+### 🚀 Implemented enhancements:
+* Scheduling sequential campaigns by @rbenyoussef in https://github.com/chutney-testing/chutney/pull/1235
+* Admin search report by @DelaunayAlex in https://github.com/chutney-testing/chutney/pull/1236
+* Allow to save campaign with specific id by @nbrouand in https://github.com/chutney-testing/chutney/pull/1253
+* On startup, reschedule missed campaign by @DelaunayAlex in https://github.com/chutney-testing/chutney/pull/1252
+### 🐛 Fixed bugs:
+* Follow execution error by @rbenyoussef in https://github.com/chutney-testing/chutney/pull/1213
+* Allow https proxy for jira client api by @boddissattva in https://github.com/chutney-testing/chutney/pull/1237
+* Update campaigns and scenarios on dataset delete by @rbenyoussef in https://github.com/chutney-testing/chutney/pull/1238
+* Filter NOT_EXECUTED when findLastExecutionsByScenarioId by @DelaunayAlex in https://github.com/chutney-testing/chutney/pull/1251
+* Delete campaign from schedule after deleting campaign by @DelaunayAlex in https://github.com/chutney-testing/chutney/pull/1249
+### 🔧 Technical enhancements:
+* Remove hover animation on left menu by @nbrouand in https://github.com/chutney-testing/chutney/pull/1250
+* DB compact for SQLite by @boddissattva in https://github.com/chutney-testing/chutney/pull/1234
+### 👒 Dependencies:
+* Bump org.liquibase:liquibase-core from 4.24.0 to 4.25.1 by @dependabot in https://github.com/chutney-testing/chutney/pull/1219
+* Bump com.atlassian.jira:jira-rest-java-client-app from 5.2.4 to 5.2.7 by @dependabot in https://github.com/chutney-testing/chutney/pull/1221
+* Bump org.immutables:value from 2.9.0 to 2.10.0 by @dependabot in https://github.com/chutney-testing/chutney/pull/1242
+* Bump commons-io:commons-io from 2.11.0 to 2.15.1 by @dependabot in https://github.com/chutney-testing/chutney/pull/1244
+* Bump sshd.version from 2.11.0 to 2.12.0 by @dependabot in https://github.com/chutney-testing/chutney/pull/1247
+* Bump org.apache.maven.plugins:maven-clean-plugin from 3.2.0 to 3.3.2 by @dependabot in https://github.com/chutney-testing/chutney/pull/1246
+* Bump org.apache.maven.plugins:maven-compiler-plugin from 3.10.1 to 3.12.1 by @dependabot in https://github.com/chutney-testing/chutney/pull/1240
+
+
 ## [2.6.1](https://github.com/chutney-testing/chutney/tree/2.6.1)
 
 [Full Changelog](https://github.com/chutney-testing/chutney/compare/2.6.0...2.6.1)
