@@ -138,6 +138,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.FORBIDDEN, request);
     }
 
+    @ExceptionHandler({
+        UnsupportedOperationException.class
+    })
+    protected ResponseEntity<Object> notImplemented(RuntimeException ex, WebRequest request) {
+        return handleExceptionInternalWithExceptionMessageAsBody(ex, HttpStatus.NOT_IMPLEMENTED, request);
+    }
+
     private ResponseEntity<Object> handleExceptionInternalWithExceptionMessageAsBody(RuntimeException ex, HttpStatus status, WebRequest request) {
         logException(ex, status);
         metrics.onHttpError(status);

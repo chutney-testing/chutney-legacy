@@ -340,7 +340,17 @@
             }
         },
         "database": {
-            "updated_rows": "ligne(s) mise(s) à jour"
+            "actions": {
+                "search.executions": "Executions",
+                "vacuum": "Vacuum"
+            },
+            "vacuum": {
+                "size": {
+                    "current": "Current database size is",
+                    "report": "Database sizes (before / after) are",
+                    "unit": "MB"
+                }
+            }
         },
         "plugins": {
             "jira": {
@@ -431,7 +441,8 @@
             "select": "Select",
             "done": {
                 "saved": "Saved"
-            }
+            },
+            "refresh": "Refresh"
         },
         "bdd": {
             "given": "Given",

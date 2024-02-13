@@ -1,22 +1,64 @@
 <div>
-    <div class="row">
-        <div class="col justify-content-center input-group input-group-sm">
-            <div class="w30">
-                <chutney-forms-search-field [id]="'scenario-search'"
-                                            [placeholder]="'scenarios.search.placeholder-search-report' | translate"
-                                            [searchInput]="query"
-                                            (searchInputEvent)="updateQuery($event)"></chutney-forms-search-field>
-            </div>
-            <div class="mx-2">
-                <button class="btn btn-success" (click)="searchQuery()">
-                    <span class="fa fa-play me-2" aria-hidden="true"></span> {{'global.actions.execute' | translate}}
-                </button>
-            </div>
-        </div>
+    <div *ngIf="errorMessage" class="alert alert-dismissible alert-danger mt-4">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" (click)="errorMessage = null"></button>
+        {{ errorMessage }}
     </div>
-    <div class="row mt-3">
-        <database-admin-report-list [executions]="executions"
-                                    [(filters)]="executionsFilters"
-                                    (onExecutionSelect)="openReport($event)"></database-admin-report-list>
-    </div>
+    <ul ngbNav #nav="ngbNav" [activeId]="activeTabId" [destroyOnHide]="false" class="nav-tabs border-bottom border-primary pb-1">
+        <li [ngbNavItem]="1" class="me-1">
+            <button ngbNavLink class="btn btn-outline-primary" data-bs-toggle="button"
+                [ngClass]="{'active':activeTabId==1}"
+                (click)="activeTabId = 1"
+            >{{'admin.database.actions.search.executions' | translate}}</button>
+            <ng-template ngbNavContent>
+                <div class="row">
+                    <div class="col justify-content-center input-group input-group-sm">
+                        <div class="w30">
+                            <chutney-forms-search-field [id]="'scenario-search'"
+                                                        [placeholder]="'scenarios.search.placeholder-search-report' | translate"
+                                                        [searchInput]="query"
+                                                        (searchInputEvent)="updateQuery($event)"></chutney-forms-search-field>
+                        </div>
+                        <div class="mx-2">
+                            <button class="btn btn-success" (click)="searchQuery()">
+                                <span class="fa fa-play me-2" aria-hidden="true"></span> {{'global.actions.execute' | translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <database-admin-report-list [executions]="executions"
+                                                [(filters)]="executionsFilters"
+                                                (onExecutionSelect)="openReport($event)"></database-admin-report-list>
+                </div>
+            </ng-template>
+        </li>
+        <li [ngbNavItem]="2">
+            <button ngbNavLink class="btn btn-outline-primary" data-bs-toggle="button"
+            [ngClass]="{ 'active':activeTabId==2}"
+                (click)="activeTabId = 2"
+            >{{'admin.database.actions.vacuum' | translate}}</button>
+            <ng-template ngbNavContent>
+                <div class="row border-bottom">
+                    <div class="col text-center">
+                        <span>{{'admin.database.vacuum.size.current' | translate}} <span class="fw-bold">{{ (dbSizeObs$ | async) / (1024 * 1024) }}</span> {{'admin.database.vacuum.size.unit' | translate}}</span>
+                        <i class="fa-solid fa-rotate-right ms-2" title="{{'global.actions.refresh' | translate}}" (click)="refreshDBSize()"></i>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col text-center">
+                        <button class="btn btn-success" [ngClass]="{'disabled':vacuumRunning}" (click)="launchVacuum()">
+                            <span class="fa fa-play me-2" aria-hidden="true"></span> {{'global.actions.execute' | translate}}
+                        </button>
+                    </div>
+                </div>
+                <div class="row mt-2" *ngIf="vacuumReport.length > 0">
+                    <div class="col text-center">
+                        <span>{{'admin.database.vacuum.size.report' | translate}} <span class="fw-bold">{{ vacuumReport[0] / (1024 * 1024) }}</span> {{'admin.database.vacuum.size.unit' | translate}} / <span class="fw-bold">{{ vacuumReport[1] / (1024 * 1024) }}</span> {{'admin.database.vacuum.size.unit' | translate}}</span>
+                    </div>
+                </div>
+            </ng-template>
+        </li>
+    </ul>
+
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
 </div>
