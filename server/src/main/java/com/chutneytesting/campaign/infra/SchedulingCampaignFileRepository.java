@@ -124,7 +124,7 @@ public class SchedulingCampaignFileRepository implements PeriodicScheduledCampai
     }
 
     @Override
-    public List<PeriodicScheduledCampaign> getALl() {
+    public List<PeriodicScheduledCampaign> getAll() {
         return readFromDisk().values().stream()
             .map(this::fromDto)
             .collect(Collectors.toList());

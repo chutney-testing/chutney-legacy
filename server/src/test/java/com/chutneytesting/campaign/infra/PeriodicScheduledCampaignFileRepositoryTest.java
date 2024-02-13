@@ -128,7 +128,7 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
 
         //// GET
         // When
-        List<PeriodicScheduledCampaign> periodicScheduledCampaigns = sut.getALl();
+        List<PeriodicScheduledCampaign> periodicScheduledCampaigns = sut.getAll();
 
         // Then
         assertThat(periodicScheduledCampaigns).hasSize(2);
@@ -215,7 +215,7 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
         PeriodicScheduledCampaign sc2 = new PeriodicScheduledCampaign(2L, 22L, "campaign title 2", LocalDateTime.of(2023, 3, 4, 7, 10));
 
         // When
-        List<PeriodicScheduledCampaign> periodicScheduledCampaigns = sut.getALl();
+        List<PeriodicScheduledCampaign> periodicScheduledCampaigns = sut.getAll();
         //Then
         assertThat(periodicScheduledCampaigns).hasSize(1);
         assertThat(periodicScheduledCampaigns).contains(sc1);
@@ -225,7 +225,7 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
         sut.add(sc2);
 
         // Then
-        periodicScheduledCampaigns = sut.getALl();
+        periodicScheduledCampaigns = sut.getAll();
         assertThat(periodicScheduledCampaigns).hasSize(2);
         assertThat(periodicScheduledCampaigns).contains(sc1);
         assertThat(periodicScheduledCampaigns).contains(sc2);
@@ -263,7 +263,7 @@ public class PeriodicScheduledCampaignFileRepositoryTest {
         };
         Runnable readScheduledCampaigns = () -> {
             try {
-                sut.getALl();
+                sut.getAll();
             } catch (Exception e) {
                 exceptions.add(e);
             }
