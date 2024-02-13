@@ -37,19 +37,15 @@ import com.chutneytesting.campaign.domain.PeriodicScheduledCampaignRepository;
 import com.chutneytesting.execution.domain.campaign.CampaignExecutionEngine;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InOrder;
-import org.mockito.Mock;
 
 public class CampaignSchedulerTest {
 
@@ -57,13 +53,11 @@ public class CampaignSchedulerTest {
 
     private final CampaignExecutionEngine campaignExecutionEngine = mock(CampaignExecutionEngine.class);
     private final PeriodicScheduledCampaignRepository periodicScheduledCampaignRepository = mock(PeriodicScheduledCampaignRepository.class);
-    private final Clock clock = mock(Clock.class);
+    private Clock clock;
 
     @BeforeEach
     public void setUp() {
-        Clock fixedClock = Clock.fixed(LocalDateTime.of(2024, 3, 15, 15, 0, 0).toInstant(ZoneOffset.UTC), ZoneId.of("Europe/Paris"));
-        doReturn(fixedClock.instant()).when(clock).instant();
-        doReturn(fixedClock.getZone()).when(clock).getZone();
+        clock = Clock.systemDefaultZone();
         sut = new CampaignScheduler(campaignExecutionEngine, clock, periodicScheduledCampaignRepository, Executors.newFixedThreadPool(2));
     }
 
@@ -71,7 +65,7 @@ public class CampaignSchedulerTest {
     @EnumSource(Frequency.class)
     void should_execute_campaign_as_internal_user_named_auto_when_executing_periodic_scheduled_campaign(Frequency frequency) {
         List<PeriodicScheduledCampaign> periodicScheduledCampaign = createPeriodicScheduledCampaigns(singletonList(frequency));
-        when(periodicScheduledCampaignRepository.getALl())
+        when(periodicScheduledCampaignRepository.getAll())
             .thenReturn(
                 periodicScheduledCampaign
             );
@@ -85,7 +79,7 @@ public class CampaignSchedulerTest {
     @EnumSource(Frequency.class)
     void should_remove_last_execution_when_executing_periodic_scheduled_campaign(Frequency frequency) {
         List<PeriodicScheduledCampaign> periodicScheduledCampaign = createPeriodicScheduledCampaigns(singletonList(frequency));
-        when(periodicScheduledCampaignRepository.getALl())
+        when(periodicScheduledCampaignRepository.getAll())
             .thenReturn(
                 periodicScheduledCampaign
             );
@@ -99,7 +93,7 @@ public class CampaignSchedulerTest {
     @EnumSource(Frequency.class)
     void should_add_next_execution_when_executing_periodic_scheduled_campaign_except_for_EMPTY_frequency(Frequency frequency) {
         List<PeriodicScheduledCampaign> periodicScheduledCampaign = createPeriodicScheduledCampaigns(singletonList(frequency));
-        when(periodicScheduledCampaignRepository.getALl())
+        when(periodicScheduledCampaignRepository.getAll())
             .thenReturn(
                 periodicScheduledCampaign
             );
@@ -116,13 +110,13 @@ public class CampaignSchedulerTest {
     }
 
     @Test
-    void should_reschedule_missed_campaign() {
-        PeriodicScheduledCampaign periodicScheduledCampaign1 = new PeriodicScheduledCampaign(1L, List.of(11L), List.of("campaign title 1"), LocalDateTime.of(2024, 1, 1, 14, 0), Frequency.WEEKLY);
-        PeriodicScheduledCampaign periodicScheduledCampaign2 = new PeriodicScheduledCampaign(2L, List.of(22L), List.of("campaign title 2"), LocalDateTime.of(2023, 3, 4, 7, 10), Frequency.HOURLY);
-        PeriodicScheduledCampaign periodicScheduledCampaign3 = new PeriodicScheduledCampaign(3L, List.of(33L), List.of("campaign title 3"), LocalDateTime.of(2024, 2, 2, 14, 0));
-        when(periodicScheduledCampaignRepository.getALl())
+    void should_reschedule_missed_campaign_with_frequency_from_now_in_the_future() {
+        PeriodicScheduledCampaign scheduledCampaignWeeklyFrequency = new PeriodicScheduledCampaign(1L, List.of(11L), List.of("campaign title 1"), LocalDateTime.now().minusWeeks(5).minusHours(1).plusMinutes(15).withSecond(0).withNano(0), Frequency.WEEKLY);
+        PeriodicScheduledCampaign scheduledCampaignHourlyFrequency = new PeriodicScheduledCampaign(2L, List.of(22L), List.of("campaign title 2"), LocalDateTime.now().minusHours(6).plusMinutes(15).withSecond(0).withNano(0), Frequency.HOURLY);
+        PeriodicScheduledCampaign scheduledCampaignNoFrequency = new PeriodicScheduledCampaign(3L, List.of(33L), List.of("campaign title 3"), LocalDateTime.now().minusYears(1).minusHours(6).plusMinutes(15).withSecond(0).withNano(0));
+        when(periodicScheduledCampaignRepository.getAll())
             .thenReturn(
-                List.of(periodicScheduledCampaign1, periodicScheduledCampaign2, periodicScheduledCampaign3)
+                List.of(scheduledCampaignWeeklyFrequency, scheduledCampaignHourlyFrequency, scheduledCampaignNoFrequency)
             );
         when(periodicScheduledCampaignRepository.add(any()))
             .thenReturn(
@@ -130,8 +124,8 @@ public class CampaignSchedulerTest {
             );
         doNothing().when(periodicScheduledCampaignRepository).removeById(any());
 
-        PeriodicScheduledCampaign expected1 = new PeriodicScheduledCampaign(1L, List.of(11L), List.of("campaign title 1"), LocalDateTime.of(2024, 3, 18, 14, 0), Frequency.WEEKLY);
-        PeriodicScheduledCampaign expected2 = new PeriodicScheduledCampaign(2L, List.of(22L), List.of("campaign title 2"), LocalDateTime.of(2024, 3, 15, 16, 10), Frequency.HOURLY);
+        PeriodicScheduledCampaign expected1 = new PeriodicScheduledCampaign(1L, List.of(11L), List.of("campaign title 1"), LocalDateTime.now().plusWeeks(1).minusHours(1).plusMinutes(15).withSecond(0).withNano(0), Frequency.WEEKLY);
+        PeriodicScheduledCampaign expected2 = new PeriodicScheduledCampaign(2L, List.of(22L), List.of("campaign title 2"), LocalDateTime.now().plusMinutes(15).withSecond(0).withNano(0), Frequency.HOURLY);
 
 
         // WHEN
@@ -147,19 +141,19 @@ public class CampaignSchedulerTest {
 
     @Test
     void should_not_explode_when_runtime_exceptions_occur_retrieving_campaigns_to_execute() {
-        when(periodicScheduledCampaignRepository.getALl())
+        when(periodicScheduledCampaignRepository.getAll())
             .thenThrow(new RuntimeException("scheduledCampaignRepository.getAll()"));
         Assertions.assertDoesNotThrow(
             () -> sut.executeScheduledCampaigns()
         );
 
-        verify(periodicScheduledCampaignRepository).getALl();
+        verify(periodicScheduledCampaignRepository).getAll();
     }
 
     @Test
     void should_not_explode_when_runtime_exceptions_occur_executing_campaigns() {
         List<PeriodicScheduledCampaign> periodicScheduledCampaigns = createPeriodicScheduledCampaigns(asList(Frequency.MONTHLY, Frequency.DAILY));
-        when(periodicScheduledCampaignRepository.getALl())
+        when(periodicScheduledCampaignRepository.getAll())
             .thenReturn(
                 periodicScheduledCampaigns
             );
@@ -178,7 +172,7 @@ public class CampaignSchedulerTest {
         PeriodicScheduledCampaign sc1 = new PeriodicScheduledCampaign(1L, List.of(11L, 22L), List.of("cpg 11", "cpg 22"), now(clock).minusSeconds(5), Frequency.HOURLY);
 
         List<PeriodicScheduledCampaign> periodicScheduledCampaign = List.of(sc1);
-        when(periodicScheduledCampaignRepository.getALl())
+        when(periodicScheduledCampaignRepository.getAll())
             .thenReturn(
                 periodicScheduledCampaign
             );

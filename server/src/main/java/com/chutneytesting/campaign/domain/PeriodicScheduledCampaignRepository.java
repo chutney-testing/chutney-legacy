@@ -29,5 +29,5 @@ public interface PeriodicScheduledCampaignRepository {
 
     void removeCampaignId(Long id);
 
-    List<PeriodicScheduledCampaign> getALl();
+    List<PeriodicScheduledCampaign> getAll();
 }

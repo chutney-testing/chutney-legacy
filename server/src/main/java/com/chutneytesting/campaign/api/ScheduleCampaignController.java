@@ -49,7 +49,7 @@ public class ScheduleCampaignController {
     @PreAuthorize("hasAuthority('CAMPAIGN_READ')")
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<SchedulingCampaignDto> getAll() {
-        return periodicScheduledCampaignRepository.getALl().stream()
+        return periodicScheduledCampaignRepository.getAll().stream()
             .map(sc -> new SchedulingCampaignDto(sc.id, sc.campaignsId, sc.campaignsTitle, sc.nextExecutionDate, sc.frequency.label))
             .sorted(Comparator.comparing(SchedulingCampaignDto::getSchedulingDate))
             .collect(Collectors.toList());

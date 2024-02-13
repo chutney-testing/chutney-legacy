@@ -89,7 +89,7 @@ public class CampaignScheduler {
 
     synchronized private Stream<List<Long>> scheduledCampaignIdsToExecute() {
         try {
-            List<PeriodicScheduledCampaign> all = periodicScheduledCampaignRepository.getALl();
+            List<PeriodicScheduledCampaign> all = periodicScheduledCampaignRepository.getAll();
             return all.stream()
                 .filter(sc -> sc.nextExecutionDate != null)
                 .filter(sc -> sc.nextExecutionDate.isBefore(LocalDateTime.now(clock)))
