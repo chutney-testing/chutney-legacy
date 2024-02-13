@@ -55,9 +55,22 @@ public class DatabaseCampaignRepository implements CampaignRepository {
 
     @Override
     public Campaign createOrUpdate(Campaign campaign) {
+        if (campaign.id != null && !campaignExists(campaign.id)) {
+            CampaignEntity campaignEntity = CampaignEntity.fromDomain(campaign, 1);
+            campaignJpaRepository.saveWithExplicitId(campaignEntity.id(), campaignEntity.title(), campaignEntity.description());
+        }
         CampaignEntity campaignJpa =
             campaignJpaRepository.save(CampaignEntity.fromDomain(campaign, lastCampaignVersion(campaign.id)));
         return campaignJpa.toDomain();
+    }
+
+    private boolean campaignExists(Long id) {
+        try {
+            findById(id);
+            return true;
+        } catch (CampaignNotFoundException e) {
+           return false;
+        }
     }
 
     private Integer lastCampaignVersion(Long id) {

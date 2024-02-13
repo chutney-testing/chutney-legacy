@@ -120,6 +120,28 @@ public class DatabaseCampaignRepositoryTest {
         }
 
         @Test
+        public void should_create_a_campaign_with_given_id() {
+            // Given
+            ScenarioEntity s1 = givenScenario();
+            ScenarioEntity s2 = givenScenario();
+            List<String> scenarioIds = scenariosIds(s1, s2);
+            Campaign unsavedCampaign = new Campaign(12345L, "campaignName", "lol", scenarioIds, "env", false, false, null, null);
+
+            //When
+            Campaign savedCampaign = sut.createOrUpdate(unsavedCampaign);
+
+            //Then
+            assertThat(savedCampaign.id).isEqualTo(12345L);
+            assertThat(savedCampaign.title).isEqualTo(unsavedCampaign.title);
+            assertThat(savedCampaign.description).isEqualTo(unsavedCampaign.description);
+            assertThat(savedCampaign.executionEnvironment()).isEqualTo(unsavedCampaign.executionEnvironment());
+            assertThat(savedCampaign.parallelRun).isFalse();
+            assertThat(savedCampaign.retryAuto).isFalse();
+            assertThat(savedCampaign.scenarioIds).containsExactlyElementsOf(scenarioIds);
+
+        }
+
+        @Test
         public void should_update_a_campaign() {
             // Given
             ScenarioEntity s1 = givenScenario();
