@@ -254,7 +254,6 @@ public class ServerConfiguration {
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            .enable(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS.mappedFeature())
             .registerModule(jdomElementModule)
             .findAndRegisterModules();
     }

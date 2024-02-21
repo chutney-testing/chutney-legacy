@@ -81,22 +81,22 @@ Feature: SQL Task test
         And the report contains record results
             Do compare
                 With actual ${#json(#report, "$.report.steps[-1:].stepOutputs.recordResult").toString()}
-                With expected [[{"affectedRows":"-1","headers":["ID","NAME","EMAIL"],"rows":[["1","laitue","laitue@fake.com"],["2","carotte","kakarot@fake.db"]],"columns":[{"name":"ID","index":"0"},{"name":"NAME","index":"1"},{"name":"EMAIL","index":"2"}],"records":[{"cells":[{"column":{"name":"ID","index":"0"},"value":"1"},{"column":{"name":"NAME","index":"1"},"value":"laitue"},{"column":{"name":"EMAIL","index":"2"},"value":"laitue@fake.com"}]},{"cells":[{"column":{"name":"ID","index":"0"},"value":"2"},{"column":{"name":"NAME","index":"1"},"value":"carotte"},{"column":{"name":"EMAIL","index":"2"},"value":"kakarot@fake.db"}]}]}]]
+                With expected [[{"affectedRows":-1,"headers":["ID","NAME","EMAIL"],"rows":[[1,"laitue","laitue@fake.com"],[2,"carotte","kakarot@fake.db"]],"columns":[{"name":"ID","index":0},{"name":"NAME","index":1},{"name":"EMAIL","index":2}],"records":[{"cells":[{"column":{"name":"ID","index":0},"value":1},{"column":{"name":"NAME","index":1},"value":"laitue"},{"column":{"name":"EMAIL","index":2},"value":"laitue@fake.com"}]},{"cells":[{"column":{"name":"ID","index":0},"value":2},{"column":{"name":"NAME","index":1},"value":"carotte"},{"column":{"name":"EMAIL","index":2},"value":"kakarot@fake.db"}]}]}]]
                 With mode equals
         And the report contains firstRow output
             Do compare
                 With actual ${#json(#report, "$.report.steps[-1:].stepOutputs.firstRow").toString()}
-                With expected [{"cells":[{"column":{"name":"ID","index":"0"},"value":"1"},{"column":{"name":"NAME","index":"1"},"value":"laitue"},{"column":{"name":"EMAIL","index":"2"},"value":"laitue@fake.com"}]}]
+                With expected [{"cells":[{"column":{"name":"ID","index":0},"value":1},{"column":{"name":"NAME","index":1},"value":"laitue"},{"column":{"name":"EMAIL","index":2},"value":"laitue@fake.com"}]}]
                 With mode equals
         And the report contains rows output
             Do compare
                 With actual ${#json(#report, "$.report.steps[-1:].stepOutputs.rows").toString()}
-                With expected [{"rows":[{"cells":[{"column":{"name":"ID","index":"0"},"value":"1"},{"column":{"name":"NAME","index":"1"},"value":"laitue"},{"column":{"name":"EMAIL","index":"2"},"value":"laitue@fake.com"}]},{"cells":[{"column":{"name":"ID","index":"0"},"value":"2"},{"column":{"name":"NAME","index":"1"},"value":"carotte"},{"column":{"name":"EMAIL","index":"2"},"value":"kakarot@fake.db"}]}]}]
+                With expected [{"rows":[{"cells":[{"column":{"name":"ID","index":0},"value":1},{"column":{"name":"NAME","index":1},"value":"laitue"},{"column":{"name":"EMAIL","index":2},"value":"laitue@fake.com"}]},{"cells":[{"column":{"name":"ID","index":0},"value":2},{"column":{"name":"NAME","index":1},"value":"carotte"},{"column":{"name":"EMAIL","index":2},"value":"kakarot@fake.db"}]}]}]
                 With mode equals
         And the report contains affectedRows output
             Do compare
                 With actual ${#json(#report, "$.report.steps[-1:].stepOutputs.affectedRows").toString()}
-                With expected ["-1"]
+                With expected [-1]
                 With mode equals
 
     Scenario: Sql query wrong table
